@@ -12,7 +12,6 @@ book:
   repo-url: https://github.com/ignacio82/book
   repo-branch: master
   favicon: hex.png
-
   comments:
     utterances:
       repo: ignacio82/book
@@ -57,7 +56,12 @@ book:
   sidebar: 
     logo: hex.png
 bibliography: references.bib
-
+google-scholar: true 
+citation:
+  type: book
+  container-title: "Business Data Science: A guide for data-driven decisions"
+  url: https:/book.martinez.fyi
+  
 format:
   html:
     theme: cosmo
@@ -81,11 +85,7 @@ format:
       email: true
       mastodon: true
   
-citation:
-  type: book
-  container-title: "Business Data Science: A guide for data-driven decisions"
-  url: https:/book.martinez.fyi
-google-scholar: true 
+
 
 resources:
   - CNAME
