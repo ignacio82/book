@@ -8,7 +8,7 @@ share:
   mastodon: true
 ---
 
-![Hurdle Models](img/hurdle.jpg){.lightbox}
+<img src="img/hurdle.jpg" align="right" height="280" alt="Hurdle Models" />
 
 ## What are Hurdle Models and When are they Useful?
 
