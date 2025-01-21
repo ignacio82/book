@@ -52,7 +52,7 @@ glossary_add(term = "Meaningful threshold",
 
 ```
 
-![Decisions First](img/decisions_first.png){.lightbox}
+<img src="img/decisions_first.jpg" align="right" height="280" alt="A decisions-first framework"/>
 
 In the world of `r glossary("data-driven")` decision-making, it's all too easy to
 fall into the trap of the "null ritual." This ritual, as @gigerenzer2004null
