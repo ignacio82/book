@@ -829,7 +829,7 @@ improvements. This case study serves as a potent reminder: in the quest for
 causality, your choice of analytical tool can make all the difference between
 misleading conclusions and actionable insights.
 
-### Caveat 1: Generic Mixing Issue
+### Caveat A: Generic Mixing Issue
 
 On the technical side, Bayesian analysis relies on posterior sampling for
 estimating the distributions of parameters that we get from the above methods.
@@ -1039,7 +1039,7 @@ ivobj$vizdraws(
 ```
 :::
 
-### Caveat 2: Weak Instrument Issue
+### Caveat B: Weak Instrument Issue
 
 We measure the "strength" of an instrumental variable to be the proportion of
 compliers in the entire population. Weak instrument issue is a more serious
