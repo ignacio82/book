@@ -49,10 +49,11 @@ them into four groups:
 The potential outcomes framework is crucial for understanding these designs. For
 each participant, we consider:
 
-  - $Y(1)$: The outcome if encouraged
-  - $Y(0)$: The outcome if not encouraged
-  - $D(1)$: The treatment status if encouraged
-  - $D(0)$: The treatment status if not encouraged
+  - $Z$: The encouragement (Z = 1 if encouraged, Z = 0 if not encouraged)
+  - $Y(1) = Y(Z = 1)$: The outcome if encouraged
+  - $Y(0) = Y(Z = 0)$: The outcome if not encouraged
+  - $D(1) = D(Z = 1)$: The treatment status if encouraged
+  - $D(0) = D(Z = 0)$: The treatment status if not encouraged
 
 ## What We Want to Know: ITT and CACE
 
@@ -76,10 +77,10 @@ In the world of REDs, our curiosity often leads us down two paths:
     the average effect of the treatment specifically for those who are swayed by
     the encouragement—the compliers. The CACE is defined as:
     $$CACE = E[Y(1) - Y(0)|D(1) = 1, D(0) = 0]$$
-where $Z$ is the encouragement assignment and $D$
-    is the actual treatment received. For instance, a product team might be
-    interested in the impact of actually using a new feature on user engagement,
-    rather than just being encouraged to use it.
+    where $Y(1)$ and Y(0) are the outcomes under encouragement versus not, and $D(1)$
+    and $D(0)$ are actual treatment received under encouragement versus not. For
+    instance, a product team might be interested in the impact of actually using
+    a new feature on user engagement, rather than just being encouraged to use it.
 
 
 ## Making it Work: Key Assumptions
