@@ -315,7 +315,7 @@ to a more sophisticated approach: Bayesian Instrumental Variable Analysis
 (BIVA). This method allows us to navigate the complexities of our randomized
 encouragement design and extract meaningful causal insights.
 
-The BIVA workflow begins with the `biva$new method`, which is defined as
+The BIVA workflow begins with the `biva$new` method, which is defined as
 follows:
 
 
@@ -765,7 +765,7 @@ ivobj$plotPrior()
 ```
 
 These prior distributions reflect our initial beliefs about the parameters.
-They're intentionally weak, but not compleatly uniformative. For example, they
+They're intentionally weak, but not completely uninformative. For example, they
 refect that a small CACE is more likely than a big one. The plots show the range
 of plausible values for each parameter before we've seen any data.
 
@@ -830,7 +830,7 @@ improvements. This case study serves as a potent reminder: in the quest for
 causality, your choice of analytical tool can make all the difference between
 misleading conclusions and actionable insights.
 
-### Caveat 1: Generic Mixing Issue
+### Caveat A: Generic Mixing Issue
 
 On the technical side, Bayesian analysis relies on posterior sampling for
 estimating the distributions of parameters that we get from the above methods.
@@ -985,7 +985,7 @@ Here are some possible fixes by our recommended order.
     the mixing issue calls for a second round of reflection to reaffirm that
     the input represent the best efforts of reporting our knowledge.
 3.  **Generic fixes:** Common practice of increasing the number of iterations,
-    or running them more slowly could be tried out.
+    or running them more slowly could be attempted.
 
 The order of fixes suggests prioritizing understanding what went wrong in terms
 of inadequate amount or quality of information through data and models, instead
@@ -1040,7 +1040,7 @@ ivobj$vizdraws(
 ```
 :::
 
-### Caveat 2: Weak Instrument Issue
+### Caveat B: Weak Instrument Issue
 
 We measure the "strength" of an instrumental variable to be the proportion of
 compliers in the entire population. Weak instrument issue is a more serious

@@ -7,7 +7,6 @@ share:
   email: true
   mastodon: true
 author:
-  - name: ??
   - name: Ignacio Martinez  
 ---
 
