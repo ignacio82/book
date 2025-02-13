@@ -83,8 +83,40 @@ retention and revenue growth.
 #### Example with Code
 
 ```{r example, message=FALSE}
-# TODO WRITE EXAMPLE!
+library(dplyr)
+library(glmnet)
 
+# Generate n time periods
+set.seed(42)
+n <- 50
+
+# Generate gaussian numbers for an ecommerce company looking at cart
+# abandonment, MAU, average cart value, and average item quantity
+X <- tibble(
+  abandonment = rnorm(n, mean = 0.7, sd = 0.1),
+  mau = round(rnorm(n, mean = 10000, sd = 2000)),
+  value = rnorm(n, mean = 50, sd = 10),
+  quantity = round(rnorm(n, mean = 3, sd = 1))
+) |> as.matrix()
+
+# Define true coefficients (some strong, some weak, some near zero)
+intercept <- 200000
+coefs <- c(
+  abandonment = -2000,
+  mau = 2,
+  value = 100,
+  quantity = 0.01)
+
+# Generate revenue using simulated covariates with our defined coefficients + noise
+revenue <- intercept + X %*% coefs + rnorm(n, 5e4)
+
+# Train linear model with L1 regularization (lasso)
+lasso.mdl.cv <- cv.glmnet(X, revenue, alpha = 1)
+
+# The coefficient for item quantity has been reduced to zero reflecting
+# that item quantity is not likely an effective surrogate for revenue.
+cat("Lasso Coefficients:\n")
+print(coef(lasso.mdl.cv))
 ```
 
 ### Conclusion
