@@ -157,16 +157,37 @@ decision for their company.
 
 ## The Deceptive Case of Sub-additive Interactions
 
-The dangers of uncoordinated experiments become even more pronounced, and potentially misleading, when interventions exhibit **sub-additive interactions**. This occurs when the combined effect of multiple incentives is *less* than the sum of their individual effects.  In some unfortunate scenarios, the combined effect can even be less than the effect of the most potent incentive applied in isolation.
+The dangers of uncoordinated experiments become even more pronounced, and
+potentially misleading, when interventions exhibit **sub-additive
+interactions**. This occurs when the combined effect of multiple incentives is
+*less* than the sum of their individual effects. In some unfortunate scenarios,
+the combined effect can even be less than the effect of the most potent
+incentive applied in isolation.
 
-Imagine, for instance, that our monetary and non-monetary incentives are email communications.  If a customer receives *both* a discount offer and a personalized message, they might perceive this as excessive or even spammy.  Perhaps the user's spam filter becomes more aggressive, or the sheer volume of communication leads to both emails being overlooked or dismissed. In such cases, the combined impact could be diminished, or even negated, compared to using just one incentive type.
+Imagine, for instance, that our monetary and non-monetary incentives are email
+communications. If a customer receives *both* a discount offer and a
+personalized message, they might perceive this as excessive or even spammy.
+Perhaps the user's spam filter becomes more aggressive, or the sheer volume of
+communication leads to both emails being overlooked or dismissed. In such cases,
+the combined impact could be diminished, or even negated, compared to using just
+one incentive type.
 
-To simulate this sub-additive interaction, let's adjust our synthetic data. We'll keep the monetary incentive effect strong and positive, and the non-monetary incentive with a small positive effect in isolation. However, we'll introduce a *negative* interaction effect that is large enough to make the combined effect smaller than the sum of the individual effects:
+To simulate this sub-additive interaction, let's adjust our synthetic data.
+We'll keep the monetary incentive effect strong and positive, and the
+non-monetary incentive with a small positive effect in isolation. However, we'll
+introduce a *negative* interaction effect that is large enough to make the
+combined effect smaller than the sum of the individual effects:
 
 ```{r}
 #| label: sub-additive-effects
 #| message: false
 #| warning: false
+
+# Create data frame for coordinated experiment
+coordinated_data_modified <- data.frame(
+  monetary = rep(c(0, 1), each = 2 * n),
+  non_monetary = rep(c(0, 1, 0, 1), each = n)
+)
 
 # Define treatment effects - SUB-ADDITIVE EFFECTS
 monetary_effect <- 2
