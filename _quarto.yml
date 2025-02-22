@@ -36,6 +36,7 @@ book:
         - bad.qmd
         - factorial.qmd
         - iv.qmd    
+        - coordination.qmd
     - part: other_methods.qmd
       chapters: 
         - matching.qmd

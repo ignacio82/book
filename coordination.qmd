@@ -1,0 +1,230 @@
+---
+title: "The Importance of Coordination"
+share:
+  permalink: "https://book.martinez.fyi/coordination.html"
+  description: "Understanding and managing experimental interference in business settings"
+  linkedin: true
+  email: true
+  mastodon: true
+---
+
+## Introduction
+
+As a business data scientist in a large company, you'll likely encounter
+situations where multiple teams are simultaneously running experiments. There's
+a common but dangerous assumption in these situations: "We're both randomizing,
+so it's fine." This mindset can lead to misleading results and incorrect
+conclusions, ultimately hindering business decisions.
+
+## A Motivating Example
+
+Let's explore a scenario where two teams are independently trying to improve the
+same outcome (e.g., conversion rate, customer engagement, sales):
+
+  - Team A is testing a monetary incentive (e.g., a discount, a gift card)
+  - Team B is testing a non-monetary incentive (e.g., a personalized message,
+    early access to features)
+
+With proper coordination, these teams could run a more informative 2x2 factorial
+experiment with four arms:
+
+1.  Monetary Incentive Only
+2.  Non-Monetary Incentive Only
+3.  Both Incentives Combined
+4.  Control (No Incentives)
+
+This design enables understanding both individual effects and their interaction:
+Does combining incentives create synergy (greater than the sum), antagonism
+(less than the sum), or no interaction?
+
+## The Problem with Uncoordinated Experiments
+
+Without coordination, each team typically runs a two-arm experiment (their
+incentive vs. control). This creates two major issues:
+
+1.  Each team's "control" group is contaminated by the other team's experiment
+2.  The true interaction effects between interventions remain unknown
+
+Let's demonstrate this with synthetic data. We'll assume:
+
+  - Monetary Incentive Effect: +2 units
+  - Non-Monetary Incentive Effect: +1 unit
+  - Combined Effect: +2 units (showing a ceiling effect)
+  - Baseline (No Incentives): 0 units
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+
+# Set seed for reproducibility
+set.seed(42)
+
+# Generate synthetic data
+n <- 1000  # observations per group
+
+# Create data frame for coordinated experiment
+coordinated_data <- data.frame(
+  monetary = rep(c(0, 1), each = 2 * n),
+  non_monetary = rep(c(0, 1, 0, 1), each = n),
+  group = paste0(
+    "Monetary", 
+    c("No", "Yes"),
+    "_NonMonetary",
+    c("No", "No", "Yes", "Yes")
+  )
+)
+
+# Define treatment effects
+monetary_effect <- 2
+non_monetary_effect <- 1
+interaction_effect <- -1  # Negative interaction
+
+# Generate outcome
+coordinated_data$outcome <- with(
+  coordinated_data,
+  0 +  # Baseline
+    monetary * monetary_effect +
+    non_monetary * non_monetary_effect +
+    monetary * non_monetary * interaction_effect +
+    rnorm(4 * n, mean = 0, sd = 1)  # Random noise
+)
+```
+
+## Analyzing Uncoordinated Experiments
+
+Let's see how each team might analyze their data in isolation:
+
+```{r}
+#| label: team-a-analysis
+#| warning: false
+
+# Team A's perspective (Monetary Incentive)
+team_a_data <- coordinated_data %>%
+  filter(
+    group %in% c(
+      "MonetaryNo_NonMonetaryNo",
+      "MonetaryNo_NonMonetaryYes",
+      "MonetaryYes_NonMonetaryNo",
+      "MonetaryYes_NonMonetaryYes"
+    )
+  ) %>%
+  mutate(treatment_a = ifelse(grepl("MonetaryYes", group), 1, 0))
+
+# Team A's regression
+lm(outcome ~ treatment_a, data = team_a_data) %>% 
+  broom::tidy(conf.int = TRUE) %>%
+  select(term, estimate, conf.low, conf.high, p.value) %>% 
+  knitr::kable(
+  caption = "Team A's Analysis (Monetary Incentive)",
+  digits = 3
+)
+```
+
+Team A would likely, incorrectly, conclude that compared to no incentives
+monetary incentives have no statistically significant impact so they are not
+worth it. This conclusion would have two problems. The first is what we
+discussed in the [Bayesian Linear
+Regression](https://book.martinez.fyi/blm.html) chapter. They are using the
+hammer of null hypothesis testing to answer a business question that should
+likely not be answered with that tool. The second is that they are saying
+"compared to no incentives" and in reality their model is mispesified and some
+of the control units are receiving non-monetary incentives and some of well as
+some of their treated units.
+
+The code bellow shows that the same would happen to the non-monetary incentives
+team:
+
+```{r}
+#| label: team-b-analysis
+#| warning: false
+
+team_b_data <- coordinated_data %>%
+  filter(
+    group %in% c(
+      "MonetaryNo_NonMonetaryNo",
+      "MonetaryNo_NonMonetaryYes",
+      "MonetaryYes_NonMonetaryNo",
+      "MonetaryYes_NonMonetaryYes"
+    )
+  ) %>%
+  mutate(treatment_b = ifelse(grepl("NonMonetaryYes", group), 1, 0))
+
+# Team B's regression
+lm(outcome ~ treatment_b, data = team_b_data) %>% 
+  broom::tidy(conf.int = TRUE) %>%
+  select(term, estimate, conf.low, conf.high, p.value) %>% 
+  knitr::kable(
+  caption = "Team B's Analysis (Non-Monetary Incentive)",
+  digits = 3
+)
+
+```
+
+## The Power of Coordination
+
+Now let's analyze the data properly using a coordinated approach:
+
+```{r}
+#| label: coordinated-analysis
+#| warning: false
+
+# Full factorial analysis
+lm(outcome ~ monetary * non_monetary, data = coordinated_data) %>% 
+  broom::tidy(conf.int = TRUE) %>%
+  select(term, estimate, conf.low, conf.high, p.value) %>% 
+  knitr::kable(
+  caption = "Coordinated Analysis (Full Factorial Design)",
+  digits = 3
+)
+```
+
+With this analysis they would be able to correctly communicate what would happen
+if they only did one of the incentives or both together. Moreover, although the
+impact of the non monetary incentives is smaller, it is possible that the ROI of
+doing just the non monetary incentive is higher and therefore that is the right
+decision for their company.
+
+## Additional Considerations
+
+While the preceding example simplifies the scenario, real-world experiments
+often involve complex interactions that can skew results. For instance, consider
+the impact of sequential experiments:
+
+  - **Temporal Overlap and Carryover Effects:** If Team A runs an experiment in
+    Q1 and Team B in Q2, Team A might mistakenly conclude their intervention's
+    effect fully decays over time. However, this could be a misinterpretation
+    due to Team B's subsequent intervention. This is particularly problematic
+    when comparing ROI, as Team A's intervention might actually be superior.
+
+Furthermore, interference isn't limited to teams pursuing identical objectives.
+Even experiments targeting distinct goals can influence each other:
+
+  - **Interdependent Actions and Resource Constraints:** When multiple teams
+    employ [randomized encouragement
+    designs](https://book.martinez.fyi/iv.html), even for different actions,
+    individuals face limited decision-making capacity. Consequently,
+    encouragement for action A can impact the likelihood of action B, and vice
+    versa. This interdependence necessitates careful consideration of potential
+    interference between experiments.
+
+In essence, accurate experiment analysis requires accounting for temporal
+factors and potential interactions between seemingly unrelated experiments.
+Failure to do so can lead to flawed conclusions and misinformed decisions.
+
+Finally, you have to remember that [estimating interactions is
+difficult](https://statmodeling.stat.columbia.edu/2018/03/15/need16/). If you
+try to do too much, you may end up with too much noise in your findings. In some
+cases you will have to make a decision about which is the most important
+business question that you need to answer and make sacrifices by having to wait
+to answer some other question.
+
+## Key Takeaways
+
+1.  Always map out potential interference between experiments
+2.  Consider both direct and indirect interaction effects
+3.  When possible, use factorial designs to understand interaction effects
+4.  Balance the desire for comprehensive understanding against your needs to
+    reduce uncertainty in your findings
+5.  Document assumptions about interference in your analysis
