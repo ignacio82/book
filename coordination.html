@@ -438,8 +438,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-problem-with-uncoordinated-experiments" id="toc-the-problem-with-uncoordinated-experiments" class="nav-link" data-scroll-target="#the-problem-with-uncoordinated-experiments"><span class="header-section-number">12.3</span> The Problem with Uncoordinated Experiments</a></li>
   <li><a href="#analyzing-uncoordinated-experiments" id="toc-analyzing-uncoordinated-experiments" class="nav-link" data-scroll-target="#analyzing-uncoordinated-experiments"><span class="header-section-number">12.4</span> Analyzing Uncoordinated Experiments</a></li>
   <li><a href="#the-power-of-coordination" id="toc-the-power-of-coordination" class="nav-link" data-scroll-target="#the-power-of-coordination"><span class="header-section-number">12.5</span> The Power of Coordination</a></li>
-  <li><a href="#additional-considerations" id="toc-additional-considerations" class="nav-link" data-scroll-target="#additional-considerations"><span class="header-section-number">12.6</span> Additional Considerations</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">12.7</span> Key Takeaways</a></li>
+  <li><a href="#beyond-the-simple-case-real-world-complexities" id="toc-beyond-the-simple-case-real-world-complexities" class="nav-link" data-scroll-target="#beyond-the-simple-case-real-world-complexities"><span class="header-section-number">12.6</span> Beyond the Simple Case: Real-World Complexities</a></li>
+  <li><a href="#key-takeaways-a-checklist-for-coordination" id="toc-key-takeaways-a-checklist-for-coordination" class="nav-link" data-scroll-target="#key-takeaways-a-checklist-for-coordination"><span class="header-section-number">12.7</span> Key Takeaways: A Checklist for Coordination</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ignacio82/book/edit/master/coordination.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
@@ -467,7 +467,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level2" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">12.1</span> Introduction</h2>
-<p>As a business data scientist in a large company, you’ll likely encounter situations where multiple teams are simultaneously running experiments. There’s a common but dangerous assumption in these situations: “We’re both randomizing, so it’s fine.” This mindset can lead to misleading results and incorrect conclusions, ultimately hindering business decisions.</p>
+<p>In large companies, multiple teams often run experiments simultaneously. A common—but risky—assumption is: “We’re both randomizing, so it’s fine.” In reality, uncoordinated experiments can contaminate control groups and obscure true interaction effects. This chapter explains why coordinating experimental designs is crucial for reliable business insights and decisions.</p>
 </section>
 <section id="a-motivating-example" class="level2" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="a-motivating-example"><span class="header-section-number">12.2</span> A Motivating Example</h2>
@@ -506,34 +506,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate synthetic data</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span>  <span class="co"># observations per group</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span>  <span class="co"># observations per group</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame for coordinated experiment</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>coordinated_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">monetary =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> <span class="dv">2</span> <span class="sc">*</span> n),</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">non_monetary =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> n),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">paste0</span>(</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monetary"</span>, </span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>),</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_NonMonetary"</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Define treatment effects</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>monetary_effect <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>non_monetary_effect <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>interaction_effect <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span>  <span class="co"># Negative interaction</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate outcome</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>coordinated_data<span class="sc">$</span>outcome <span class="ot">&lt;-</span> <span class="fu">with</span>(</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  coordinated_data,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span> <span class="sc">+</span>  <span class="co"># Baseline</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> monetary_effect <span class="sc">+</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    non_monetary <span class="sc">*</span> non_monetary_effect <span class="sc">+</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> non_monetary <span class="sc">*</span> interaction_effect <span class="sc">+</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">4</span> <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)  <span class="co"># Random noise</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">non_monetary =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> n)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Define treatment effects</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>monetary_effect <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>non_monetary_effect <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>interaction_effect <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span>  <span class="co"># Negative interaction</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate outcome</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>coordinated_data<span class="sc">$</span>outcome <span class="ot">&lt;-</span> <span class="fu">with</span>(</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  coordinated_data,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span> <span class="sc">+</span>  <span class="co"># Baseline</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> monetary_effect <span class="sc">+</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    non_monetary <span class="sc">*</span> non_monetary_effect <span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> non_monetary <span class="sc">*</span> interaction_effect <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">4</span> <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)  <span class="co"># Random noise</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="analyzing-uncoordinated-experiments" class="level2" data-number="12.4">
@@ -563,23 +557,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">0.484</td>
-<td style="text-align: right;">0.438</td>
-<td style="text-align: right;">0.531</td>
+<td style="text-align: right;">0.474</td>
+<td style="text-align: right;">0.409</td>
+<td style="text-align: right;">0.540</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">monetary</td>
-<td style="text-align: right;">1.503</td>
-<td style="text-align: right;">1.437</td>
-<td style="text-align: right;">1.569</td>
+<td style="text-align: right;">1.521</td>
+<td style="text-align: right;">1.428</td>
+<td style="text-align: right;">1.613</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>Team A would likely conclude that compared to no incentives 1.5, and it is statistically significant. Notice that they are saying “compared to no incentives” and in reality their model is mispesified and some of the control units are receiving non-monetary incentives and some of well as some of their treated units.</p>
+<p>In the absence of coordination, Team A’s analysis would likely lead them to conclude that monetary incentives increase the outcome of interest by 1.5 units compared to no incentives, a statistically significant result. However, their model is misspecified because some of the control units are receiving non-monetary incentives, while some of their treated units are also receiving non-monetary incentives.</p>
 <p>The code bellow shows that the same would happen to the non-monetary incentives team:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Team B's regression</span></span>
@@ -605,16 +599,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">0.985</td>
-<td style="text-align: right;">0.929</td>
-<td style="text-align: right;">1.042</td>
+<td style="text-align: right;">0.964</td>
+<td style="text-align: right;">0.885</td>
+<td style="text-align: right;">1.043</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">non_monetary</td>
-<td style="text-align: right;">0.501</td>
-<td style="text-align: right;">0.422</td>
-<td style="text-align: right;">0.580</td>
+<td style="text-align: right;">0.540</td>
+<td style="text-align: right;">0.429</td>
+<td style="text-align: right;">0.652</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
@@ -650,30 +644,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">-0.026</td>
-<td style="text-align: right;">-0.088</td>
-<td style="text-align: right;">0.036</td>
-<td style="text-align: right;">0.415</td>
+<td style="text-align: right;">-0.030</td>
+<td style="text-align: right;">-0.117</td>
+<td style="text-align: right;">0.057</td>
+<td style="text-align: right;">0.499</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">monetary</td>
-<td style="text-align: right;">2.023</td>
-<td style="text-align: right;">1.935</td>
-<td style="text-align: right;">2.110</td>
+<td style="text-align: right;">1.989</td>
+<td style="text-align: right;">1.865</td>
+<td style="text-align: right;">2.112</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">non_monetary</td>
-<td style="text-align: right;">1.021</td>
-<td style="text-align: right;">0.933</td>
-<td style="text-align: right;">1.108</td>
+<td style="text-align: right;">1.008</td>
+<td style="text-align: right;">0.885</td>
+<td style="text-align: right;">1.132</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">monetary:non_monetary</td>
-<td style="text-align: right;">-1.039</td>
-<td style="text-align: right;">-1.163</td>
-<td style="text-align: right;">-0.915</td>
+<td style="text-align: right;">-0.936</td>
+<td style="text-align: right;">-1.111</td>
+<td style="text-align: right;">-0.762</td>
 <td style="text-align: right;">0.000</td>
 </tr>
 </tbody>
@@ -682,28 +676,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>With this analysis they would be able to correctly communicate what would happen if they only did one of the incentives or both together. Moreover, although the impact of the non monetary incentives is smaller, it is possible that the ROI of doing just the non monetary incentive is higher and therefore that is the right decision for their company.</p>
 </section>
-<section id="additional-considerations" class="level2" data-number="12.6">
-<h2 data-number="12.6" class="anchored" data-anchor-id="additional-considerations"><span class="header-section-number">12.6</span> Additional Considerations</h2>
-<p>While the preceding example simplifies the scenario, real-world experiments often involve complex interactions that can skew results. For instance, consider the impact of sequential experiments:</p>
+<section id="beyond-the-simple-case-real-world-complexities" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="beyond-the-simple-case-real-world-complexities"><span class="header-section-number">12.6</span> Beyond the Simple Case: Real-World Complexities</h2>
+<p>This example, while illustrative, simplifies reality. Consider these additional complexities:</p>
 <ul>
-<li><strong>Temporal Overlap and Carryover Effects:</strong> If Team A runs an experiment in Q1 and Team B in Q2, Team A might mistakenly conclude their intervention’s effect fully decays over time. However, this could be a misinterpretation due to Team B’s subsequent intervention. This is particularly problematic when comparing ROI, as Team A’s intervention might actually be superior.</li>
+<li><p><strong>Sequential Experiments and Carryover:</strong> If Team A runs their experiment in Q1 and Team B in Q2, Team A might incorrectly conclude their effect decays over time. This could be due to Team B’s intervention, creating a carryover effect. This is particularly damaging for ROI comparisons. Team A’s intervention might be superior long-term, but this would be masked.</p></li>
+<li><p><strong>Interference Beyond Shared Outcomes:</strong> Even experiments targeting different outcomes can interfere. For example, if both teams use <a href="(https://book.martinez.fyi/iv.html)">randomized encouragement designs</a> (even for different actions), they are competing for limited user attention and decision-making capacity. Encouraging action A can impact the likelihood of action B, and vice versa. This creates subtle but important dependencies.</p></li>
+<li><p><strong>The Difficulty of Estimating Interactions:</strong> As <a href="https://statmodeling.stat.columbia.edu/2018/03/15/need16/">Andrew Gelman points out</a>, estimating interaction effects often requires much larger sample sizes than estimating main effects. Trying to do too much at once can lead to noisy, inconclusive results. Prioritize the most critical business questions, and be prepared to make trade-offs.</p></li>
 </ul>
-<p>Furthermore, interference isn’t limited to teams pursuing identical objectives. Even experiments targeting distinct goals can influence each other:</p>
-<ul>
-<li><strong>Interdependent Actions and Resource Constraints:</strong> When multiple teams employ <a href="https://book.martinez.fyi/iv.html">randomized encouragement designs</a>, even for different actions, individuals face limited decision-making capacity. Consequently, encouragement for action A can impact the likelihood of action B, and vice versa. This interdependence necessitates careful consideration of potential interference between experiments.</li>
-</ul>
-<p>In essence, accurate experiment analysis requires accounting for temporal factors and potential interactions between seemingly unrelated experiments. Failure to do so can lead to flawed conclusions and misinformed decisions.</p>
-<p>Finally, you have to remember that <a href="https://statmodeling.stat.columbia.edu/2018/03/15/need16/">estimating interactions is difficult</a>. If you try to do too much, you may end up with too much noise in your findings. In some cases you will have to make a decision about which is the most important business question that you need to answer and make sacrifices by having to wait to answer some other question.</p>
 </section>
-<section id="key-takeaways" class="level2" data-number="12.7">
-<h2 data-number="12.7" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">12.7</span> Key Takeaways</h2>
+<section id="key-takeaways-a-checklist-for-coordination" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="key-takeaways-a-checklist-for-coordination"><span class="header-section-number">12.7</span> Key Takeaways: A Checklist for Coordination</h2>
 <ol type="1">
-<li>Always map out potential interference between experiments</li>
-<li>Consider both direct and indirect interaction effects</li>
-<li>When possible, use factorial designs to understand interaction effects</li>
-<li>Balance the desire for comprehensive understanding against your needs to reduce uncertainty in your findings</li>
-<li>Document assumptions about interference in your analysis</li>
+<li><strong>Map the Landscape:</strong> Before launching any experiment, proactively identify potential interference with other ongoing or planned tests. Create a shared calendar or experiment registry.</li>
+<li><strong>Consider All Interaction Types:</strong> Think about both direct (shared outcome) and indirect (competing for resources, attention, or carryover) interactions.</li>
+<li><strong>Embrace Factorial Designs:</strong> Whenever feasible, use factorial designs to disentangle main effects and interactions. This provides a much richer understanding.</li>
+<li><strong>Prioritize and Simplify:</strong> Balance the desire for complete understanding with the need for statistical power. Focus on the most important interactions first.</li>
+<li><strong>Document, Document, Document:</strong> Clearly state all assumptions about potential interference in your experimental design and analysis plan. This promotes transparency and facilitates learning.</li>
+<li><strong>Communicate:</strong> If full coordination isn’t possible, at least communicate with other teams. Sharing experimental designs and timelines can help mitigate some of the risks.</li>
 </ol>
+<p>By embracing these principles, business data scientists can avoid the pitfalls of uncoordinated experimentation, leading to more reliable results, better decisions, and ultimately, a greater impact on the business.</p>
 
 
 <!-- -->
@@ -1208,11 +1200,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>As a business data scientist in a large company, you'll likely encounter</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>situations where multiple teams are simultaneously running experiments. There's</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>a common but dangerous assumption in these situations: "We're both randomizing,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>so it's fine." This mindset can lead to misleading results and incorrect</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>conclusions, ultimately hindering business decisions.</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>In large companies, multiple teams often run experiments simultaneously. A</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>common—but risky—assumption is: “We’re both randomizing, so it’s fine.” In</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>reality, uncoordinated experiments can contaminate control groups and obscure</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>true interaction effects. This chapter explains why coordinating experimental</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>designs is crucial for reliable business insights and decisions.</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## A Motivating Example</span></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
@@ -1260,146 +1252,148 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate synthetic data</span></span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span>  <span class="co"># observations per group</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span>  <span class="co"># observations per group</span></span>
 <span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frame for coordinated experiment</span></span>
 <span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>coordinated_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">monetary =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> <span class="dv">2</span> <span class="sc">*</span> n),</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">non_monetary =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> n),</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">paste0</span>(</span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Monetary"</span>, </span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>),</span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_NonMonetary"</span>,</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span>)</span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="co"># Define treatment effects</span></span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>monetary_effect <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>non_monetary_effect <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>interaction_effect <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span>  <span class="co"># Negative interaction</span></span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate outcome</span></span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>coordinated_data<span class="sc">$</span>outcome <span class="ot">&lt;-</span> <span class="fu">with</span>(</span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>  coordinated_data,</span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span> <span class="sc">+</span>  <span class="co"># Baseline</span></span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> monetary_effect <span class="sc">+</span></span>
-<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>    non_monetary <span class="sc">*</span> non_monetary_effect <span class="sc">+</span></span>
-<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> non_monetary <span class="sc">*</span> interaction_effect <span class="sc">+</span></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">4</span> <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)  <span class="co"># Random noise</span></span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="fu">## Analyzing Uncoordinated Experiments</span></span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>Let's see how each team might analyze their data in isolation:</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">non_monetary =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">each =</span> n)</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Define treatment effects</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>monetary_effect <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>non_monetary_effect <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>interaction_effect <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span>  <span class="co"># Negative interaction</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate outcome</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>coordinated_data<span class="sc">$</span>outcome <span class="ot">&lt;-</span> <span class="fu">with</span>(</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>  coordinated_data,</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>  <span class="dv">0</span> <span class="sc">+</span>  <span class="co"># Baseline</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> monetary_effect <span class="sc">+</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>    non_monetary <span class="sc">*</span> non_monetary_effect <span class="sc">+</span></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>    monetary <span class="sc">*</span> non_monetary <span class="sc">*</span> interaction_effect <span class="sc">+</span></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">4</span> <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)  <span class="co"># Random noise</span></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Analyzing Uncoordinated Experiments</span></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>Let's see how each team might analyze their data in isolation:</span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: team-a-analysis</span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
 <span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: team-a-analysis</span></span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="co"># Team A's regression</span></span>
-<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(outcome <span class="sc">~</span> monetary, <span class="at">data =</span> coordinated_data) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, estimate, conf.low, conf.high, p.value) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Team A's Analysis (Monetary Incentive)"</span>,</span>
-<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
-<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>Team A would likely conclude that compared to no incentives 1.5, and it is</span>
-<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>statistically significant. Notice that they are saying "compared to no</span>
-<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>incentives" and in reality their model is mispesified and some of the control</span>
-<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>units are receiving non-monetary incentives and some of well as some of their</span>
-<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>treated units.</span>
-<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a>The code bellow shows that the same would happen to the non-monetary incentives</span>
-<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>team:</span>
-<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: team-b-analysis</span></span>
-<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a><span class="co"># Team B's regression</span></span>
-<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(outcome <span class="sc">~</span> non_monetary, <span class="at">data =</span> coordinated_data) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, estimate, conf.low, conf.high, p.value) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Team B's Analysis (Non-Monetary Incentive)"</span>,</span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>Team B would conclude that the impact of non-monetary incentives is 0.5. </span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Power of Coordination</span></span>
-<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>Now let's analyze the data properly using a coordinated approach:</span>
-<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: coordinated-analysis</span></span>
-<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a><span class="co"># Full factorial analysis</span></span>
-<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(outcome <span class="sc">~</span> monetary <span class="sc">*</span> non_monetary, <span class="at">data =</span> coordinated_data) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, estimate, conf.low, conf.high, p.value) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Coordinated Analysis (Full Factorial Design)"</span>,</span>
-<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
-<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>With this analysis they would be able to correctly communicate what would happen</span>
-<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>if they only did one of the incentives or both together. Moreover, although the</span>
-<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>impact of the non monetary incentives is smaller, it is possible that the ROI of</span>
-<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>doing just the non monetary incentive is higher and therefore that is the right</span>
-<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>decision for their company.</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Team A's regression</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(outcome <span class="sc">~</span> monetary, <span class="at">data =</span> coordinated_data) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, estimate, conf.low, conf.high, p.value) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Team A's Analysis (Monetary Incentive)"</span>,</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>In the absence of coordination, Team A's analysis would likely lead them to</span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>conclude that monetary incentives increase the outcome of interest by 1.5 units</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>compared to no incentives, a statistically significant result. However, their</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>model is misspecified because some of the control units are receiving</span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>non-monetary incentives, while some of their treated units are also receiving</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>non-monetary incentives.</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>The code bellow shows that the same would happen to the non-monetary incentives</span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>team:</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: team-b-analysis</span></span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="co"># Team B's regression</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(outcome <span class="sc">~</span> non_monetary, <span class="at">data =</span> coordinated_data) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, estimate, conf.low, conf.high, p.value) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Team B's Analysis (Non-Monetary Incentive)"</span>,</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>Team B would conclude that the impact of non-monetary incentives is 0.5. </span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Power of Coordination</span></span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>Now let's analyze the data properly using a coordinated approach:</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: coordinated-analysis</span></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a><span class="co"># Full factorial analysis</span></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(outcome <span class="sc">~</span> monetary <span class="sc">*</span> non_monetary, <span class="at">data =</span> coordinated_data) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(term, estimate, conf.low, conf.high, p.value) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Coordinated Analysis (Full Factorial Design)"</span>,</span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>With this analysis they would be able to correctly communicate what would happen</span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>if they only did one of the incentives or both together. Moreover, although the</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>impact of the non monetary incentives is smaller, it is possible that the ROI of</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>doing just the non monetary incentive is higher and therefore that is the right</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>decision for their company.</span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a><span class="fu">## Beyond the Simple Case: Real-World Complexities</span></span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>This example, while illustrative, simplifies reality. Consider these additional</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>complexities:</span>
 <span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## Additional Considerations</span></span>
-<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>While the preceding example simplifies the scenario, real-world experiments</span>
-<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>often involve complex interactions that can skew results. For instance, consider</span>
-<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>the impact of sequential experiments:</span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Sequential Experiments and Carryover:** If Team A runs their experiment in</span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a>    Q1 and Team B in Q2, Team A might incorrectly conclude their effect decays</span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>    over time. This could be due to Team B's intervention, creating a carryover</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a>    effect. This is particularly damaging for ROI comparisons. Team A's</span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>    intervention might be superior long-term, but this would be masked.</span>
 <span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Temporal Overlap and Carryover Effects:** If Team A runs an experiment in</span>
-<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>    Q1 and Team B in Q2, Team A might mistakenly conclude their intervention's</span>
-<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>    effect fully decays over time. However, this could be a misinterpretation</span>
-<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a>    due to Team B's subsequent intervention. This is particularly problematic</span>
-<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>    when comparing ROI, as Team A's intervention might actually be superior.</span>
-<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a>Furthermore, interference isn't limited to teams pursuing identical objectives.</span>
-<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>Even experiments targeting distinct goals can influence each other:</span>
-<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Interdependent Actions and Resource Constraints:** When multiple teams</span>
-<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a>    employ [randomized encouragement</span>
-<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a>    designs](https://book.martinez.fyi/iv.html), even for different actions,</span>
-<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>    individuals face limited decision-making capacity. Consequently,</span>
-<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a>    encouragement for action A can impact the likelihood of action B, and vice</span>
-<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a>    versa. This interdependence necessitates careful consideration of potential</span>
-<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a>    interference between experiments.</span>
-<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>In essence, accurate experiment analysis requires accounting for temporal</span>
-<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>factors and potential interactions between seemingly unrelated experiments.</span>
-<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a>Failure to do so can lead to flawed conclusions and misinformed decisions.</span>
-<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>Finally, you have to remember that [estimating interactions is</span>
-<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>difficult](https://statmodeling.stat.columbia.edu/2018/03/15/need16/). If you</span>
-<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>try to do too much, you may end up with too much noise in your findings. In some</span>
-<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>cases you will have to make a decision about which is the most important</span>
-<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>business question that you need to answer and make sacrifices by having to wait</span>
-<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>to answer some other question.</span>
-<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways</span></span>
-<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Always map out potential interference between experiments</span>
-<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>Consider both direct and indirect interaction effects</span>
-<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>When possible, use factorial designs to understand interaction effects</span>
-<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>Balance the desire for comprehensive understanding against your needs to</span>
-<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>    reduce uncertainty in your findings</span>
-<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>Document assumptions about interference in your analysis</span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Interference Beyond Shared Outcomes:** Even experiments targeting</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>    different outcomes can interfere. For example, if both teams use [randomized</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>    encouragement designs](<span class="sc">\(</span>https://book.martinez.fyi/iv.html<span class="sc">\)</span>) (even for</span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a>    different actions), they are competing for limited user attention and</span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>    decision-making capacity. Encouraging action A can impact the likelihood of</span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>    action B, and vice versa. This creates subtle but important dependencies.</span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**The Difficulty of Estimating Interactions:** As [Andrew Gelman points</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a>    out](https://statmodeling.stat.columbia.edu/2018/03/15/need16/), estimating</span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>    interaction effects often requires much larger sample sizes than estimating</span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a>    main effects. Trying to do too much at once can lead to noisy, inconclusive</span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a>    results. Prioritize the most critical business questions, and be prepared to</span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>    make trade-offs.</span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways: A Checklist for Coordination</span></span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Map the Landscape:** Before launching any experiment, proactively identify</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>    potential interference with other ongoing or planned tests. Create a shared</span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>    calendar or experiment registry.</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Consider All Interaction Types:** Think about both direct (shared outcome)</span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>    and indirect (competing for resources, attention, or carryover)</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>    interactions.</span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Embrace Factorial Designs:** Whenever feasible, use factorial designs to</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>    disentangle main effects and interactions. This provides a much richer</span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>    understanding.</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Prioritize and Simplify:** Balance the desire for complete understanding</span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>    with the need for statistical power. Focus on the most important</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>    interactions first.</span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>**Document, Document, Document:** Clearly state all assumptions about</span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>    potential interference in your experimental design and analysis plan. This</span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a>    promotes transparency and facilitates learning.</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="ss">6.  </span>**Communicate:** If full coordination isn't possible, at least communicate</span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>    with other teams. Sharing experimental designs and timelines can help</span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>    mitigate some of the risks.</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>By embracing these principles, business data scientists can avoid the pitfalls</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>of uncoordinated experimentation, leading to more reliable results, better</span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>decisions, and ultimately, a greater impact on the business.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
