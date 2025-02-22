@@ -10,11 +10,11 @@ share:
 
 ## Introduction
 
-As a business data scientist in a large company, you'll likely encounter
-situations where multiple teams are simultaneously running experiments. There's
-a common but dangerous assumption in these situations: "We're both randomizing,
-so it's fine." This mindset can lead to misleading results and incorrect
-conclusions, ultimately hindering business decisions.
+In large companies, multiple teams often run experiments simultaneously. A
+common—but risky—assumption is: “We’re both randomizing, so it’s fine.” In
+reality, uncoordinated experiments can contaminate control groups and obscure
+true interaction effects. This chapter explains why coordinating experimental
+designs is crucial for reliable business insights and decisions.
 
 ## A Motivating Example
 
@@ -62,18 +62,12 @@ library(tidyverse)
 set.seed(42)
 
 # Generate synthetic data
-n <- 1000  # observations per group
+n <- 500  # observations per group
 
 # Create data frame for coordinated experiment
 coordinated_data <- data.frame(
   monetary = rep(c(0, 1), each = 2 * n),
-  non_monetary = rep(c(0, 1, 0, 1), each = n),
-  group = paste0(
-    "Monetary", 
-    c("No", "Yes"),
-    "_NonMonetary",
-    c("No", "No", "Yes", "Yes")
-  )
+  non_monetary = rep(c(0, 1, 0, 1), each = n)
 )
 
 # Define treatment effects
@@ -110,11 +104,12 @@ lm(outcome ~ monetary, data = coordinated_data) %>%
 )
 ```
 
-Team A would likely conclude that compared to no incentives 1.5, and it is
-statistically significant. Notice that they are saying "compared to no
-incentives" and in reality their model is mispesified and some of the control
-units are receiving non-monetary incentives and some of well as some of their
-treated units.
+In the absence of coordination, Team A's analysis would likely lead them to
+conclude that monetary incentives increase the outcome of interest by 1.5 units
+compared to no incentives, a statistically significant result. However, their
+model is misspecified because some of the control units are receiving
+non-monetary incentives, while some of their treated units are also receiving
+non-monetary incentives.
 
 The code bellow shows that the same would happen to the non-monetary incentives
 team:
@@ -160,45 +155,52 @@ impact of the non monetary incentives is smaller, it is possible that the ROI of
 doing just the non monetary incentive is higher and therefore that is the right
 decision for their company.
 
-## Additional Considerations
+## Beyond the Simple Case: Real-World Complexities
 
-While the preceding example simplifies the scenario, real-world experiments
-often involve complex interactions that can skew results. For instance, consider
-the impact of sequential experiments:
+This example, while illustrative, simplifies reality. Consider these additional
+complexities:
 
-  - **Temporal Overlap and Carryover Effects:** If Team A runs an experiment in
-    Q1 and Team B in Q2, Team A might mistakenly conclude their intervention's
-    effect fully decays over time. However, this could be a misinterpretation
-    due to Team B's subsequent intervention. This is particularly problematic
-    when comparing ROI, as Team A's intervention might actually be superior.
+  - **Sequential Experiments and Carryover:** If Team A runs their experiment in
+    Q1 and Team B in Q2, Team A might incorrectly conclude their effect decays
+    over time. This could be due to Team B's intervention, creating a carryover
+    effect. This is particularly damaging for ROI comparisons. Team A's
+    intervention might be superior long-term, but this would be masked.
 
-Furthermore, interference isn't limited to teams pursuing identical objectives.
-Even experiments targeting distinct goals can influence each other:
+  - **Interference Beyond Shared Outcomes:** Even experiments targeting
+    different outcomes can interfere. For example, if both teams use [randomized
+    encouragement designs](\(https://book.martinez.fyi/iv.html\)) (even for
+    different actions), they are competing for limited user attention and
+    decision-making capacity. Encouraging action A can impact the likelihood of
+    action B, and vice versa. This creates subtle but important dependencies.
 
-  - **Interdependent Actions and Resource Constraints:** When multiple teams
-    employ [randomized encouragement
-    designs](https://book.martinez.fyi/iv.html), even for different actions,
-    individuals face limited decision-making capacity. Consequently,
-    encouragement for action A can impact the likelihood of action B, and vice
-    versa. This interdependence necessitates careful consideration of potential
-    interference between experiments.
+  - **The Difficulty of Estimating Interactions:** As [Andrew Gelman points
+    out](https://statmodeling.stat.columbia.edu/2018/03/15/need16/), estimating
+    interaction effects often requires much larger sample sizes than estimating
+    main effects. Trying to do too much at once can lead to noisy, inconclusive
+    results. Prioritize the most critical business questions, and be prepared to
+    make trade-offs.
 
-In essence, accurate experiment analysis requires accounting for temporal
-factors and potential interactions between seemingly unrelated experiments.
-Failure to do so can lead to flawed conclusions and misinformed decisions.
+## Key Takeaways: A Checklist for Coordination
 
-Finally, you have to remember that [estimating interactions is
-difficult](https://statmodeling.stat.columbia.edu/2018/03/15/need16/). If you
-try to do too much, you may end up with too much noise in your findings. In some
-cases you will have to make a decision about which is the most important
-business question that you need to answer and make sacrifices by having to wait
-to answer some other question.
+1.  **Map the Landscape:** Before launching any experiment, proactively identify
+    potential interference with other ongoing or planned tests. Create a shared
+    calendar or experiment registry.
+2.  **Consider All Interaction Types:** Think about both direct (shared outcome)
+    and indirect (competing for resources, attention, or carryover)
+    interactions.
+3.  **Embrace Factorial Designs:** Whenever feasible, use factorial designs to
+    disentangle main effects and interactions. This provides a much richer
+    understanding.
+4.  **Prioritize and Simplify:** Balance the desire for complete understanding
+    with the need for statistical power. Focus on the most important
+    interactions first.
+5.  **Document, Document, Document:** Clearly state all assumptions about
+    potential interference in your experimental design and analysis plan. This
+    promotes transparency and facilitates learning.
+6.  **Communicate:** If full coordination isn't possible, at least communicate
+    with other teams. Sharing experimental designs and timelines can help
+    mitigate some of the risks.
 
-## Key Takeaways
-
-1.  Always map out potential interference between experiments
-2.  Consider both direct and indirect interaction effects
-3.  When possible, use factorial designs to understand interaction effects
-4.  Balance the desire for comprehensive understanding against your needs to
-    reduce uncertainty in your findings
-5.  Document assumptions about interference in your analysis
+By embracing these principles, business data scientists can avoid the pitfalls
+of uncoordinated experimentation, leading to more reliable results, better
+decisions, and ultimately, a greater impact on the business.
