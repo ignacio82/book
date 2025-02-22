@@ -100,20 +100,8 @@ Let's see how each team might analyze their data in isolation:
 #| label: team-a-analysis
 #| warning: false
 
-# Team A's perspective (Monetary Incentive)
-team_a_data <- coordinated_data %>%
-  filter(
-    group %in% c(
-      "MonetaryNo_NonMonetaryNo",
-      "MonetaryNo_NonMonetaryYes",
-      "MonetaryYes_NonMonetaryNo",
-      "MonetaryYes_NonMonetaryYes"
-    )
-  ) %>%
-  mutate(treatment_a = ifelse(grepl("MonetaryYes", group), 1, 0))
-
 # Team A's regression
-lm(outcome ~ treatment_a, data = team_a_data) %>% 
+lm(outcome ~ monetary, data = coordinated_data) %>% 
   broom::tidy(conf.int = TRUE) %>%
   select(term, estimate, conf.low, conf.high, p.value) %>% 
   knitr::kable(
@@ -122,16 +110,11 @@ lm(outcome ~ treatment_a, data = team_a_data) %>%
 )
 ```
 
-Team A would likely, incorrectly, conclude that compared to no incentives
-monetary incentives have no statistically significant impact so they are not
-worth it. This conclusion would have two problems. The first is what we
-discussed in the [Bayesian Linear
-Regression](https://book.martinez.fyi/blm.html) chapter. They are using the
-hammer of null hypothesis testing to answer a business question that should
-likely not be answered with that tool. The second is that they are saying
-"compared to no incentives" and in reality their model is mispesified and some
-of the control units are receiving non-monetary incentives and some of well as
-some of their treated units.
+Team A would likely conclude that compared to no incentives 1.5, and it is
+statistically significant. Notice that they are saying "compared to no
+incentives" and in reality their model is mispesified and some of the control
+units are receiving non-monetary incentives and some of well as some of their
+treated units.
 
 The code bellow shows that the same would happen to the non-monetary incentives
 team:
@@ -140,19 +123,8 @@ team:
 #| label: team-b-analysis
 #| warning: false
 
-team_b_data <- coordinated_data %>%
-  filter(
-    group %in% c(
-      "MonetaryNo_NonMonetaryNo",
-      "MonetaryNo_NonMonetaryYes",
-      "MonetaryYes_NonMonetaryNo",
-      "MonetaryYes_NonMonetaryYes"
-    )
-  ) %>%
-  mutate(treatment_b = ifelse(grepl("NonMonetaryYes", group), 1, 0))
-
 # Team B's regression
-lm(outcome ~ treatment_b, data = team_b_data) %>% 
+lm(outcome ~ non_monetary, data = coordinated_data) %>% 
   broom::tidy(conf.int = TRUE) %>%
   select(term, estimate, conf.low, conf.high, p.value) %>% 
   knitr::kable(
@@ -161,6 +133,8 @@ lm(outcome ~ treatment_b, data = team_b_data) %>%
 )
 
 ```
+
+Team B would conclude that the impact of non-monetary incentives is 0.5. 
 
 ## The Power of Coordination
 
