@@ -10,11 +10,14 @@ share:
 
 ## Introduction
 
-In large companies, multiple teams often run experiments simultaneously. A
-common—but risky—assumption is: “We’re both randomizing, so it’s fine.” In
-reality, uncoordinated experiments can contaminate control groups and obscure
-true interaction effects. This chapter explains why coordinating experimental
-designs is crucial for reliable business insights and decisions.
+In large companies, multiple teams often run experiments simultaneously. It is
+common practice in such organizations to run experiments independently, without
+coordination. There is a belief among some that they are fine because they are
+both randomizing. The truth is that the lack of coordination can lead to
+unanticipated consequences, including contamination of control groups and
+obscuring the true interaction effects. This chapter focuses on why coordinating
+experimental designs is crucial for obtaining reliable business insights and
+making business decisions.
 
 ## A Motivating Example
 
@@ -104,14 +107,14 @@ lm(outcome ~ monetary, data = coordinated_data) %>%
 )
 ```
 
-In the absence of coordination, Team A's analysis would likely lead them to
+In the absence of coordination, Team A’s analysis would likely lead them to
 conclude that monetary incentives increase the outcome of interest by 1.5 units
 compared to no incentives, a statistically significant result. However, their
 model is misspecified because some of the control units are receiving
 non-monetary incentives, while some of their treated units are also receiving
 non-monetary incentives.
 
-The code bellow shows that the same would happen to the non-monetary incentives
+The code below shows that the same would happen to the non-monetary incentives
 team:
 
 ```{r}
@@ -129,7 +132,7 @@ lm(outcome ~ non_monetary, data = coordinated_data) %>%
 
 ```
 
-Team B would conclude that the impact of non-monetary incentives is 0.5. 
+Team B would conclude that the impact of non-monetary incentives is 0.5.
 
 ## The Power of Coordination
 
@@ -151,8 +154,8 @@ lm(outcome ~ monetary * non_monetary, data = coordinated_data) %>%
 
 With this analysis they would be able to correctly communicate what would happen
 if they only did one of the incentives or both together. Moreover, although the
-impact of the non monetary incentives is smaller, it is possible that the ROI of
-doing just the non monetary incentive is higher and therefore that is the right
+impact of the non-monetary incentives is smaller, it is possible that the ROI of
+doing just the non-monetary incentive is higher and therefore that is the right
 decision for their company.
 
 ## The Deceptive Case of Sub-additive Interactions
