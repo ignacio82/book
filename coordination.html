@@ -54,7 +54,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -188,6 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="citation_reference" content="citation_title=Principal stratification–uses and limitations;,citation_author=Tyler J VanderWeele;,citation_publication_date=2011;,citation_cover_date=2011;,citation_year=2011;,citation_issue=1;,citation_doi=10.2202/1557-4679.1329;,citation_volume=7;,citation_journal_title=The international journal of biostatistics;,citation_publisher=De Gruyter;">
 <meta name="citation_reference" content="citation_title=Finite mixtures and zero-inflated models;,citation_author=Stan Development Team;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_fulltext_html_url=https://mc-stan.org/docs/stan-users-guide/finite-mixtures.html#zero-inflated.section;">
 <meta name="citation_reference" content="citation_title=A guide to modeling outcomes that have lots of zeros with bayesian hurdle lognormal and hurdle gaussian regression models;,citation_author=Andrew Heiss;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_fulltext_html_url=https://www.andrewheiss.com/blog/2022/05/09/hurdle-lognormal-gaussian-brms/;">
+<meta name="citation_reference" content="citation_title=Trial registration at ClinicalTrials. Gov between may and october 2005;,citation_author=Deborah A Zarin;,citation_author=Tony Tse;,citation_author=Nicholas C Ide;,citation_publication_date=2005;,citation_cover_date=2005;,citation_year=2005;,citation_issue=26;,citation_volume=353;,citation_journal_title=New England Journal of Medicine;,citation_publisher=Mass Medical Soc;">
 </head>
 
 <body class="nav-sidebar floating">
@@ -767,7 +788,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="pre-registration-the-foundation-of-effective-coordination" class="level3">
 <h3 class="anchored" data-anchor-id="pre-registration-the-foundation-of-effective-coordination">Pre-registration: The Foundation of Effective Coordination</h3>
 <p>Pre-registration involves publicly documenting your study’s design, hypotheses, and analysis plan before collecting or analyzing data. This practice has gained significant traction across research fields for good reason:</p>
-<p>The importance of pre-registration has been increasingly recognized across various research fields. In medical research, a significant milestone was the 2005 requirement by the International Committee of Medical Journal Editors (ICMJE) for clinical trials to be registered <span class="citation" data-cites="zarin2005trial">(<a href="references.html#ref-zarin2005trial" role="doc-biblioref"><strong>zarin2005trial?</strong></a>)</span>. This landmark decision aimed to combat publication bias and selective reporting of trial outcomes, ensuring that the full scope of research efforts, regardless of the results, would be publicly accessible.</p>
+<p>The importance of pre-registration has been increasingly recognized across various research fields. In medical research, a significant milestone was the 2005 requirement by the International Committee of Medical Journal Editors (ICMJE) for clinical trials to be registered <span class="citation" data-cites="zarin2005trial">(<a href="references.html#ref-zarin2005trial" role="doc-biblioref">Zarin, Tse, and Ide 2005</a>)</span>. This landmark decision aimed to combat publication bias and selective reporting of trial outcomes, ensuring that the full scope of research efforts, regardless of the results, would be publicly accessible.</p>
 <p>In social sciences, including psychology and economics, the pre-registration movement gained momentum in the early 2010s, fueled by growing concerns about replicability. The launch of registries like the <a href="https://www.aeaweb.org/news/rct-registry-over-1000">American Economic Association (AEA) RCT Registry</a> in 2013 played a crucial role in facilitating pre-registration specifically among economists.</p>
 <p>For large companies where multiple teams are continuously running experiments, pre-registration serves as the cornerstone of coordination by:</p>
 <ol type="1">
@@ -804,6 +825,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <!-- -->
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-zarin2005trial" class="csl-entry" role="listitem">
+Zarin, Deborah A, Tony Tse, and Nicholas C Ide. 2005. <span>“Trial Registration at ClinicalTrials. Gov Between May and October 2005.”</span> <em>New England Journal of Medicine</em> 353 (26): 2779–87.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
