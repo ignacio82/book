@@ -440,7 +440,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-power-of-coordination" id="toc-the-power-of-coordination" class="nav-link" data-scroll-target="#the-power-of-coordination"><span class="header-section-number">12.5</span> The Power of Coordination</a></li>
   <li><a href="#the-deceptive-case-of-sub-additive-interactions" id="toc-the-deceptive-case-of-sub-additive-interactions" class="nav-link" data-scroll-target="#the-deceptive-case-of-sub-additive-interactions"><span class="header-section-number">12.6</span> The Deceptive Case of Sub-additive Interactions</a></li>
   <li><a href="#beyond-the-simple-case-real-world-complexities" id="toc-beyond-the-simple-case-real-world-complexities" class="nav-link" data-scroll-target="#beyond-the-simple-case-real-world-complexities"><span class="header-section-number">12.7</span> Beyond the Simple Case: Real-World Complexities</a></li>
-  <li><a href="#key-takeaways-a-checklist-for-coordination" id="toc-key-takeaways-a-checklist-for-coordination" class="nav-link" data-scroll-target="#key-takeaways-a-checklist-for-coordination"><span class="header-section-number">12.8</span> Key Takeaways: A Checklist for Coordination</a></li>
+  <li><a href="#building-a-coordination-framework" id="toc-building-a-coordination-framework" class="nav-link" data-scroll-target="#building-a-coordination-framework"><span class="header-section-number">12.8</span> Building a Coordination Framework</a>
+  <ul class="collapse">
+  <li><a href="#pre-registration-the-foundation-of-effective-coordination" id="toc-pre-registration-the-foundation-of-effective-coordination" class="nav-link" data-scroll-target="#pre-registration-the-foundation-of-effective-coordination">Pre-registration: The Foundation of Effective Coordination</a></li>
+  <li><a href="#coordination-checklist" id="toc-coordination-checklist" class="nav-link" data-scroll-target="#coordination-checklist">Coordination Checklist</a></li>
+  </ul></li>
+  <li><a href="#conclusion-the-business-value-of-coordinated-experimentation" id="toc-conclusion-the-business-value-of-coordinated-experimentation" class="nav-link" data-scroll-target="#conclusion-the-business-value-of-coordinated-experimentation"><span class="header-section-number">12.9</span> Conclusion: The Business Value of Coordinated Experimentation</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ignacio82/book/edit/master/coordination.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
@@ -756,17 +761,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>The Difficulty of Estimating Interactions:</strong> As <a href="https://statmodeling.stat.columbia.edu/2018/03/15/need16/">Andrew Gelman points out</a>, estimating interaction effects often requires much larger sample sizes than estimating main effects. Trying to do too much at once can lead to noisy, inconclusive results. Prioritize the most critical business questions, and be prepared to make trade-offs.</p></li>
 </ul>
 </section>
-<section id="key-takeaways-a-checklist-for-coordination" class="level2" data-number="12.8">
-<h2 data-number="12.8" class="anchored" data-anchor-id="key-takeaways-a-checklist-for-coordination"><span class="header-section-number">12.8</span> Key Takeaways: A Checklist for Coordination</h2>
+<section id="building-a-coordination-framework" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="building-a-coordination-framework"><span class="header-section-number">12.8</span> Building a Coordination Framework</h2>
+<p>To address these challenges, organizations need a systematic approach to experimental coordination. The following framework combines practical management steps with institutional practices to ensure reliable, interpretable results:</p>
+<section id="pre-registration-the-foundation-of-effective-coordination" class="level3">
+<h3 class="anchored" data-anchor-id="pre-registration-the-foundation-of-effective-coordination">Pre-registration: The Foundation of Effective Coordination</h3>
+<p>Pre-registration involves publicly documenting your study’s design, hypotheses, and analysis plan before collecting or analyzing data. This practice has gained significant traction across research fields for good reason:</p>
+<p>The importance of pre-registration has been increasingly recognized across various research fields. In medical research, a significant milestone was the 2005 requirement by the International Committee of Medical Journal Editors (ICMJE) for clinical trials to be registered <span class="citation" data-cites="zarin2005trial">(<a href="references.html#ref-zarin2005trial" role="doc-biblioref"><strong>zarin2005trial?</strong></a>)</span>. This landmark decision aimed to combat publication bias and selective reporting of trial outcomes, ensuring that the full scope of research efforts, regardless of the results, would be publicly accessible.</p>
+<p>In social sciences, including psychology and economics, the pre-registration movement gained momentum in the early 2010s, fueled by growing concerns about replicability. The launch of registries like the <a href="https://www.aeaweb.org/news/rct-registry-over-1000">American Economic Association (AEA) RCT Registry</a> in 2013 played a crucial role in facilitating pre-registration specifically among economists.</p>
+<p>For large companies where multiple teams are continuously running experiments, pre-registration serves as the cornerstone of coordination by:</p>
 <ol type="1">
-<li><strong>Map the Landscape:</strong> Before launching any experiment, proactively identify potential interference with other ongoing or planned tests. Create a shared calendar or experiment registry.</li>
-<li><strong>Consider All Interaction Types:</strong> Think about both direct (shared outcome) and indirect (competing for resources, attention, or carryover) interactions.</li>
-<li><strong>Embrace Factorial Designs:</strong> Whenever feasible, use factorial designs to disentangle main effects and interactions. This provides a much richer understanding.</li>
-<li><strong>Prioritize and Simplify:</strong> Balance the desire for complete understanding with the need for statistical power. Focus on the most important interactions first.</li>
-<li><strong>Document, Document, Document:</strong> Clearly state all assumptions about potential interference in your experimental design and analysis plan. This promotes transparency and facilitates learning.</li>
-<li><strong>Communicate:</strong> If full coordination isn’t possible, at least communicate with other teams. Sharing experimental designs and timelines can help mitigate some of the risks.</li>
+<li><p><strong>Creating Transparency</strong>: A centralized pre-registration system acts as a company-wide experiment registry, making all planned and ongoing experiments visible to relevant stakeholders.</p></li>
+<li><p><strong>Preventing Interference</strong>: Teams can identify potential overlaps or interferences before launching experiments, enabling proactive coordination.</p></li>
+<li><p><strong>Reducing Bias</strong>: By documenting hypotheses and analysis plans beforehand, teams are less likely to engage in selective reporting or post-hoc rationalization.</p></li>
+<li><p><strong>Improving Design Quality</strong>: The act of pre-registering forces more thoughtful experimental design and clarifies the key questions being addressed.</p></li>
 </ol>
-<p>By embracing these principles, business data scientists can avoid the pitfalls of uncoordinated experimentation, leading to more reliable results, better decisions, and ultimately, a greater impact on the business.</p>
+</section>
+<section id="coordination-checklist" class="level3">
+<h3 class="anchored" data-anchor-id="coordination-checklist">Coordination Checklist</h3>
+<p>In addition to pre-registration, follow these key steps for effective experimental coordination:</p>
+<ol type="1">
+<li><p><strong>Map the Experimental Landscape</strong>: Before launching any experiment, use the pre-registration system to identify potential interference with other ongoing or planned tests.</p></li>
+<li><p><strong>Consider All Interaction Types</strong>: Think about both direct (shared outcome) and indirect (competing for resources, attention, or carryover) interactions.</p></li>
+<li><p><strong>Embrace Factorial Designs</strong>: Whenever feasible, use factorial designs to disentangle main effects and interactions. This provides a much richer understanding.</p></li>
+<li><p><strong>Prioritize and Simplify</strong>: Balance the desire for complete understanding with the need for statistical power. Focus on the most important interactions first.</p></li>
+<li><p><strong>Document, Document, Document</strong>: Clearly state all assumptions about potential interference in your experimental design and analysis plan. This promotes transparency and facilitates learning.</p></li>
+<li><p><strong>Communicate</strong>: If full coordination isn’t possible, at least communicate with other teams. Sharing experimental designs and timelines can help mitigate some of the risks.</p></li>
+</ol>
+</section>
+</section>
+<section id="conclusion-the-business-value-of-coordinated-experimentation" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="conclusion-the-business-value-of-coordinated-experimentation"><span class="header-section-number">12.9</span> Conclusion: The Business Value of Coordinated Experimentation</h2>
+<p>Coordinated experimentation isn’t just a technical best practice—it delivers tangible business value. By implementing the framework described in this chapter, organizations can:</p>
+<ol type="1">
+<li><p><strong>Make Better-Informed Decisions</strong>: Understanding true treatment effects and interactions leads to more accurate ROI calculations and better prioritization.</p></li>
+<li><p><strong>Avoid Costly Mistakes</strong>: Prevent the adoption of interventions that might appear beneficial in isolation but have negative interactions with other initiatives.</p></li>
+<li><p><strong>Accelerate Learning</strong>: A systematic approach to coordination builds institutional knowledge more efficiently than siloed experimentation.</p></li>
+<li><p><strong>Optimize Resource Allocation</strong>: By understanding interaction effects, companies can identify where complementary initiatives deliver outsized returns or where efforts are redundant.</p></li>
+</ol>
+<p>By embracing pre-registration and following a structured coordination framework, business data scientists can avoid the pitfalls of uncoordinated experimentation, leading to more reliable results, better decisions, and ultimately, a greater impact on the business.</p>
 
 
 <!-- -->
@@ -1517,30 +1550,106 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb7-268"><a href="#cb7-268" aria-hidden="true" tabindex="-1"></a>    results. Prioritize the most critical business questions, and be prepared to</span>
 <span id="cb7-269"><a href="#cb7-269" aria-hidden="true" tabindex="-1"></a>    make trade-offs.</span>
 <span id="cb7-270"><a href="#cb7-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-271"><a href="#cb7-271" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways: A Checklist for Coordination</span></span>
+<span id="cb7-271"><a href="#cb7-271" aria-hidden="true" tabindex="-1"></a><span class="fu">## Building a Coordination Framework</span></span>
 <span id="cb7-272"><a href="#cb7-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Map the Landscape:** Before launching any experiment, proactively identify</span>
-<span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a>    potential interference with other ongoing or planned tests. Create a shared</span>
-<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a>    calendar or experiment registry.</span>
-<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Consider All Interaction Types:** Think about both direct (shared outcome)</span>
-<span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a>    and indirect (competing for resources, attention, or carryover)</span>
-<span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a>    interactions.</span>
-<span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Embrace Factorial Designs:** Whenever feasible, use factorial designs to</span>
-<span id="cb7-280"><a href="#cb7-280" aria-hidden="true" tabindex="-1"></a>    disentangle main effects and interactions. This provides a much richer</span>
-<span id="cb7-281"><a href="#cb7-281" aria-hidden="true" tabindex="-1"></a>    understanding.</span>
-<span id="cb7-282"><a href="#cb7-282" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Prioritize and Simplify:** Balance the desire for complete understanding</span>
-<span id="cb7-283"><a href="#cb7-283" aria-hidden="true" tabindex="-1"></a>    with the need for statistical power. Focus on the most important</span>
-<span id="cb7-284"><a href="#cb7-284" aria-hidden="true" tabindex="-1"></a>    interactions first.</span>
-<span id="cb7-285"><a href="#cb7-285" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>**Document, Document, Document:** Clearly state all assumptions about</span>
-<span id="cb7-286"><a href="#cb7-286" aria-hidden="true" tabindex="-1"></a>    potential interference in your experimental design and analysis plan. This</span>
-<span id="cb7-287"><a href="#cb7-287" aria-hidden="true" tabindex="-1"></a>    promotes transparency and facilitates learning.</span>
-<span id="cb7-288"><a href="#cb7-288" aria-hidden="true" tabindex="-1"></a><span class="ss">6.  </span>**Communicate:** If full coordination isn't possible, at least communicate</span>
-<span id="cb7-289"><a href="#cb7-289" aria-hidden="true" tabindex="-1"></a>    with other teams. Sharing experimental designs and timelines can help</span>
-<span id="cb7-290"><a href="#cb7-290" aria-hidden="true" tabindex="-1"></a>    mitigate some of the risks.</span>
-<span id="cb7-291"><a href="#cb7-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-292"><a href="#cb7-292" aria-hidden="true" tabindex="-1"></a>By embracing these principles, business data scientists can avoid the pitfalls</span>
-<span id="cb7-293"><a href="#cb7-293" aria-hidden="true" tabindex="-1"></a>of uncoordinated experimentation, leading to more reliable results, better</span>
-<span id="cb7-294"><a href="#cb7-294" aria-hidden="true" tabindex="-1"></a>decisions, and ultimately, a greater impact on the business.</span>
+<span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a>To address these challenges, organizations need a systematic approach to</span>
+<span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a>experimental coordination. The following framework combines practical management</span>
+<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a>steps with institutional practices to ensure reliable, interpretable results:</span>
+<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pre-registration: The Foundation of Effective Coordination</span></span>
+<span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a>Pre-registration involves publicly documenting your study's design, hypotheses,</span>
+<span id="cb7-280"><a href="#cb7-280" aria-hidden="true" tabindex="-1"></a>and analysis plan before collecting or analyzing data. This practice has gained</span>
+<span id="cb7-281"><a href="#cb7-281" aria-hidden="true" tabindex="-1"></a>significant traction across research fields for good reason:</span>
+<span id="cb7-282"><a href="#cb7-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-283"><a href="#cb7-283" aria-hidden="true" tabindex="-1"></a>The importance of pre-registration has been increasingly recognized across</span>
+<span id="cb7-284"><a href="#cb7-284" aria-hidden="true" tabindex="-1"></a>various research fields. In medical research, a significant milestone was</span>
+<span id="cb7-285"><a href="#cb7-285" aria-hidden="true" tabindex="-1"></a>the 2005 requirement by the International Committee of Medical Journal Editors</span>
+<span id="cb7-286"><a href="#cb7-286" aria-hidden="true" tabindex="-1"></a>(ICMJE) for clinical trials to be registered <span class="co">[</span><span class="ot">@zarin2005trial</span><span class="co">]</span>. This landmark</span>
+<span id="cb7-287"><a href="#cb7-287" aria-hidden="true" tabindex="-1"></a>decision aimed to combat publication bias and selective reporting of trial</span>
+<span id="cb7-288"><a href="#cb7-288" aria-hidden="true" tabindex="-1"></a>outcomes, ensuring that the full scope of research efforts, regardless of the</span>
+<span id="cb7-289"><a href="#cb7-289" aria-hidden="true" tabindex="-1"></a>results, would be publicly accessible.</span>
+<span id="cb7-290"><a href="#cb7-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-291"><a href="#cb7-291" aria-hidden="true" tabindex="-1"></a>In social sciences, including psychology and economics, the pre-registration</span>
+<span id="cb7-292"><a href="#cb7-292" aria-hidden="true" tabindex="-1"></a>movement gained momentum in the early 2010s, fueled by growing concerns about</span>
+<span id="cb7-293"><a href="#cb7-293" aria-hidden="true" tabindex="-1"></a>replicability. The launch of registries like the [American Economic Association</span>
+<span id="cb7-294"><a href="#cb7-294" aria-hidden="true" tabindex="-1"></a>(AEA) RCT Registry](https://www.aeaweb.org/news/rct-registry-over-1000) in 2013</span>
+<span id="cb7-295"><a href="#cb7-295" aria-hidden="true" tabindex="-1"></a>played a crucial role in facilitating pre-registration specifically among</span>
+<span id="cb7-296"><a href="#cb7-296" aria-hidden="true" tabindex="-1"></a>economists.</span>
+<span id="cb7-297"><a href="#cb7-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-298"><a href="#cb7-298" aria-hidden="true" tabindex="-1"></a>For large companies where multiple teams are continuously running experiments,</span>
+<span id="cb7-299"><a href="#cb7-299" aria-hidden="true" tabindex="-1"></a>pre-registration serves as the cornerstone of coordination by:</span>
+<span id="cb7-300"><a href="#cb7-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-301"><a href="#cb7-301" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Creating Transparency**: A centralized pre-registration system acts as a</span>
+<span id="cb7-302"><a href="#cb7-302" aria-hidden="true" tabindex="-1"></a>    company-wide experiment registry, making all planned and ongoing experiments</span>
+<span id="cb7-303"><a href="#cb7-303" aria-hidden="true" tabindex="-1"></a>    visible to relevant stakeholders.</span>
+<span id="cb7-304"><a href="#cb7-304" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-305"><a href="#cb7-305" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Preventing Interference**: Teams can identify potential overlaps or</span>
+<span id="cb7-306"><a href="#cb7-306" aria-hidden="true" tabindex="-1"></a>    interferences before launching experiments, enabling proactive coordination.</span>
+<span id="cb7-307"><a href="#cb7-307" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-308"><a href="#cb7-308" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Reducing Bias**: By documenting hypotheses and analysis plans beforehand,</span>
+<span id="cb7-309"><a href="#cb7-309" aria-hidden="true" tabindex="-1"></a>    teams are less likely to engage in selective reporting or post-hoc</span>
+<span id="cb7-310"><a href="#cb7-310" aria-hidden="true" tabindex="-1"></a>    rationalization.</span>
+<span id="cb7-311"><a href="#cb7-311" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-312"><a href="#cb7-312" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Improving Design Quality**: The act of pre-registering forces more</span>
+<span id="cb7-313"><a href="#cb7-313" aria-hidden="true" tabindex="-1"></a>    thoughtful experimental design and clarifies the key questions being</span>
+<span id="cb7-314"><a href="#cb7-314" aria-hidden="true" tabindex="-1"></a>    addressed.</span>
+<span id="cb7-315"><a href="#cb7-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-316"><a href="#cb7-316" aria-hidden="true" tabindex="-1"></a><span class="fu">### Coordination Checklist</span></span>
+<span id="cb7-317"><a href="#cb7-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-318"><a href="#cb7-318" aria-hidden="true" tabindex="-1"></a>In addition to pre-registration, follow these key steps for effective</span>
+<span id="cb7-319"><a href="#cb7-319" aria-hidden="true" tabindex="-1"></a>experimental coordination:</span>
+<span id="cb7-320"><a href="#cb7-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-321"><a href="#cb7-321" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Map the Experimental Landscape**: Before launching any experiment, use the</span>
+<span id="cb7-322"><a href="#cb7-322" aria-hidden="true" tabindex="-1"></a>    pre-registration system to identify potential interference with other</span>
+<span id="cb7-323"><a href="#cb7-323" aria-hidden="true" tabindex="-1"></a>    ongoing or planned tests.</span>
+<span id="cb7-324"><a href="#cb7-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-325"><a href="#cb7-325" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Consider All Interaction Types**: Think about both direct (shared outcome)</span>
+<span id="cb7-326"><a href="#cb7-326" aria-hidden="true" tabindex="-1"></a>    and indirect (competing for resources, attention, or carryover)</span>
+<span id="cb7-327"><a href="#cb7-327" aria-hidden="true" tabindex="-1"></a>    interactions.</span>
+<span id="cb7-328"><a href="#cb7-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-329"><a href="#cb7-329" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Embrace Factorial Designs**: Whenever feasible, use factorial designs to</span>
+<span id="cb7-330"><a href="#cb7-330" aria-hidden="true" tabindex="-1"></a>    disentangle main effects and interactions. This provides a much richer</span>
+<span id="cb7-331"><a href="#cb7-331" aria-hidden="true" tabindex="-1"></a>    understanding.</span>
+<span id="cb7-332"><a href="#cb7-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-333"><a href="#cb7-333" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Prioritize and Simplify**: Balance the desire for complete understanding</span>
+<span id="cb7-334"><a href="#cb7-334" aria-hidden="true" tabindex="-1"></a>    with the need for statistical power. Focus on the most important</span>
+<span id="cb7-335"><a href="#cb7-335" aria-hidden="true" tabindex="-1"></a>    interactions first.</span>
+<span id="cb7-336"><a href="#cb7-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-337"><a href="#cb7-337" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>**Document, Document, Document**: Clearly state all assumptions about</span>
+<span id="cb7-338"><a href="#cb7-338" aria-hidden="true" tabindex="-1"></a>    potential interference in your experimental design and analysis plan. This</span>
+<span id="cb7-339"><a href="#cb7-339" aria-hidden="true" tabindex="-1"></a>    promotes transparency and facilitates learning.</span>
+<span id="cb7-340"><a href="#cb7-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-341"><a href="#cb7-341" aria-hidden="true" tabindex="-1"></a><span class="ss">6.  </span>**Communicate**: If full coordination isn't possible, at least communicate</span>
+<span id="cb7-342"><a href="#cb7-342" aria-hidden="true" tabindex="-1"></a>    with other teams. Sharing experimental designs and timelines can help</span>
+<span id="cb7-343"><a href="#cb7-343" aria-hidden="true" tabindex="-1"></a>    mitigate some of the risks.</span>
+<span id="cb7-344"><a href="#cb7-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-345"><a href="#cb7-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-346"><a href="#cb7-346" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion: The Business Value of Coordinated Experimentation</span></span>
+<span id="cb7-347"><a href="#cb7-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-348"><a href="#cb7-348" aria-hidden="true" tabindex="-1"></a>Coordinated experimentation isn't just a technical best practice—it delivers</span>
+<span id="cb7-349"><a href="#cb7-349" aria-hidden="true" tabindex="-1"></a>tangible business value. By implementing the framework described in this</span>
+<span id="cb7-350"><a href="#cb7-350" aria-hidden="true" tabindex="-1"></a>chapter, organizations can:</span>
+<span id="cb7-351"><a href="#cb7-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-352"><a href="#cb7-352" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Make Better-Informed Decisions**: Understanding true treatment effects and</span>
+<span id="cb7-353"><a href="#cb7-353" aria-hidden="true" tabindex="-1"></a>    interactions leads to more accurate ROI calculations and better</span>
+<span id="cb7-354"><a href="#cb7-354" aria-hidden="true" tabindex="-1"></a>    prioritization.</span>
+<span id="cb7-355"><a href="#cb7-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-356"><a href="#cb7-356" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Avoid Costly Mistakes**: Prevent the adoption of interventions that might</span>
+<span id="cb7-357"><a href="#cb7-357" aria-hidden="true" tabindex="-1"></a>    appear beneficial in isolation but have negative interactions with other</span>
+<span id="cb7-358"><a href="#cb7-358" aria-hidden="true" tabindex="-1"></a>    initiatives.</span>
+<span id="cb7-359"><a href="#cb7-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-360"><a href="#cb7-360" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Accelerate Learning**: A systematic approach to coordination builds</span>
+<span id="cb7-361"><a href="#cb7-361" aria-hidden="true" tabindex="-1"></a>    institutional knowledge more efficiently than siloed experimentation.</span>
+<span id="cb7-362"><a href="#cb7-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-363"><a href="#cb7-363" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Optimize Resource Allocation**: By understanding interaction effects,</span>
+<span id="cb7-364"><a href="#cb7-364" aria-hidden="true" tabindex="-1"></a>    companies can identify where complementary initiatives deliver outsized</span>
+<span id="cb7-365"><a href="#cb7-365" aria-hidden="true" tabindex="-1"></a>    returns or where efforts are redundant.</span>
+<span id="cb7-366"><a href="#cb7-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-367"><a href="#cb7-367" aria-hidden="true" tabindex="-1"></a>By embracing pre-registration and following a structured coordination framework,</span>
+<span id="cb7-368"><a href="#cb7-368" aria-hidden="true" tabindex="-1"></a>business data scientists can avoid the pitfalls of uncoordinated</span>
+<span id="cb7-369"><a href="#cb7-369" aria-hidden="true" tabindex="-1"></a>experimentation, leading to more reliable results, better decisions, and</span>
+<span id="cb7-370"><a href="#cb7-370" aria-hidden="true" tabindex="-1"></a>ultimately, a greater impact on the business.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
