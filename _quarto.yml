@@ -37,6 +37,7 @@ book:
         - factorial.qmd
         - iv.qmd    
         - coordination.qmd
+        - strength.qmd
     - part: other_methods.qmd
       chapters: 
         - matching.qmd
