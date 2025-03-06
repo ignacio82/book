@@ -229,13 +229,12 @@ by traditional hypothesis testing.
 For the common case with symmetric Normal priors (i.e. when you assume no a
 priori difference between treatments), a closed-form expression for the
 profit‐maximizing sample size can be derived. Without delving into all the
-mathematical details, the key takeaway is that the optimal test size, ( n^\* ),
+mathematical details, the key takeaway is that the optimal test size, ( $n^*$ ),
 grows sub-linearly with the total population ( N ) and is sensitive to both the
-response noise ( s ) and the uncertainty in the treatment effect ( \\sigma ). In
+response noise ( s ) and the uncertainty in the treatment effect ( $\sigma$ ). In
 simplified terms, one finds that
 
-\[ n^\* \\propto \sqrt{N} \\quad \text{and} \\quad n^\* \\sim
-O\!\\left(\frac{s}{\\sigma}\\right), \]
+$$ n^* \propto \sqrt{N} \quad \text{and} \quad n^* \sim \mathcal{O}\left(\frac{s}{\sigma}\right) $$
 
 which contrasts sharply with the linear (or even super-linear) growth in sample
 size dictated by traditional power analysis. This means that for noisy responses
@@ -247,8 +246,8 @@ feasible but also profit-maximizing.
 Another appealing feature of the test & roll approach is its behavior in terms
 of regret—the loss in profit relative to an ideal scenario of perfect
 information. Analyses show that the expected regret from a profit-maximizing
-test & roll scales as ( O(\sqrt{N}) ). By comparison, conventional hypothesis
-tests often incur regret on the order of ( \\Omega(N) ) when sample sizes are
+test & roll scales as ( $O(\sqrt{N}$) ). By comparison, conventional hypothesis
+tests often incur regret on the order of ( $\Omega(N)$ ) when sample sizes are
 oversized relative to the finite population. In other words, a carefully sized
 test can nearly match the performance of more dynamic algorithms (such as those
 based on multi-armed bandits) while maintaining operational simplicity and
