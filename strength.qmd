@@ -199,59 +199,60 @@ the resources required for different sample sizes.
 
 ## Profit-Maximizing A/B Testing: A Test & Roll Approach
 
-Traditional power calculations focus on controlling Type I and Type II errors
-and are designed to detect statistically significant differences. In business
-experiments, however, the ultimate goal is not merely to "reject a null
-hypothesis" but to maximize profit by deploying the better treatment to the
-largest possible segment of your audience. The test & roll framework re-frames
-sample size determination as an explicit trade-off between the learning cost
-incurred during the test phase and the opportunity cost of deploying a
-suboptimal treatment in the roll phase [see @mcdonnell2018test].
+Traditional power calculations in A/B testing focus on managing statistical
+significance by controlling Type I and Type II errors. However, in practical
+business experiments, the primary goal isn't merely to "reject the null
+hypothesis" but to maximize overall profit. The test & roll framework,
+introduced by @mcdonnell2018test, re-frames sample size determination as a
+strategic decision balancing the cost of learning against the opportunity cost
+of deploying a suboptimal treatment.
 
 ### Balancing Learning and Opportunity Cost
 
-In a conventional A/B test, you might allocate a large portion of your sample to
-achieve high statistical power. Yet doing so means that more customers are
-exposed to a treatment that may later be deemed inferior. In contrast, the
-profit-maximizing approach weighs:
+In conventional A/B tests, achieving high statistical power often requires large
+test groups, inadvertently exposing more customers to potentially inferior
+treatments. The test & roll framework explicitly addresses two crucial
+considerations:
   
   - **The cost of testing:** Every unit allocated to the test phase may
     experience a less-than-optimal treatment.
   - **The benefit of deployment:** Once the better treatment is identified, it
     can be applied to the remainder of the population to maximize profit.
 
-By explicitly quantifying these trade-offs, the optimal (or profit‐maximizing)
-test sample size is often substantially smaller than the sample size suggested
-by traditional hypothesis testing.
+By quantifying these trade-offs explicitly, the optimal (profit-maximizing) test
+size is typically smaller than traditional hypothesis testing methods recommend,
+particularly when data responses are noisy or population size is limited.
 
 ### A Closed-Form Insight
 
-For the common case with symmetric Normal priors (i.e. when you assume no a
-priori difference between treatments), a closed-form expression for the
-profit‐maximizing sample size can be derived. Without delving into all the
-mathematical details, the key takeaway is that the optimal test size, ( $n^*$ ),
-grows sub-linearly with the total population ( N ) and is sensitive to both the
-response noise ( s ) and the uncertainty in the treatment effect ( $\sigma$ ). In
-simplified terms, one finds that
+@mcdonnell2018test derived a closed-form formula for determining optimal test sizes under symmetric Normal priors (assuming no initial preference between treatments). Formally, the optimal sample size grows as follows:
 
 $$ n^* \propto \sqrt{N} \quad \text{and} \quad n^* \sim \mathcal{O}\left(\frac{s}{\sigma}\right) $$
+This implies:
 
-which contrasts sharply with the linear (or even super-linear) growth in sample
-size dictated by traditional power analysis. This means that for noisy responses
-or when the total available population is small, a much smaller test is not only
-feasible but also profit-maximizing.
+  - Optimal test size ($n^*$) scales with the square root of the total available
+    population ($N$).
+  - The optimal test size is sensitive to the response noise ($s$) and the
+uncertainty in treatment effects ($\sigma$).
+
+More specifically, proposition A.2 in their paper derives:
+
+$$
+n^* = \frac{\sqrt{N}}{4}\left[\left(\frac{s}{\sigma}\right)^2 + \left(\frac{3}{4}\left(\frac{s}{\sigma}\right)^2\right)^2\right]
+$$
+
+
+This contrasts with traditional power calculations, which typically recommend
+sample sizes scaling linearly or super-linearly with variance, often resulting
+in overly large tests.
 
 ### Regret and Decision Quality
 
-Another appealing feature of the test & roll approach is its behavior in terms
-of regret—the loss in profit relative to an ideal scenario of perfect
-information. Analyses show that the expected regret from a profit-maximizing
-test & roll scales as ( $O(\sqrt{N}$) ). By comparison, conventional hypothesis
-tests often incur regret on the order of ( $\Omega(N)$ ) when sample sizes are
-oversized relative to the finite population. In other words, a carefully sized
-test can nearly match the performance of more dynamic algorithms (such as those
-based on multi-armed bandits) while maintaining operational simplicity and
-transparency.
+A notable advantage of the test & roll approach is its management of
+"regret"—the lost profit compared to the ideal scenario of perfect
+information. The expected regret under profit-maximizing test & roll is
+approximately $O(\sqrt{N})$, significantly lower than conventional hypothesis
+testing, which can incur regret on the order of $\Omega(N)$.
 
 ### Extensions to Asymmetric and Complex Settings
 
@@ -283,11 +284,11 @@ In practice, the test & roll design helps managers make timely decisions:
 
 ### Summary
 
-Incorporating the profit-maximizing test & roll framework shifts the focus from
-statistical significance to business impact. By balancing the cost of testing
-against the opportunity cost of deploying a suboptimal treatment, this
-decision-centric approach offers a compelling alternative to traditional power
-analysis, especially in contexts with noisy responses or limited populations.
+By centering experimentation on maximizing business impact rather than solely
+achieving statistical significance, the test & roll framework presents a robust,
+economically efficient alternative to traditional power-based approaches. It
+optimally manages the trade-offs between learning and earning, particularly
+advantageous for noisy data or limited customer populations.
 
 ## Pilot Strength: A Decision-Centric Approach
 
