@@ -197,6 +197,99 @@ effect size that would be practically meaningful for your business decision and
 the resources required for different sample sizes.
 :::
 
+## Profit-Maximizing A/B Testing: A Test & Roll Approach
+
+Traditional power calculations focus on controlling Type I and Type II errors
+and are designed to detect statistically significant differences. In business
+experiments, however, the ultimate goal is not merely to "reject a null
+hypothesis" but to maximize profit by deploying the better treatment to the
+largest possible segment of your audience. The test & roll framework re-frames
+sample size determination as an explicit trade-off between the learning cost
+incurred during the test phase and the opportunity cost of deploying a
+suboptimal treatment in the roll phase [see @mcdonnell2018test].
+
+### Balancing Learning and Opportunity Cost
+
+In a conventional A/B test, you might allocate a large portion of your sample to
+achieve high statistical power. Yet doing so means that more customers are
+exposed to a treatment that may later be deemed inferior. In contrast, the
+profit-maximizing approach weighs:
+  
+  - **The cost of testing:** Every unit allocated to the test phase may
+    experience a less-than-optimal treatment.
+  - **The benefit of deployment:** Once the better treatment is identified, it
+    can be applied to the remainder of the population to maximize profit.
+
+By explicitly quantifying these trade-offs, the optimal (or profit‐maximizing)
+test sample size is often substantially smaller than the sample size suggested
+by traditional hypothesis testing.
+
+### A Closed-Form Insight
+
+For the common case with symmetric Normal priors (i.e. when you assume no a
+priori difference between treatments), a closed-form expression for the
+profit‐maximizing sample size can be derived. Without delving into all the
+mathematical details, the key takeaway is that the optimal test size, ( n^\* ),
+grows sub-linearly with the total population ( N ) and is sensitive to both the
+response noise ( s ) and the uncertainty in the treatment effect ( \\sigma ). In
+simplified terms, one finds that
+
+\[ n^\* \\propto \sqrt{N} \\quad \text{and} \\quad n^\* \\sim
+O\!\\left(\frac{s}{\\sigma}\\right), \]
+
+which contrasts sharply with the linear (or even super-linear) growth in sample
+size dictated by traditional power analysis. This means that for noisy responses
+or when the total available population is small, a much smaller test is not only
+feasible but also profit-maximizing.
+
+### Regret and Decision Quality
+
+Another appealing feature of the test & roll approach is its behavior in terms
+of regret—the loss in profit relative to an ideal scenario of perfect
+information. Analyses show that the expected regret from a profit-maximizing
+test & roll scales as ( O(\sqrt{N}) ). By comparison, conventional hypothesis
+tests often incur regret on the order of ( \\Omega(N) ) when sample sizes are
+oversized relative to the finite population. In other words, a carefully sized
+test can nearly match the performance of more dynamic algorithms (such as those
+based on multi-armed bandits) while maintaining operational simplicity and
+transparency.
+
+### Extensions to Asymmetric and Complex Settings
+
+The basic test & roll framework can also be extended to account for situations
+where prior beliefs about the treatments differ. For instance:
+  
+  - **Incumbent/Challenger Tests:** If one treatment is well understood (the
+    incumbent) and the other is more uncertain (the challenger), asymmetric
+    priors can be used to justify allocating a larger sample to the less-known
+    treatment.
+  - **Pricing Experiments:** When treatments involve different price points, the
+    trade-offs include not only response variability but also differences in
+    profit per sale. The framework naturally extends to these settings by
+    adjusting priors to reflect both the likelihood of purchase and the profit
+    margin.
+
+### Operational Advantages
+
+In practice, the test & roll design helps managers make timely decisions:
+  
+  - **Smaller, Agile Tests:** By running smaller tests, firms expose fewer
+    customers to a potentially inferior treatment.
+  - **Transparency:** The decision rule is based on explicit profit
+    calculations, making it easier to justify the chosen test size and strategy.
+  - **Comparable Performance:** Despite its simplicity, the test & roll approach
+    has been shown to achieve regret—and thus overall performance—that is
+    comparable to more complex, continuously adaptive methods like Thompson
+    sampling.
+
+### Summary
+
+Incorporating the profit-maximizing test & roll framework shifts the focus from
+statistical significance to business impact. By balancing the cost of testing
+against the opportunity cost of deploying a suboptimal treatment, this
+decision-centric approach offers a compelling alternative to traditional power
+analysis, especially in contexts with noisy responses or limited populations.
+
 ## Pilot Strength: A Decision-Centric Approach
 
 Instead of focusing solely on traditional power calculations, let's explore a
@@ -789,4 +882,6 @@ feature when it has no meaningful impact on churn) is
     
   - @gelman2014beyond Beyond power calculations: Assessing type S (sign) and
     type M (magnitude) errors.
+    
+  - @mcdonnell2018test Test \& Roll: Profit-Maximizing A/B Tests.  
 :::
