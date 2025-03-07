@@ -159,10 +159,6 @@ $$
 
 This contrasts with traditional power calculations, which typically recommend sample sizes scaling linearly or super-linearly with variance, often resulting in overly large tests.
 
-### Regret and Decision Quality
-
-A notable advantage of the test & roll approach is its management of "regret"—the lost profit compared to the ideal scenario of perfect information. The expected regret under profit-maximizing test & roll is approximately $O(\sqrt{N})$, significantly lower than conventional hypothesis testing, which can incur regret on the order of $\Omega(N)$.
-
 ### Extensions to Asymmetric and Complex Settings
 
 The basic test & roll framework can also be extended to account for situations where prior beliefs about the treatments differ. For instance:
