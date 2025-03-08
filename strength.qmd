@@ -216,6 +216,8 @@ control group, 5% probability of churn for the control group, and and impact
 of 2 percentage points for treated units.
 
 ```{r}
+#| warning: false
+#| message: false
 library(tidyverse)
 library(broom)
 
