@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://book.martinez.fyi/index.html</loc>
+    <lastmod>2024-11-16T18:58:18.090Z</lastmod>
+  </url>
+  <url>
     <loc>https://book.martinez.fyi/chapter_01.html</loc>
     <lastmod>2024-10-04T16:17:16.711Z</lastmod>
   </url>
@@ -29,6 +33,10 @@
     <lastmod>2024-07-26T20:33:05.154Z</lastmod>
   </url>
   <url>
+    <loc>https://book.martinez.fyi/rct.html</loc>
+    <lastmod>2024-07-26T20:33:05.154Z</lastmod>
+  </url>
+  <url>
     <loc>https://book.martinez.fyi/rct_basic.html</loc>
     <lastmod>2024-10-04T16:48:19.624Z</lastmod>
   </url>
@@ -53,6 +61,10 @@
     <lastmod>2025-03-08T20:19:56.537Z</lastmod>
   </url>
   <url>
+    <loc>https://book.martinez.fyi/other_methods.html</loc>
+    <lastmod>2024-07-26T20:33:05.150Z</lastmod>
+  </url>
+  <url>
     <loc>https://book.martinez.fyi/matching.html</loc>
     <lastmod>2025-02-11T16:19:52.834Z</lastmod>
   </url>
@@ -63,6 +75,10 @@
   <url>
     <loc>https://book.martinez.fyi/bsynth.html</loc>
     <lastmod>2024-07-26T20:33:04.578Z</lastmod>
+  </url>
+  <url>
+    <loc>https://book.martinez.fyi/glm.html</loc>
+    <lastmod>2024-07-26T20:33:05.142Z</lastmod>
   </url>
   <url>
     <loc>https://book.martinez.fyi/blm.html</loc>
@@ -81,12 +97,16 @@
     <lastmod>2024-11-19T15:26:40.979Z</lastmod>
   </url>
   <url>
+    <loc>https://book.martinez.fyi/stochastictrees.html</loc>
+    <lastmod>2025-05-20T17:23:09.228Z</lastmod>
+  </url>
+  <url>
     <loc>https://book.martinez.fyi/bart.html</loc>
-    <lastmod>2024-07-26T20:33:04.574Z</lastmod>
+    <lastmod>2025-05-20T17:36:30.840Z</lastmod>
   </url>
   <url>
     <loc>https://book.martinez.fyi/bcf.html</loc>
-    <lastmod>2024-07-26T20:33:04.578Z</lastmod>
+    <lastmod>2025-05-20T17:46:03.915Z</lastmod>
   </url>
   <url>
     <loc>https://book.martinez.fyi/longbet.html</loc>
@@ -95,25 +115,5 @@
   <url>
     <loc>https://book.martinez.fyi/references.html</loc>
     <lastmod>2024-07-26T20:33:05.154Z</lastmod>
-  </url>
-  <url>
-    <loc>https://book.martinez.fyi/rct.html</loc>
-    <lastmod>2024-07-26T20:33:05.154Z</lastmod>
-  </url>
-  <url>
-    <loc>https://book.martinez.fyi/other_methods.html</loc>
-    <lastmod>2024-07-26T20:33:05.150Z</lastmod>
-  </url>
-  <url>
-    <loc>https://book.martinez.fyi/glm.html</loc>
-    <lastmod>2024-07-26T20:33:05.142Z</lastmod>
-  </url>
-  <url>
-    <loc>https://book.martinez.fyi/stochastictrees.html</loc>
-    <lastmod>2024-07-26T20:33:05.154Z</lastmod>
-  </url>
-  <url>
-    <loc>https://book.martinez.fyi/index.html</loc>
-    <lastmod>2024-11-16T18:58:18.090Z</lastmod>
   </url>
 </urlset>
