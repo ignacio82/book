@@ -174,7 +174,7 @@ ggplot() +
   theme_bw() +
   theme(legend.position = "bottom") 
 ```
-To fit BART we can use the [{stochtree}](https://stochastictree.github.io/stochtree-r/) package.
+To fit BART we can use the [{stochtree}](https://stochtree.ai/) package.
 
 ```{r fit_bart, warning=FALSE, message=FALSE}
 xstart <- 20-15
@@ -205,8 +205,8 @@ if the model has converged. We can do this by running the following code:
 ```{r traceplot}
 trace_plot_data <-
   tibble(
-    iteration = 1:length(bart_model$sigma2_samples),
-    sigma2_samples = bart_model$sigma2_samples
+    iteration = 1:length(bart_model$sigma2_global_samples),
+    sigma2_samples = bart_model$sigma2_global_samples
   )
 ggplot(aes(x = iteration, y = sigma2_samples), data = trace_plot_data) +
   geom_line(color = "blue", alpha = 0.5) +
@@ -471,8 +471,8 @@ After fitting, let's examine the trace plot of $\sigma^2$ to assess convergence:
 ```{r}
 # Create the Data for Plotting
 df_plot <- tibble(
-  iteration = seq_along(bart_model$sigma2_samples),    # Sequence of iteration numbers
-  sigma = bart_model$sigma2_samples                    
+  iteration = seq_along(bart_model$sigma2_global_samples),    # Sequence of iteration numbers
+  sigma = bart_model$sigma2_global_samples                    
 )
 
 # Create the Traceplot

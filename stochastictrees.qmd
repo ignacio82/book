@@ -53,7 +53,7 @@ We'll explore three key models in this family: BART, Bayesian Causal Forests
 improvements in terms of causal effect estimation, handling of confounding, and
 applicability to different data structures.
 
-In our exploration, we'll be leveraging the stochtree R package
+In our exploration, we'll be leveraging the [stochtree R package](https://stochtree.ai/)
 [@stochastictree], which implements these models using a technique called
 "warm-start" as introduced by @krantsevich23a. The warm-start approach is a
 computational innovation that significantly improves the efficiency and
