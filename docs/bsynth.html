@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>14&nbsp; Bayesian Synthetic Control – Business Data Science</title>
+<title>16&nbsp; Bayesian Synthetic Control – Business Data Science</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,8 +21,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -87,15 +88,16 @@ div.csl-indent {
 <link href="./glm.html" rel="next">
 <link href="./causalimpact.html" rel="prev">
 <link href="./hex.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/social-share.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/all.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -167,19 +169,19 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="14&nbsp; Bayesian Synthetic Control – Business Data Science">
+<meta property="og:title" content="16&nbsp; Bayesian Synthetic Control – Business Data Science">
 <meta property="og:description" content="">
-<meta property="og:image" content="https://book.martinez.fyi/hex.png">
+<meta property="og:image" content="https://book.martinez.fyi/bsynth_files/figure-html/germany-1.png">
 <meta property="og:site_name" content="Business Data Science">
-<meta property="og:image:height" content="588">
-<meta property="og:image:width" content="510">
-<meta name="twitter:title" content="14&nbsp; Bayesian Synthetic Control – Business Data Science">
+<meta property="og:image:height" content="960">
+<meta property="og:image:width" content="1344">
+<meta name="twitter:title" content="16&nbsp; Bayesian Synthetic Control – Business Data Science">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="https://book.martinez.fyi/hex.png">
-<meta name="twitter:image-height" content="588">
-<meta name="twitter:image-width" content="510">
+<meta name="twitter:image" content="https://book.martinez.fyi/bsynth_files/figure-html/germany-1.png">
+<meta name="twitter:image-height" content="960">
+<meta name="twitter:image-width" content="1344">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="citation_title" content="[14]{.chapter-number}&nbsp; [Bayesian Synthetic Control]{.chapter-title}">
+<meta name="citation_title" content="[16]{.chapter-number}&nbsp; [Bayesian Synthetic Control]{.chapter-title}">
 <meta name="citation_fulltext_html_url" content="https:/book.martinez.fyi">
 <meta name="citation_language" content="en">
 <meta name="citation_book_title" content="Business Data Science: A guide for data-driven decisions">
@@ -247,9 +249,14 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=Principal stratification–uses and limitations;,citation_author=Tyler J VanderWeele;,citation_publication_date=2011;,citation_cover_date=2011;,citation_year=2011;,citation_issue=1;,citation_doi=10.2202/1557-4679.1329;,citation_volume=7;,citation_journal_title=The international journal of biostatistics;,citation_publisher=De Gruyter;">
 <meta name="citation_reference" content="citation_title=Finite mixtures and zero-inflated models;,citation_author=Stan Development Team;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_fulltext_html_url=https://mc-stan.org/docs/stan-users-guide/finite-mixtures.html#zero-inflated.section;">
 <meta name="citation_reference" content="citation_title=A guide to modeling outcomes that have lots of zeros with bayesian hurdle lognormal and hurdle gaussian regression models;,citation_author=Andrew Heiss;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_fulltext_html_url=https://www.andrewheiss.com/blog/2022/05/09/hurdle-lognormal-gaussian-brms/;">
+<meta name="citation_reference" content="citation_title=Trial registration at ClinicalTrials. Gov between may and october 2005;,citation_author=Deborah A Zarin;,citation_author=Tony Tse;,citation_author=Nicholas C Ide;,citation_publication_date=2005;,citation_cover_date=2005;,citation_year=2005;,citation_issue=26;,citation_volume=353;,citation_journal_title=New England Journal of Medicine;,citation_publisher=Mass Medical Soc;">
+<meta name="citation_reference" content="citation_title=PowerUp!: A tool for calculating minimum detectable effect sizes and minimum required sample sizes for experimental and quasi-experimental design studies;,citation_author=Nianbo Dong;,citation_author=Rebecca Maynard;,citation_publication_date=2013;,citation_cover_date=2013;,citation_year=2013;,citation_fulltext_html_url=https://www.ipr.northwestern.edu/documents/required-reading/2018/dong--maynard-2013.pdf;,citation_issue=1;,citation_volume=6;,citation_journal_title=Journal of Research on Educational Effectiveness;,citation_publisher=Taylor &amp;amp;amp; Francis;">
+<meta name="citation_reference" content="citation_title=The core analytics of randomized experiments for social research;,citation_author=Howard S Bloom;,citation_publication_date=2008;,citation_cover_date=2008;,citation_year=2008;,citation_fulltext_html_url=https://files.eric.ed.gov/fulltext/ED493363.pdf;,citation_journal_title=The SAGE handbook of social research methods;,citation_publisher=Sage Los Angeles;">
+<meta name="citation_reference" content="citation_title=Beyond power calculations: Assessing type s (sign) and type m (magnitude) errors;,citation_author=Andrew Gelman;,citation_author=John Carlin;,citation_publication_date=2014;,citation_cover_date=2014;,citation_year=2014;,citation_fulltext_html_url=https://journals.sagepub.com/doi/pdf/10.1177/1745691614551642?trk=public_post_comment-text;,citation_issue=6;,citation_volume=9;,citation_journal_title=Perspectives on psychological science;,citation_publisher=Sage Publications Sage CA: Los Angeles, CA;">
+<meta name="citation_reference" content="citation_title=Test &amp;amp;amp; roll: Profit-maximizing a/b tests;,citation_author=Elea McDonnell Feit;,citation_author=Ron Berman;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_fulltext_html_url=https://ui.adsabs.harvard.edu/abs/2018arXiv181100457M/abstract;,citation_journal_title=arXiv e-prints;">
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -258,7 +265,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./other_methods.html">Non Experimental Methods</a></li><li class="breadcrumb-item"><a href="./bsynth.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./other_methods.html">Non Experimental Methods</a></li><li class="breadcrumb-item"><a href="./bsynth.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -375,6 +382,18 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Randomized Encouragement Design</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./coordination.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">The Importance of Coordination</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./strength.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -389,19 +408,19 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./matching.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./causalimpact.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bsynth.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
       </ul>
@@ -418,25 +437,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./blm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./meta-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./beyond_normality.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./hurdle.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -453,19 +472,19 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bcf.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">LongBet: Heterogeneous Treatment Effects in Panel Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">LongBet: Heterogeneous Treatment Effects in Panel Data</span></span></a>
   </div>
 </li>
       </ul>
@@ -473,7 +492,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -486,8 +505,8 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#key-concepts-and-principles" id="toc-key-concepts-and-principles" class="nav-link active" data-scroll-target="#key-concepts-and-principles"><span class="header-section-number">14.1</span> Key Concepts and Principles</a></li>
-  <li><a href="#the-bayesian-advantage" id="toc-the-bayesian-advantage" class="nav-link" data-scroll-target="#the-bayesian-advantage"><span class="header-section-number">14.2</span> The Bayesian Advantage</a>
+  <li><a href="#key-concepts-and-principles" id="toc-key-concepts-and-principles" class="nav-link active" data-scroll-target="#key-concepts-and-principles"><span class="header-section-number">16.1</span> Key Concepts and Principles</a></li>
+  <li><a href="#the-bayesian-advantage" id="toc-the-bayesian-advantage" class="nav-link" data-scroll-target="#the-bayesian-advantage"><span class="header-section-number">16.2</span> The Bayesian Advantage</a>
   <ul class="collapse">
   <li><a href="#mathematical-formulation" id="toc-mathematical-formulation" class="nav-link" data-scroll-target="#mathematical-formulation">Mathematical Formulation</a></li>
   <li><a href="#practical-implementation-the-german-re-unification-example" id="toc-practical-implementation-the-german-re-unification-example" class="nav-link" data-scroll-target="#practical-implementation-the-german-re-unification-example">Practical Implementation: The German Re-unification Example</a></li>
@@ -500,9 +519,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./other_methods.html">Non Experimental Methods</a></li><li class="breadcrumb-item"><a href="./bsynth.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./other_methods.html">Non Experimental Methods</a></li><li class="breadcrumb-item"><a href="./bsynth.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -520,8 +539,8 @@ window.Quarto = {
 
 
 <p>Synthetic control methods have become a widely applied tool for empirical researchers to estimate the effect of interventions or treatments, especially when traditional randomized controlled trials aren’t feasible. In a recent Journal of Economic Perspectives survey on the econometrics of policy evaluation, Susan Athey and Guido Imbens describe synthetic controls as “arguably the most important innovation in the policy evaluation literature in the last 15 years” <span class="citation" data-cites="athey2017state">(<a href="references.html#ref-athey2017state" role="doc-biblioref">Athey and Imbens 2017</a>)</span>. The technique involves creating a “synthetic” version of the treated unit by weighting untreated units from a donor pool. This essentially allows us to estimate what would have happened if the treatment had never occurred.</p>
-<section id="key-concepts-and-principles" class="level2" data-number="14.1">
-<h2 data-number="14.1" class="anchored" data-anchor-id="key-concepts-and-principles"><span class="header-section-number">14.1</span> Key Concepts and Principles</h2>
+<section id="key-concepts-and-principles" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="key-concepts-and-principles"><span class="header-section-number">16.1</span> Key Concepts and Principles</h2>
 <p>Before we dive into the Bayesian approach, let’s review some fundamental concepts:</p>
 <p><strong>Pre-treatment Fit:</strong> The credibility of a synthetic control estimator hinges on how well it can track the trajectory of the outcome variable for the treated unit before the intervention. A close pre-treatment fit makes for more reliable post-treatment estimates.</p>
 <p><strong>Convex Hull Condition:</strong> The synthetic control method works best when the characteristics of the treated unit fall within the convex hull of the donor pool units’ characteristics. This ensures that the treated unit can be approximated by a weighted average of donor units.</p>
@@ -530,8 +549,8 @@ window.Quarto = {
 <p><strong>Sufficient Pre- and Post-intervention Information:</strong> The credibility of the estimates depends on having enough pre-intervention periods to establish a good fit and enough post-intervention periods to observe the full effect of the intervention.</p>
 <p><strong>No Interference:</strong> The method assumes that the intervention does not affect the outcomes of the untreated units. This assumption should be carefully considered in the study design.</p>
 </section>
-<section id="the-bayesian-advantage" class="level2" data-number="14.2">
-<h2 data-number="14.2" class="anchored" data-anchor-id="the-bayesian-advantage"><span class="header-section-number">14.2</span> The Bayesian Advantage</h2>
+<section id="the-bayesian-advantage" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="the-bayesian-advantage"><span class="header-section-number">16.2</span> The Bayesian Advantage</h2>
 <p><strong>Prior Information:</strong> Bayesian methods allow us to incorporate prior knowledge or beliefs about the data. This can be particularly useful when we have relevant information from past studies or expert opinions.</p>
 <p><strong>Posterior Distribution:</strong> By combining the prior distribution with the likelihood of the observed data, we get a posterior distribution. This distribution represents our updated beliefs about the parameters after taking into account the new data.</p>
 <p><strong>Uncertainty Quantification:</strong> One of the key strengths of Bayesian methods is their ability to quantify uncertainty. The posterior distribution gives us a range of plausible values for the treatment effects, along with associated probabilities.</p>
@@ -700,290 +719,293 @@ Martinez, Ignacio, and Jaume Vives-i-Bastida. 2023. <span>“Bayesian and Freque
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-  const viewSource = window.document.getElementById('quarto-view-source') ||
-                     window.document.getElementById('quarto-code-tools-source');
-  if (viewSource) {
-    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
-    viewSource.addEventListener("click", function(e) {
-      if (sourceUrl) {
-        // rstudio viewer pane
-        if (/\bcapabilities=\b/.test(window.location)) {
-          window.open(sourceUrl);
-        } else {
-          window.location.href = sourceUrl;
-        }
-      } else {
-        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
-        modal.show();
-      }
-      return false;
-    });
-  }
-  function toggleCodeHandler(show) {
-    return function(e) {
-      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-      for (let i=0; i<detailsSrc.length; i++) {
-        const details = detailsSrc[i].parentElement;
-        if (show) {
-          details.open = true;
-        } else {
-          details.removeAttribute("open");
-        }
-      }
-      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
-      const fromCls = show ? "hidden" : "unhidden";
-      const toCls = show ? "unhidden" : "hidden";
-      for (let i=0; i<cellCodeDivs.length; i++) {
-        const codeDiv = cellCodeDivs[i];
-        if (codeDiv.classList.contains(fromCls)) {
-          codeDiv.classList.remove(fromCls);
-          codeDiv.classList.add(toCls);
-        } 
-      }
-      return false;
-    }
-  }
-  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
-  if (hideAllCode) {
-    hideAllCode.addEventListener("click", toggleCodeHandler(false));
-  }
-  const showAllCode = window.document.getElementById("quarto-show-all-code");
-  if (showAllCode) {
-    showAllCode.addEventListener("click", toggleCodeHandler(true));
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/book\.martinez\.fyi");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
+      return false;
     }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
         }
-        return container.innerHTML
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/book\.martinez\.fyi");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -991,191 +1013,167 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <script src="https://utteranc.es/client.js" repo="ignacio82/book" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./causalimpact.html" class="pagination-link" aria-label="Bayesian Structural Time Series">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -1301,37 +1299,37 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>control methods. Let's see how we can analyze the German reunification data:</span>
 <span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r germany}</span></span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="in">library("bsynth")</span></span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="in">load("germany.rda")</span></span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a><span class="in">germany_synth &lt;- bayesianSynth$new(data = germany,</span></span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a><span class="in">                                   time = year,</span></span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a><span class="in">                                   id = country,</span></span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a><span class="in">                                   treated = D,</span></span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="in">                                   outcome = gdp,</span></span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a><span class="in">                                   ci_width = 0.95,</span></span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a><span class="in">                                   predictor_match = FALSE)</span></span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"bsynth"</span>)</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"germany.rda"</span>)</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>germany_synth <span class="ot">&lt;-</span> bayesianSynth<span class="sc">$</span><span class="fu">new</span>(<span class="at">data =</span> germany,</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">time =</span> year,</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">id =</span> country,</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">treated =</span> D,</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">outcome =</span> gdp,</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">ci_width =</span> <span class="fl">0.95</span>,</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">predictor_match =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="in">germany_synth$timeTiles + ggplot2::xlab("Year") + ggplot2::ylab("Country")</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>germany_synth<span class="sc">$</span>timeTiles <span class="sc">+</span> ggplot2<span class="sc">::</span><span class="fu">xlab</span>(<span class="st">"Year"</span>) <span class="sc">+</span> ggplot2<span class="sc">::</span><span class="fu">ylab</span>(<span class="st">"Country"</span>)</span>
 <span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>In this example, we're starting with a simple model that doesn't include predictor matching. We'll fit the model and visualize the results:</span>
 <span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fit, message=FALSE, results = "hide"}</span></span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a><span class="in">germany_synth$fit(cores = 4)</span></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>germany_synth<span class="sc">$</span><span class="fu">fit</span>(<span class="at">cores =</span> <span class="dv">4</span>)</span>
 <span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="in"># Vizualize the Bayesian Synthetic Control</span></span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a><span class="in">germany_synth$synthetic + </span></span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot2::xlab("Year") +</span></span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot2::ylab("Per Capita GDP (PPP, 2002 USD)") +</span></span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot2::scale_y_continuous(labels=scales::dollar_format())</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="co"># Vizualize the Bayesian Synthetic Control</span></span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>germany_synth<span class="sc">$</span>synthetic <span class="sc">+</span> </span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">xlab</span>(<span class="st">"Year"</span>) <span class="sc">+</span></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ylab</span>(<span class="st">"Per Capita GDP (PPP, 2002 USD)"</span>) <span class="sc">+</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">scale_y_continuous</span>(<span class="at">labels=</span>scales<span class="sc">::</span><span class="fu">dollar_format</span>())</span>
 <span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
 <span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>We can also examine the estimated lift (the cumulative effect of the treatment) over a specific time period:</span>
 <span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{r liftDraws}</span></span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: !expr knitr::is_html_output()</span></span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="in">germany_synth$liftDraws(from = lubridate::as_date("1990-01-01"), </span></span>
-<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a><span class="in">                        to = lubridate::as_date("2002-01-01"))</span></span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr knitr::is_html_output()</span></span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>germany_synth<span class="sc">$</span><span class="fu">liftDraws</span>(<span class="at">from =</span> lubridate<span class="sc">::</span><span class="fu">as_date</span>(<span class="st">"1990-01-01"</span>), </span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>                        <span class="at">to =</span> lubridate<span class="sc">::</span><span class="fu">as_date</span>(<span class="st">"2002-01-01"</span>))</span>
 <span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a></span>
@@ -1389,10 +1387,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
 <span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bias1, warning=FALSE}</span></span>
-<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: !expr knitr::is_html_output()</span></span>
-<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a><span class="in">germany_synth$biasDraws(small_bias = 0.2, </span></span>
-<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a><span class="in">                        firstT = lubridate::as_date("1990-01-01"), </span></span>
-<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a><span class="in">                        lastT = lubridate::as_date("2002-01-01"))</span></span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr knitr::is_html_output()</span></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>germany_synth<span class="sc">$</span><span class="fu">biasDraws</span>(<span class="at">small_bias =</span> <span class="fl">0.2</span>, </span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>                        <span class="at">firstT =</span> lubridate<span class="sc">::</span><span class="fu">as_date</span>(<span class="st">"1990-01-01"</span>), </span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>                        <span class="at">lastT =</span> lubridate<span class="sc">::</span><span class="fu">as_date</span>(<span class="st">"2002-01-01"</span>))</span>
 <span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>:::</span>
@@ -1403,10 +1401,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
 <span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bias2, warning=FALSE}</span></span>
-<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a><span class="in">#| eval: !expr knitr::is_html_output()</span></span>
-<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a><span class="in">germany_synth$biasDraws(small_bias = 0.2, </span></span>
-<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a><span class="in">                        firstT = lubridate::as_date("1990-01-01"), </span></span>
-<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a><span class="in">                        lastT = lubridate::as_date("1994-01-01"))</span></span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr knitr::is_html_output()</span></span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>germany_synth<span class="sc">$</span><span class="fu">biasDraws</span>(<span class="at">small_bias =</span> <span class="fl">0.2</span>, </span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>                        <span class="at">firstT =</span> lubridate<span class="sc">::</span><span class="fu">as_date</span>(<span class="st">"1990-01-01"</span>), </span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a>                        <span class="at">lastT =</span> lubridate<span class="sc">::</span><span class="fu">as_date</span>(<span class="st">"1994-01-01"</span>))</span>
 <span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a></span>

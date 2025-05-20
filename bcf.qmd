@@ -61,7 +61,7 @@ modeled using BART, but with different priors that reflect their distinct roles.
 
 ## Examples
 
-Let's consider the following data generating process from @hahn2020bayesian, which is also covered in [one of the vignettes](https://stochastictree.github.io/stochtree-r/articles/CausalInference.html#demo-1-nonlinear-outcome-model-heterogeneous-treatment-effect) from @stochastictree.
+Let's consider the following data generating process from @hahn2020bayesian, which is also covered in [one of the vignettes](https://stochtree.ai/R_docs/pkgdown/articles/CausalInference.html) from @stochastictree.
 
 $$
 \begin{aligned}
@@ -173,15 +173,13 @@ bcf_model_warmstart <- bcf(
   X_train = X_train,
   Z_train = Z_train,
   y_train = y_train,
-  pi_train = pi_train,
+  propensity_train = pi_train,
   X_test = X_test,
   Z_test = Z_test,
-  pi_test = pi_test,
+  propensity_test = pi_test,
   num_gfr = num_gfr,
   num_burnin = num_burnin,
-  num_mcmc = num_mcmc,
-  sample_sigma_leaf_mu = F,
-  sample_sigma_leaf_tau = F
+  num_mcmc = num_mcmc
 )
 ```
 
