@@ -12,31 +12,67 @@ share:
 
 <img src="img/bcf.png" align="right" height="280" alt="Causal Propensity Modeling with BCF" />
 
-Business data scientists in the tech industry frequently face the task of identifying **which users to nudge toward a desired action**. Consider a few common examples:
+Business data scientists in the tech industry frequently face the task of
+identifying **which users to nudge toward a desired action**. Consider a few
+common examples:
 
--   Encouraging long-form video creators to experiment with shorter formats like Shorts or Reels.
--   Prompting prolific product reviewers to establish their own storefront.
--   Selecting the most suitable candidates for an exclusive event invitation.
--   Offering a complimentary trial or a discount on a service.
+  - Encouraging long-form video creators to experiment with shorter formats like
+    Shorts or Reels.
+  - Prompting prolific product reviewers to establish their own storefront.
+  - Selecting the most suitable candidates for an exclusive event invitation.
+  - Offering a complimentary trial or a discount on a service.
 
-This might seem like a standard prediction problem: who is most likely to take action X? Yet, such an approach is incomplete. Focusing solely on prediction risks expending resources on users who would have taken the action anyway, irrespective of any nudge. The crucial element here is **causality**—pinpointing individuals **whose behavior will change *because* of our intervention.**
+This might seem like a standard prediction problem: who is most likely to take
+action X? Yet, such an approach is incomplete. Focusing solely on prediction
+risks expending resources on users who would have taken the action anyway,
+irrespective of any nudge. The crucial element here is **causality**—pinpointing
+individuals **whose behavior will change *because* of our intervention.**
 
 When we think about causal propensity, two key principles emerge:
 
-1.  **Receptivity**: A user's propensity to act due to a nudge is meaningful only if they are, in fact, receptive to that nudge. If they're not going to pay attention or be influenced, the nudge is irrelevant for them. An intervention cannot *cause* a change if the user isn't open to it.
-2.  **Sustained Impact (Avoiding Regret)**: True high propensity implies that the user not only takes the desired action but continues it long-term, signaling a genuinely positive experience. A fleeting change followed by disengagement or 'regret' isn't the goal; we're interested in interventions that lead to lasting, beneficial changes in behavior.
+1.  **Receptivity**: A user's propensity to act due to a nudge is meaningful
+    only if they are, in fact, receptive to that nudge. If they're not going to
+    pay attention or be influenced, the nudge is irrelevant for them. An
+    intervention cannot *cause* a change if the user isn't open to it.
+2.  **Sustained Impact (Avoiding Regret)**: True high propensity implies that
+    the user not only takes the desired action but continues it long-term,
+    signaling a genuinely positive experience. A fleeting change followed by
+    disengagement or 'regret' isn't the goal; we're interested in interventions
+    that lead to lasting, beneficial changes in behavior.
 
-Furthermore, a common oversight is the imprecise definition of 'success' when estimating propensity. Take a shopping scenario, for instance. One might be tempted to predict the intervention's impact on revenue per user. However, a specific percentage or dollar increase in revenue might be significant and worthwhile for some users, yet inconsequential or even detrimental for others (perhaps they purchase, regret it, and churn). This is where the principle of **revealed preferences** comes in handy. Observing continued engagement with the desired action serves as a practical proxy, suggesting the user finds the action valuable enough to persist. It tells us the intervention was likely a good fit for them.
+Furthermore, a common oversight is the imprecise definition of 'success' when
+estimating propensity. Take a shopping scenario, for instance. One might be
+tempted to predict the intervention's impact on revenue per user. However, a
+specific percentage or dollar increase in revenue might be significant and
+worthwhile for some users, yet inconsequential or even detrimental for others
+(perhaps they purchase, regret it, and churn). This is where the principle of
+**revealed preferences** comes in handy. Observing continued engagement with the
+desired action serves as a practical proxy, suggesting the user finds the action
+valuable enough to persist. It tells us the intervention was likely a good fit
+for them.
 
 ## An Example with Synthetic Data
 
-Let's illustrate with a synthetic example. Imagine a company, SaaSify Solutions, which provides "TaskMaster," a project management tool. TaskMaster has a free basic tier and a premium "Pro Tier." To boost conversions to the paid Pro Tier, SaaSify decides to offer a one-month free trial. The Pro Tier boasts advanced features such as team collaboration, detailed analytics, and automation.
+Let's illustrate with a synthetic example. Imagine a company, SaaSify Solutions,
+which provides "TaskMaster," a project management tool. TaskMaster has a free
+basic tier and a premium "Pro Tier." To boost conversions to the paid Pro Tier,
+SaaSify decides to offer a one-month free trial. The Pro Tier boasts advanced
+features such as team collaboration, detailed analytics, and automation.
 
 ### The Challenge: Identifying the Right Users for the Free Trial
 
-The teams at SaaSify understand that a free trial isn't universally effective. Their objective is to measure the **causal impact** of the Pro Tier trial. Specifically, they want to determine how offering the trial influences a user's probability of subscribing to the paid tier three months down the line, relative to users not offered the trial. The aim is to target users for whom the trial will be most impactful and avoid offering it where it's likely to be ineffective or, worse, counterproductive.
+The teams at SaaSify understand that a free trial isn't universally effective.
+Their objective is to measure the **causal impact** of the Pro Tier trial.
+Specifically, they want to determine how offering the trial influences a user's
+probability of subscribing to the paid tier three months down the line, relative
+to users not offered the trial. The aim is to target users for whom the trial
+will be most impactful and avoid offering it where it's likely to be ineffective
+or, worse, counterproductive.
 
-To achieve this, they randomly assign the free trial offer to a subset of users—this randomization is key for causal inference. The outcome of interest is the subscription status three months after the trial offer. The R code that follows generates synthetic data for this scenario.
+To achieve this, they randomly assign the free trial offer to a subset of
+users—this randomization is key for causal inference. The outcome of interest
+is the subscription status three months after the trial offer. The R code that
+follows generates synthetic data for this scenario.
 
 ```{r}
 #| message: false
@@ -302,7 +338,13 @@ glimpse(simulated_data)
 
 ## Stochtree for Bayesian Causal Forest
 
-Now that we have our synthetic data, which includes user characteristics, whether they were offered a trial (the treatment), and their subsequent subscription status (the outcome), we can move on to modeling. We'll use the [stochtree package](https://stochtree.ai/) to implement Bayesian Causal Forests (BCF). BCF is well-suited for estimating heterogeneous treatment effects, which is precisely what we're interested in: how does the trial's effect vary across different types of users?
+Now that we have our synthetic data, which includes user characteristics,
+whether they were offered a trial (the treatment), and their subsequent
+subscription status (the outcome), we can move on to modeling. We'll use the
+[stochtree package](https://stochtree.ai/) to implement Bayesian Causal Forests
+(BCF). BCF is well-suited for estimating heterogeneous treatment effects, which
+is precisely what we're interested in: how does the trial's effect vary across
+different types of users?
 
 ```{r}
 ## ------------------------------------------------------------
@@ -380,7 +422,11 @@ message(sprintf(
 
 ```
 
-The real power of BCF lies in its ability to uncover treatment effect heterogeneity. Let's visualize how the estimated ITE varies with user activity levels. We'll bin users by their scaled free-tier activity and plot the mean true ITE (from our data generating process) against the BCF's posterior mean ITE, along with a credible interval.
+The real power of BCF lies in its ability to uncover treatment effect
+heterogeneity. Let's visualize how the estimated ITE varies with user activity
+levels. We'll bin users by their scaled free-tier activity and plot the mean
+true ITE (from our data generating process) against the BCF's posterior mean
+ITE, along with a credible interval.
 
 ```{r}
 #| message: false
@@ -455,7 +501,9 @@ ggplot(bin_stats, aes(x_mid)) +
 
 ```
 
-We can also examine how well the BCF model identifies users whose true ITE exceeds a certain threshold. This is often a practical concern: who are the users for whom the intervention is "meaningfully" positive?
+We can also examine how well the BCF model identifies users whose true ITE
+exceeds a certain threshold. This is often a practical concern: who are the
+users for whom the intervention is "meaningfully" positive?
 
 ```{r}
 #| message: false
@@ -510,7 +558,9 @@ ggplot(bcf_long, aes(PostProb)) +
 )
 ```
 
-Finally, let's look at Conditional Average Treatment Effects (CATEs) by user role. This provides a summary of how the treatment effect, both true and BCF-estimated, varies across predefined user segments.
+Finally, let's look at Conditional Average Treatment Effects (CATEs) by user
+role. This provides a summary of how the treatment effect, both true and
+BCF-estimated, varies across predefined user segments.
 
 ```{r}
 #| message: false
@@ -558,11 +608,14 @@ simulated_data %>%
 
 ## Take-aways
 
--   Prediction alone is not enough—causal propensity targets users who change because of the nudge.
--   Randomised offers supply the counterfactual needed for causal estimation.
--   Bayesian Causal Forest captures rich heterogeneity, helping us
+  - Prediction alone is not enough—causal propensity targets users who change
+    because of the nudge.
+  - Randomised offers supply the counterfactual needed for causal estimation.
+  - Bayesian Causal Forest captures rich heterogeneity, helping us
     1.  quantify individual effects (ITEs),
     2.  flag users with meaningfully positive response probabilities, and
     3.  summarise segment-level CATEs for strategic targeting.
 
-Armed with these tools, teams can deploy interventions that are both **effective and efficient**, minimising wasted incentives and maximising long-term user value.
+Armed with these tools, teams can deploy interventions that are both **effective
+and efficient**, minimising wasted incentives and maximising long-term user
+value.
