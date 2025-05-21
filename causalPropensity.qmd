@@ -10,7 +10,7 @@ share:
 
 ## Why do we need a causal framework for propensity modeling?
 
-<img src="img/bcf.png" align="right" height="280" alt="Causal Propensity Modeling with BCF" />
+<img src="img/causal_propensity.png" align="right" height="280" alt="Causal Propensity Modeling with BCF" />
 
 Business data scientists in the tech industry frequently face the task of
 identifying **which users to nudge toward a desired action**. Consider a few
@@ -78,6 +78,7 @@ follows generates synthetic data for this scenario.
 #| message: false
 # ── pkgs ────────────────────────────────────────────────────────────────────────
 library(dplyr)
+library(tidyr)
 library(tibble)
 library(ggplot2)
 
@@ -606,16 +607,134 @@ simulated_data %>%
 
 ```
 
-## Take-aways
+## Prioritising control-group creators for a follow-up nudge
 
-  - Prediction alone is not enough—causal propensity targets users who change
-    because of the nudge.
-  - Randomised offers supply the counterfactual needed for causal estimation.
-  - Bayesian Causal Forest captures rich heterogeneity, helping us
-    1.  quantify individual effects (ITEs),
-    2.  flag users with meaningfully positive response probabilities, and
-    3.  summarise segment-level CATEs for strategic targeting.
+One common “Phase-2” use-case is to **re-target users who were originally in the
+control group** but appear—according to the model—to be the *most* likely to
+benefit from receiving the treatment.  
+Below we illustrate a principled, fully Bayesian way to do that.
 
-Armed with these tools, teams can deploy interventions that are both **effective
-and efficient**, minimising wasted incentives and maximising long-term user
-value.
+> **Goal:** pick the *N* creators (say **N = 1000**) in the control group whose
+> *posterior probability* of belonging to the *true* top-N is highest.
+
+### Method
+
+1. For every posterior draw \(d = 1,\dots,D\) of the BCF we already have an
+   ITE estimate \(\tau_{id}\) for each creator \(i\).
+2. **Within each draw** we  
+   - keep only the control-group creators  
+   - rank them by \(\tau_{id}\) (descending)  
+   - mark the top *N* with a 1, the rest with 0.
+3. Averaging those indicators across draws gives  
+   \[
+   p_i \;=\; \frac1D \sum_{d=1}^D \mathbf 1\{i\text{ is in top }N\text{ in draw }d\},
+   \]
+   the posterior probability that creator \(i\) truly belongs to the top-N.
+4. We **select the N control creators with the largest \(p_i\)**.
+5. Finally we check, using the hidden ground-truth ITE from the DGP, how many
+   of our picks actually *are* in the true top-N.
+   
+```{r}
+#| message: false
+#| warning: false
+## ------------------------------------------------------------
+## Target the N control creators with highest posterior P(top-N)
+## ------------------------------------------------------------
+N_target <- 1000
+
+## 1. isolate control-group rows & their ITE draws -------------
+control_idx       <- which(Z_treat == 0)
+ite_control_draws <- ite_bcf_draws[control_idx, ]    # m  ×  D
+
+## 2. indicator: 1 if creator is in top-N for draw d -----------
+indicator <- apply(
+  ite_control_draws, 2L,
+  function(draw_vec) {
+    top <- order(draw_vec, decreasing = TRUE)[seq_len(N_target)]
+    idx <- integer(length(draw_vec)); idx[top] <- 1
+    idx
+  }
+)
+
+## 3. posterior probability of being in top-N ------------------
+prob_topN <- rowMeans(indicator)                      # length = m
+
+## 4. add to main tibble ---------------------------------------
+simulated_data$prob_topN <- NA_real_
+simulated_data$prob_topN[control_idx] <- prob_topN
+
+## 5. pick the creators with highest P(top-N) -------------------
+selected <- simulated_data %>%
+  filter(offered_free_trial == 0) %>%
+  slice_max(prob_topN, n = N_target, with_ties = FALSE)
+
+## 6. evaluate against ground truth -----------------------------
+truth_ranks <- simulated_data %>%
+  filter(offered_free_trial == 0) %>%
+  mutate(true_rank = rank(-ITE_prob_subscribe, ties.method = "min")) %>%
+  select(user_id, true_rank)
+
+selected <- selected %>% left_join(truth_ranks, by = "user_id") %>%
+  mutate(hit = true_rank <= N_target)
+
+hit_rate <- mean(selected$hit)
+
+message(sprintf(
+  "Model picked %d of the true top %d creators (hit-rate = %.1f%%).",
+  sum(selected$hit), N_target, 100 * hit_rate
+))
+```
+
+We can also examine the false positive with the code bellow:
+ 
+```{r}
+#| message: false
+#| warning: false
+## ------------------------------------------------------------
+## False-positives: creators picked by the model but *not*
+## in the true top-N  (how wrong are we?)
+## ------------------------------------------------------------
+false_pos <- selected %>%
+  filter(!hit) %>%                       # keep only the misses
+  arrange(true_rank) %>%                 # smaller rank = closer to the cut-off
+  select(
+    user_id,
+    prob_topN,            # posterior P(being top-N)
+    true_rank,            # ground-truth rank
+    ITE_prob_subscribe,   # true ITE (prob. scale)
+    ITE_bcf               # posterior mean ITE
+  )
+
+# peek at the first 15 for a sense of magnitude
+knitr::kable(
+  head(false_pos, 15),
+  caption = paste0(
+    "Top 15 false-positives (model-selected but true rank > ", N_target, ")"
+  ),
+  digits = 3
+)
+
+# summary stats: how far off are we on average?
+summary(false_pos$true_rank)
+
+```
+ 
+
+## Take-aways — What to remember before you hit "Send Nudge"
+
+- **Causality beats raw prediction**  
+  Don’t waste offers on the "sure-thing" crowd. Causal propensity models single out the users whose behaviour is *expected to change because of* your intervention, not the ones who were already halfway there.
+
+- **Randomisation is your super-power**  
+  A/B assignment (or any well-designed experiment) manufactures the missing counterfactual. Without it, every downstream estimate—however sophisticated—rests on unverifiable assumptions.
+
+- **Heterogeneity is the rule, not the exception**  
+  Bayesian Causal Forests surface nuanced, non-linear treatment patterns that simple uplift models miss. They let you  
+  1. **Measure individual treatment effects (ITEs)** — a per-user ROI forecast.  
+  2. **Rank control-group users by posterior "top-N" probability** — a principled way to choose whom to target next.  
+  3. **Summarise conditional ATEs (CATEs)** for segments your business cares about — fuel for clear, defensible strategy.
+
+- **Efficiency follows from focus**  
+  By steering incentives to users with high posterior gain—and sparing those likely to regret or ignore them—you compress spend, boost long-run value, and create experiments that keep paying for themselves.
+
+> **TL;DR:** Wrap your propensity work in a causal cloak: randomise, model heterogeneity, act on posterior uncertainty, and watch both your precision *and* your business impact climb.
