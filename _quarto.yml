@@ -54,6 +54,7 @@ book:
         - bart.qmd
         - bcf.qmd
         - longbet.qmd
+        - causalPropensity.qmd
     - references.qmd
   sidebar: 
     logo: hex.png
