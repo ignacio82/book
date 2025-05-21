@@ -396,7 +396,84 @@ toc()
 
 ```
 
-After fitting the BCF model, we can extract and summarize the posterior distributions of the treatment effects. This allows us to understand not only the average treatment effect (ATE) across all users but also the individual treatment effects (ITEs) for each user
+After fitting the model, you should always check if the model converged:
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| fig-cap: "Convergence diagnostics for the Average Treatment Effect (ATE)"
+
+# ── 0. libraries ─────────────────────────────────────────────────────────────
+library(posterior)   # ≥ 1.0 – rhat(), ess_bulk(), ess_tail(), as_draws_*
+library(bayesplot)
+
+# `ate_draws`        : numeric vector of length n_draws
+# `ite_bcf_draws`    : n_users × n_draws matrix returned by stochtree::bcf()
+
+# ── 1. build K inter-leaved pseudo-chains ────────────────────────────────────
+K <- 4                                   # number of pseudo-chains
+
+thin <- function(x, k, offset = 0) x[seq(1 + offset, length(x), by = k)]
+
+ate_mat <- sapply(0:(K - 1), function(j) thin(ate_draws, K, j))
+colnames(ate_mat) <- paste0("chain", 1:K)   # helpful labels
+iter <- nrow(ate_mat)
+
+# ── 2. single-panel trace plot with coloured chains ──────────────────────────
+# bayesplot expects an object with *iterations × chains × variables*
+ate_arr <- array(
+  ate_mat,
+  dim      = c(iter, K, 1),
+  dimnames = list(NULL, paste0("chain", 1:K), "ATE")
+)
+
+bayesplot::mcmc_trace(
+  posterior::as_draws_array(ate_arr),
+  pars       = "ATE",        # only one parameter
+  size       = 0.4,
+  facet_args = list(nrow = 1)  # 1 facet (the default), chains overlay
+)
+
+# ── 3. R-hat and effective sample size (ESS) ─────────────────────────────────
+ate_rhat     <- posterior::rhat(ate_mat)        # scalar
+ate_ess_bulk <- posterior::ess_bulk(ate_mat)    # scalar
+ate_ess_tail <- posterior::ess_tail(ate_mat)    # scalar
+
+cat(sprintf(
+  "R-hat       : %.3f\nBulk ESS    : %.0f\nTail ESS    : %.0f\n\n",
+  ate_rhat, ate_ess_bulk, ate_ess_tail
+))
+
+# ── 4. per-user bulk ESS for the ITE posterior draws ─────────────────────────
+ess_users <- posterior::ess_bulk(t(ite_bcf_draws))   # named vector
+summary(ess_users)
+
+
+
+```
+
+| Diagnostic           | What it is                                                                                                                        | How to interpret it                                                                                                                                                                                                    |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Trace plot**       | The wiggly lines show the sampled value of the ATE across iterations; each colour represents a different chain.                   | *Good signs*: the chains overlap, wander freely, and show no visible upward or downward drift. If one chain is stuck at a different level, or drifts in one direction, that is a warning sign.                         |
+| **$\hat R$ (R-hat)** | Compares the variance **within** each chain to the variance **between** chains.                                                   | Values very close to 1 (typically ≤ 1.01) indicate the chains are sampling the same posterior distribution. Values > 1.05 flag non-convergence—you should run more draws or diagnose the model.                        |
+| **Bulk ESS**         | An estimate of the number of *independent* draws you have for the **centre** of the posterior (mean, sd, etc.).                   | For a single scalar like the ATE, a few hundred independent draws is usually sufficient. If Bulk ESS is below \~100, increase the number of iterations.                                                                |
+| **Tail ESS**         | The same idea as Bulk ESS but focused on the **tails** of the posterior (important for credible intervals and extreme quantiles). | Values above \~100 give reasonably stable 2.5 % and 97.5 % quantiles; lower values mean those intervals are still noisy.                                                                                               |
+| **Per-user ESS**     | Bulk ESS computed for every individual ITE.                                                                                       | Review the distribution (min, quartiles, max). If some users have very low ESS while most are much higher, those specific posteriors are still noisy; consider running the sampler longer or inspecting that subgroup. |
+
+::: {.callout-note}
+
+### Quick checklist
+
+* **Trace plot**: nicely overlapping chains with no obvious trends.
+* **R-hat** ≈ 1 → chains have mixed.
+* **Bulk & Tail ESS** comfortably exceed minimum rules of thumb.
+* **Per-user ESS**: no extreme low outliers.
+
+If all of the above look healthy, you can proceed with summaries, plots, and downstream decisions knowing that Monte Carlo error is negligible relative to the signal in your data.
+:::
+
+After confirming that the model converged, we can extract and summarize the posterior distributions of the treatment effects. This allows us to understand not only the average treatment effect (ATE) across all users but also the individual treatment effects (ITEs) for each user
 
 ```{r}
 ## ------------------------------------------------------------
