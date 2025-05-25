@@ -8,48 +8,33 @@ share:
   mastodon: true
 ---
 
-## Why do we need a causal framework for propensity modeling?
+## Beyond "Who Will Convert" to "Who Will Convert Because of Us"
 
 <img src="img/causal_propensity.png" align="right" height="280" alt="Causal Propensity Modeling with BCF" />
 
-Business data scientists in the tech industry frequently face the task of
-identifying **which users to nudge toward a desired action**. Consider a few
-common examples:
+Business data scientists in the tech industry frequently face the task of identifying **which users to nudge toward a desired action**. Consider these common scenarios:
 
-  - Encouraging long-form video creators to experiment with shorter formats like
-    Shorts or Reels.
-  - Prompting prolific product reviewers to establish their own storefront.
-  - Selecting the most suitable candidates for an exclusive event invitation.
-  - Offering a complimentary trial or a discount on a service.
+- Encouraging long-form video creators to experiment with shorter formats 
+- Prompting prolific product reviewers to establish their own storefront  
+- Selecting the most suitable candidates for an exclusive event invitation
+- Offering a complimentary trial or discount on a service
 
-This might seem like a standard prediction problem: who is most likely to take
-action X? Yet, such an approach is incomplete. Focusing solely on prediction
-risks expending resources on users who would have taken the action anyway,
-irrespective of any nudge. The crucial element here is **causality**—pinpointing
-individuals **whose behavior will change *because* of our intervention.**
+The naive approach treats this as a standard prediction problem: *who is most likely to take action X?* But this misses the crucial insight. **You don't want to spend resources on users who would have acted anyway.** What you really want to know is: **whose behavior will change *because* of your intervention?**
 
-When we think about causal propensity, two key principles emerge:
+This shift from prediction to causation isn't just academic—it's the difference between wasting marketing budget on the "sure things" and efficiently targeting users who actually need a nudge.
 
-1.  **Receptivity**: A user's propensity to act due to a nudge is meaningful
-    only if they are, in fact, receptive to that nudge. If they're not going to
-    pay attention or be influenced, the nudge is irrelevant for them. An
-    intervention cannot *cause* a change if the user isn't open to it.
-2.  **Sustained Impact (Avoiding Regret)**: True high propensity implies that
-    the user not only takes the desired action but continues it long-term,
-    signaling a genuinely positive experience. A fleeting change followed by
-    disengagement or 'regret' isn't the goal; we're interested in interventions
-    that lead to lasting, beneficial changes in behavior.
+### The Causal Propensity Framework
 
-Furthermore, a common oversight is the imprecise definition of 'success' when
-estimating propensity. Take a shopping scenario, for instance. One might be
-tempted to predict the intervention's impact on revenue per user. However, a
-specific percentage or dollar increase in revenue might be significant and
-worthwhile for some users, yet inconsequential or even detrimental for others
-(perhaps they purchase, regret it, and churn). This is where the principle of
-**revealed preferences** comes in handy. Observing continued engagement with the
-desired action serves as a practical proxy, suggesting the user finds the action
-valuable enough to persist. It tells us the intervention was likely a good fit
-for them.
+When we think about causal propensity, three key principles emerge:
+
+**1. Receptivity Over Likelihood**  
+A user's propensity to act due to a nudge is meaningful only if they're actually receptive to that nudge. If they won't pay attention or be influenced, the nudge is irrelevant. An intervention cannot *cause* a change if the user isn't open to it.
+
+**2. Sustained Impact (Avoiding Buyer's Regret)**  
+True high propensity implies that the user not only takes the desired action but continues it long-term, signaling a genuinely positive experience. A fleeting change followed by disengagement or regret isn't the goal—we want interventions that lead to lasting, beneficial changes.
+
+**3. Revealed Preferences as Success Metrics**  
+Rather than focusing on immediate revenue metrics that might be misleading (a user might purchase, regret it, and churn), observing continued engagement serves as a practical proxy. It tells us the intervention was likely a good fit for them.
 
 ## An Example with Synthetic Data
 
@@ -77,203 +62,186 @@ follows generates synthetic data for this scenario.
 ```{r}
 #| message: false
 # ── pkgs ────────────────────────────────────────────────────────────────────────
-library(dplyr)
-library(tidyr)
-library(tibble)
-library(ggplot2)
-
-library(dplyr)
-library(tibble)
-library(ggplot2)
+library(dplyr)      # wrangling
+library(tidyr)      # pivot_longer later
+library(tibble)     # tibbles
+library(ggplot2)    # plots
 
 # ── 0. helpers ─────────────────────────────────────────────────────────────────
-# Clips a numeric vector to a specified lower and upper bound
-clip_values <- function(x, lo = 0, hi = 150)
-  pmin(pmax(x, lo), hi)
-# Inverse logit function (same as plogis)
-inv_logit <- plogis
+clip_values <- function(x, lo = 0, hi = 150) pmin(pmax(x, lo), hi)
 
 # ── 1. configuration ───────────────────────────────────────────────────────────
 cfg <- list(
-  n_users = 50000,
+  n_users = 5000,
   prop_offered_trial = 0.50,
-  
-  # Baseline subscription model coefficients (log-odds scale)
-  # log_odds(Subscribed | X, Trial=0)
+
+  # Coefficients now live on the **latent-normal (probit) scale**
   beta = c(
-    intercept = -3.5,
-    # Overall low baseline subscription propensity
-    activity_free = 0.6,
-    # Higher free tier activity -> more likely to subscribe naturally
-    project_manager = 0.8,
-    # Project Managers more likely to subscribe naturally
-    feature_requests = 0.5,
-    # Interacted with feature requests -> more likely
-    freelancer = -0.2  # Freelancers slightly less likely at baseline (or neutral)
+    intercept        = -0.5,
+    activity_free    =  0.6,
+    project_manager  =  0.8,
+    feature_requests =  0.5,
+    freelancer       = -0.2
   ),
-  
-  # Treatment effect model coefficients (CHANGE in log-odds DUE TO the trial offer)
-  # delta_log_odds = tau_intercept + tau_activity_free*activity_free + ...
   tau = c(
-    intercept_trial_effect = 1.2,
-    # General positive effect of the trial offer
-    activity_free_trial_effect = 0.7,
-    # Trial is more effective for more active free users
-    project_manager_trial_effect = 1.0,
-    # Trial is particularly effective for Project Managers
-    feature_requests_trial_effect = 0.6,
-    # Trial effective if they showed interest in features
-    interaction_freelancer_low_activity = -4.0 # Strong negative effect for low-activity freelancers
+    intercept_trial_effect          =  0.8,
+    activity_free_trial_effect      =  0.3,
+    project_manager_trial_effect    =  0.5,
+    feature_requests_trial_effect   =  0.6,
+    interaction_freelancer_low_activity = -2.5
   ),
-  
-  # Probabilities for user roles
+
   user_role_prob = c(
-    Freelancer = 0.30,
-    ProjectManager = 0.15,
-    SmallBusinessOwner = 0.25,
-    Student = 0.15,
-    TeamMember = 0.15
+    Freelancer        = 0.30,
+    ProjectManager    = 0.15,
+    SmallBusinessOwner= 0.25,
+    Student           = 0.15,
+    TeamMember        = 0.15
   ),
-  # Parameters for raw_activity_score generation (gamma distribution)
-  activity_score_shape = 3,
-  activity_score_rate = 0.5,
+
+  activity_score_shape      = 3,
+  activity_score_rate       = 0.5,
   activity_score_multiplier = 10,
-  # Quantile for defining "low activity"
-  low_activity_quantile = 0.30,
-  # Proportion of users who interacted with feature requests
+  low_activity_quantile     = 0.30,
   prop_interacted_feature_requests = 0.20
 )
 
-set.seed(123) # For reproducibility
+set.seed(123)  # reproducibility
 
 # ── 2. simulate covariates ─────────────────────────────────────────────────────
 raw_users_data <- tibble(
   user_id = seq_len(cfg$n_users),
-  # Free tier activity level
+
+  # raw free-tier activity
   raw_activity_score = rgamma(
     cfg$n_users,
     shape = cfg$activity_score_shape,
-    rate = cfg$activity_score_rate
+    rate  = cfg$activity_score_rate
   ) * cfg$activity_score_multiplier,
-  # User role
+
+  # user role
   user_role = sample(
     names(cfg$user_role_prob),
     cfg$n_users,
     replace = TRUE,
-    prob = cfg$user_role_prob
+    prob    = cfg$user_role_prob
   ),
-  # Engagement with feature requests
-  has_interacted_feature_requests = rbinom(cfg$n_users, 1, cfg$prop_interacted_feature_requests)
+
+  # engagement with feature requests
+  has_interacted_feature_requests =
+    rbinom(cfg$n_users, 1, cfg$prop_interacted_feature_requests)
 ) %>%
   mutate(
-    raw_activity_score = clip_values(raw_activity_score, 0, 150),
-    # Apply clipping
+    raw_activity_score   = clip_values(raw_activity_score, 0, 150),
     scaled_activity_free = as.numeric(scale(raw_activity_score)),
-    is_freelancer = as.integer(user_role == "Freelancer"),
-    is_project_manager = as.integer(user_role == "ProjectManager"),
-    is_low_activity_user = scaled_activity_free < quantile(scaled_activity_free, cfg$low_activity_quantile, na.rm = TRUE),
-    offered_free_trial = rbinom(n(), 1, cfg$prop_offered_trial) # Use n() for current group size in mutate
+    is_freelancer        = as.integer(user_role == "Freelancer"),
+    is_project_manager   = as.integer(user_role == "ProjectManager"),
+    is_low_activity_user =
+      scaled_activity_free < quantile(
+        scaled_activity_free,
+        cfg$low_activity_quantile,
+        na.rm = TRUE
+      ),
+    offered_free_trial   = rbinom(n(), 1, cfg$prop_offered_trial)
   )
 
-# ── 3. potential outcomes & realised subscription ───────────────────────────────
+# ── 3. potential outcomes & realised subscription  (PROBIT DGP) ───────────────
 simulated_data <- with(cfg, {
   raw_users_data %>%
     mutate(
-      # Counterfactual log-odds of subscribing WITHOUT the trial offer (Y_0)
-      logodds_0_subscribe_no_trial = beta["intercept"] +
-        beta["activity_free"] * scaled_activity_free +
-        beta["project_manager"] * is_project_manager +
-        beta["feature_requests"] * has_interacted_feature_requests +
-        beta["freelancer"] * is_freelancer,
-      
-      # Delta log-odds due to the trial offer (treatment effect on log-odds scale)
-      delta_logodds_trial_effect = tau["intercept_trial_effect"] +
-        tau["activity_free_trial_effect"] * scaled_activity_free +
-        tau["project_manager_trial_effect"] * is_project_manager +
-        tau["feature_requests_trial_effect"] * has_interacted_feature_requests +
-        tau["interaction_freelancer_low_activity"] * is_freelancer * is_low_activity_user,
-      
-      # Counterfactual log-odds of subscribing WITH the trial offer (Y_1)
-      logodds_1_subscribe_with_trial = logodds_0_subscribe_no_trial + delta_logodds_trial_effect,
-      
-      # Convert log-odds to probabilities
-      p0_subscribe_no_trial = inv_logit(logodds_0_subscribe_no_trial),
-      p1_subscribe_with_trial = inv_logit(logodds_1_subscribe_with_trial),
-      
-      # Individual Treatment Effect (ITE)
+      ## latent mean WITHOUT the trial (μ(X))
+      w0 = beta["intercept"] +
+           beta["activity_free"]    * scaled_activity_free +
+           beta["project_manager"]  * is_project_manager +
+           beta["feature_requests"] * has_interacted_feature_requests +
+           beta["freelancer"]       * is_freelancer,
+
+      ## latent treatment effect τ(X)
+      tau_latent =
+           tau["intercept_trial_effect"] +
+           tau["activity_free_trial_effect"]      * scaled_activity_free +
+           tau["project_manager_trial_effect"]    * is_project_manager +
+           tau["feature_requests_trial_effect"]   * has_interacted_feature_requests +
+           tau["interaction_freelancer_low_activity"] *
+             is_freelancer * is_low_activity_user,
+
+      ## latent mean WITH the trial
+      w1 = w0 + tau_latent,
+
+      ## probabilities via Φ (standard-normal CDF)
+      p0_subscribe_no_trial  = pnorm(w0),
+      p1_subscribe_with_trial= pnorm(w1),
+
+      ## Individual Treatment Effect on probability scale
       ITE_prob_subscribe = p1_subscribe_with_trial - p0_subscribe_no_trial,
-      # On probability scale
-      ITE_logodds_subscribe = delta_logodds_trial_effect,
-      # On log-odds scale
-      
-      # Simulate the OBSERVED outcome based on trial offer assignment
+
+      ## observed outcome
       is_subscribed_after_3months = rbinom(
-        n(),
-        1,
-        if_else(
-          offered_free_trial == 1,
-          p1_subscribe_with_trial,
-          p0_subscribe_no_trial
-        )
+        n(), 1,
+        if_else(offered_free_trial == 1,
+                p1_subscribe_with_trial,
+                p0_subscribe_no_trial)
       )
     )
 })
 
 # ── 4. quick diagnostics ──────────────────────────────────────────────────────
-true_ATE_prob <-
-  mean(simulated_data$ITE_prob_subscribe, na.rm = TRUE)
-cat(
-  sprintf(
-    "True Average Treatment Effect (ATE) on probability scale (Subscription): %.4f\n",
-    true_ATE_prob
-  )
-)
+true_ATE_prob <- mean(simulated_data$ITE_prob_subscribe)
+cat(sprintf(
+  "True Average Treatment Effect (ATE) on probability scale: %.4f\n",
+  true_ATE_prob
+))
 
-# Distribution of all ITEs
-p_all_ites <- simulated_data %>%
-  ggplot(aes(x = ITE_prob_subscribe)) +
+# ── Histogram of predicted subscription probabilities ─────────────────────────
+
+simulated_data %>% 
+  select(p0_subscribe_no_trial, p1_subscribe_with_trial) %>% 
+  pivot_longer(
+    cols      = everything(),
+    names_to  = "scenario",
+    values_to = "probability"
+  ) %>% 
+  ggplot(aes(probability)) +
   geom_histogram(
-    bins = 60,
-    fill = "steelblue",
-    color = "white",
-    alpha = 0.8
+    bins   = 60,
+    fill   = "steelblue",
+    colour = "white",
+    alpha  = 0.8
   ) +
-  geom_vline(
-    xintercept = true_ATE_prob,
-    color = "red",
-    linetype = "dashed",
-    linewidth = 1
+  facet_wrap(~ scenario, ncol = 2) +
+  scale_x_continuous(
+    labels  = scales::label_percent(accuracy = 1),  # 0–1 → 0%–100%
+    breaks  = seq(0, 1, 0.10),                      # nice 10-point tick marks
+    limits  = c(0, 1)
   ) +
-  annotate(
-    "text",
-    x = true_ATE_prob,
-    y = Inf,
-    label = sprintf("ATE = %.3f", true_ATE_prob),
-    hjust = -0.1,
-    vjust = 1.5,
-    color = "red"
+  labs(
+    title = "Distribution of true subscription probabilities",
+    x     = "Subscription probability (%)",
+    y     = "Users"
   ) +
-  labs(title = "Distribution of Individual Treatment Effects (ITEs) on Subscription Probability",
-       x = expression("ITE (p"[1] * " - p"[0] * ")"),
-       y = "Frequency") +
   theme_minimal()
-print(p_all_ites)
 
-# --- Subgroup Analysis: "Overwhelmed Novice" Freelancers ---
+
+# distribution of ITEs
+ggplot(simulated_data, aes(ITE_prob_subscribe)) +
+  geom_histogram(bins = 60, fill = "steelblue", colour = "white", alpha = 0.8) +
+  geom_vline(xintercept = true_ATE_prob, colour = "red", linetype = "dashed") +
+  annotate(
+    "text", x = true_ATE_prob, y = Inf,
+    label = sprintf("ATE = %.3f", true_ATE_prob),
+    hjust = -0.1, vjust = 1.5, colour = "red"
+  ) +
+  labs(
+    title = "Distribution of ITEs (probit DGP)",
+    x     = expression(Δ[p] == p[1] - p[0]),
+    y     = "Users"
+  ) +
+  theme_minimal()
+
 overwhelmed_novice_freelancers_data <- simulated_data %>%
   filter(is_freelancer == 1 & is_low_activity_user == 1)
 
-cat("\nSummary of ITEs for 'Overwhelmed Novice' Freelancers (Low Activity):\n")
-print(summary(overwhelmed_novice_freelancers_data$ITE_prob_subscribe))
-cat(sprintf(
-  "Proportion of this group with negative ITE: %.3f\n",
-  mean(
-    overwhelmed_novice_freelancers_data$ITE_prob_subscribe < 0,
-    na.rm = TRUE
-  )
-))
-
-p_novice_freelancers_ites <- overwhelmed_novice_freelancers_data %>%
+overwhelmed_novice_freelancers_data %>%
   ggplot(aes(x = ITE_prob_subscribe)) +
   geom_histogram(
     bins = 30,
@@ -294,24 +262,15 @@ p_novice_freelancers_ites <- overwhelmed_novice_freelancers_data %>%
        x = expression("ITE (p"[1] * " - p"[0] * ")"),
        y = "Frequency") +
   theme_minimal()
-print(p_novice_freelancers_ites)
 
 
-# --- Subgroup Analysis: High Activity Project Managers ---
 high_activity_pms_data <- simulated_data %>%
   filter(
     is_project_manager == 1 &
       scaled_activity_free > quantile(scaled_activity_free, 0.70, na.rm = TRUE)
   )
 
-cat("\nSummary of ITEs for High Activity Project Managers:\n")
-print(summary(high_activity_pms_data$ITE_prob_subscribe))
-cat(sprintf(
-  "Proportion of this group with positive ITE: %.3f\n",
-  mean(high_activity_pms_data$ITE_prob_subscribe > 0, na.rm = TRUE)
-))
-
-p_high_pms_ites <- high_activity_pms_data %>%
+high_activity_pms_data %>%
   ggplot(aes(x = ITE_prob_subscribe)) +
   geom_histogram(
     bins = 30,
@@ -329,103 +288,109 @@ p_high_pms_ites <- high_activity_pms_data %>%
        x = expression("ITE (p"[1] * " - p"[0] * ")"),
        y = "Frequency") +
   theme_minimal()
-print(p_high_pms_ites)
 
-
-# ── 5. quick peek at the data ───────────────────────────────────────────────────
+# peek at the data structure
+# ─────────────────────────────────────
 glimpse(simulated_data)
+
+
 
 ```
 
-## Stochtree for Bayesian Causal Forest
+## Bayesian Causal Forest: Modeling the Heterogeneity
 
-Now that we have our synthetic data, which includes user characteristics,
-whether they were offered a trial (the treatment), and their subsequent
-subscription status (the outcome), we can move on to modeling. We'll use the
-[stochtree package](https://stochtree.ai/) to implement Bayesian Causal Forests
-(BCF). BCF is well-suited for estimating heterogeneous treatment effects, which
-is precisely what we're interested in: how does the trial's effect vary across
-different types of users?
+Now comes the modeling. We'll use [stochtree](https://stochtree.ai/) to implement Bayesian Causal Forests (BCF), which excels at capturing complex, non-linear treatment effect heterogeneity.
+
+### Why BCF?
+
+Traditional methods assume treatment effects are either constant or follow simple patterns. BCF uses tree-based methods to discover complex interactions and non-linearities while maintaining proper uncertainty quantification through Bayesian inference.
 
 ```{r}
-## ------------------------------------------------------------
-## 1 / Load packages
-## ------------------------------------------------------------
-library(stochtree)     # BCF implementation
-library(tictoc)        # simple timing helper
+# ── Load BCF package ─────────────────────────────────────────────────────────────
+library(stochtree)
+library(tictoc)
 
-## ------------------------------------------------------------
-## 2 / Prepare modelling matrices
-##    – X = covariates (no treatment column)
-##    – Z = treatment indicator  (1 = trial offered)
-##    – Y = binary outcome       (1 = paid subscriber after 3 mths)
-## ------------------------------------------------------------
-X_cov <- simulated_data %>% 
+# ── Prepare data for modeling ────────────────────────────────────────────────────
+X_cov <- simulated_data %>%
   select(
     scaled_activity_free,
     is_project_manager,
     has_interacted_feature_requests,
     is_freelancer,
     is_low_activity_user
-  ) %>% 
-  mutate(across(everything(), as.numeric)) %>%   # ensure pure numeric
+  ) %>%
+  mutate(across(everything(), as.numeric)) %>% 
   as.data.frame()
 
 Z_treat <- simulated_data$offered_free_trial
 Y_out   <- simulated_data$is_subscribed_after_3months
 
-## ------------------------------------------------------------
-## 3 / Fit Bayesian Causal Forest (probit-BCF)
-## ------------------------------------------------------------
-tic("BCF fit")
+# ── Fit the BCF model ────────────────────────────────────────────────────────────
+tic("BCF model fitting")
 bcf_fit <- stochtree::bcf(
   X_train  = X_cov,
   Z_train  = Z_treat,
   y_train  = Y_out,
-  propensity_train = rep(0.5, nrow(simulated_data)),   # known randomisation
-  num_gfr   = 10,      # warm-start tree draws
-  num_burnin= 0,       # extra burn-in after warm start (none)
-  num_mcmc  = 1000,    # retained posterior draws
-  general_params = list(random_seed = 42),
+  propensity_train = NULL,   # Known randomization probabilities
+  num_gfr   = 100,
+  num_burnin= 0,
+  num_mcmc  = 8000,
+  general_params = list(
+    random_seed          = 142,
+    probit_outcome_model = TRUE,          # Use probit link for binary outcomes
+    sample_sigma2_global = FALSE,
+    sigma2_global_init = 1.0
+  ),
   prognostic_forest_params       = list(sample_sigma2_leaf = FALSE),
   treatment_effect_forest_params = list(sample_sigma2_leaf = FALSE)
 )
 toc()
-
-
-
 ```
 
-After fitting the model, you should always check if the model converged:
+### Model Diagnostics: Did It Converge?
+
+Before trusting any results, we must verify the model converged properly:
 
 ```{r}
 #| message: false
 #| warning: false
 #| echo: true
-#| fig-cap: "Convergence diagnostics for the Average Treatment Effect (ATE)"
-
-# ── libraries ────────────────────────────────────────────────────────────────
-library(posterior)   # ess_bulk(), ess_tail(), as_draws_matrix()
+library(posterior)
 library(bayesplot)
 
-# Posterior draws of the ATE  (vector length = n_draws)
-ate_draws <- colMeans(bcf_fit$tau_hat_train)
+# Extract posterior draws
+tau_raw <- bcf_fit$tau_hat_train   
+mu_raw  <- bcf_fit$mu_hat_train
 
-# ── 1. trace plot (single chain) ─────────────────────────────────────────────
+# Convert to probability scale (this is what we care about!)
+delta_bcf_draws <- pnorm(mu_raw + tau_raw) - pnorm(mu_raw)
+n_draws <- ncol(delta_bcf_draws)
+
+# Average Treatment Effect across all draws
+ate_draws <- colMeans(delta_bcf_draws)
+
+# Convergence diagnostics
 bayesplot::mcmc_trace(
   matrix(ate_draws, ncol = 1, dimnames = list(NULL, "ATE")),
   facet_args = list(nrow = 1), size = 0.4
-)
+) +
+  labs(title = "MCMC Trace Plot: Average Treatment Effect",
+       subtitle = "Looking for good mixing (no trends or flat sections)")
 
-# ── 2. effective sample size (ESS) ───────────────────────────────────────────
-draws_mat    <- posterior::as_draws_matrix(matrix(ate_draws, ncol = 1))
-ate_ess_bulk <- posterior::ess_bulk(draws_mat)
-ate_ess_tail <- posterior::ess_tail(draws_mat)
+# Effective sample size
+bulk_ess <- posterior::ess_bulk(ate_draws)
+tail_ess <- posterior::ess_tail(ate_draws)
 
 cat(sprintf(
-  "Bulk ESS : %.0f\nTail ESS : %.0f\n",
-  ate_ess_bulk, ate_ess_tail
+  "Convergence Diagnostics:\n  Bulk ESS: %.0f (need >100)\n  Tail ESS: %.0f (need >100)\n",
+  bulk_ess, tail_ess
 ))
+
+if (bulk_ess > 100 & tail_ess > 100) {
+  cat("✓ Model converged successfully!\n")
+} else {
+  cat("⚠ Warning: Poor convergence. Consider longer chains.\n")
+}
 
 
 
@@ -449,107 +414,87 @@ If both items look healthy, you can proceed with summaries, plots, and downstrea
 
 After verifying these diagnostics, extract and summarise the posterior draws to understand both the overall Average Treatment Effect (ATE) and the distribution of Individual Treatment Effects (ITEs) across users.
 
+### Model Performance: How Well Did We Do?
 
 ```{r}
-## ------------------------------------------------------------
-## 4 / Posterior summaries
-##    – Individual treatment effects (ITE)
-##    – Average treatment effect (ATE) + 95 % CI
-## ------------------------------------------------------------
-ite_bcf_draws <- bcf_fit$tau_hat_train         # n × draws matrix
 
-# add posterior mean ITE back to the simulation tibble
-simulated_data <- simulated_data %>% 
-  mutate(ITE_bcf = rowMeans(ite_bcf_draws))
+# Add BCF estimates to our data
+simulated_data <- simulated_data %>%
+  mutate(ITE_bcf = rowMeans(delta_bcf_draws))
 
-# ATE posterior distribution
-ate_bcf_draws <- colMeans(ite_bcf_draws)
-ate_bcf_mean  <- mean(ate_bcf_draws)
-ate_bcf_ci    <- quantile(ate_bcf_draws, c(.025, .975))
+# Compare ATE estimates
+ate_mean <- mean(ate_draws)
+ate_ci   <- quantile(ate_draws, c(.025, .975))
 
-message(sprintf(
-  "BCF ATE (posterior mean): %.4f  –  95%% CI: [%.4f, %.4f]",
-  ate_bcf_mean, ate_bcf_ci[1], ate_bcf_ci[2]
+cat(sprintf(
+  "Treatment Effect Comparison:\n  True ATE: %.4f\n  BCF ATE:  %.4f [95%% CI: %.4f, %.4f]\n",
+  true_ATE_prob, ate_mean, ate_ci[1], ate_ci[2]
 ))
 
+# Overall correlation between true and estimated ITEs
+correlation <- cor(simulated_data$ITE_prob_subscribe, simulated_data$ITE_bcf)
+cat(sprintf("ITE Correlation (true vs. BCF): %.3f\n", correlation))
 
 ```
 
-The real power of BCF lies in its ability to uncover treatment effect
-heterogeneity. Let's visualize how the estimated ITE varies with user activity
-levels. We'll bin users by their scaled free-tier activity and plot the mean
-true ITE (from our data generating process) against the BCF's posterior mean
-ITE, along with a credible interval.
+### Visualizing Treatment Effect Heterogeneity
+
+The real power of BCF lies in capturing how treatment effects vary across users:
 
 ```{r}
 #| message: false
 #| warning: false
-## ------------------------------------------------------------
-## Continuous heterogeneity: ribbon = 75 % BCF credible interval
-## ------------------------------------------------------------
-library(dplyr)
-library(ggplot2)
-
-## 1. Bin the activity covariate (40 quantile bins)
+# ── Continuous heterogeneity by activity level ──────────────────────────────────
 n_bins <- 40
-simulated_data <- simulated_data %>% 
+simulated_data <- simulated_data %>%
   mutate(act_bin = ntile(scaled_activity_free, n_bins))
 
-## 2. Pre-compute: mean of scaled_activity_free & true ITE for each bin
-bin_stats <- simulated_data %>% 
-  group_by(act_bin) %>% 
+# Calculate bin statistics
+bin_stats <- simulated_data %>%
+  group_by(act_bin) %>%
   summarise(
-    x_mid      = mean(scaled_activity_free),
-    true_ite   = mean(ITE_prob_subscribe),
-    .groups    = "drop"
+    x_mid    = mean(scaled_activity_free),
+    true_ite = mean(ITE_prob_subscribe),
+    .groups  = "drop"
   )
 
-## 3. Posterior mean ITE per bin, for every MCMC draw
-n_draws <- ncol(ite_bcf_draws)
+# BCF posterior summaries by bin
+bin_index   <- simulated_data$act_bin
+draw_means  <- matrix(NA_real_, nrow = n_draws, ncol = n_bins)
 
-# indices for faster split-apply
-bin_index <- simulated_data$act_bin
-draw_means <- matrix(NA_real_, nrow = n_draws, ncol = n_bins)
-
-for (b in 1:n_bins) {
+for (b in seq_len(n_bins)) {
   rows_b <- which(bin_index == b)
-  # average ITE in that bin for each draw (vectorised colMeans)
-  draw_means[, b] <- colMeans(ite_bcf_draws[rows_b, , drop = FALSE])
+  draw_means[, b] <- colMeans(delta_bcf_draws[rows_b, , drop = FALSE])
 }
 
-## 4. Posterior summary: mean & 75 % CI
 bcf_mean  <- colMeans(draw_means)
 bcf_lower <- apply(draw_means, 2, quantile, probs = 0.125)
 bcf_upper <- apply(draw_means, 2, quantile, probs = 0.875)
 
-bin_stats <- bin_stats %>% 
+bin_stats <- bin_stats %>%
   mutate(
     bcf_mean  = bcf_mean,
     bcf_lower = bcf_lower,
     bcf_upper = bcf_upper
   )
 
-## 5. Plot
+# Create the plot
 ggplot(bin_stats, aes(x_mid)) +
-  geom_ribbon(aes(ymin = bcf_lower,
-                  ymax = bcf_upper),
-              fill  = "darkgreen",
-              alpha = 0.25) +
-  geom_line(aes(y = bcf_mean,
-                colour = "BCF"),
-            linewidth = 1.2) +
-  geom_line(aes(y = true_ite,
-                colour = "True ITE"),
-            linewidth = 1.2) +
-  scale_colour_manual(values = c("True ITE" = "blue",
-                                 "BCF"      = "darkgreen"),
-                      name = NULL) +
-  labs(title = "ITE heterogeneity by free-tier activity",
-       x     = "Scaled free-tier activity",
-       y     = "Individual treatment effect") +
+  geom_ribbon(aes(ymin = bcf_lower, ymax = bcf_upper),
+              fill = "darkgreen", alpha = 0.25) +
+  geom_line(aes(y = bcf_mean,  color = "BCF Estimate"),  size = 1.2) +
+  geom_line(aes(y = true_ite, color = "True ITE"), size = 1.2) +
+  scale_color_manual(values = c("True ITE" = "blue", "BCF Estimate" = "darkgreen")) +
+  labs(
+    title = "Treatment Effect Heterogeneity by User Activity",
+    subtitle = "BCF captures the non-linear relationship between activity and treatment response",
+    x = "Scaled Free-Tier Activity Level",
+    y = "Individual Treatment Effect",
+    color = NULL
+  ) +
   theme_minimal(base_size = 14) +
-  theme(legend.position = "bottom",
-        legend.margin   = margin(t = -4))
+  theme(legend.position = "bottom")
+
 
 
 ```
@@ -565,96 +510,85 @@ users for whom the intervention is "meaningfully" positive?
 ## Visual: BCF posterior P(ITE > thresh) vs. truth label
 ## ------------------------------------------------------------
 
-thresh <- 0.05                             # target treatment-effect threshold
+thresh <- 0.05  # 5 percentage point improvement threshold
 
-# 1) posterior   P(ITE > thresh | data, model)
-p_bcf_gt <- rowMeans(ite_bcf_draws > thresh)
+# BCF posterior probability that ITE > threshold
+p_bcf_gt <- rowMeans(delta_bcf_draws > thresh)
 
-# 2) ground-truth indicator from the DGP
-sim <- simulated_data %>% 
-  mutate(true_gt = ITE_prob_subscribe > thresh)
-
-# 3) long format for ggplot
-bcf_long <- sim %>% 
-  transmute(
-    TruthLabel = factor(
-      ifelse(true_gt,
-             paste0("ITE > ", thresh),
-             paste0("ITE \u2264 ", thresh))          # ≤ symbol
-    ),
-    PostProb = p_bcf_gt
+# Ground truth
+sim_with_probs <- simulated_data %>% 
+  mutate(
+    true_gt = ITE_prob_subscribe > thresh,
+    bcf_prob_gt = p_bcf_gt
   )
 
-# 4) histogram by truth label
-ggplot(bcf_long, aes(PostProb)) +
-  geom_histogram(binwidth = 0.02,
-                 fill = "steelblue",
-                 colour = "white",
-                 alpha = 0.9) +
-  facet_wrap(~ TruthLabel,
-             ncol   = 1,
-             scales = "fixed") +
-  scale_x_continuous(limits = c(0, 1),
-                     breaks = seq(0, 1, 0.25)) +
-  scale_y_continuous(limits = c(0, 1000)) +
-  labs(
-    title = paste0("BCF posterior P(ITE > ", thresh, ") by truth label"),
-    x     = "Posterior probability",
-    y     = "Users"
-  ) +
-  theme_minimal(base_size = 18) +
-  theme(strip.text = element_text(face = "bold")) +
+# Calibration visualization
+sim_with_probs %>%
+  mutate(
+    TruthLabel = factor(
+      ifelse(true_gt,
+             paste0("True ITE > ", thresh),
+             paste0("True ITE ≤ ", thresh))
+    )
+  ) %>%
+  ggplot(aes(bcf_prob_gt)) +
+  geom_histogram(binwidth = 0.05, fill = "steelblue", color = "white", alpha = 0.9) +
+  facet_wrap(~ TruthLabel, ncol = 1, scales = "free_y") +
   scale_x_continuous(
-  limits = c(0, 1),
-  breaks = seq(0, 1, 0.25),
-  labels = scales::percent_format(accuracy = 1)   # 0%, 25%, … 100%
-)
+    breaks = seq(0, 1, 0.25),
+    labels = scales::percent_format(accuracy = 1)
+  ) +
+  labs(
+    title = "Model Calibration: Posterior Probabilities vs. Ground Truth",
+    subtitle = paste0("BCF posterior P(ITE > ", thresh, ") by actual truth status"),
+    x = "BCF Posterior Probability",
+    y = "Number of Users"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(strip.text = element_text(face = "bold"))
 ```
 
-Finally, let's look at Conditional Average Treatment Effects (CATEs) by user
-role. This provides a summary of how the treatment effect, both true and
-BCF-estimated, varies across predefined user segments.
+### Segment-Level Insights
+
+Business stakeholders often think in terms of user segments:
 
 ```{r}
 #| message: false
 #| warning: false
-## ------------------------------------------------------------
-## CATE heterogeneity by user role (truth vs. BCF estimate)
-## ------------------------------------------------------------
-
-simulated_data %>% 
+# ── CATE by user role ────────────────────────────────────────────────────────────
+segment_comparison <- simulated_data %>% 
   pivot_longer(
-    cols      = c(ITE_prob_subscribe, ITE_bcf),   # true vs. model
-    names_to  = "Type",
+    cols      = c(ITE_prob_subscribe, ITE_bcf),
+    names_to  = "estimate_type",
     values_to = "ITE"
   ) %>% 
   mutate(
-    Type = recode(
-      Type,
+    estimate_type = recode(estimate_type,
       ITE_prob_subscribe = "True ITE",
-      ITE_bcf            = "BCF"
+      ITE_bcf            = "BCF Estimate"
     )
-  ) %>% 
-  ggplot(aes(user_role, ITE, fill = Type)) +
+  )
+
+ggplot(segment_comparison, aes(user_role, ITE, fill = estimate_type)) +
   geom_boxplot(
-    width          = 0.8,
-    position       = position_dodge(width = 0.9),
-    outlier.alpha  = 0.15
+    width = 0.8,
+    position = position_dodge(width = 0.9),
+    outlier.alpha = 0.3
   ) +
   scale_fill_manual(
-    values = c("True ITE" = "blue",
-               "BCF"      = "darkgreen"),
-    name   = NULL
+    values = c("True ITE" = "lightblue", "BCF Estimate" = "darkgreen"),
+    name = NULL
   ) +
   labs(
-    title = "CATE heterogeneity by user role",
-    x     = "User role",
-    y     = "Individual treatment effect"
+    title = "Treatment Effects by User Role: Truth vs. Model",
+    subtitle = "BCF successfully captures segment-level differences",
+    x = "User Role",
+    y = "Individual Treatment Effect"
   ) +
   theme_minimal(base_size = 14) +
   theme(
     axis.text.x = element_text(angle = 25, hjust = 1),
-    strip.text  = element_text(face = "bold")
+    legend.position = "bottom"
   )
 
 ```
@@ -671,20 +605,29 @@ Below we illustrate a principled, fully Bayesian way to do that.
 
 ### Method
 
-1. For every posterior draw \(d = 1,\dots,D\) of the BCF we already have an
-   ITE estimate \(\tau_{id}\) for each creator \(i\).
-2. **Within each draw** we  
-   - keep only the control-group creators  
-   - rank them by \(\tau_{id}\) (descending)  
-   - mark the top *N* with a 1, the rest with 0.
-3. Averaging those indicators across draws gives  
-   \[
-   p_i \;=\; \frac1D \sum_{d=1}^D \mathbf 1\{i\text{ is in top }N\text{ in draw }d\},
-   \]
-   the posterior probability that creator \(i\) truly belongs to the top-N.
-4. We **select the N control creators with the largest \(p_i\)**.
-5. Finally we check, using the hidden ground-truth ITE from the DGP, how many
-   of our picks actually *are* in the true top-N.
+The goal is to identify control-group users who are most likely to benefit from the intervention, where "benefit" is defined as a high positive Individual Treatment Effect (ITE) on their probability of subscription.
+
+1.  For every posterior draw \(d = 1, \dots, D\) from our BCF model, we have estimates of \(\mu_{id}\) (latent prognostic effect) and \(\tau_{id}\) (latent treatment effect) for each creator \(i\). We use these to calculate the ITE on the probability scale for that draw:
+    $$
+    \Delta p_{id} = \Phi(\mu_{id} + \tau_{id}) - \Phi(\mu_{id})
+    $$
+    where \(\Phi\) is the standard normal CDF. This \(\Delta p_{id}\) represents the estimated change in subscription probability for creator \(i\) due to the trial, according to draw \(d\).
+
+2.  **Within each posterior draw \(d\)**:
+    * We consider only the creators who were in the control group (i.e., not offered the trial).
+    * We rank these control-group creators based on their estimated ITE on the probability scale, \(\Delta p_{id}\), in descending order.
+    * We mark the top *N* ranked creators with a '1' (indicating they are among the most positively impacted in this draw) and the rest with a '0'.
+
+3.  After repeating this for all \(D\) posterior draws, we average these indicator marks for each creator \(i\) in the control group:
+    $$
+    \text{Prob}(\text{User } i \text{ is Top-N}) = \frac{1}{D} \sum_{d=1}^{D} \mathbf{1}\{\text{creator } i \text{ is in the top } N \text{ (by } \Delta p_{id}\text{) in draw } d\}
+    $$
+    This gives us \( \text{Prob}(\text{User } i \text{ is Top-N}) \), the posterior probability that creator \(i\) is truly among the *N* control-group users who would experience the largest increase in subscription probability if treated.
+
+4.  We then **select the *N* control-group creators who have the highest calculated posterior probability** \( \text{Prob}(\text{User } i \text{ is Top-N}) \).
+
+5.  Finally, using the ground-truth ITEs on the probability scale (`ITE_prob_subscribe` from our synthetic DGP), we evaluate our selection by checking how many of the chosen *N* creators actually are among the true top-*N* most impacted individuals in the control group.
+
    
 ```{r}
 #| message: false
@@ -694,24 +637,15 @@ Below we illustrate a principled, fully Bayesian way to do that.
 ## ------------------------------------------------------------
 N_target <- 1000
 
-## 1. isolate control-group rows & their ITE draws -------------
 control_idx       <- which(Z_treat == 0)
-ite_control_draws <- ite_bcf_draws[control_idx, ]    # m  ×  D
+delta_control     <- delta_bcf_draws[control_idx, ]      # Δ-draws
 
-## 2. indicator: 1 if creator is in top-N for draw d -----------
 indicator <- apply(
-  ite_control_draws, 2L,
-  function(draw_vec) {
-    top <- order(draw_vec, decreasing = TRUE)[seq_len(N_target)]
-    idx <- integer(length(draw_vec)); idx[top] <- 1
-    idx
-  }
+  delta_control, 2L,
+  function(v) { idx <- integer(length(v)); idx[order(v, decreasing = TRUE)[1:N_target]] <- 1; idx }
 )
+prob_topN <- rowMeans(indicator)
 
-## 3. posterior probability of being in top-N ------------------
-prob_topN <- rowMeans(indicator)                      # length = m
-
-## 4. add to main tibble ---------------------------------------
 simulated_data$prob_topN <- NA_real_
 simulated_data$prob_topN[control_idx] <- prob_topN
 
