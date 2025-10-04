@@ -5,7 +5,8 @@ project:
 book:
   title: "Business Data Science"
   subtitle: A guide for data-driven decisions
-  author: "Ignacio Martinez, ..."
+  author: "Ignacio Martinez"
+  abstract: "This book provides a comprehensive guide to the principles and applications of business data science, with a focus on making sound, data-driven decisions. We begin by laying the groundwork, introducing core concepts such as the potential outcomes framework, the importance of baselines, and the fundamentals of Bayesian thinking. The book then delves into the gold standard of causal inference: randomized controlled trials (RCTs). We explore the design and analysis of RCTs, including factorial designs and instrumental variable approaches. Recognizing that RCTs are not always feasible, we then present a variety of other powerful methods, including matching, causal impact analysis, and Bayesian structural time-series. The book also covers generalized linear models, from Bayesian linear models to more advanced topics like meta-analysis and hurdle models. Finally, we explore the use of stochastic trees for causal inference, with chapters on Bayesian Additive Regression Trees (BART), Bayesian Causal Forests (BCF), and other cutting-edge techniques. Throughout the book, the emphasis is on the practical application of these methods to solve real-world business problems"
   license: "CC BY-NC"
   repo-actions: [edit]
   site-url: https://book.martinez.fyi
@@ -63,7 +64,7 @@ google-scholar: true
 citation:
   type: book
   container-title: "Business Data Science: A guide for data-driven decisions"
-  url: https:/book.martinez.fyi
+  url: https://book.martinez.fyi
   
 format:
   html:
