@@ -77,7 +77,11 @@ relevant academic papers and further resources, allowing you to dive deeper into
 any topic that piques your interest or demands more thorough exploration for
 your specific needs.
 
-To further assist you, I have created [Iggy](https://iggy.martinez.fyi), an AI Data Science agent that acts as a companion to this book. Iggy is designed to answer your data science questions using the contents of this book as its knowledge base, providing an interactive way to explore and clarify the concepts discussed in these pages.
+To further assist you, I have created [Iggy](https://iggy.martinez.fyi),
+an AI Data Science agent that acts as a companion to this book. Iggy is
+designed to answer your data science questions using the contents of this
+book as its knowledge base, providing an interactive way to explore and
+clarify the concepts discussed in these pages.
 
 By the book's conclusion, you'll possess a basic foundation in business data
 science and the confidence to leverage data as a driving force for
