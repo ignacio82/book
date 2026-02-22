@@ -46,7 +46,7 @@ To avoid installing R and all its dependencies locally, you can build and render
 2. Run the container to render the book. To prevent generated files (like caches and compiled models) from cluttering your repository, we render everything into a dedicated `_docker_build` subfolder that will be ignored by Git:
    ```bash
    mkdir -p _docker_build
-   docker run --rm -v "$(pwd):/src:ro" -v "$(pwd)/_docker_build:/book" business-data-science-book bash -c "cp -a /src/. /book/ && quarto render"
+   docker run --rm -v "$(pwd):/src:ro" -v "$(pwd)/_docker_build:/book" business-data-science-book bash -O extglob -O dotglob -c "cp -a /src/!(_docker_build) /book/ && quarto render"
    ```
    Once finished, you can find the fully rendered book at `_docker_build/docs/index.html`.
 
