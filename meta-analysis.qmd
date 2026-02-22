@@ -132,10 +132,10 @@ where:
 
 - $\tau$ is the standard deviation in lift
 
-To fit this model you can use `im::metaAnalysis()`:
+To fit this model you can use `imt::metaAnalysis()`:
 
 ```{r meta-analysis, warning=FALSE, results = "hide"}
-library(im)
+library(imt)
 
 test_meta <- metaAnalysis$new(data = studies, point_estimates = lift_hat,
                               standard_errors = std_err, id = study)

@@ -36,7 +36,34 @@ jobs:
             any::rmarkdown
             any::downlit
             any::xml2
+            any::ggplot2
+            any::dplyr
+            any::tidyr
+            any::tibble
+            any::purrr
+            any::tidyverse
+            any::broom
+            any::scales
+            any::patchwork
+            any::ggiraph
+            any::ggpubr
+            any::stochtree
+            any::CausalImpact
+            any::bsynth
+            any::rstan
+            any::bayesplot
+            any::posterior
+            any::vizdraws
+            any::glossary
+            any::furrr
+            any::tictoc
+            any::glue
+            any::shinydashboard
+            any::remotes
           
+      - name: Install GitHub Packages
+        run: Rscript -e "remotes::install_github(c('google/imt', 'google/biva'))"
+
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:

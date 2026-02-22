@@ -180,7 +180,7 @@ effects that matter in practice. This focus is crucial in business, where even
 small but reliable improvements can have substantial impacts.
 
 
-The {im} package fits a Bayesian linear model using [weakly informative
+The {imt} package fits a Bayesian linear model using [weakly informative
 priors](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations) for
 the covariates and allows the user to set more informative priors for the impact
 of the intervention. If $y$ is the outcome of interest, the model is specified
@@ -227,7 +227,7 @@ model, you just need to run the following code:
 
 
 ```{r blm, message=FALSE, results = "hide"}
-library(im)
+library(imt)
 
 fitted_blm <- blm$new(
   y = "y", 
@@ -310,7 +310,7 @@ investment.
 
 ::: {.content-visible when-format="html"}
 
-The {im} package enables the creation of interactive visualizations that
+The {imt} package enables the creation of interactive visualizations that
 effectively demonstrate our data insights and summarize the risks associated
 with various decisions.
 

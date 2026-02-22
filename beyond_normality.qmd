@@ -110,7 +110,7 @@ $$
 $$
 
 ```{r priors_check, fig.align = 'center', message=FALSE, results = "hide"}
-logit <- im::logit$new(
+logit <- imt::logit$new(
   data = fake_data,
   y = "y", # this will not be used
   treatment = "treat",
@@ -132,7 +132,7 @@ logit$plotPrior()
 Satisfied with our priors, we're ready to fit the model to the data:
 
 ```{r fit, fig.align = 'center', message=FALSE, results = "hide"}
-logit <- im::logit$new(
+logit <- imt::logit$new(
   data = fake_data,
   y = "y",
   treatment = "treat",
@@ -332,14 +332,14 @@ lm(data = fake_data, log(y) ~ x1 + x2 + t) %>% broom::tidy(conf.int = TRUE)
 
 ### Taming Overdispersion: The Bayesian Negative Binomial Advantage
 
-Enter the Bayesian negative binomial model, easily implemented using the {im}
+Enter the Bayesian negative binomial model, easily implemented using the {imt}
 package in R. This approach has two key advantages. First, it better captures
 the true data-generating process. Second, being Bayesian, it lets us incorporate
 prior information and express our findings in a way that's more directly
 relevant to business decisions.
 
 ```{r NB, message=FALSE, results = "hide"}
-library(im)
+library(imt)
 nb <- negativeBinomial$new(
   data = fake_data, y = "y", x = c("x1", "x2"),
   treatment = "t", tau_mean = 0.0, tau_sd = 0.025
