@@ -35,6 +35,19 @@ This book is written and built using [Quarto](https://quarto.org/). To render th
    quarto render
    ```
 
+### Using Docker
+
+To avoid installing R and all its dependencies locally, you can build and render the book using Docker. This ensures an isolated environment mirroring the CI process.
+
+1. Build the Docker image (this will take a few minutes as it installs all packages):
+   ```bash
+   docker build -t business-data-science-book .
+   ```
+2. Run the container to render the book. By mounting your current directory, the rendered output will be saved back to your local filesystem:
+   ```bash
+   docker run --rm -v "$(pwd):/book" business-data-science-book
+   ```
+
 ## 📄 License
 
 This book is licensed under the [Creative Commons Attribution-NonCommercial 4.0](https://creativecommons.org/licenses/by-nc/4.0/) License.
