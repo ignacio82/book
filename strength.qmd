@@ -1,7 +1,7 @@
 ---
 title: "Study Design"
 share:
-  permalink: "https://book.martinez.fyi/strenght.html"
+  permalink: "https://book.martinez.fyi/strength.html"
   description: "Pilot Strength: Designing Decision-Centric Business Experiments"
   linkedin: true
   email: true
@@ -210,8 +210,8 @@ The simulation below assesses how frequently a study with a moderate sample size
 (n=500 per group) might incorrectly estimate the direction or exaggerate the
 magnitude of the observed effect:
 
-Now lets run some simulations to estimate type S and M errors. The code bellow
-runs 10,000 simulations with 500 obervations in the treatment and 500 in the
+Now lets run some simulations to estimate type S and M errors. The code below
+runs 10,000 simulations with 500 observations in the treatment and 500 in the
 control group, 5% probability of churn for the control group, and and impact
 of 2 percentage points for treated units.
 
@@ -455,7 +455,7 @@ that the treatment effect exceeds our decision threshold.
 ```{stan output.var = "logit"}
 data {
   int N;                          // Number of observations
-  int<lower = 0, upper = 1> y[N]; // Outcome (binary 0 or 1)
+  array[N] int<lower = 0, upper = 1> y; // Outcome (binary 0 or 1)
   vector[N] treat;      // Treatment indicator
   real mean_alpha;
   real sd_alpha;
@@ -801,7 +801,7 @@ run_simulations <-
            tau_sd,
            periods,
            threshold,
-           num_cores = 1) {
+           num_cores = max(1, parallel::detectCores() - 1)) {
     # Function to run a single simulation
     run_single_sim <- function(i) {
       # Generate synthetic data with a unique seed
@@ -836,12 +836,12 @@ run_simulations <-
     probabilities <- 1:N %>%
       {
         if (num_cores > 1) {
-          # Use future_map for parallel execution
-          future::plan(future::multicore, workers = num_cores) # Setup parallel processing
-          future_map(., run_single_sim)
+          # Use future_map_dbl for parallel execution
+          future::plan(future::multisession, workers = num_cores) # Setup parallel processing
+          furrr::future_map_dbl(., run_single_sim, .options = furrr::furrr_options(seed = TRUE, packages = "rstan"))
         } else {
-          # Use map for sequential execution
-          map(., run_single_sim)
+          # Use map_dbl for sequential execution
+          purrr::map_dbl(., run_single_sim)
         }
       }
 
@@ -855,6 +855,7 @@ Let's run the simulations with 2000 observations:
 ```{r}
 #| warning: false
 #| message: false
+#| cache: true
 simulations <- run_simulations(
   N = 200,
   num_observations = 2000,
@@ -869,7 +870,7 @@ simulations <- run_simulations(
   tau_sd = 2,
   periods = c(1, 2, 3),
   threshold = 0.01,
-  num_cores = 4
+  num_cores = max(1, parallel::detectCores() - 1)
 )
 ```
 
@@ -884,6 +885,7 @@ observations we will only have 1000 observations.
 ```{r}
 #| warning: false
 #| message: false
+#| cache: true
 simulations <- run_simulations(
   N = 200,
   num_observations = 1000,
@@ -898,7 +900,7 @@ simulations <- run_simulations(
   tau_sd = 2,
   periods = c(1, 2, 3),
   threshold = 0.01,
-  num_cores = 4
+  num_cores = max(1, parallel::detectCores() - 1)
 )
 ```
 
@@ -912,6 +914,7 @@ feature.
 ```{r}
 #| warning: false
 #| message: false
+#| cache: true
 simulations <- run_simulations(
   N = 200,
   num_observations = 1000,
@@ -926,7 +929,7 @@ simulations <- run_simulations(
   tau_sd = 2,
   periods = c(1, 2, 3),
   threshold = 0.01,
-  num_cores = 4
+  num_cores = max(1, parallel::detectCores() - 1)
 )
 ```
 
