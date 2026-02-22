@@ -58,6 +58,7 @@ jobs:
             any::tictoc
             any::glue
             any::shinydashboard
+            any::shinylive
             any::remotes
             google/imt
             google/biva
