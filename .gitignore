@@ -11,3 +11,4 @@ _freeze/
 *.log
 *.tex
 *.toc
+_docker_build/
