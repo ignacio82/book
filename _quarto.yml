@@ -94,6 +94,8 @@ format:
 resources:
   - CNAME
   - b1020836019d4ba6810c61a919d3867a.txt
+  - robots.txt
+  - llms.txt
 execute:
   freeze: auto
 
