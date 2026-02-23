@@ -83,7 +83,6 @@ $$
 Let's generate data from this DGP and fit a BCF model using the {stochtree} package:
 
 ```{r data}
-#| label: data
 #| warning: false
 #| message: false
 
@@ -188,8 +187,8 @@ After fitting the model, it's crucial to assess convergence. One way to do this 
 ```{r traceplot}
 library(ggplot2)
 df <- tibble::tibble(
-  sample = 1:length(bcf_model_warmstart$sigma2_samples),
-  sigma2_samples = bcf_model_warmstart$sigma2_samples
+  sample = 1:length(bcf_model_warmstart$sigma2_global_samples),
+  sigma2_samples = bcf_model_warmstart$sigma2_global_samples
 )
 
 
@@ -260,7 +259,6 @@ ggplot(df, aes(x = predicted, y = actual)) +
 Finally, let's check our coverage:
 
 ```{r coverage}
-#| label: coverage
 test_lb <- apply(bcf_model_warmstart$tau_hat_test, 1, quantile, 0.025)
 test_ub <- apply(bcf_model_warmstart$tau_hat_test, 1, quantile, 0.975)
 cover <- (
