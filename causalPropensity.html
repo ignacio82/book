@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.8.27">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -70,14 +70,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./hex.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-364982630eef5352dd1537128a8ed5cb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-0dd2bd5de344125cf763a379ddc3eb04.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/social-share.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/all.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -123,7 +124,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -154,7 +155,7 @@ window.Quarto = {
 <meta name="twitter:image-width" content="1024">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="citation_title" content="[24]{.chapter-number}&nbsp; [Causal Propensity Modeling]{.chapter-title}">
-<meta name="citation_fulltext_html_url" content="https:/book.martinez.fyi">
+<meta name="citation_fulltext_html_url" content="https://book.martinez.fyi">
 <meta name="citation_language" content="en">
 <meta name="citation_book_title" content="Business Data Science: A guide for data-driven decisions">
 <meta name="citation_reference" content="citation_title=Sur les applications de la théorie des probabilités aux experiences agricoles: Essai des principes;,citation_author=Jersey Neyman;,citation_publication_date=1923;,citation_cover_date=1923;,citation_year=1923;,citation_issue=1;,citation_volume=10;,citation_journal_title=Roczniki Nauk Rolniczych;">
@@ -252,7 +253,8 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
-      <img src="./hex.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="./hex.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="./hex.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Business Data Science</a> 
@@ -561,7 +563,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 <p>The teams at SaaSify understand that a free trial isn’t universally effective. Their objective is to measure the <strong>causal impact</strong> of the Pro Tier trial. Specifically, they want to determine how offering the trial influences a user’s probability of subscribing to the paid tier three months down the line, relative to users not offered the trial. The aim is to target users for whom the trial will be most impactful and avoid offering it where it’s likely to be ineffective or, worse, counterproductive.</p>
 <p>To achieve this, they randomly assign the free trial offer to a subset of users—this randomization is key for causal inference. The outcome of interest is the subscription status three months after the trial offer. The R code that follows generates synthetic data for this scenario.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── pkgs ────────────────────────────────────────────────────────────────────────</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── pkgs ────────────────────────────────────────────────────────────────────────</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)      <span class="co"># wrangling</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)      <span class="co"># pivot_longer later</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)     <span class="co"># tibbles</span></span>
@@ -690,11 +692,11 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 <span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(</span>
 <span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>  <span class="st">"True Average Treatment Effect (ATE) on probability scale: %.4f</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>  true_ATE_prob</span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>True Average Treatment Effect (ATE) on probability scale: 0.2461</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Histogram of predicted subscription probabilities ─────────────────────────</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Histogram of predicted subscription probabilities ─────────────────────────</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>simulated_data <span class="sc">%&gt;%</span> </span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(p0_subscribe_no_trial, p1_subscribe_with_trial) <span class="sc">%&gt;%</span> </span>
@@ -721,7 +723,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">x     =</span> <span class="st">"Subscription probability (%)"</span>,</span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">y     =</span> <span class="st">"Users"</span></span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 4 rows containing missing values or values outside the scale range
 (`geom_bar()`).</code></pre>
@@ -733,7 +735,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># distribution of ITEs</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># distribution of ITEs</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(simulated_data, <span class="fu">aes</span>(ITE_prob_subscribe)) <span class="sc">+</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">60</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> true_ATE_prob, <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
@@ -747,7 +749,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x     =</span> <span class="fu">expression</span>(Δ[p] <span class="sc">==</span> p[<span class="dv">1</span>] <span class="sc">-</span> p[<span class="dv">0</span>]),</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y     =</span> <span class="st">"Users"</span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -755,7 +757,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>overwhelmed_novice_freelancers_data <span class="ot">&lt;-</span> simulated_data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>overwhelmed_novice_freelancers_data <span class="ot">&lt;-</span> simulated_data <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_freelancer <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> is_low_activity_user <span class="sc">==</span> <span class="dv">1</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>overwhelmed_novice_freelancers_data <span class="sc">%&gt;%</span></span>
@@ -778,7 +780,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ITE Distribution for 'Overwhelmed Novice' Freelancers"</span>,</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">expression</span>(<span class="st">"ITE (p"</span>[<span class="dv">1</span>] <span class="sc">*</span> <span class="st">" - p"</span>[<span class="dv">0</span>] <span class="sc">*</span> <span class="st">")"</span>),</span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -786,7 +788,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>high_activity_pms_data <span class="ot">&lt;-</span> simulated_data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>high_activity_pms_data <span class="ot">&lt;-</span> simulated_data <span class="sc">%&gt;%</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    is_project_manager <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>      scaled_activity_free <span class="sc">&gt;</span> <span class="fu">quantile</span>(scaled_activity_free, <span class="fl">0.70</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
@@ -809,7 +811,7 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ITE Distribution for High Activity Project Managers"</span>,</span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">expression</span>(<span class="st">"ITE (p"</span>[<span class="dv">1</span>] <span class="sc">*</span> <span class="st">" - p"</span>[<span class="dv">0</span>] <span class="sc">*</span> <span class="st">")"</span>),</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -817,9 +819,9 @@ Rather than focusing on immediate revenue metrics that might be misleading (a us
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># peek at the data structure</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># peek at the data structure</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ─────────────────────────────────────</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(simulated_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(simulated_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 5,000
 Columns: 16
@@ -850,7 +852,7 @@ $ is_subscribed_after_3months     &lt;int&gt; 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1
 <h3 class="anchored" data-anchor-id="why-bcf">Why BCF?</h3>
 <p>Traditional methods assume treatment effects are either constant or follow simple patterns. BCF uses tree-based methods to discover complex interactions and non-linearities while maintaining proper uncertainty quantification through Bayesian inference.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Load BCF package ─────────────────────────────────────────────────────────────</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Load BCF package ─────────────────────────────────────────────────────────────</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stochtree)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -888,9 +890,9 @@ $ is_subscribed_after_3months     &lt;int&gt; 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1
 <span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">prognostic_forest_params       =</span> <span class="fu">list</span>(<span class="at">sample_sigma2_leaf =</span> <span class="cn">FALSE</span>),</span>
 <span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment_effect_forest_params =</span> <span class="fu">list</span>(<span class="at">sample_sigma2_leaf =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>BCF model fitting: 693.587 sec elapsed</code></pre>
+<pre><code>BCF model fitting: 613.297 sec elapsed</code></pre>
 </div>
 </div>
 </section>
@@ -898,7 +900,7 @@ $ is_subscribed_after_3months     &lt;int&gt; 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1
 <h3 class="anchored" data-anchor-id="model-diagnostics-did-it-converge">Model Diagnostics: Did It Converge?</h3>
 <p>Before trusting any results, we must verify the model converged properly:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(posterior)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(posterior)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract posterior draws</span></span>
@@ -918,7 +920,7 @@ $ is_subscribed_after_3months     &lt;int&gt; 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">facet_args =</span> <span class="fu">list</span>(<span class="at">nrow =</span> <span class="dv">1</span>), <span class="at">size =</span> <span class="fl">0.4</span></span>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"MCMC Trace Plot: Average Treatment Effect"</span>,</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Looking for good mixing (no trends or flat sections)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Looking for good mixing (no trends or flat sections)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -926,26 +928,26 @@ $ is_subscribed_after_3months     &lt;int&gt; 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Effective sample size</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Effective sample size</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>bulk_ess <span class="ot">&lt;-</span> posterior<span class="sc">::</span><span class="fu">ess_bulk</span>(ate_draws)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>tail_ess <span class="ot">&lt;-</span> posterior<span class="sc">::</span><span class="fu">ess_tail</span>(ate_draws)</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Convergence Diagnostics:</span><span class="sc">\n</span><span class="st">  Bulk ESS: %.0f (need &gt;100)</span><span class="sc">\n</span><span class="st">  Tail ESS: %.0f (need &gt;100)</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  bulk_ess, tail_ess</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Convergence Diagnostics:
-  Bulk ESS: 66 (need &gt;100)
-  Tail ESS: 149 (need &gt;100)</code></pre>
+  Bulk ESS: 1728 (need &gt;100)
+  Tail ESS: 3226 (need &gt;100)</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (bulk_ess <span class="sc">&gt;</span> <span class="dv">100</span> <span class="sc">&amp;</span> tail_ess <span class="sc">&gt;</span> <span class="dv">100</span>) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (bulk_ess <span class="sc">&gt;</span> <span class="dv">100</span> <span class="sc">&amp;</span> tail_ess <span class="sc">&gt;</span> <span class="dv">100</span>) {</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✓ Model converged successfully!</span><span class="sc">\n</span><span class="st">"</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"⚠ Warning: Poor convergence. Consider longer chains.</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>⚠ Warning: Poor convergence. Consider longer chains.</code></pre>
+<pre><code>✓ Model converged successfully!</code></pre>
 </div>
 </div>
 <table class="caption-top table">
@@ -985,7 +987,7 @@ $ is_subscribed_after_3months     &lt;int&gt; 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Quick checklist
+<span class="screen-reader-only">Note</span>Quick checklist
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1001,7 +1003,7 @@ Quick checklist
 <section id="model-performance-how-well-did-we-do" class="level3">
 <h3 class="anchored" data-anchor-id="model-performance-how-well-did-we-do">Model Performance: How Well Did We Do?</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add BCF estimates to our data</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add BCF estimates to our data</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>simulated_data <span class="ot">&lt;-</span> simulated_data <span class="sc">%&gt;%</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ITE_bcf =</span> <span class="fu">rowMeans</span>(delta_bcf_draws))</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1012,17 +1014,17 @@ Quick checklist
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Treatment Effect Comparison:</span><span class="sc">\n</span><span class="st">  True ATE: %.4f</span><span class="sc">\n</span><span class="st">  BCF ATE:  %.4f [95%% CI: %.4f, %.4f]</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  true_ATE_prob, ate_mean, ate_ci[<span class="dv">1</span>], ate_ci[<span class="dv">2</span>]</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Treatment Effect Comparison:
   True ATE: 0.2461
-  BCF ATE:  0.2484 [95% CI: 0.2209, 0.2806]</code></pre>
+  BCF ATE:  0.2478 [95% CI: 0.2252, 0.2698]</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Overall correlation between true and estimated ITEs</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Overall correlation between true and estimated ITEs</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>correlation <span class="ot">&lt;-</span> <span class="fu">cor</span>(simulated_data<span class="sc">$</span>ITE_prob_subscribe, simulated_data<span class="sc">$</span>ITE_bcf)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"ITE Correlation (true vs. BCF): %.3f</span><span class="sc">\n</span><span class="st">"</span>, correlation))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"ITE Correlation (true vs. BCF): %.3f</span><span class="sc">\n</span><span class="st">"</span>, correlation))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>ITE Correlation (true vs. BCF): 0.950</code></pre>
+<pre><code>ITE Correlation (true vs. BCF): 0.946</code></pre>
 </div>
 </div>
 </section>
@@ -1030,7 +1032,7 @@ Quick checklist
 <h3 class="anchored" data-anchor-id="visualizing-treatment-effect-heterogeneity">Visualizing Treatment Effect Heterogeneity</h3>
 <p>The real power of BCF lies in capturing how treatment effects vary across users:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Continuous heterogeneity by activity level ──────────────────────────────────</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Continuous heterogeneity by activity level ──────────────────────────────────</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>n_bins <span class="ot">&lt;-</span> <span class="dv">40</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>simulated_data <span class="ot">&lt;-</span> simulated_data <span class="sc">%&gt;%</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">act_bin =</span> <span class="fu">ntile</span>(scaled_activity_free, n_bins))</span>
@@ -1079,7 +1081,7 @@ Quick checklist
 <span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="cn">NULL</span></span>
 <span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1090,7 +1092,7 @@ Quick checklist
 </div>
 <p>We can also examine how well the BCF model identifies users whose true ITE exceeds a certain threshold. This is often a practical concern: who are the users for whom the intervention is “meaningfully” positive?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Visual: BCF posterior P(ITE &gt; thresh) vs. truth label</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1129,7 +1131,7 @@ Quick checklist
 <span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Users"</span></span>
 <span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1143,7 +1145,7 @@ Quick checklist
 <h3 class="anchored" data-anchor-id="segment-level-insights">Segment-Level Insights</h3>
 <p>Business stakeholders often think in terms of user segments:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── CATE by user role ────────────────────────────────────────────────────────────</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ── CATE by user role ────────────────────────────────────────────────────────────</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>segment_comparison <span class="ot">&lt;-</span> simulated_data <span class="sc">%&gt;%</span> </span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols      =</span> <span class="fu">c</span>(ITE_prob_subscribe, ITE_bcf),</span>
@@ -1177,7 +1179,7 @@ Quick checklist
 <span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
 <span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">25</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
 <span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span></span>
-<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1215,7 +1217,7 @@ Below we illustrate a principled, fully Bayesian way to do that.</p>
 <li><p>Finally, using the ground-truth ITEs on the probability scale (<code>ITE_prob_subscribe</code> from our synthetic DGP), we evaluate our selection by checking how many of the chosen <em>N</em> creators actually are among the true top-<em>N</em> most impacted individuals in the control group.</p></li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Target the N control creators with highest posterior P(top-N)</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>N_target <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
@@ -1251,11 +1253,11 @@ Below we illustrate a principled, fully Bayesian way to do that.</p>
 <span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">sprintf</span>(</span>
 <span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Model picked %d of the true top %d creators (hit-rate = %.1f%%)."</span>,</span>
 <span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(selected<span class="sc">$</span>hit), N_target, <span class="dv">100</span> <span class="sc">*</span> hit_rate</span>
-<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We can also examine the false positive with the code bellow:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="do">## False-positives: creators picked by the model but *not*</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="do">## in the true top-N  (how wrong are we?)</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="do">## ------------------------------------------------------------</span></span>
@@ -1277,7 +1279,7 @@ Below we illustrate a principled, fully Bayesian way to do that.</p>
 <span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Top 15 false-positives (model-selected but true rank &gt; "</span>, N_target, <span class="st">")"</span></span>
 <span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  ),</span>
 <span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">3</span></span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Top 15 false-positives (model-selected but true rank &gt; 1000)</caption>
@@ -1293,117 +1295,117 @@ Below we illustrate a principled, fully Bayesian way to do that.</p>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">1981</td>
-<td style="text-align: right;">0.901</td>
+<td style="text-align: right;">0.915</td>
 <td style="text-align: right;">1003</td>
 <td style="text-align: right;">0.319</td>
-<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">950</td>
-<td style="text-align: right;">0.905</td>
+<td style="text-align: right;">0.917</td>
 <td style="text-align: right;">1004</td>
 <td style="text-align: right;">0.319</td>
-<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">2520</td>
-<td style="text-align: right;">0.900</td>
+<td style="text-align: right;">0.916</td>
 <td style="text-align: right;">1005</td>
 <td style="text-align: right;">0.319</td>
-<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2610</td>
-<td style="text-align: right;">0.897</td>
+<td style="text-align: right;">0.915</td>
 <td style="text-align: right;">1006</td>
 <td style="text-align: right;">0.319</td>
-<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1135</td>
-<td style="text-align: right;">0.903</td>
+<td style="text-align: right;">0.914</td>
 <td style="text-align: right;">1008</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">405</td>
-<td style="text-align: right;">0.902</td>
+<td style="text-align: right;">0.916</td>
 <td style="text-align: right;">1010</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">2198</td>
-<td style="text-align: right;">0.892</td>
+<td style="text-align: right;">0.913</td>
 <td style="text-align: right;">1011</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.349</td>
+<td style="text-align: right;">0.352</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">4943</td>
-<td style="text-align: right;">0.881</td>
+<td style="text-align: right;">0.911</td>
 <td style="text-align: right;">1012</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.349</td>
+<td style="text-align: right;">0.352</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">2538</td>
-<td style="text-align: right;">0.890</td>
+<td style="text-align: right;">0.912</td>
 <td style="text-align: right;">1013</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.349</td>
+<td style="text-align: right;">0.352</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1305</td>
-<td style="text-align: right;">0.896</td>
+<td style="text-align: right;">0.914</td>
 <td style="text-align: right;">1014</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.349</td>
+<td style="text-align: right;">0.352</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">3466</td>
-<td style="text-align: right;">0.890</td>
+<td style="text-align: right;">0.911</td>
 <td style="text-align: right;">1015</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.349</td>
+<td style="text-align: right;">0.352</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">413</td>
-<td style="text-align: right;">0.902</td>
+<td style="text-align: right;">0.915</td>
 <td style="text-align: right;">1017</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.349</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">650</td>
-<td style="text-align: right;">0.904</td>
+<td style="text-align: right;">0.914</td>
 <td style="text-align: right;">1019</td>
 <td style="text-align: right;">0.318</td>
-<td style="text-align: right;">0.349</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">712</td>
-<td style="text-align: right;">0.903</td>
+<td style="text-align: right;">0.911</td>
 <td style="text-align: right;">1022</td>
 <td style="text-align: right;">0.317</td>
-<td style="text-align: right;">0.350</td>
+<td style="text-align: right;">0.351</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">4624</td>
-<td style="text-align: right;">0.599</td>
+<td style="text-align: right;">0.639</td>
 <td style="text-align: right;">1025</td>
 <td style="text-align: right;">0.317</td>
-<td style="text-align: right;">0.338</td>
+<td style="text-align: right;">0.331</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary stats: how far off are we on average?</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(false_pos<span class="sc">$</span>true_rank)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summary stats: how far off are we on average?</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(false_pos<span class="sc">$</span>true_rank)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   1003    1113    1213    1217    1334    1428 </code></pre>
+   1003    1109    1210    1215    1331    1423 </code></pre>
 </div>
 </div>
 </section>
@@ -1488,13 +1490,14 @@ By steering incentives to users with high posterior gain—and sparing those lik
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1901,7 +1904,7 @@ By steering incentives to users with high posterior gain—and sparing those lik
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb28" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Causal Propensity Modeling"</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/causalPropensity.html"</span></span>
@@ -2626,7 +2629,7 @@ By steering incentives to users with high posterior gain—and sparing those lik
 <span id="cb28-741"><a href="#cb28-741" aria-hidden="true" tabindex="-1"></a>  By steering incentives to users with high posterior gain—and sparing those likely to regret or ignore them—you compress spend, boost long-run value, and create experiments that keep paying for themselves.</span>
 <span id="cb28-742"><a href="#cb28-742" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-743"><a href="#cb28-743" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **TL;DR:** Wrap your propensity work in a causal cloak: randomise, model heterogeneity, act on posterior uncertainty, and watch both your precision *and* your business impact climb.</span></span>
-</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/causalPropensity.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/causalPropensity.html&amp;title=Business Data Science: What Does it Mean to Be Data-Driven?" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Business Data Science: What Does it Mean to Be Data-Driven?&amp;body=Check out this link:https://book.martinez.fyi/causalPropensity.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Business Data Science: What Does it Mean to Be Data-Driven? https://book.martinez.fyi/causalPropensity.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
