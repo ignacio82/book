@@ -6,7 +6,6 @@
 *pdf
 .Rproj.user
 docs/
-_freeze/
 *.aux
 *.log
 *.tex
