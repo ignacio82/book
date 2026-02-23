@@ -16,8 +16,9 @@ RUN Rscript -e "pak::pkg_install(c( \
     'patchwork', 'ggiraph', 'ggpubr', 'stochtree', 'CausalImpact', \
     'bsynth', 'rstan', 'bayesplot', 'posterior', 'vizdraws', 'glossary', \
     'furrr', 'tictoc', 'glue', 'shinydashboard', 'shinylive', 'remotes', \
+    'MatchIt', 'coda', 'rpart', 'rpart.plot', 'shiny', 'shinybusy', \
     'google/imt', 'google/biva' \
-))"
+    ))"
 
 WORKDIR /book
 COPY . .

@@ -61,6 +61,12 @@ jobs:
             any::shinydashboard
             any::shinylive
             any::remotes
+            any::MatchIt
+            any::coda
+            any::rpart
+            any::rpart.plot
+            any::shiny
+            any::shinybusy
             google/imt
             google/biva
           
