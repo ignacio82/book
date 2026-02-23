@@ -75,6 +75,9 @@ jobs:
             any::rpart.plot
             any::shiny
             any::shinybusy
+            any::arm
+            any::future
+            any::lubridate
             google/imt
             google/biva
           

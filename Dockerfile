@@ -17,7 +17,7 @@ RUN Rscript -e "pak::pkg_install(c( \
     'bsynth', 'rstan', 'bayesplot', 'posterior', 'vizdraws', 'glossary', \
     'furrr', 'tictoc', 'glue', 'shinydashboard', 'shinylive', 'remotes', \
     'MatchIt', 'coda', 'rpart', 'rpart.plot', 'shiny', 'shinybusy', \
-    'google/imt', 'google/biva' \
+    'arm', 'future', 'lubridate', 'google/imt', 'google/biva' \
     ))"
 
 WORKDIR /book
