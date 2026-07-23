@@ -81,6 +81,7 @@ format:
       source: true   
 
     filters:
+      - shinylive
       - social-share
     share:
       permalink: "https://book.martinez.fyi/"
