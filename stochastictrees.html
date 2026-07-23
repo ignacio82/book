@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Stochastic Trees – Business Data Science</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -59,7 +62,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -90,15 +92,14 @@ div.csl-indent {
 <link href="./hex.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-0dd2bd5de344125cf763a379ddc3eb04.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-514c3c5c645fecdfd9acb6a6b9a944a6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/social-share.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/all.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -510,7 +511,7 @@ div.csl-indent {
 </ol>
 <p>These assumptions are the bedrock upon which we build causal interpretations. When these conditions hold, we can attribute the observed differences in outcomes between treated and untreated units to the treatment itself, rather than to confounding factors.</p>
 <p>We’ll explore three key models in this family: BART, Bayesian Causal Forests (BCF), and LongBet. Each of these models builds upon its predecessors, offering improvements in terms of causal effect estimation, handling of confounding, and applicability to different data structures.</p>
-<p>In our exploration, we’ll be leveraging the <a href="https://stochtree.ai/">stochtree R package</a> <span class="citation" data-cites="stochastictree">(<a href="references.html#ref-stochastictree" role="doc-biblioref">Herren et al. 2024</a>)</span>, which implements these models using a technique called “warm-start” as introduced by <span class="citation" data-cites="krantsevich23a">Krantsevich, He, and Hahn (<a href="references.html#ref-krantsevich23a" role="doc-biblioref">2023</a>)</span>. The warm-start approach is a computational innovation that significantly improves the efficiency and effectiveness of these models, particularly for large datasets.</p>
+<p>In our exploration, we’ll be leveraging the <a href="https://stochtree.ai/">stochtree R package</a> <span class="citation" data-cites="stochastictree">(<a href="references.html#ref-stochastictree" role="doc-biblioref">Herren et al. 2024</a>)</span>, which implements these models using a technique called “warm-start” as introduced by <span class="citation" data-cites="krantsevich23a">Krantsevich et al. (<a href="references.html#ref-krantsevich23a" role="doc-biblioref">2023</a>)</span>. The warm-start approach is a computational innovation that significantly improves the efficiency and effectiveness of these models, particularly for large datasets.</p>
 <p>The warm-start technique works by using a fast approximation method (XBART) to generate initial tree structures, which are then used as starting points for the full Bayesian MCMC algorithm. This approach combines the speed of approximate methods with the statistical rigor of full Bayesian inference, resulting in models that are both computationally efficient and statistically robust.</p>
 <p>By using warm-start, we can fit these sophisticated models to larger datasets and explore more complex causal relationships than was previously feasible. This makes these models particularly valuable for business data science applications, where we often deal with large, complex datasets and need to uncover nuanced causal relationships.</p>
 <p>Let’s begin our journey into the world of stochastic trees and their applications in causal inference, keeping in mind the critical assumptions that allow us to draw causal conclusions from these powerful tools.</p>
@@ -525,7 +526,7 @@ div.csl-indent {
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><span class="citation" data-cites="krantsevich23a">Krantsevich, He, and Hahn (<a href="references.html#ref-krantsevich23a" role="doc-biblioref">2023</a>)</span> Stochastic Tree Ensembles for Estimating Heterogeneous Effects.</li>
+<li><span class="citation" data-cites="krantsevich23a">Krantsevich et al. (<a href="references.html#ref-krantsevich23a" role="doc-biblioref">2023</a>)</span> Stochastic Tree Ensembles for Estimating Heterogeneous Effects.</li>
 <li><span class="citation" data-cites="stochastictree">Herren et al. (<a href="references.html#ref-stochastictree" role="doc-biblioref">2024</a>)</span> Stochastic tree ensembles (XBART and BART) for supervised learning and causal inference.</li>
 </ul>
 </div>
@@ -534,12 +535,12 @@ div.csl-indent {
 
 <!-- -->
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-stochastictree" class="csl-entry" role="listitem">
 Herren, Drew, Richard Hahn, Jared Murray, Carlos Carvalho, and Jingyu He. 2024. <em>Stochtree: Stochastic Tree Ensembles (XBART and BART) for Supervised Learning and Causal Inference</em>. <a href="https://stochastictree.github.io/stochtree-r/">https://stochastictree.github.io/stochtree-r/</a>.
 </div>
 <div id="ref-krantsevich23a" class="csl-entry" role="listitem">
-Krantsevich, Nikolay, Jingyu He, and P. Richard Hahn. 2023. <span>“Stochastic Tree Ensembles for Estimating Heterogeneous Effects.”</span> In <em>Proceedings of the 26th International Conference on Artificial Intelligence and Statistics</em>, edited by Francisco Ruiz, Jennifer Dy, and Jan-Willem van de Meent, 206:6120–31. Proceedings of Machine Learning Research. PMLR. <a href="https://proceedings.mlr.press/v206/krantsevich23a.html">https://proceedings.mlr.press/v206/krantsevich23a.html</a>.
+Krantsevich, Nikolay, Jingyu He, and P. Richard Hahn. 2023. <span>“Stochastic Tree Ensembles for Estimating Heterogeneous Effects.”</span> In <em>Proceedings of the 26th International Conference on Artificial Intelligence and Statistics</em>, edited by Francisco Ruiz, Jennifer Dy, and Jan-Willem van de Meent, vol. 206. Proceedings of Machine Learning Research. PMLR. <a href="https://proceedings.mlr.press/v206/krantsevich23a.html">https://proceedings.mlr.press/v206/krantsevich23a.html</a>.
 </div>
 </div>
 
