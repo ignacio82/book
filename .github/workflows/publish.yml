@@ -91,7 +91,7 @@ jobs:
             txt <- readLines(clean_file)
             txt <- gsub("x_smodel = NULL,", "x_smodel = NULL,\n                      group = NULL,", txt)
             writeLines(txt, clean_file)
-            remotes::install_local(tmp, force = TRUE)
+            remotes::install_local(tmp, dependencies = FALSE, force = TRUE)
           '
           
       - name: Render and Publish
