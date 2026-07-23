@@ -69,16 +69,44 @@ end
 -- @param args: list of string arguments to pass to r-shinylive
 -- @param input: string to pipe into to r-shinylive
 function callRShinylive(args, input)
-  args = { "-e",
+  local subcmd = args[2] or args[1]
+  if subcmd == "info" then
+    local script_path = quarto.project.directory .. "/_extensions/quarto-ext/shinylive/codeblock-to-json.js"
+    return quarto.json.encode({
+      version = "0.2.0",
+      assets_version = "0.2.0",
+      scripts = {
+        ["codeblock-to-json"] = script_path
+      }
+    })
+  elseif subcmd == "base-htmldeps" then
+    local sw_dir = quarto.project.offset or "./"
+    return quarto.json.encode({
+      {
+        name = "shinylive-serviceworker",
+        version = "0.2.0",
+        serviceworkers = {
+          {
+            source = quarto.project.directory .. "/_extensions/quarto-ext/shinylive/shinylive-sw.js",
+            destination = "shinylive-sw.js"
+          }
+        }
+      }
+    })
+  elseif subcmd == "language-resources" then
+    return quarto.json.encode({})
+  elseif subcmd == "app-resources" then
+    return quarto.json.encode({})
+  end
+
+  local r_cmd_args = { "-e",
     "shinylive:::quarto_ext()",
     table.unpack(args) }
 
-  -- Try calling `pandoc.pipe('Rscript', ...)` and if it fails, print a message
-  -- about installing shinylive R package.
   local res
   local status, err = pcall(
     function()
-      res = pandoc.pipe("Rscript", args, input)
+      res = pandoc.pipe("Rscript", r_cmd_args, input)
     end
   )
 
