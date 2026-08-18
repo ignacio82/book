@@ -6,6 +6,9 @@ share:
   linkedin: true
   email: true
   mastodon: true
+author:
+  - name: Entejar Alam 
+  - name: Ignacio Martinez  
 ---
 
 ## Ordinal Outcomes in Business
