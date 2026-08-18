@@ -990,7 +990,7 @@ Figure&nbsp;25.1: Comparison of average treatment effect estimates across models
 </div>
 <p>Looking at these results on Monday morning completely alters the executive decision:</p>
 <ul>
-<li><strong>The Linear Model’s Blind Spot:</strong> The linear probit reports high posterior confidence that promoters increased, but <strong>0% probability</strong> that detractors increased. Because standard cumulative-link models impose monotonic global shifts from a single parameter, they are mathematically incapable of detecting simultaneous increases at both extremes. Relying on this model, leadership would greenlight a full 100% rollout, unaware that they are actively alienating newer users.</li>
+<li><strong>The Linear Model’s Blind Spot:</strong> The linear probit reports an 85.2% posterior probability that promoters increased, but only a 14.8% probability that detractors increased, and <strong>0.0% probability</strong> of customer polarization (both extremes increasing simultaneously). Because standard cumulative-link models impose monotonic global shifts from a single parameter, they are mathematically incapable of detecting simultaneous increases at both extremes. Relying on this model, leadership would greenlight a full 100% rollout, unaware that they are actively alienating newer users.</li>
 <li><strong>The Nonparametric Prescription:</strong> PHOBART reveals near certainty that top ratings increased <em>and</em> near certainty that 1-star ratings spiked. Rather than a simplistic “ship or kill” verdict, this enables targeted action:
 <ol type="1">
 <li><strong>Cohort-Gated Rollout:</strong> Ship the feature immediately to power users and highly engaged accounts (<span class="math inline">\(x_1 &gt; 0\)</span>) who experience clear value.</li>
@@ -1031,14 +1031,12 @@ BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
 LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 
-time zone: Etc/UTC
+time zone: UTC
 tzcode source: system (glibc)
 
 attached base packages:
@@ -1053,23 +1051,24 @@ loaded via a namespace (and not attached):
  [4] stringi_1.8.9        lattice_0.22-9       digest_0.6.39       
  [7] magrittr_2.0.5       evaluate_1.0.5       grid_4.6.1          
 [10] RColorBrewer_1.1-3   mvtnorm_1.4-2        fastmap_1.2.0       
-[13] jsonlite_2.0.0       Matrix_1.7-5         pkgbuild_1.4.8      
-[16] backports_1.5.1      gridExtra_2.3.1      Brobdingnag_1.2-9   
-[19] purrr_1.2.2          QuickJSR_1.10.0      scales_1.4.0        
-[22] codetools_0.2-20     abind_1.4-8          cli_3.6.6           
-[25] rlang_1.3.0          withr_3.0.3          yaml_2.3.12         
-[28] otel_0.2.0           StanHeaders_2.32.10  inline_0.3.21       
-[31] rstan_2.32.7         tools_4.6.1          parallel_4.6.1      
-[34] rstantools_2.7.0     checkmate_2.3.4      vctrs_0.7.3         
-[37] posterior_1.7.0      R6_2.6.1             stats4_4.6.1        
-[40] matrixStats_1.5.0    lifecycle_1.0.5      stringr_1.6.0       
-[43] htmlwidgets_1.6.4    pkgconfig_2.0.3      RcppParallel_6.2.0  
-[46] pillar_1.11.1        gtable_0.3.6         loo_2.10.1          
-[49] glue_1.8.1           xfun_0.60            tibble_3.3.1        
-[52] tidyselect_1.2.1     farver_2.1.2         bayesplot_1.15.0    
-[55] htmltools_0.5.9      nlme_3.1-169         labeling_0.4.3      
-[58] rmarkdown_2.31       compiler_4.6.1       S7_0.2.2            
-[61] distributional_0.8.1</code></pre>
+[13] jsonlite_2.0.0       Matrix_1.7-5         processx_3.9.0      
+[16] pkgbuild_1.4.8       backports_1.5.1      ps_1.9.3            
+[19] gridExtra_2.3.1      Brobdingnag_1.2-9    purrr_1.2.2         
+[22] QuickJSR_1.10.0      scales_1.4.0         codetools_0.2-20    
+[25] abind_1.4-8          cli_3.6.6            rlang_1.3.0         
+[28] withr_3.0.3          yaml_2.3.12          otel_0.2.0          
+[31] StanHeaders_2.32.10  inline_0.3.21        rstan_2.32.7        
+[34] tools_4.6.1          parallel_4.6.1       rstantools_2.7.0    
+[37] checkmate_2.3.4      vctrs_0.7.3          posterior_1.7.0     
+[40] R6_2.6.1             stats4_4.6.1         matrixStats_1.5.0   
+[43] lifecycle_1.0.5      stringr_1.6.0        htmlwidgets_1.6.4   
+[46] callr_3.8.0          pkgconfig_2.0.3      RcppParallel_6.2.0  
+[49] pillar_1.11.1        gtable_0.3.6         loo_2.10.1          
+[52] glue_1.8.1           xfun_0.60            tibble_3.3.1        
+[55] tidyselect_1.2.1     farver_2.1.2         bayesplot_1.15.0    
+[58] htmltools_0.5.9      nlme_3.1-169         labeling_0.4.3      
+[61] rmarkdown_2.31       compiler_4.6.1       S7_0.2.2            
+[64] distributional_0.8.1</code></pre>
 </div>
 </div>
 
@@ -2068,55 +2067,56 @@ Liddell, Torrin M, and John K Kruschke. 2018. <span>“Analyzing Ordinal Data wi
 <span id="cb15-504"><a href="#cb15-504" aria-hidden="true" tabindex="-1"></a>Looking at these results on Monday morning completely alters the executive</span>
 <span id="cb15-505"><a href="#cb15-505" aria-hidden="true" tabindex="-1"></a>decision:</span>
 <span id="cb15-506"><a href="#cb15-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-507"><a href="#cb15-507" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**The Linear Model's Blind Spot:** The linear probit reports high posterior</span>
-<span id="cb15-508"><a href="#cb15-508" aria-hidden="true" tabindex="-1"></a>  confidence that promoters increased, but **0% probability** that detractors</span>
-<span id="cb15-509"><a href="#cb15-509" aria-hidden="true" tabindex="-1"></a>  increased. Because standard cumulative-link models impose monotonic global</span>
-<span id="cb15-510"><a href="#cb15-510" aria-hidden="true" tabindex="-1"></a>  shifts from a single parameter, they are mathematically incapable of</span>
-<span id="cb15-511"><a href="#cb15-511" aria-hidden="true" tabindex="-1"></a>  detecting simultaneous increases at both extremes. Relying on this model,</span>
-<span id="cb15-512"><a href="#cb15-512" aria-hidden="true" tabindex="-1"></a>  leadership would greenlight a full 100% rollout, unaware that they are</span>
-<span id="cb15-513"><a href="#cb15-513" aria-hidden="true" tabindex="-1"></a>  actively alienating newer users.</span>
-<span id="cb15-514"><a href="#cb15-514" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**The Nonparametric Prescription:** PHOBART reveals near certainty that</span>
-<span id="cb15-515"><a href="#cb15-515" aria-hidden="true" tabindex="-1"></a>  top ratings increased *and* near certainty that 1-star ratings spiked. Rather</span>
-<span id="cb15-516"><a href="#cb15-516" aria-hidden="true" tabindex="-1"></a>  than a simplistic "ship or kill" verdict, this enables targeted action:</span>
-<span id="cb15-517"><a href="#cb15-517" aria-hidden="true" tabindex="-1"></a><span class="ss">  1. </span>**Cohort-Gated Rollout:** Ship the feature immediately to power users and</span>
-<span id="cb15-518"><a href="#cb15-518" aria-hidden="true" tabindex="-1"></a>     highly engaged accounts ($x_1 &gt; 0$) who experience clear value.</span>
-<span id="cb15-519"><a href="#cb15-519" aria-hidden="true" tabindex="-1"></a><span class="ss">  2. </span>**Product Redesign for Onboarding:** Investigate why less-engaged</span>
-<span id="cb15-520"><a href="#cb15-520" aria-hidden="true" tabindex="-1"></a>     customers ($x_1 \le 0$) struggle with the update, iterating on UI</span>
-<span id="cb15-521"><a href="#cb15-521" aria-hidden="true" tabindex="-1"></a>     guidance and onboarding workflows before widening exposure.</span>
-<span id="cb15-522"><a href="#cb15-522" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-523"><a href="#cb15-523" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
-<span id="cb15-524"><a href="#cb15-524" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-525"><a href="#cb15-525" aria-hidden="true" tabindex="-1"></a>This example illustrates the practical value of a unified Bayesian</span>
-<span id="cb15-526"><a href="#cb15-526" aria-hidden="true" tabindex="-1"></a>nonparametric framework: it is easier to implement because it avoids cutpoint</span>
-<span id="cb15-527"><a href="#cb15-527" aria-hidden="true" tabindex="-1"></a>constraints, and more accurate because it adapts automatically to complex</span>
-<span id="cb15-528"><a href="#cb15-528" aria-hidden="true" tabindex="-1"></a>structure in the data.</span>
-<span id="cb15-529"><a href="#cb15-529" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-530"><a href="#cb15-530" aria-hidden="true" tabindex="-1"></a>The usual cautions apply. The causal reading rests on the standard</span>
-<span id="cb15-531"><a href="#cb15-531" aria-hidden="true" tabindex="-1"></a>assumptions, unconfoundedness and adequate overlap between treated and control</span>
-<span id="cb15-532"><a href="#cb15-532" aria-hidden="true" tabindex="-1"></a>units, which no model supplies on its own; when treatment is not randomized,</span>
-<span id="cb15-533"><a href="#cb15-533" aria-hidden="true" tabindex="-1"></a>including a propensity score as an additional covariate can mitigate</span>
-<span id="cb15-534"><a href="#cb15-534" aria-hidden="true" tabindex="-1"></a>regularization-induced confounding (@hahn2020bayesian), though causal</span>
-<span id="cb15-535"><a href="#cb15-535" aria-hidden="true" tabindex="-1"></a>identification ultimately depends on unconfoundedness and adequate overlap.</span>
-<span id="cb15-536"><a href="#cb15-536" aria-hidden="true" tabindex="-1"></a>The proportional-hazards version assumes the covariate effect does not interact</span>
-<span id="cb15-537"><a href="#cb15-537" aria-hidden="true" tabindex="-1"></a>with the rating level; the non-proportional variant (NPHOBART) relaxes this at</span>
-<span id="cb15-538"><a href="#cb15-538" aria-hidden="true" tabindex="-1"></a>some computational cost. @alam2025unified develop PHOBART and NPHOBART for</span>
-<span id="cb15-539"><a href="#cb15-539" aria-hidden="true" tabindex="-1"></a>ordinal regression and note that sharing forests, in the spirit of</span>
-<span id="cb15-540"><a href="#cb15-540" aria-hidden="true" tabindex="-1"></a>@hahn2020bayesian, is a natural route to richer causal estimation.</span>
-<span id="cb15-541"><a href="#cb15-541" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-542"><a href="#cb15-542" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
-<span id="cb15-543"><a href="#cb15-543" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learn more</span></span>
-<span id="cb15-544"><a href="#cb15-544" aria-hidden="true" tabindex="-1"></a>For the theoretical framework, minimax posterior contraction proofs, and</span>
-<span id="cb15-545"><a href="#cb15-545" aria-hidden="true" tabindex="-1"></a>extensions to non-proportional hazards ordinal regression (NPHOBART), see</span>
-<span id="cb15-546"><a href="#cb15-546" aria-hidden="true" tabindex="-1"></a>@alam2025unified, *A unified Bayesian nonparametric framework for ordinal,</span>
-<span id="cb15-547"><a href="#cb15-547" aria-hidden="true" tabindex="-1"></a>survival, and density regression using the complementary log-log link*</span>
-<span id="cb15-548"><a href="#cb15-548" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">arXiv:2502.00606</span><span class="co">](https://arxiv.org/abs/2502.00606)</span>).</span>
-<span id="cb15-549"><a href="#cb15-549" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-550"><a href="#cb15-550" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-551"><a href="#cb15-551" aria-hidden="true" tabindex="-1"></a><span class="fu">## Appendix: Session Information</span></span>
-<span id="cb15-552"><a href="#cb15-552" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-553"><a href="#cb15-553" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session-info}</span></span>
-<span id="cb15-554"><a href="#cb15-554" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb15-555"><a href="#cb15-555" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-507"><a href="#cb15-507" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**The Linear Model's Blind Spot:** The linear probit reports an 85.2%</span>
+<span id="cb15-508"><a href="#cb15-508" aria-hidden="true" tabindex="-1"></a>  posterior probability that promoters increased, but only a 14.8% probability</span>
+<span id="cb15-509"><a href="#cb15-509" aria-hidden="true" tabindex="-1"></a>  that detractors increased, and **0.0% probability** of customer polarization</span>
+<span id="cb15-510"><a href="#cb15-510" aria-hidden="true" tabindex="-1"></a>  (both extremes increasing simultaneously). Because standard cumulative-link</span>
+<span id="cb15-511"><a href="#cb15-511" aria-hidden="true" tabindex="-1"></a>  models impose monotonic global shifts from a single parameter, they are</span>
+<span id="cb15-512"><a href="#cb15-512" aria-hidden="true" tabindex="-1"></a>  mathematically incapable of detecting simultaneous increases at both</span>
+<span id="cb15-513"><a href="#cb15-513" aria-hidden="true" tabindex="-1"></a>  extremes. Relying on this model, leadership would greenlight a full 100%</span>
+<span id="cb15-514"><a href="#cb15-514" aria-hidden="true" tabindex="-1"></a>  rollout, unaware that they are actively alienating newer users.</span>
+<span id="cb15-515"><a href="#cb15-515" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**The Nonparametric Prescription:** PHOBART reveals near certainty that</span>
+<span id="cb15-516"><a href="#cb15-516" aria-hidden="true" tabindex="-1"></a>  top ratings increased *and* near certainty that 1-star ratings spiked. Rather</span>
+<span id="cb15-517"><a href="#cb15-517" aria-hidden="true" tabindex="-1"></a>  than a simplistic "ship or kill" verdict, this enables targeted action:</span>
+<span id="cb15-518"><a href="#cb15-518" aria-hidden="true" tabindex="-1"></a><span class="ss">  1. </span>**Cohort-Gated Rollout:** Ship the feature immediately to power users and</span>
+<span id="cb15-519"><a href="#cb15-519" aria-hidden="true" tabindex="-1"></a>     highly engaged accounts ($x_1 &gt; 0$) who experience clear value.</span>
+<span id="cb15-520"><a href="#cb15-520" aria-hidden="true" tabindex="-1"></a><span class="ss">  2. </span>**Product Redesign for Onboarding:** Investigate why less-engaged</span>
+<span id="cb15-521"><a href="#cb15-521" aria-hidden="true" tabindex="-1"></a>     customers ($x_1 \le 0$) struggle with the update, iterating on UI</span>
+<span id="cb15-522"><a href="#cb15-522" aria-hidden="true" tabindex="-1"></a>     guidance and onboarding workflows before widening exposure.</span>
+<span id="cb15-523"><a href="#cb15-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-524"><a href="#cb15-524" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
+<span id="cb15-525"><a href="#cb15-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-526"><a href="#cb15-526" aria-hidden="true" tabindex="-1"></a>This example illustrates the practical value of a unified Bayesian</span>
+<span id="cb15-527"><a href="#cb15-527" aria-hidden="true" tabindex="-1"></a>nonparametric framework: it is easier to implement because it avoids cutpoint</span>
+<span id="cb15-528"><a href="#cb15-528" aria-hidden="true" tabindex="-1"></a>constraints, and more accurate because it adapts automatically to complex</span>
+<span id="cb15-529"><a href="#cb15-529" aria-hidden="true" tabindex="-1"></a>structure in the data.</span>
+<span id="cb15-530"><a href="#cb15-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-531"><a href="#cb15-531" aria-hidden="true" tabindex="-1"></a>The usual cautions apply. The causal reading rests on the standard</span>
+<span id="cb15-532"><a href="#cb15-532" aria-hidden="true" tabindex="-1"></a>assumptions, unconfoundedness and adequate overlap between treated and control</span>
+<span id="cb15-533"><a href="#cb15-533" aria-hidden="true" tabindex="-1"></a>units, which no model supplies on its own; when treatment is not randomized,</span>
+<span id="cb15-534"><a href="#cb15-534" aria-hidden="true" tabindex="-1"></a>including a propensity score as an additional covariate can mitigate</span>
+<span id="cb15-535"><a href="#cb15-535" aria-hidden="true" tabindex="-1"></a>regularization-induced confounding (@hahn2020bayesian), though causal</span>
+<span id="cb15-536"><a href="#cb15-536" aria-hidden="true" tabindex="-1"></a>identification ultimately depends on unconfoundedness and adequate overlap.</span>
+<span id="cb15-537"><a href="#cb15-537" aria-hidden="true" tabindex="-1"></a>The proportional-hazards version assumes the covariate effect does not interact</span>
+<span id="cb15-538"><a href="#cb15-538" aria-hidden="true" tabindex="-1"></a>with the rating level; the non-proportional variant (NPHOBART) relaxes this at</span>
+<span id="cb15-539"><a href="#cb15-539" aria-hidden="true" tabindex="-1"></a>some computational cost. @alam2025unified develop PHOBART and NPHOBART for</span>
+<span id="cb15-540"><a href="#cb15-540" aria-hidden="true" tabindex="-1"></a>ordinal regression and note that sharing forests, in the spirit of</span>
+<span id="cb15-541"><a href="#cb15-541" aria-hidden="true" tabindex="-1"></a>@hahn2020bayesian, is a natural route to richer causal estimation.</span>
+<span id="cb15-542"><a href="#cb15-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-543"><a href="#cb15-543" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb15-544"><a href="#cb15-544" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learn more</span></span>
+<span id="cb15-545"><a href="#cb15-545" aria-hidden="true" tabindex="-1"></a>For the theoretical framework, minimax posterior contraction proofs, and</span>
+<span id="cb15-546"><a href="#cb15-546" aria-hidden="true" tabindex="-1"></a>extensions to non-proportional hazards ordinal regression (NPHOBART), see</span>
+<span id="cb15-547"><a href="#cb15-547" aria-hidden="true" tabindex="-1"></a>@alam2025unified, *A unified Bayesian nonparametric framework for ordinal,</span>
+<span id="cb15-548"><a href="#cb15-548" aria-hidden="true" tabindex="-1"></a>survival, and density regression using the complementary log-log link*</span>
+<span id="cb15-549"><a href="#cb15-549" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">arXiv:2502.00606</span><span class="co">](https://arxiv.org/abs/2502.00606)</span>).</span>
+<span id="cb15-550"><a href="#cb15-550" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-551"><a href="#cb15-551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-552"><a href="#cb15-552" aria-hidden="true" tabindex="-1"></a><span class="fu">## Appendix: Session Information</span></span>
+<span id="cb15-553"><a href="#cb15-553" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-554"><a href="#cb15-554" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session-info}</span></span>
+<span id="cb15-555"><a href="#cb15-555" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb15-556"><a href="#cb15-556" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
