@@ -502,13 +502,14 @@ kable(
 Looking at these results on Monday morning completely alters the executive
 decision:
 
-- **The Linear Model's Blind Spot:** The linear probit reports high posterior
-  confidence that promoters increased, but **0% probability** that detractors
-  increased. Because standard cumulative-link models impose monotonic global
-  shifts from a single parameter, they are mathematically incapable of
-  detecting simultaneous increases at both extremes. Relying on this model,
-  leadership would greenlight a full 100% rollout, unaware that they are
-  actively alienating newer users.
+- **The Linear Model's Blind Spot:** The linear probit reports an 85.2%
+  posterior probability that promoters increased, but only a 14.8% probability
+  that detractors increased, and **0.0% probability** of customer polarization
+  (both extremes increasing simultaneously). Because standard cumulative-link
+  models impose monotonic global shifts from a single parameter, they are
+  mathematically incapable of detecting simultaneous increases at both
+  extremes. Relying on this model, leadership would greenlight a full 100%
+  rollout, unaware that they are actively alienating newer users.
 - **The Nonparametric Prescription:** PHOBART reveals near certainty that
   top ratings increased *and* near certainty that 1-star ratings spiked. Rather
   than a simplistic "ship or kill" verdict, this enables targeted action:
