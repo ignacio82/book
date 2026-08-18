@@ -64,21 +64,23 @@ $$
 $$
 or equivalently in discrete proportional-hazards form,
 $$
-\Pr(Y_i > k \mid X_i = x) = \{S_0(k)\}^{e^{-\lambda(x)}},
+\Pr(Y_i > k \mid X_i = x) = \{S_0(k)\}^{e^{+\lambda(x)}},
 $$
-where $\lambda(x)$ is assigned a BART sum-of-trees prior. This yields a
-**proportional hazards ordinal BART** model (**PHOBART**).
+where $S_0(k) = \exp(-e^{c_k})$ and $\lambda(x)$ is assigned a BART
+sum-of-trees prior. Under this $+ \lambda(x)$ convention, a larger $\lambda(x)$
+increases $\Pr(Y_i \le k)$, shifting probability mass toward lower rating
+categories (worse outcomes). This yields a **proportional hazards ordinal
+BART** model (**PHOBART**).
 
-Unlike the symmetric probit and logit links, the cloglog link is asymmetric:
-the cumulative probability approaches 0 and 1 at different rates on the latent
-scale. This asymmetry is advantageous when extreme rating categories behave
-asymmetrically in probability space, while BART's tree ensemble is responsible
-for discovering non-linear threshold effects and interactions across covariates
-$X$.
+It is helpful to separate the distinct roles of the link function and the tree
+ensemble: the cloglog link buys *computation* (unconstrained cutpoints and
+conjugate Gibbs updates), while BART's sum-of-trees prior $\lambda(x)$ buys
+*flexibility* (discovering non-linear threshold effects and subgroup
+heterogeneity across covariates $X$).
 
-PHOBART also elegantly resolves the cutpoint constraint issue. The strictly
-ordered cutpoints $c_k$ are reparameterized through unconstrained parameters
-$\gamma_j \in \mathbb{R}$ via:
+PHOBART resolves the cutpoint constraint issue that typically impedes Gibbs
+sampling in ordinal models. The strictly ordered cutpoints $c_k$ are
+reparameterized through unconstrained parameters $\gamma_j \in \mathbb{R}$ via:
 $$
 c_k = \log \sum_{j \le k} e^{\gamma_j}, \qquad k = 1, \dots, K-1.
 $$
@@ -97,8 +99,8 @@ guaranteeing that the posterior concentrates around the true data-generating
 process at the optimal statistical rate.
 
 The same latent-exponential machinery unifies ordinal, survival, and density
-regression under one framework. In the practical example below, our code targets
-`stochtree` version `0.5.x`. 
+regression under one framework. In the practical example below, our code
+targets `stochtree` version `0.4.5` (and `stochtree >= 0.4.5`). 
 
 
 ## A Business Example: A Feature Change and Customer Satisfaction
@@ -206,14 +208,14 @@ specifying `outcome = "ordinal"` and `link = "cloglog"` inside
 - `random_seed = 2025`: In `stochtree`, MCMC sampling randomness is controlled
   via `random_seed` inside `general_params` rather than base R's `set.seed()`.
 - `mean_forest_params = list(num_trees = 50, sample_sigma2_leaf = FALSE)`:
-  Configures 50 trees with leaf variance sampling disabled for stronger
-  regularization.
+  Configures 50 trees and fixes the leaf shrinkage parameter at its prior
+  default rather than sampling it adaptively.
 - `num_gfr = 0`: Runs standard MCMC sampling from initialization.
 
-We run a single MCMC chain here for brevity and monitor ESS and trace plots; in
-production settings, one can set `num_chains` in `stochtree::bart()` to assess
-convergence diagnostics such as $\hat{R}$ across multiple independent chains
-alongside ESS.
+We run a single MCMC chain here for illustration and monitor ESS and trace
+plots; in production settings, one can set `num_chains` in `stochtree::bart()`
+to assess convergence diagnostics such as $\hat{R}$ across multiple
+independent chains alongside ESS.
 
 ```{r fit-phobart, message=FALSE, warning=FALSE}
 X_train <- fake_data %>% select(x1, t) %>% as.matrix()
@@ -225,7 +227,6 @@ X1 <- X_train; X1[, "t"] <- 1
 phobart <- bart(
   X_train = X_train,
   y_train = y_train,
-  X_test  = rbind(X0, X1),
   num_gfr = 0,
   num_burnin = 1000,
   num_mcmc   = 1000,
@@ -282,9 +283,13 @@ tibble(
 cat("ESS for adjusted c_2:", round(effectiveSize(adj_c2), 1), "\n")
 ```
 
-The trace looks stationary with no drift or sticking, and the ESS is healthy,
-confirming adequate posterior exploration. In practice, you would inspect the
-remaining thresholds and tree ensemble predictions similarly.
+The trace looks stationary with no drift or sticking. An ESS of approximately
+105 from 1,000 posterior draws (~10% efficiency) is adequate for exploring
+central tendencies and median treatment effects, though estimating extreme tail
+intervals with high precision in production typically calls for longer sampling
+runs where $\text{ESS} \gtrsim 400$ per tail quantity is standard. In
+practice, you would inspect the remaining thresholds and tree ensemble
+predictions similarly.
 
 ### Turning the posterior into category probabilities
 
@@ -406,49 +411,68 @@ bind_rows(summ(tau_phobart, "PHOBART"), summ(tau_probit, "Linear Probit")) %>%
   theme_bw() + theme(legend.position = "bottom")
 ```
 
+As shown in @fig-ate-comparison, the two models tell radically different
+stories about how the product change impacts customer experience:
+
 - **Rating 1 (1 Star):** The linear probit estimates a small decrease in 1-star
-  ratings. The true latent shift averages to $0.5(1.5) + 0.5(-1.0) = 0.25$, so
-  the linear model estimates a slightly positive treatment coefficient
-  ($\hat{\beta}_t \approx 0.24$), forcing the modeled probability of the lowest
-  category to fall. In reality, the harmed subgroup ($x_1 \le 0$) is pushed
-  below the $-1.5$ threshold, causing 1-star reviews to *increase*. The linear
-  model commits a dangerous **sign error** on the company's most dissatisfied
-  customers.
+  ratings. The true latent shift averages to $0.5(1.5) + 0.5(-1.0) = 0.25$. On
+  the identified probit scale (where the residual variance denominator is
+  inflated by the unmodeled sine variation), the linear model estimates a small
+  positive treatment coefficient ($\hat{\beta}_t \approx 0.24$), forcing the
+  modeled probability of the lowest category to fall ($\approx -0.01$). In
+  reality, the harmed subgroup ($x_1 \le 0$) is pushed below the $-1.5$
+  threshold, causing 1-star reviews to increase by 20.9 points ($+0.209$). The
+  linear model commits a dangerous **sign error** on the company's most
+  dissatisfied customers.
 - **Ratings 2, 3, and 4:** Under the true data-generating process, probability
   mass drains out of the middle ratings as customers polarize toward the
   extremes. The linear probit predicts negligible changes across these tiers,
   missing the hollowed-out middle.
-- **Rating 5 (5 Stars):** Both models detect an increase in 5-star ratings, but
-  PHOBART accurately quantifies the large positive surge driven by delighted
-  power users ($x_1 > 0$).
-- **Overall:** PHOBART flexibly recovers the full U-shaped polarization across
-  all five categories, tracking the ground truth closely.
+- **Rating 5 (5 Stars):** The linear probit points in the right direction at
+  the top of the scale ($\approx +0.01$), but its estimate is indistinguishable
+  from zero (its 95% credible interval crosses zero) and roughly 25× too small.
+  In contrast, PHOBART captures the large positive surge in 5-star reviews
+  ($\approx +0.25$) driven by delighted power users ($x_1 > 0$).
+- **Overall:** PHOBART captures the qualitative U-shaped polarization that the
+  linear model misses entirely. At the same time, notice that PHOBART's 95%
+  credible intervals are moderately shrunk toward zero relative to the ground
+  truth. This attenuation stems from two factors: (1) tree shrinkage priors with
+  50 trees, and (2) link misspecification, as the true data-generating process
+  uses a Gaussian location shift rather than an exact proportional-hazards
+  cloglog link. Even under this link mismatch, PHOBART successfully recovers the
+  correct directional dynamics across every category.
 
 ## Why These Results Matter
 
 In this data-generating process, the treatment effect is heterogeneous: it is
 positive for individuals with $x_1 > 0$ and negative for those with
-$x_1 \le 0$. A linear ordinal probit model is forced to represent this
-structure using a single treatment coefficient, which leads to biased
-population-level estimates when effects cancel out across subgroups.
+$x_1 \le 0$. A cumulative-link model with a single additive treatment
+coefficient is forced to represent this structure using a single global shift,
+which washes out opposing subgroup effects. (A parametric model with an explicit
+interaction term like `y ~ x1 * t` could in principle accommodate
+heterogeneity, but that requires the analyst to already know the exact
+interaction structure in advance—which is rarely possible in production.)
 
 The linear model's failure here is not subtle: it tells leadership that angry
 reviews are dropping when they are actually spiking. The PHOBART model correctly
 identifies both the non-linear baseline relationship between $x_1$ and the
-outcome and the interaction between $x_1$ and treatment. By combining the
-flexibility of BART with the computational advantages of the cloglog link, it
-accurately recovers the true average treatment effects across all ordinal
-categories. This is the practical payoff: when an intervention helps some
-customers and hurts others, only the flexible model tells you so.
+outcome and the interaction between $x_1$ and treatment. This is the practical
+payoff: when an intervention helps some customers and hurts others, only a
+flexible model reveals the trade-off.
 
 ### Decision-Making Under Polarization: What to Do Monday Morning
 
 The core business dynamic demonstrated here is **customer polarization**: the
-feature simultaneously manufactures both promoters (4–5 stars) and detractors
-(1 star). In customer experience management and Net Promoter Score (NPS)
-frameworks, a release that polarizes the user base can leave headline summary
-metrics—such as mean star ratings or net scores—looking modestly positive or
-unmoved, while masking severe customer churn among vulnerable cohorts.
+feature drives mass to both ends of the scale, creating 5-star advocates and
+1-star detractors while hollowing out everything in between—including 4-star
+ratings, which fall by 16 points.
+
+This polarization easily fools high-level executive dashboards. Looking only at
+summary metrics from the true population distribution, the average customer
+rating inches up by a negligible 0.07 stars ($2.98 \to 3.05$), and an NPS-style
+net score ($4\text{--}5$ star ratings minus $1\text{--}2$ star ratings) improves
+from $-1.8\%$ to $-0.8\%$. Yet under the hood, 1-star reviews surge from
+$14.8\%$ to $35.7\%$—a $2.4\times$ explosion in furious customers.
 
 Because Bayesian models produce posterior draws across the full probability
 distribution, we can directly query the posterior for decision-relevant
@@ -477,19 +501,27 @@ prob_pol_phobart  <- mean(
   (pop1_phobart[, 1] > pop0_phobart[, 1])
 )
 
+fmt_pct <- function(p) {
+  if (p >= 0.999) return(">99.9%")
+  if (p <= 0.001) return("<0.1%")
+  sprintf("%.1f%%", 100 * p)
+}
+
 decision_summary <- tibble(
   `Business Question` = c(
-    "Pr(Share of 4–5 star ratings [Promoters] increased)",
-    "Pr(Share of 1-star ratings [Detractors] increased)",
-    "Pr(Polarization: Both 1-star and 4–5 star ratings increased)"
+    "Pr(Top-box share [4–5 stars] increased)",
+    "Pr(Bottom-box share [1 star] increased)",
+    "Pr(Polarization: Both 1-star and top-box shares increased)"
   ),
-  `Linear Probit` = sprintf(
-    "%.1f%%",
-    100 * c(prob_prom_probit, prob_detr_probit, prob_pol_probit)
+  `Linear Probit` = c(
+    fmt_pct(prob_prom_probit),
+    fmt_pct(prob_detr_probit),
+    fmt_pct(prob_pol_probit)
   ),
-  `PHOBART` = sprintf(
-    "%.1f%%",
-    100 * c(prob_prom_phobart, prob_detr_phobart, prob_pol_phobart)
+  `PHOBART` = c(
+    fmt_pct(prob_prom_phobart),
+    fmt_pct(prob_detr_phobart),
+    fmt_pct(prob_pol_phobart)
   )
 )
 
@@ -499,25 +531,106 @@ kable(
 )
 ```
 
-Looking at these results on Monday morning completely alters the executive
-decision:
+Note that while the polarization verdict is robust across reasonable
+bucketings (for instance, defining detractors as 1–2 stars still yields a
+$+10.0\%$ increase), net summary scores remain sensitive to threshold choices
+(defining detractors as 1–3 stars flips the net effect to $-11.0\%$),
+highlighting the risk of collapsing ordinal distributions into single numbers.
 
-- **The Linear Model's Blind Spot:** The linear probit reports an 85.2%
-  posterior probability that promoters increased, but only a 14.8% probability
-  that detractors increased, and **0.0% probability** of customer polarization
-  (both extremes increasing simultaneously). Because standard cumulative-link
-  models impose monotonic global shifts from a single parameter, they are
-  mathematically incapable of detecting simultaneous increases at both
-  extremes. Relying on this model, leadership would greenlight a full 100%
-  rollout, unaware that they are actively alienating newer users.
-- **The Nonparametric Prescription:** PHOBART reveals near certainty that
-  top ratings increased *and* near certainty that 1-star ratings spiked. Rather
-  than a simplistic "ship or kill" verdict, this enables targeted action:
-  1. **Cohort-Gated Rollout:** Ship the feature immediately to power users and
-     highly engaged accounts ($x_1 > 0$) who experience clear value.
-  2. **Product Redesign for Onboarding:** Investigate why less-engaged
-     customers ($x_1 \le 0$) struggle with the update, iterating on UI
-     guidance and onboarding workflows before widening exposure.
+To justify concrete operational actions on Monday morning, we inspect how the
+treatment effect on extreme ratings varies across customer engagement levels
+$x_1$:
+
+```{r}
+#| label: fig-heterogeneity
+#| fig-cap: >-
+#|   Estimated conditional treatment effect on 1-star and 5-star ratings
+#|   across engagement levels under PHOBART.
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 5
+
+x1_grid <- seq(-1.8, 1.8, length.out = 50)
+grid0   <- cbind(x1 = x1_grid, t = 0)
+grid1   <- cbind(x1 = x1_grid, t = 1)
+
+g_p0 <- predict(
+  phobart, grid0, scale = "probability", terms = "y_hat", type = "posterior"
+)
+g_p1 <- predict(
+  phobart, grid1, scale = "probability", terms = "y_hat", type = "posterior"
+)
+
+tau1_grid <- g_p1[, 1, ] - g_p0[, 1, ]
+tau5_grid <- g_p1[, 5, ] - g_p0[, 5, ]
+
+df_het <- tibble(
+  x1 = rep(x1_grid, 2),
+  Rating = rep(
+    c("1 Star (Detractors)", "5 Stars (Advocates)"),
+    each = 50
+  ),
+  val  = c(apply(tau1_grid, 1, median), apply(tau5_grid, 1, median)),
+  low  = c(apply(tau1_grid, 1, quantile, 0.025),
+           apply(tau5_grid, 1, quantile, 0.025)),
+  high = c(apply(tau1_grid, 1, quantile, 0.975),
+           apply(tau5_grid, 1, quantile, 0.975))
+)
+
+ggplot(df_het, aes(x1, val, color = Rating, fill = Rating)) +
+  geom_ribbon(aes(ymin = low, ymax = high), alpha = 0.2, color = NA) +
+  geom_line(linewidth = 1.2) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5) +
+  scale_color_manual(
+    values = c(
+      "1 Star (Detractors)" = "#D55E00",
+      "5 Stars (Advocates)"  = "#0072B2"
+    )
+  ) +
+  scale_fill_manual(
+    values = c(
+      "1 Star (Detractors)" = "#D55E00",
+      "5 Stars (Advocates)"  = "#0072B2"
+    )
+  ) +
+  labs(
+    title = "Conditional treatment effects across engagement levels",
+    subtitle = paste0(
+      "PHOBART autonomously discovers the sign-flip threshold near x1 = 0"
+    ),
+    x = "Baseline Engagement (x1)",
+    y = "Estimated Change in Probability"
+  ) +
+  theme_bw() + theme(legend.position = "bottom")
+```
+
+As demonstrated in @fig-heterogeneity, PHOBART autonomously discovers the
+inflection point near $x_1 = 0$ without parametric guidance. This empowers
+leadership to make targeted, data-backed decisions:
+
+1. **Cohort-Gated Rollout:** Ship the feature immediately to power users and
+   highly engaged accounts ($x_1 > 0$), where 5-star reviews surge by 40–50
+   percentage points and negative sentiment is absent.
+2. **Product Redesign for Onboarding:** Pause exposure for less-engaged
+   customers ($x_1 \le 0$), where 1-star reviews spike by 30–40 points,
+   iterating on simpler onboarding and UI guidance before re-testing.
+
+### Diagnosing Model Misfit Without Ground Truth
+
+In real industry applications, analysts do not have access to ground truth
+benchmarks. How can a team detect that an additive model has failed?
+
+1. **Subgroup Calibration & Posterior Predictive Checks (PPCs):** Bin the
+   observed data by customer cohorts (such as $x_1 \le 0$ vs. $x_1 > 0$) and
+   compare observed proportions against the model's posterior predictions. For
+   treated customers with $x_1 \le 0$, the empirical share of 1-star ratings is
+   roughly $50\%$, yet the linear probit predicts only $\approx 13\%$. This
+   glaring discrepancy immediately exposes model misspecification.
+2. **Model Comparison via Out-of-Sample Validation:** Evaluating leave-one-out
+   cross-validation (e.g., via `loo`) or predictive log-likelihood quickly
+   flags that an additive model fails to capture systematic patterns across
+   engagement deciles.
 
 ## Conclusion
 
