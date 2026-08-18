@@ -1,0 +1,287 @@
+---
+title: "Ordinal Regression with BART and the Cloglog Link"
+share:
+  permalink: "https://book.martinez.fyi/phobart.html"
+  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  linkedin: true
+  email: true
+  mastodon: true
+---
+
+## Ordinal Outcomes in Business
+
+Many of the outcomes we care about most in industry are ordered, but not numeric. Customer
+satisfaction is measured on a five-point Likert scale (one-to-five star), Net Promoter Survey (NPS)
+responses fall into detractor, passive, and promoter buckets, credit files are graded, and support tickets are triaged into severity tiers. Because the distance between "3 stars" and "4 stars" is not the same as the distance between "4 stars" and "5 stars," we cannot treat these ratings as continuous numbers. Rather than modeling the raw scores with a linear regression, the standard Bayesian models for ordinal data are the ordered probit and ordered logit (cumulative-link) models. These are a good starting point, but they carry two assumptions that are easy to overlook and frequently wrong:
+
+1.  **Linearity and additivity.** Predictors are assumed to impact a latent scale linearly, with no interactions unless we hand-specify them. For example, if a product change delights power users but frustrates newcomers, a linear model averages these out, reporting a misleading effect that describes neither group.
+2.  **Ordered cutpoints.** Cumulative-link models rely on estimating thresholds ($c_1 < \dots < c_{K-1}$) that must remain strictly ordered. Enforcing this constraint computationally complicates Markov Chain Monte Carlo (MCMC) sampling and significantly slows down convergence (@cowles1996).
+
+In previous chapters, we saw how BART (@chipman2010bart) relaxes the first assumption for continuous outcomes, discovering non-linearities and interactions on its own. This chapter extends that flexibility to ordinal outcomes, utilizing the framework from @alam2025unified to eliminate the second assumption as well.
+
+
+## The Cloglog Link and PHOBART
+The fix starts with the link function. Instead of probit or logit, we use the
+complementary log-log (cloglog) link,
+$$
+g(p) = \log\{-\log(1 - p)\}.
+$$
+It is the only link under which the two standard formulations of ordinal
+regression, cumulative-link and continuation-ratio, coincide. For an outcome with $K$ ordered categories $Y_i \in \{1, \dots, K\}$, @alam2025unified
+use this to write the model in proportional-hazards form,
+$$
+\Pr(Y_i > k \mid X_i = x) = \{S_0(k)\}^{e^{r(x)}},
+$$
+the discrete-data cousin of Cox's model, hence a **proportional hazards ordinal**
+model, or **PHOBART** once $r(x)$ gets a BART prior.
+
+Unlike probit and logit, the cloglog link is asymmetric, so it fits skewed,
+threshold-style effects: satisfaction can collapse once support waits cross a
+customer's tolerance but barely improve when an already-fast response speeds up.
+This is one reason it often fits ordinal survey data better than probit.
+
+It also resolves the cutpoint problem from the previous section. The thresholds
+are recovered from *unconstrained* parameters via $c_k = \log \sum_{j \le k}
+e^{\gamma_j}$, so the ordering holds by construction and the sampler never fights
+it. Furthermore, computation remains highly efficient: the inverse cloglog link is an exponential CDF,
+giving the model a latent representation in exponential random variables. Specifically, each
+observation (with $Y_i < K$) is augmented with a single truncated-exponential
+draw, after which every update is a standard BART step, with a $\log-\text{gamma}$
+leaf prior in place of the Gaussian one, or a conjugate draw. Also, PHOBART achieves minimax-optimal posterior contraction rates, meaning that the posterior concentrates around the true data-generating process at essentially the best achievable rate, up to logarithmic factors.
+
+The same latent-exponential machinery elegantly unifies ordinal, survival, and density regression under one engine, though ordinal outcomes remain the primary focus here. 
+
+## A Business Example: A Feature Change and Customer Satisfaction
+
+Suppose we roll out a product change and measure its effect on a one-to-five satisfaction rating. Our concern is heterogeneity: we suspect the change helps some customers and hurts others depending on how engaged they were to begin with. If we are right, a linear ordered probit will average those opposing effects into something misleading, and we could ship (or kill) the feature for the wrong reason.
+
+To see this cleanly, we simulate data where we know the truth. Let `x1` be a centered engagement score and `t` the feature flag. The latent satisfaction `z` is defined as
+$$
+z = 1.5 \sin\!\left(\frac{\pi\, x_1}{2}\right) + \tau(x_1)\, t + \epsilon,
+\qquad \epsilon \sim \mathcal{N}(0, 0.8^2),
+$$
+where the feature's effect $\tau(x_1)$ is $+1.5$ for engaged customers ($x_1 > 0$) and $-1.0$ for less-engaged ones ($x_1 \le 0$). This construction induces both a non-linear baseline effect through the sine function and heterogeneous treatment effects whose sign depends on $x_1$. 
+
+The observed ordinal outcome is generated by discretizing $z$ into a five-point Likert scale using fixed thresholds. The latent noise is Gaussian, which actually favors the probit benchmark. That is intentional: it puts all the difficulty in the regression function, which is non-linear and non-additive, so the comparison turns on flexibility rather than the link. It also lets us see whether PHOBART holds up when the link is misspecified.
+
+```{r simulate, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(stochtree)
+
+set.seed(1982)
+N <- 2500
+
+fake_data <- tibble(
+  x1 = runif(N, -2, 2),
+  t  = sample(c(0, 1), N, replace = TRUE)
+) %>%
+  mutate(
+    f_x    = 1.5 * sin(pi * x1 / 2),
+    tau_x  = ifelse(x1 > 0, 1.5, -1.0),
+    z_true = f_x + tau_x * t + rnorm(N, 0, 0.8),
+    y = case_when(
+      z_true <  -1.5 ~ 1,
+      z_true <  -0.5 ~ 2,
+      z_true <   0.5 ~ 3,
+      z_true <   1.5 ~ 4,
+      TRUE           ~ 5
+    )
+  )
+```
+
+We then compute the *true* population effect of the feature on each rating level by integrating over the
+counterfactuals (feature off vs. feature on) for every customer.
+
+```{r truth, message=FALSE, warning=FALSE}
+truth_ate <- fake_data %>%
+  mutate(z0 = f_x, z1 = f_x + tau_x) %>%
+  rowwise() %>%
+  mutate(
+    p0_1 = pnorm(-1.5, z0, 0.8),
+    p0_2 = pnorm(-0.5, z0, 0.8) - pnorm(-1.5, z0, 0.8),
+    p0_3 = pnorm( 0.5, z0, 0.8) - pnorm(-0.5, z0, 0.8),
+    p0_4 = pnorm( 1.5, z0, 0.8) - pnorm( 0.5, z0, 0.8),
+    p0_5 = 1 - pnorm(1.5, z0, 0.8),
+    p1_1 = pnorm(-1.5, z1, 0.8),
+    p1_2 = pnorm(-0.5, z1, 0.8) - pnorm(-1.5, z1, 0.8),
+    p1_3 = pnorm( 0.5, z1, 0.8) - pnorm(-0.5, z1, 0.8),
+    p1_4 = pnorm( 1.5, z1, 0.8) - pnorm( 0.5, z1, 0.8),
+    p1_5 = 1 - pnorm(1.5, z1, 0.8)
+  ) %>%
+  ungroup() %>%
+  summarise(across(starts_with("p0_") | starts_with("p1_"), mean)) %>%
+  pivot_longer(everything(), names_to = c("group", "y"), names_sep = "_") %>%
+  pivot_wider(names_from = group, values_from = value) %>%
+  mutate(y = as.integer(y), tau = p1 - p0)
+
+truth_ate
+```
+
+### BART Model Fitting (PHOBART)
+
+We now fit the PHOBART model using the cloglog link. Compared to probit-based ordinal BART models, this approach avoids ordered cutpoints and relies only on standard BART updates and conditionally conjugate steps, resulting in simpler and more stable computation.
+
+```{r fit-phobart, message=FALSE, warning=FALSE}
+X_train <- fake_data %>% select(x1, t) %>% as.matrix()
+y_train <- fake_data$y
+
+X0 <- X_train; X0[, "t"] <- 0
+X1 <- X_train; X1[, "t"] <- 1
+
+set.seed(2025)
+phobart <- cloglog_ordinal_bart(
+  X       = X_train,
+  y       = y_train,
+  X_test  = rbind(X0, X1),
+  num_burnin = 1000,
+  num_mcmc   = 1000
+)
+```
+
+### Checking convergence
+
+Before we trust any estimate, we check that the sampler has mixed. We fix $\gamma_1 = 0$ for identifiability, so we inspect the first *free* threshold, $\gamma_2$: a healthy trace is stationary, with no drift or long stuck stretches.
+
+```{r traceplot, message=FALSE, warning=FALSE}
+gamma_samples <- phobart$gamma_samples
+
+tibble(
+  iteration = seq_len(ncol(gamma_samples)),
+  gamma2    = gamma_samples[2, ]
+) %>%
+  ggplot(aes(iteration, gamma2)) +
+  geom_line(color = "blue", alpha = 0.6) +
+  labs(title = "Trace plot for the first free threshold",
+       x = "Iteration", y = expression(gamma[2])) +
+  theme_bw()
+```
+
+We also report the effective sample size (ESS), the number of independent draws the chain is worth:
+
+```{r ess, message=FALSE, warning=FALSE}
+library(coda)
+cat("ESS for gamma_2:", round(effectiveSize(gamma_samples[2, ]), 1), "\n")
+```
+The trace looks stationary with no drift or sticking, and the ESS is healthy, so we can trust the posterior summaries that follow. In practice you would check the remaining thresholds and the forest the same way.
+
+### Turning the posterior into category probabilities
+
+The forest predictions are on the latent scale, so we push them through the cloglog link to get, for each posterior draw, the probability of each rating under the feature-off and feature-on worlds.
+
+```{r phobart-probs, message=FALSE, warning=FALSE}
+N_obs  <- nrow(X_train)
+n_cats <- 5
+pred0  <- phobart$forest_predictions_test[1:N_obs, ]
+pred1  <- phobart$forest_predictions_test[(N_obs + 1):(2 * N_obs), ]
+
+compute_pop_probs <- function(latent, gammas, n_cats) {
+  n_d <- ncol(latent)
+  out <- matrix(0, n_d, n_cats)
+  for (m in 1:n_d) {
+    lam <- latent[, m]; gam <- gammas[, m]
+    prev <- 1 - exp(-exp(gam[1] + lam))
+    out[m, 1] <- mean(prev)
+    for (j in 2:(n_cats - 1)) {
+      curr <- 1 - exp(-exp(gam[j] + lam))
+      out[m, j] <- mean(curr - prev)
+      prev <- curr
+    }
+    out[m, n_cats] <- mean(1 - prev)
+  }
+  out
+}
+
+tidy_draws <- function(mat) {
+  as_tibble(mat, .name_repair = ~ paste0("V", seq_along(.x))) %>%
+    mutate(draw = row_number()) %>%
+    pivot_longer(-draw, names_to = "y", values_to = "prob") %>%
+    mutate(y = as.integer(sub("V", "", y)))
+}
+
+probs0 <- compute_pop_probs(pred0, gamma_samples, n_cats)
+probs1 <- compute_pop_probs(pred1, gamma_samples, n_cats)
+
+tau_phobart <- inner_join(
+  tidy_draws(probs0) %>% rename(p0 = prob),
+  tidy_draws(probs1) %>% rename(p1 = prob),
+  by = c("draw", "y")
+) %>% mutate(tau = p1 - p0)
+```
+
+### Benchmark: linear ordered probit
+
+To benchmark our approach, we fit a Bayesian linear ordered probit model with `brms`, to see how it performs when the true relationship is non-linear and includes interactions.
+
+```{r probit, message=FALSE, warning=FALSE, results="hide"}
+library(brms)
+
+probit_lm <- brm(
+  y ~ x1 + t,
+  data    = fake_data %>% mutate(y = ordered(y)),
+  family  = cumulative("probit"),
+  chains  = 4, iter = 2000, refresh = 0
+)
+```
+
+```{r probit-probs, message=FALSE, warning=FALSE}
+# posterior_epred returns draws x observations x categories for ordinal families
+ep0 <- posterior_epred(probit_lm, newdata = fake_data %>% mutate(t = 0, y = ordered(y)))
+ep1 <- posterior_epred(probit_lm, newdata = fake_data %>% mutate(t = 1, y = ordered(y)))
+
+pop0 <- apply(ep0, c(1, 3), mean)   # draws x categories
+pop1 <- apply(ep1, c(1, 3), mean)
+
+tau_probit <- as_tibble(pop1 - pop0, .name_repair = ~ paste0("V", seq_along(.x))) %>%
+  mutate(draw = row_number()) %>%
+  pivot_longer(-draw, names_to = "y", values_to = "tau") %>%
+  mutate(y = as.integer(sub("V", "", y)))
+```
+
+### Comparison of Average Treatment Effects
+
+```{r compare-plot, message=FALSE, warning=FALSE, fig.width=10, fig.height=6}
+summ <- function(df, model) {
+  df %>% group_by(y) %>%
+    summarise(val  = median(tau),
+              low  = quantile(tau, 0.025),
+              high = quantile(tau, 0.975), .groups = "drop") %>%
+    mutate(Model = model)
+}
+
+bind_rows(summ(tau_phobart, "PHOBART"), summ(tau_probit, "Linear Probit")) %>%
+  ggplot(aes(factor(y), val, color = Model)) +
+  geom_linerange(aes(ymin = low, ymax = high), linewidth = 1,
+                 position = position_dodge(0.5)) +
+  geom_point(size = 3, position = position_dodge(0.5)) +
+  geom_point(data = truth_ate, aes(factor(y), tau, color = "Truth"),
+             size = 4, shape = 4, stroke = 1.5, inherit.aes = FALSE) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5) +
+  scale_color_manual(values = c("PHOBART" = "blue", "Linear Probit" = "orange",
+                                "Truth" = "red")) +
+  labs(title = "Effect of the feature on each rating level",
+       subtitle = "The linear model averages away the sign-flipping heterogeneity",
+       x = "Rating (1–5)", y = "Change in probability") +
+  theme_bw() + theme(legend.position = "bottom")
+```
+ - The linear probit sits near zero at every rating, detecting almost no effect anywhere. 
+ - PHOBART recovers the full shape of the effect: strong negative shifts at ratings 3 and 4, strong positive shifts at 1 and 5, closely tracking the truth.
+
+## Why These Results Matter
+
+In this data-generating process, the treatment effect is heterogeneous: it is positive for individuals with $x_1 > 0$ and negative for those with $x_1 \le 0$. A linear ordinal probit model is forced to represent this structure using a single treatment coefficient, which leads to biased population-level estimates when effects cancel out across subgroups.
+
+The PHOBART model correctly identifies both the non-linear baseline relationship between $x_1$ and the outcome and the interaction between $x_1$ and treatment. By combining the flexibility of BART with the computational advantages of the cloglog link, it accurately recovers the true average treatment effects across all ordinal categories. This is the practical payoff: when an intervention helps some customers and hurts others, only the flexible model tells you so.
+
+## Conclusion
+
+This example illustrates the practical value of a unified Bayesian nonparametric framework: it is easier to implement because it avoids cutpoint constraints, and more accurate because it adapts automatically to complex
+structure in the data.
+
+The usual cautions apply. The causal reading rests on the standard assumptions, unconfoundedness and adequate overlap between treated and control units, which no model supplies on its own; when treatment is not randomized, include a propensity score as a covariate. The proportional-hazards version assumes the covariate effect does not interact with the rating level; the non-proportional variant (NPHOBART) relaxes this at some computational cost. @alam2025unified develop PHOBART and NPHOBART for ordinal regression and note that sharing forests, in the spirit of @hahn2020bayesian, is a natural route to richer causal estimation.
+
+::: {.callout-tip}
+## Learn more
+@alam2025unified A unified Bayesian nonparametric framework for ordinal, survival, and density regression using the complementary log-log link.
+:::
