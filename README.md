@@ -37,18 +37,29 @@ This book is written and built using [Quarto](https://quarto.org/). To render th
 
 ### Using Docker
 
-To avoid installing R and all its dependencies locally, you can build and render the book using Docker. This ensures an isolated environment mirroring the CI process.
+To avoid installing R and all its dependencies directly on your host machine, you can build and render the book using Docker:
 
-1. Build the Docker image (this will take a few minutes as it installs all packages):
+1. Build the Docker image (installs system libraries, R packages, and dependencies):
    ```bash
-   docker build -t business-data-science-book .
+   make build
+   # or: ./render.sh --build
    ```
-2. Run the container to render the book. To prevent generated files (like caches and compiled models) from cluttering your repository, we render everything into a dedicated `_docker_build` subfolder that will be ignored by Git:
+2. Render a single modified chapter (fast, with caching and freeze output):
    ```bash
-   mkdir -p _docker_build
-   docker run --rm -v "$(pwd):/src:ro" -v "$(pwd)/_docker_build:/book" business-data-science-book bash -O extglob -O dotglob -c "cp -a /src/!(_docker_build) /book/ && quarto render"
+   make render-chapter CHAPTER=phobart.qmd
+   # or: ./render.sh phobart.qmd
    ```
-   Once finished, you can find the fully rendered book at `_docker_build/docs/index.html`.
+3. Render the full book:
+   ```bash
+   make render
+   # or: ./render.sh
+   ```
+4. Live interactive preview:
+   ```bash
+   make preview
+   ```
+
+*Note: When rendering locally, Quarto saves execution outputs to `_freeze/`. Committing `_freeze/` allows GitHub Actions to publish in 1–2 minutes without re-running long MCMC computations in CI.*
 
 ## 📄 License
 

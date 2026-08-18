@@ -11,3 +11,5 @@ docs/
 *.tex
 *.toc
 _docker_build/
+cache/
+**/*.quarto_ipynb

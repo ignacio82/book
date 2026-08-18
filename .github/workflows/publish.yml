@@ -78,6 +78,7 @@ jobs:
             any::arm
             any::future
             any::lubridate
+            any::brms
             google/imt
             google/biva
 
