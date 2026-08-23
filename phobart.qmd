@@ -16,6 +16,8 @@ author:
 
 ## Ordinal Outcomes in Business
 
+<img src="img/phobart.jpeg" align="right" height="280" alt="Ordinal Regression with BART and the Cloglog Link" />
+
 Many of the outcomes we care about most in industry are ordered, but not
 numeric. Customer satisfaction is measured on a five-point Likert scale (one
 to five stars), Net Promoter Score (NPS) responses fall into detractor,
