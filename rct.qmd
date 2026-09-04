@@ -1,8 +1,9 @@
 ---
 title: "The Gold Standard"
+description: "Randomized controlled trials, from 1920s agriculture to the modern A/B test: why randomization is the most credible route to a causal claim, and where its apparent simplicity misleads."
 share:
   permalink: "https://book.martinez.fyi/rct.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "The gold standard: the promise and the limits of randomized controlled trials"
   linkedin: true
   email: true
   mastodon: true

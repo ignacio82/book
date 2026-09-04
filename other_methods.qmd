@@ -1,8 +1,9 @@
 ---
 title: "Non Experimental Methods"
+description: "When randomized trials are impossible, these methods approximate experimental conditions from observational data, each carrying its own assumptions, strengths, and failure modes."
 share:
   permalink: "https://book.martinez.fyi/other_methods.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Non-experimental methods: causal inference when you cannot run an RCT"
   linkedin: true
   email: true
   mastodon: true

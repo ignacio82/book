@@ -1,8 +1,9 @@
 ---
 title: "Rapid-Cycle Evaluation for Program Improvement"
+description: "Rapid-cycle evaluation: short, iterative test-and-learn loops that let teams improve programs continuously, and how behavioral economics sharpens the interventions worth testing."
 share:
   permalink: "https://book.martinez.fyi/rce.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Rapid-cycle evaluation: fast, iterative testing for continuous program improvement"
   linkedin: true
   email: true
   mastodon: true

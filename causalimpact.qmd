@@ -1,8 +1,9 @@
 ---
 title: "Bayesian Structural Time Series"
+description: "Measuring the effect of a campaign, price change, or launch against a counterfactual forecast built from control series, with cautionary tales about stability and spillovers."
 share:
   permalink: "https://book.martinez.fyi/causalimpact.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Bayesian structural time series: measuring impact against a forecast counterfactual"
   linkedin: true
   email: true
   mastodon: true

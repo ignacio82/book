@@ -1,8 +1,9 @@
 ---
 title: "Generalized Linear Models"
+description: "Extending linear regression beyond the normal distribution: the random component, linear predictor, and link function that let GLMs handle binary, ordinal, and count outcomes."
 share:
   permalink: "https://book.martinez.fyi/glm.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Generalized linear models: regression beyond the bell curve"
   linkedin: true
   email: true
   mastodon: true

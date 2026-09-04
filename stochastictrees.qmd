@@ -1,8 +1,9 @@
 ---
 title: "Stochastic Trees"
+description: "BART and its causal derivatives: flexible non-parametric models that capture non-linearities and interactions without hand-specified functional forms, and the assumptions they still require."
 share:
   permalink: "https://book.martinez.fyi/stochastictrees.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Stochastic trees: BART and its derivatives for causal inference"
   linkedin: true
   email: true
   mastodon: true

@@ -1,8 +1,9 @@
 ---
 title: "Meta-Analysis"
+description: "Combining evidence across studies with Bayesian meta-analysis: pooling effect sizes, borrowing strength across related experiments, and carrying what you already know forward as a prior."
 share:
   permalink: "https://book.martinez.fyi/meta-analysis.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Bayesian meta-analysis: pooling evidence across multiple studies"
   linkedin: true
   email: true
   mastodon: true

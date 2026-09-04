@@ -1,8 +1,9 @@
 ---
 title: "Bayesian Linear Regression"
+description: "Why the Bayesian approach to linear regression suits business decisions better than OLS: a full posterior distribution over effects instead of a point estimate and a p-value."
 share:
   permalink: "https://book.martinez.fyi/blm.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Bayesian linear regression: posteriors over effects, not just point estimates"
   linkedin: true
   email: true
   mastodon: true

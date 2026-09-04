@@ -1,8 +1,9 @@
 ---
 title: "Hurdle Models"
+description: "Data with a preponderance of zeros defies conventional distributions. Hurdle models separate whether a value occurs from how large it is, and differ from zero-inflated models in ways that matter."
 share:
   permalink: "https://book.martinez.fyi/hurdle.html"
-  description: "Business Data Science: Hurdle Models"
+  description: "Hurdle models: handling outcomes with a preponderance of zeros"
   linkedin: true
   email: true
   mastodon: true

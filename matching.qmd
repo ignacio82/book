@@ -1,8 +1,9 @@
 ---
 title: "Matching"
+description: "Building a valid comparison group by pairing treated units with similar untreated ones, the propensity score paradox, and a clear-eyed account of what matching cannot fix."
 share:
   permalink: "https://book.martinez.fyi/matching.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Matching: constructing comparison groups from observational data, and its limits"
   linkedin: true
   email: true
   mastodon: true

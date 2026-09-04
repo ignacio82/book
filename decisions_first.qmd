@@ -1,8 +1,9 @@
 ---
 title: "A Decisions First Framework"
+description: "Escape the null ritual. Start from the decision you need to make, derive the data questions from it, design the study to answer them, and report findings without the lure of incredible certitude."
 share:
   permalink: "https://book.martinez.fyi/decisions_first.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "A decisions-first framework: start with the decision, not the p-value"
   linkedin: true
   email: true
   mastodon: true

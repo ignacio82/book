@@ -1,5 +1,6 @@
 ---
 title: "Study Design"
+description: "Power calculations, minimum detectable effects, and profit-maximizing A/B tests: how to size a study around the decision it informs rather than an arbitrary significance threshold."
 share:
   permalink: "https://book.martinez.fyi/strength.html"
   description: "Pilot Strength: Designing Decision-Centric Business Experiments"

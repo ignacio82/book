@@ -1,8 +1,9 @@
 ---
 title: "Baseline Equivalence"
+description: "How to gauge whether treatment and comparison groups started on a level playing field, why baseline equivalence underpins any causal claim, and how to check it with the imt R package."
 share:
   permalink: "https://book.martinez.fyi/baseline.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Baseline equivalence: checking that your comparison group is actually comparable"
   linkedin: true
   email: true
   mastodon: true

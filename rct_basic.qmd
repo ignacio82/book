@@ -1,8 +1,9 @@
 ---
 title: "The Power of Randomization"
+description: "Randomization is not magic. How random assignment balances observable and unobservable characteristics alike, why SUTVA is the cornerstone assumption, and when to stratify."
 share:
   permalink: "https://book.martinez.fyi/rct_basic.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "The power of randomization: why random assignment works, and when SUTVA breaks it"
   linkedin: true
   email: true
   mastodon: true

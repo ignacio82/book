@@ -3,9 +3,10 @@ title: "Bayesian Adaptive Design"
 subtitle: >-
   Contextual Multi-Armed Bandits with Multivariate Bayesian
   Causal Forests
+description: "A contextual multi-armed bandit built on multivariate Bayesian Causal Forests, routing each customer to their highest net-ROI retention offer while the experiment is still running."
 share:
   permalink: "https://book.martinez.fyi/bad.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Bayesian adaptive design: contextual bandits with multivariate BCF"
   linkedin: true
   email: true
   mastodon: true

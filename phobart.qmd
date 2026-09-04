@@ -1,11 +1,9 @@
 ---
 title: "Ordinal Regression with BART and the Cloglog Link"
+description: "Ordinal regression with Bayesian Additive Regression Trees using the complementary log-log link, capturing non-linearities and interactions while avoiding restrictive cutpoint constraints."
 share:
   permalink: "https://book.martinez.fyi/phobart.html"
-  description: >-
-    Ordinal regression with Bayesian Additive Regression Trees (BART) using
-    the complementary log-log link to model non-linearities, interactions,
-    and avoid cutpoint constraints.
+  description: "Ordinal regression with BART and the cloglog link, free of cutpoint constraints"
   linkedin: true
   email: true
   mastodon: true
