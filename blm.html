@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Why the Bayesian approach to linear regression suits business decisions better than OLS: a full posterior distribution over effects instead of a point estimate and a p-value.">
 
-<title>17&nbsp; Bayesian Linear Regression – Business Data Science</title>
+<title>16&nbsp; Bayesian Linear Regression – Business Data Science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -102,7 +103,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-3d497cff885f6278d37568d0ef0763f8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/social-share.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/all.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -174,19 +175,19 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="17&nbsp; Bayesian Linear Regression – Business Data Science">
-<meta property="og:description" content="">
+<meta property="og:title" content="16&nbsp; Bayesian Linear Regression – Business Data Science">
+<meta property="og:description" content="Why the Bayesian approach to linear regression suits business decisions better than OLS: a full posterior distribution over effects instead of a point estimate and a p-value.">
 <meta property="og:image" content="https://book.martinez.fyi/blm_files/figure-html/OLS-1.png">
 <meta property="og:site_name" content="Business Data Science">
 <meta property="og:image:height" content="960">
 <meta property="og:image:width" content="1344">
-<meta name="twitter:title" content="17&nbsp; Bayesian Linear Regression – Business Data Science">
-<meta name="twitter:description" content="">
+<meta name="twitter:title" content="16&nbsp; Bayesian Linear Regression – Business Data Science">
+<meta name="twitter:description" content="Why the Bayesian approach to linear regression suits business decisions better than OLS: a full posterior distribution over effects instead of a point estimate and a p-value.">
 <meta name="twitter:image" content="https://book.martinez.fyi/blm_files/figure-html/OLS-1.png">
 <meta name="twitter:image-height" content="960">
 <meta name="twitter:image-width" content="1344">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="citation_title" content="[17]{.chapter-number}&nbsp; [Bayesian Linear Regression]{.chapter-title}">
+<meta name="citation_title" content="[16]{.chapter-number}&nbsp; [Bayesian Linear Regression]{.chapter-title}">
 <meta name="citation_fulltext_html_url" content="https://book.martinez.fyi">
 <meta name="citation_language" content="en">
 <meta name="citation_book_title" content="Business Data Science: A guide for data-driven decisions">
@@ -274,7 +275,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./blm.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./blm.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -376,32 +377,26 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bad.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./factorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bayesian Factorial Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Bayesian Factorial Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./iv.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Randomized Encouragement Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Randomized Encouragement Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./coordination.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">The Importance of Coordination</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">The Importance of Coordination</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./strength.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -418,19 +413,19 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./matching.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./causalimpact.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
       </ul>
@@ -447,25 +442,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./blm.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./meta-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./beyond_normality.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./hurdle.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -482,31 +477,37 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bcf.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">LongBet: Heterogeneous Treatment Effects in Panel Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">LongBet: Heterogeneous Treatment Effects in Panel Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./phobart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bad.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -527,7 +528,7 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#an-example-with-synthetic-data" id="toc-an-example-with-synthetic-data" class="nav-link active" data-scroll-target="#an-example-with-synthetic-data"><span class="header-section-number">17.1</span> An example with synthetic data:</a>
+  <li><a href="#an-example-with-synthetic-data" id="toc-an-example-with-synthetic-data" class="nav-link active" data-scroll-target="#an-example-with-synthetic-data"><span class="header-section-number">16.1</span> An example with synthetic data:</a>
   <ul class="collapse">
   <li><a href="#frequentist-approach" id="toc-frequentist-approach" class="nav-link" data-scroll-target="#frequentist-approach">Frequentist approach:</a></li>
   <li><a href="#bayesian-approach" id="toc-bayesian-approach" class="nav-link" data-scroll-target="#bayesian-approach">Bayesian approach:</a></li>
@@ -538,9 +539,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./blm.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./blm.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -568,8 +569,8 @@ window.Quarto = {
 <li><p><strong>Practical Significance:</strong> While anything can be statistically significant with a large enough sample size, Bayesian analysis focuses on the magnitude and probability of effects that are practically meaningful for your business goals. Even if a result isn’t statistically significant, it could still be a good bet if the posterior probability of a meaningful impact is sufficiently high.</p></li>
 </ul>
 <p>The Bayesian approach embraces the inherent uncertainty in data analysis, providing a richer and more nuanced understanding of the relationships between variables, ultimately leading to more informed and effective business decisions.</p>
-<section id="an-example-with-synthetic-data" class="level2" data-number="17.1">
-<h2 data-number="17.1" class="anchored" data-anchor-id="an-example-with-synthetic-data"><span class="header-section-number">17.1</span> An example with synthetic data:</h2>
+<section id="an-example-with-synthetic-data" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="an-example-with-synthetic-data"><span class="header-section-number">16.1</span> An example with synthetic data:</h2>
 <p>Imagine that you are faced with a decision: should you discontinue a product? You would like to keep the product if, and only if, its impact on your outcome of interest is at least 0.1. To help you make this decision, you’ve conducted a well-designed experiment. Let’s illustrate this with some synthetic data:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-1"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-1-1"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
@@ -1263,356 +1264,357 @@ Wasserstein, Ronald L, and Nicole A Lazar. 2016. <span>“The ASA Statement on p
   </div>
   <div class="nav-page nav-page-next">
       <a href="./meta-analysis.html" class="pagination-link" aria-label="Meta-Analysis">
-        <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Bayesian Linear Regression"</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/blm.html"</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "Business Data Science: What Does it Mean to Be Data-Driven?"</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Why the Bayesian approach to linear regression suits business decisions better than OLS: a full posterior distribution over effects instead of a point estimate and a p-value."</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/blm.html"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "Bayesian linear regression: posteriors over effects, not just point estimates"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>While Ordinary Least Squares (OLS) is a popular frequentist method for linear</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>regression, the Bayesian approach is arguably better suited for informing</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>business decisions.</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>OLS aims to find the line that minimizes the sum of squared differences between</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>observed and predicted values. It treats model parameters as fixed but unknown</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>quantities, estimating them by minimizing residuals. Inference relies on</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>hypothesis testing and p-values to assess the significance of relationships.</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>However, this approach can lead to a rigid focus on statistical significance</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>rather than practical relevance.</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>A Bayesian Linear Model, while similar in structure to OLS, views parameters as</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>random variables with probability distributions reflecting uncertainty. Prior</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>distributions incorporate existing knowledge or assumptions, and Bayes' theorem</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>combines this prior information with observed data to estimate the posterior</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>distribution of parameters. Inference focuses on posterior probabilities to</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>quantify uncertainty and interpret the strength of evidence.</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>The Bayesian approach offers several advantages for business decision-making:</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Incorporating Prior Knowledge:** Bayesian models allow you to explicitly</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    include prior knowledge or beliefs about the parameters, which can be</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    valuable in business contexts where historical data or expert opinions</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    exist.</span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Learning from New Data:** The Bayesian framework naturally shows how new</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    data updates and refines your understanding of the relationships between</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    variables.</span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Thinking in Bets:** Instead of relying on the binary and often arbitrary</span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    concept of statistical significance, Bayesian analysis encourages thinking</span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    in terms of probabilities and bets. This aligns well with business</span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    decisions, where you often need to weigh potential risks and rewards.</span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Practical Significance:** While anything can be statistically significant</span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    with a large enough sample size, Bayesian analysis focuses on the magnitude</span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    and probability of effects that are practically meaningful for your business</span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    goals. Even if a result isn't statistically significant, it could still be a</span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    good bet if the posterior probability of a meaningful impact is sufficiently</span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    high.</span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>The Bayesian approach embraces the inherent uncertainty in data analysis,</span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>providing a richer and more nuanced understanding of the relationships between</span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>variables, ultimately leading to more informed and effective business decisions.</span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>While Ordinary Least Squares (OLS) is a popular frequentist method for linear</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>regression, the Bayesian approach is arguably better suited for informing</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>business decisions.</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>OLS aims to find the line that minimizes the sum of squared differences between</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>observed and predicted values. It treats model parameters as fixed but unknown</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>quantities, estimating them by minimizing residuals. Inference relies on</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>hypothesis testing and p-values to assess the significance of relationships.</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>However, this approach can lead to a rigid focus on statistical significance</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>rather than practical relevance.</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>A Bayesian Linear Model, while similar in structure to OLS, views parameters as</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>random variables with probability distributions reflecting uncertainty. Prior</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>distributions incorporate existing knowledge or assumptions, and Bayes' theorem</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>combines this prior information with observed data to estimate the posterior</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>distribution of parameters. Inference focuses on posterior probabilities to</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>quantify uncertainty and interpret the strength of evidence.</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>The Bayesian approach offers several advantages for business decision-making:</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Incorporating Prior Knowledge:** Bayesian models allow you to explicitly</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    include prior knowledge or beliefs about the parameters, which can be</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    valuable in business contexts where historical data or expert opinions</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    exist.</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Learning from New Data:** The Bayesian framework naturally shows how new</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    data updates and refines your understanding of the relationships between</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    variables.</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Thinking in Bets:** Instead of relying on the binary and often arbitrary</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    concept of statistical significance, Bayesian analysis encourages thinking</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    in terms of probabilities and bets. This aligns well with business</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    decisions, where you often need to weigh potential risks and rewards.</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Practical Significance:** While anything can be statistically significant</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    with a large enough sample size, Bayesian analysis focuses on the magnitude</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    and probability of effects that are practically meaningful for your business</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    goals. Even if a result isn't statistically significant, it could still be a</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    good bet if the posterior probability of a meaningful impact is sufficiently</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    high.</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>The Bayesian approach embraces the inherent uncertainty in data analysis,</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>providing a richer and more nuanced understanding of the relationships between</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>variables, ultimately leading to more informed and effective business decisions.</span>
 <span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## An example with synthetic data: </span></span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>Imagine that you are faced with a decision: should you discontinue a product?</span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>You would like to keep the product if, and only if, its impact on your outcome</span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>of interest is at least 0.1. To help you make this decision, you've conducted a</span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>well-designed experiment. Let's illustrate this with some synthetic data:</span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fake_data, message=FALSE}</span></span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9782</span>)</span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>N  <span class="ot">&lt;-</span> <span class="dv">200</span></span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>fake_data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">c</span>(T,F), <span class="at">size =</span> N, <span class="at">replace =</span> T, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>)),</span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">e =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.4</span>)</span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fl">7.1</span> <span class="sc">+</span> <span class="fl">0.6</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fl">0.02</span><span class="sc">*</span>t <span class="sc">+</span> e) <span class="co"># &lt;1&gt;</span></span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Note that the true impact is 0.02, suggesting that the correct decision</span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>    would be to not discontinue the product. However, what happens if you</span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>    analyze this data using a traditional frequentist approach?</span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a><span class="fu">### Frequentist approach: </span></span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r OLS}</span></span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">data =</span> fake_data, <span class="at">formula =</span> y <span class="sc">~</span> x <span class="sc">+</span> t) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(., <span class="at">conf.int=</span>T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">"tTRUE"</span>) </span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> lm1, <span class="fu">aes</span>(<span class="at">y=</span>estimate, <span class="at">x=</span> term)) <span class="sc">+</span></span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> conf.low, <span class="at">ymax =</span> conf.high)) <span class="sc">+</span></span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span> </span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="at">by =</span> <span class="fl">0.02</span>)) <span class="sc">+</span></span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">18</span>) <span class="sc">+</span></span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> </span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Impact"</span>) <span class="sc">+</span> </span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>plot</span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>In this case, the point estimate is <span class="in">`r round(lm1$estimate, 2)`</span>, the p-value</span>
-<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a><span class="in">`r round(lm1$p.value,2)`</span> is greater than 0.05, and the 95% confidence interval</span>
-<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>ranges from <span class="in">`r round(lm1$conf.low,2)`</span> to <span class="in">`r round(lm1$conf.high,2)`</span>. How would a</span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>decision-maker typically use this information? Unfortunately, many might decide</span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>to discontinue the product, misinterpreting the results [see</span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>@chandler2020speaking].</span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="The null ritual, @gigerenzer2004null:"}</span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Set up a statistical null hypothesis of "no mean difference" or "zero</span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>    correlation." Don't specify the predictions of your research hypothesis or</span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>    of any alternative substantive hypotheses.</span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>Use 5% as a convention for rejecting the null. If significant, accept your</span>
-<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>    research hypothesis.</span>
-<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>Always performing this procedure.</span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>This problem was so widespread that in 2016, the American Statistical</span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>Association issued a statement cautioning against this practice [see</span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>@wasserstein2016asa]. Confidence intervals are also frequently misinterpreted</span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">see @hoekstra2014robust</span><span class="co">]</span>.</span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="Incorrect interpretations:"}</span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>The probability that the true mean is greater than 0 is at least 95%.</span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>The probability that the true mean equals 0 is smaller than 5%.</span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>The “null hypothesis” that the true mean equals 0 is likely to be incorrect.</span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>There is a 95% probability that the true mean lies between</span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>    <span class="in">`r round(lm1$conf.low,2)`</span> and <span class="in">`r round(lm1$conf.high,2)`</span>.</span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>We can be 95% confident that the true mean lies between</span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>    <span class="in">`r round(lm1$conf.low,2)`</span> and <span class="in">`r round(lm1$conf.high,2)`</span>.</span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a><span class="ss">6.  </span>If we were to repeat the experiment over and over, then 95% of the time the</span>
-<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>    true mean falls between 0.1 and <span class="in">`r round(lm1$conf.high,2)`</span>.</span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="Correct interpretations:"}</span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>A particular procedure, when used repeatedly across a series of hyptothetical</span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>data sets, yields intervals that contain the true parameter value 95% of the</span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>cases. The key is that the CIs do not provide a statement about the parameter as</span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>it relates to the particular sample at hand.</span>
-<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>This example starkly illustrates the disconnect between what decision-makers</span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>want to say and what a frequentist approach allows them to say. The good news?</span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>Bayesian methods offer a way to answer business questions directly and in plain</span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>language.</span>
-<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="fu">## An example with synthetic data: </span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>Imagine that you are faced with a decision: should you discontinue a product?</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>You would like to keep the product if, and only if, its impact on your outcome</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>of interest is at least 0.1. To help you make this decision, you've conducted a</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>well-designed experiment. Let's illustrate this with some synthetic data:</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fake_data, message=FALSE}</span></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9782</span>)</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>N  <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>fake_data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">sample</span>(<span class="at">x =</span> <span class="fu">c</span>(T,F), <span class="at">size =</span> N, <span class="at">replace =</span> T, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.5</span>)),</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">e =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.4</span>)</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fl">7.1</span> <span class="sc">+</span> <span class="fl">0.6</span><span class="sc">*</span>x <span class="sc">+</span> <span class="fl">0.02</span><span class="sc">*</span>t <span class="sc">+</span> e) <span class="co"># &lt;1&gt;</span></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Note that the true impact is 0.02, suggesting that the correct decision</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>    would be to not discontinue the product. However, what happens if you</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>    analyze this data using a traditional frequentist approach?</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="fu">### Frequentist approach: </span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r OLS}</span></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">data =</span> fake_data, <span class="at">formula =</span> y <span class="sc">~</span> x <span class="sc">+</span> t) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(., <span class="at">conf.int=</span>T, <span class="at">conf.level=</span><span class="fl">0.95</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term<span class="sc">==</span><span class="st">"tTRUE"</span>) </span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> lm1, <span class="fu">aes</span>(<span class="at">y=</span>estimate, <span class="at">x=</span> term)) <span class="sc">+</span></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> conf.low, <span class="at">ymax =</span> conf.high)) <span class="sc">+</span></span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span> </span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="at">by =</span> <span class="fl">0.02</span>)) <span class="sc">+</span></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">18</span>) <span class="sc">+</span></span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> </span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Impact"</span>) <span class="sc">+</span> </span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>plot</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>In this case, the point estimate is <span class="in">`r round(lm1$estimate, 2)`</span>, the p-value</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a><span class="in">`r round(lm1$p.value,2)`</span> is greater than 0.05, and the 95% confidence interval</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>ranges from <span class="in">`r round(lm1$conf.low,2)`</span> to <span class="in">`r round(lm1$conf.high,2)`</span>. How would a</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>decision-maker typically use this information? Unfortunately, many might decide</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>to discontinue the product, misinterpreting the results [see</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>@chandler2020speaking].</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="The null ritual, @gigerenzer2004null:"}</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Set up a statistical null hypothesis of "no mean difference" or "zero</span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>    correlation." Don't specify the predictions of your research hypothesis or</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>    of any alternative substantive hypotheses.</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>Use 5% as a convention for rejecting the null. If significant, accept your</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>    research hypothesis.</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>Always performing this procedure.</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>This problem was so widespread that in 2016, the American Statistical</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>Association issued a statement cautioning against this practice [see</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>@wasserstein2016asa]. Confidence intervals are also frequently misinterpreted</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">see @hoekstra2014robust</span><span class="co">]</span>.</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>::: {.callout-important title="Incorrect interpretations:"}</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>The probability that the true mean is greater than 0 is at least 95%.</span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>The probability that the true mean equals 0 is smaller than 5%.</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>The “null hypothesis” that the true mean equals 0 is likely to be incorrect.</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>There is a 95% probability that the true mean lies between</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>    <span class="in">`r round(lm1$conf.low,2)`</span> and <span class="in">`r round(lm1$conf.high,2)`</span>.</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>We can be 95% confident that the true mean lies between</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>    <span class="in">`r round(lm1$conf.low,2)`</span> and <span class="in">`r round(lm1$conf.high,2)`</span>.</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a><span class="ss">6.  </span>If we were to repeat the experiment over and over, then 95% of the time the</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>    true mean falls between 0.1 and <span class="in">`r round(lm1$conf.high,2)`</span>.</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="Correct interpretations:"}</span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>A particular procedure, when used repeatedly across a series of hyptothetical</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>data sets, yields intervals that contain the true parameter value 95% of the</span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>cases. The key is that the CIs do not provide a statement about the parameter as</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>it relates to the particular sample at hand.</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>This example starkly illustrates the disconnect between what decision-makers</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>want to say and what a frequentist approach allows them to say. The good news?</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>Bayesian methods offer a way to answer business questions directly and in plain</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>language.</span>
 <span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bayesian approach: </span></span>
-<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>The Bayesian approach to linear regression fundamentally shifts how we interpret</span>
-<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>and utilize data in decision-making. Rather than relying on point estimates and</span>
-<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>p-values, it focuses on understanding the probability distributions of</span>
-<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>parameters, providing a richer, more nuanced picture.</span>
-<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>In a Bayesian Linear Model, parameters are viewed as random variables with their</span>
-<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>own probability distributions. This perspective allows us to incorporate prior</span>
-<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>knowledge into the model: prior distributions reflect existing knowledge or</span>
-<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>beliefs about parameters before observing the current data, which can be based</span>
-<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>on historical data, expert opinions, or theoretical considerations. The</span>
-<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>likelihood represents the probability of the observed data given the parameters,</span>
-<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>similar to the frequentist approach. Posterior distributions combine the prior</span>
-<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>distribution and the likelihood using Bayes' theorem, reflecting updated beliefs</span>
-<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>about the parameters after observing the data. The beauty of the Bayesian</span>
-<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>approach lies in its flexibility and adaptability. As new data becomes</span>
-<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>available, the posterior distribution from one analysis can serve as the prior</span>
-<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>for the next, continually refining our understanding.</span>
-<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>Business decisions often leverage historical data and expert judgment, and</span>
-<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>Bayesian models explicitly incorporate this information, leading to more</span>
-<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>informed and credible inferences. Bayesian analysis naturally adapts to new</span>
-<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>information. As fresh data is collected, the model updates its estimates,</span>
-<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>providing a dynamic and current understanding of the business environment.</span>
-<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>Instead of fixating on binary outcomes (significant vs. non-significant),</span>
-<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>Bayesian analysis assesses probabilities, aligning perfectly with the real-world</span>
-<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>decision-making process, which is inherently probabilistic and involves weighing</span>
-<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a>risks and rewards. Bayesian models emphasize the magnitude and probability of</span>
-<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>effects that matter in practice. This focus is crucial in business, where even</span>
-<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>small but reliable improvements can have substantial impacts.</span>
-<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bayesian approach: </span></span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>The Bayesian approach to linear regression fundamentally shifts how we interpret</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>and utilize data in decision-making. Rather than relying on point estimates and</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>p-values, it focuses on understanding the probability distributions of</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>parameters, providing a richer, more nuanced picture.</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>In a Bayesian Linear Model, parameters are viewed as random variables with their</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>own probability distributions. This perspective allows us to incorporate prior</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>knowledge into the model: prior distributions reflect existing knowledge or</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>beliefs about parameters before observing the current data, which can be based</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>on historical data, expert opinions, or theoretical considerations. The</span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>likelihood represents the probability of the observed data given the parameters,</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>similar to the frequentist approach. Posterior distributions combine the prior</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>distribution and the likelihood using Bayes' theorem, reflecting updated beliefs</span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>about the parameters after observing the data. The beauty of the Bayesian</span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>approach lies in its flexibility and adaptability. As new data becomes</span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>available, the posterior distribution from one analysis can serve as the prior</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>for the next, continually refining our understanding.</span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>Business decisions often leverage historical data and expert judgment, and</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>Bayesian models explicitly incorporate this information, leading to more</span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>informed and credible inferences. Bayesian analysis naturally adapts to new</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>information. As fresh data is collected, the model updates its estimates,</span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>providing a dynamic and current understanding of the business environment.</span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>Instead of fixating on binary outcomes (significant vs. non-significant),</span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>Bayesian analysis assesses probabilities, aligning perfectly with the real-world</span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a>decision-making process, which is inherently probabilistic and involves weighing</span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>risks and rewards. Bayesian models emphasize the magnitude and probability of</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>effects that matter in practice. This focus is crucial in business, where even</span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a>small but reliable improvements can have substantial impacts.</span>
 <span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>The {imt} package fits a Bayesian linear model using [weakly informative</span>
-<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>priors](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations) for</span>
-<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>the covariates and allows the user to set more informative priors for the impact</span>
-<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>of the intervention. If $y$ is the outcome of interest, the model is specified</span>
-<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>as follows:</span>
-<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>y &amp; \sim N(\mu, \sigma) <span class="sc">\\</span></span>
-<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>\mu &amp;= \alpha + X^\star\beta + \color{red}{\eta} t</span>
-<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>We standardize the data as follows:</span>
-<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>y^\star &amp; = \frac{y - \mu_y}{\sigma_y} <span class="sc">\\</span></span>
-<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a> &amp; \sim N(\mu^\star, \sigma^\star) <span class="sc">\\</span></span>
-<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>\mu^\star &amp; = \alpha^\star + \frac{X - \mu_X}{\sigma_X} \beta^\star +</span>
-<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a> \eta^\star t <span class="sc">\\</span></span>
-<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a> \alpha^\star &amp; \sim N(0,1) <span class="sc">\\</span></span>
-<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a> \beta^\star &amp; \sim N(0,1) <span class="sc">\\</span></span>
-<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a> \color{red}{\eta^\star} &amp; \color{red}{\sim N(\mu_\eta, \sigma_\eta)} <span class="sc">\\</span></span>
-<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a> \sigma^\star &amp; \sim N^+(0,1) <span class="sc">\\</span></span>
-<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>The {imt} package fits a Bayesian linear model using [weakly informative</span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a>priors](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations) for</span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>the covariates and allows the user to set more informative priors for the impact</span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>of the intervention. If $y$ is the outcome of interest, the model is specified</span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>as follows:</span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>y &amp; \sim N(\mu, \sigma) <span class="sc">\\</span></span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>\mu &amp;= \alpha + X^\star\beta + \color{red}{\eta} t</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>We standardize the data as follows:</span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>y^\star &amp; = \frac{y - \mu_y}{\sigma_y} <span class="sc">\\</span></span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a> &amp; \sim N(\mu^\star, \sigma^\star) <span class="sc">\\</span></span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>\mu^\star &amp; = \alpha^\star + \frac{X - \mu_X}{\sigma_X} \beta^\star +</span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a> \eta^\star t <span class="sc">\\</span></span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a> \alpha^\star &amp; \sim N(0,1) <span class="sc">\\</span></span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a> \beta^\star &amp; \sim N(0,1) <span class="sc">\\</span></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a> \color{red}{\eta^\star} &amp; \color{red}{\sim N(\mu_\eta, \sigma_\eta)} <span class="sc">\\</span></span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a> \sigma^\star &amp; \sim N^+(0,1) <span class="sc">\\</span></span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a>Therefore</span>
-<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>\frac{y - \mu_y}{\sigma_y} &amp; = \alpha^\star +</span>
-<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>\frac{X - \mu_X}{\sigma_X} \beta^\star + \eta^\star t <span class="sc">\\</span></span>
-<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>y &amp; = (\alpha^\star +</span>
-<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a>\frac{X - \mu_X}{\sigma_X} \beta^\star + \eta^\star t) \sigma_y + \mu_y <span class="sc">\\</span></span>
-<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a>\color{red}\eta = \eta^\star \sigma_y</span>
-<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>Therefore</span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>\frac{y - \mu_y}{\sigma_y} &amp; = \alpha^\star +</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>\frac{X - \mu_X}{\sigma_X} \beta^\star + \eta^\star t <span class="sc">\\</span></span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a>y &amp; = (\alpha^\star +</span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a>\frac{X - \mu_X}{\sigma_X} \beta^\star + \eta^\star t) \sigma_y + \mu_y <span class="sc">\\</span></span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>\color{red}\eta = \eta^\star \sigma_y</span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a>Notice that if you have better priors, you should use them. To use this simple</span>
-<span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a>model, you just need to run the following code:</span>
-<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a>Notice that if you have better priors, you should use them. To use this simple</span>
+<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a>model, you just need to run the following code:</span>
 <span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{r blm, message=FALSE, results = "hide"}</span></span>
-<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(imt)</span>
-<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a>fitted_blm <span class="ot">&lt;-</span> blm<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"y"</span>, </span>
-<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x"</span>),</span>
-<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"t"</span>, </span>
-<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data, </span>
-<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">eta_mean =</span> <span class="dv">0</span>,</span>
-<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>  <span class="at">eta_sd =</span> <span class="fl">0.5</span></span>
-<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a>It is always a good idea to look at the traceplot. A traceplot is a diagnostic</span>
-<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a> tool used to visualize the "path" that a Markov Chain Monte Carlo (MCMC)</span>
-<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a> sampler takes as it explores the parameter space. It helps assess the</span>
-<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a> convergence and mixing of the chains, which is crucial for ensuring</span>
-<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a> reliable inference from the model.</span>
-<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tracePlot}</span></span>
-<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">tracePlot</span>()</span>
-<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Assessing Convergence:**</span>
-<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a>A well-converged chain should exhibit a "hairy caterpillar" pattern, </span>
-<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a> where the trace fluctuates around a stable value without any trends or drifts. </span>
-<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a> This indicates that the sampler has adequately explored the parameter space </span>
-<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a> and reached a stationary distribution.</span>
-<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a>Conversely, non-converging chains might show trends, jumps, or slow mixing, </span>
-<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a> suggesting that the sampler is stuck in a local region or hasn't adequately </span>
-<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a> explored the posterior distribution. Inferences drawn from such chains can be </span>
-<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a> unreliable and misleading.</span>
-<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Diagnosing Mixing:**</span>
-<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a>Good mixing implies that the chains effectively explore the entire parameter </span>
-<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a> space and don't get stuck in local regions. This is visually represented by</span>
-<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a> well-intertwined lines from different chains on the traceplot.</span>
-<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a>Poorly mixed chains show distinct separation among lines, indicating they</span>
-<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a> haven't adequately explored the entire posterior distribution.</span>
-<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a> This can lead to biased and inaccurate estimates of the parameters and</span>
-<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a> their uncertainty.</span>
-<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Identifying Issues:**</span>
-<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a>Traceplots can reveal potential issues in the model specification, priors, </span>
-<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a> or MCMC settings. For example, highly correlated parameters might exhibit </span>
-<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a> synchronized movement in the traceplot, suggesting a dependence relationship </span>
-<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a> that needs further investigation.</span>
-<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a>Overall, examining traceplots is a valuable diagnostic step in Bayesian</span>
-<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a> statistical analysis. They provide valuable insights into the convergence</span>
-<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a>  and mixing of MCMC chains, aiding in the valid and reliable interpretation</span>
-<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a>   of the model results.</span>
-<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>It is prudent to verify that our model's data generating process is compatible</span>
-<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a> with the data used to fit the model. To do this, we can compare the kernel</span>
-<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a> density of draws from the posterior distribution to the density of our data.</span>
-<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ppcDensOverlay}</span></span>
-<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">ppcDensOverlay</span>(<span class="at">n =</span> <span class="dv">50</span>)</span>
-<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-296"><a href="#cb8-296" aria-hidden="true" tabindex="-1"></a>The next step is to use the fitted Bayesian model to answer our business</span>
-<span id="cb8-297"><a href="#cb8-297" aria-hidden="true" tabindex="-1"></a>question directly. In this example, we want to determine the likelihood that the</span>
-<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a>product's impact is at least $0.01$. We can calculate this probability with a</span>
-<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a>single line of code:</span>
-<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a><span class="in">```{r posterior}</span></span>
-<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">posteriorProb</span>(<span class="at">threshold =</span> <span class="fl">0.01</span>)</span>
-<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a>With this information, we can make a much more informed decision about whether</span>
-<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a>to keep the product than if we were merely assessing the rejection of a null</span>
-<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a>hypothesis. Moreover, we may care about multiple thresholds for this decision.</span>
-<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a>For instance, if the impact exceeds $0.2$, we might consider doubling our</span>
-<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a>investment. </span>
-<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
-<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a>The {imt} package enables the creation of interactive visualizations that</span>
-<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a>effectively demonstrate our data insights and summarize the risks associated</span>
-<span id="cb8-315"><a href="#cb8-315" aria-hidden="true" tabindex="-1"></a>with various decisions.</span>
-<span id="cb8-316"><a href="#cb8-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-319"><a href="#cb8-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-320"><a href="#cb8-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr knitr::is_html_output()</span></span>
-<span id="cb8-321"><a href="#cb8-321" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">vizdraws</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.2</span>),</span>
-<span id="cb8-322"><a href="#cb8-322" aria-hidden="true" tabindex="-1"></a>                    <span class="at">break_names =</span> <span class="fu">c</span>(<span class="st">"Discontinue"</span>, <span class="st">"Keep"</span>, <span class="st">"Double down"</span>),</span>
-<span id="cb8-323"><a href="#cb8-323" aria-hidden="true" tabindex="-1"></a>                    <span class="at">display_mode_name =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-324"><a href="#cb8-324" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-325"><a href="#cb8-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-326"><a href="#cb8-326" aria-hidden="true" tabindex="-1"></a>The plot generated by this code not only answers our business question directly</span>
-<span id="cb8-327"><a href="#cb8-327" aria-hidden="true" tabindex="-1"></a>but also illustrates how much we have learned from the data and how our initial</span>
-<span id="cb8-328"><a href="#cb8-328" aria-hidden="true" tabindex="-1"></a>priors have evolved. This comprehensive view is crucial for making better</span>
-<span id="cb8-329"><a href="#cb8-329" aria-hidden="true" tabindex="-1"></a>business decisions.</span>
-<span id="cb8-330"><a href="#cb8-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-331"><a href="#cb8-331" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb8-332"><a href="#cb8-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-333"><a href="#cb8-333" aria-hidden="true" tabindex="-1"></a>Bayesian analysis provides probabilities directly aligned with decision-making</span>
-<span id="cb8-334"><a href="#cb8-334" aria-hidden="true" tabindex="-1"></a>needs. For example, if the probability that the product's impact exceeds $0.01$</span>
-<span id="cb8-335"><a href="#cb8-335" aria-hidden="true" tabindex="-1"></a>is low, we can confidently discontinue it. Conversely, if there's a reasonable</span>
-<span id="cb8-336"><a href="#cb8-336" aria-hidden="true" tabindex="-1"></a>probability of a positive impact, we might decide to retain the product,</span>
-<span id="cb8-337"><a href="#cb8-337" aria-hidden="true" tabindex="-1"></a>potentially conducting further investigations or collecting more data.</span>
-<span id="cb8-338"><a href="#cb8-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-339"><a href="#cb8-339" aria-hidden="true" tabindex="-1"></a>In conclusion, the Bayesian approach offers a powerful, flexible, and intuitive</span>
-<span id="cb8-340"><a href="#cb8-340" aria-hidden="true" tabindex="-1"></a>framework for business decision-making. By focusing on probabilities and</span>
-<span id="cb8-341"><a href="#cb8-341" aria-hidden="true" tabindex="-1"></a>incorporating prior knowledge, it provides a clearer and more practical basis</span>
-<span id="cb8-342"><a href="#cb8-342" aria-hidden="true" tabindex="-1"></a>for making informed decisions in an uncertain world. This methodology enhances</span>
-<span id="cb8-343"><a href="#cb8-343" aria-hidden="true" tabindex="-1"></a>our ability to navigate uncertainty, ultimately leading to more effective and</span>
-<span id="cb8-344"><a href="#cb8-344" aria-hidden="true" tabindex="-1"></a>strategic business outcomes.</span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r blm, message=FALSE, results = "hide"}</span></span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(imt)</span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a>fitted_blm <span class="ot">&lt;-</span> blm<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"y"</span>, </span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x"</span>),</span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"t"</span>, </span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data, </span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>  <span class="at">eta_mean =</span> <span class="dv">0</span>,</span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">eta_sd =</span> <span class="fl">0.5</span></span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>It is always a good idea to look at the traceplot. A traceplot is a diagnostic</span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a> tool used to visualize the "path" that a Markov Chain Monte Carlo (MCMC)</span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a> sampler takes as it explores the parameter space. It helps assess the</span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a> convergence and mixing of the chains, which is crucial for ensuring</span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a> reliable inference from the model.</span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tracePlot}</span></span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">tracePlot</span>()</span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Assessing Convergence:**</span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a>A well-converged chain should exhibit a "hairy caterpillar" pattern, </span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a> where the trace fluctuates around a stable value without any trends or drifts. </span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a> This indicates that the sampler has adequately explored the parameter space </span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a> and reached a stationary distribution.</span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a>Conversely, non-converging chains might show trends, jumps, or slow mixing, </span>
+<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a> suggesting that the sampler is stuck in a local region or hasn't adequately </span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a> explored the posterior distribution. Inferences drawn from such chains can be </span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a> unreliable and misleading.</span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Diagnosing Mixing:**</span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>Good mixing implies that the chains effectively explore the entire parameter </span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a> space and don't get stuck in local regions. This is visually represented by</span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a> well-intertwined lines from different chains on the traceplot.</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>Poorly mixed chains show distinct separation among lines, indicating they</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a> haven't adequately explored the entire posterior distribution.</span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a> This can lead to biased and inaccurate estimates of the parameters and</span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a> their uncertainty.</span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Identifying Issues:**</span>
+<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a>Traceplots can reveal potential issues in the model specification, priors, </span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a> or MCMC settings. For example, highly correlated parameters might exhibit </span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a> synchronized movement in the traceplot, suggesting a dependence relationship </span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a> that needs further investigation.</span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>Overall, examining traceplots is a valuable diagnostic step in Bayesian</span>
+<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a> statistical analysis. They provide valuable insights into the convergence</span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a>  and mixing of MCMC chains, aiding in the valid and reliable interpretation</span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>   of the model results.</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>It is prudent to verify that our model's data generating process is compatible</span>
+<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a> with the data used to fit the model. To do this, we can compare the kernel</span>
+<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a> density of draws from the posterior distribution to the density of our data.</span>
+<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ppcDensOverlay}</span></span>
+<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">ppcDensOverlay</span>(<span class="at">n =</span> <span class="dv">50</span>)</span>
+<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-296"><a href="#cb8-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-297"><a href="#cb8-297" aria-hidden="true" tabindex="-1"></a>The next step is to use the fitted Bayesian model to answer our business</span>
+<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a>question directly. In this example, we want to determine the likelihood that the</span>
+<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a>product's impact is at least $0.01$. We can calculate this probability with a</span>
+<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a>single line of code:</span>
+<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a><span class="in">```{r posterior}</span></span>
+<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">posteriorProb</span>(<span class="at">threshold =</span> <span class="fl">0.01</span>)</span>
+<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a>With this information, we can make a much more informed decision about whether</span>
+<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a>to keep the product than if we were merely assessing the rejection of a null</span>
+<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a>hypothesis. Moreover, we may care about multiple thresholds for this decision.</span>
+<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a>For instance, if the impact exceeds $0.2$, we might consider doubling our</span>
+<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a>investment. </span>
+<span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a>The {imt} package enables the creation of interactive visualizations that</span>
+<span id="cb8-315"><a href="#cb8-315" aria-hidden="true" tabindex="-1"></a>effectively demonstrate our data insights and summarize the risks associated</span>
+<span id="cb8-316"><a href="#cb8-316" aria-hidden="true" tabindex="-1"></a>with various decisions.</span>
+<span id="cb8-317"><a href="#cb8-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-320"><a href="#cb8-320" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-321"><a href="#cb8-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr knitr::is_html_output()</span></span>
+<span id="cb8-322"><a href="#cb8-322" aria-hidden="true" tabindex="-1"></a>fitted_blm<span class="sc">$</span><span class="fu">vizdraws</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.2</span>),</span>
+<span id="cb8-323"><a href="#cb8-323" aria-hidden="true" tabindex="-1"></a>                    <span class="at">break_names =</span> <span class="fu">c</span>(<span class="st">"Discontinue"</span>, <span class="st">"Keep"</span>, <span class="st">"Double down"</span>),</span>
+<span id="cb8-324"><a href="#cb8-324" aria-hidden="true" tabindex="-1"></a>                    <span class="at">display_mode_name =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-325"><a href="#cb8-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-326"><a href="#cb8-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-327"><a href="#cb8-327" aria-hidden="true" tabindex="-1"></a>The plot generated by this code not only answers our business question directly</span>
+<span id="cb8-328"><a href="#cb8-328" aria-hidden="true" tabindex="-1"></a>but also illustrates how much we have learned from the data and how our initial</span>
+<span id="cb8-329"><a href="#cb8-329" aria-hidden="true" tabindex="-1"></a>priors have evolved. This comprehensive view is crucial for making better</span>
+<span id="cb8-330"><a href="#cb8-330" aria-hidden="true" tabindex="-1"></a>business decisions.</span>
+<span id="cb8-331"><a href="#cb8-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-332"><a href="#cb8-332" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-333"><a href="#cb8-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-334"><a href="#cb8-334" aria-hidden="true" tabindex="-1"></a>Bayesian analysis provides probabilities directly aligned with decision-making</span>
+<span id="cb8-335"><a href="#cb8-335" aria-hidden="true" tabindex="-1"></a>needs. For example, if the probability that the product's impact exceeds $0.01$</span>
+<span id="cb8-336"><a href="#cb8-336" aria-hidden="true" tabindex="-1"></a>is low, we can confidently discontinue it. Conversely, if there's a reasonable</span>
+<span id="cb8-337"><a href="#cb8-337" aria-hidden="true" tabindex="-1"></a>probability of a positive impact, we might decide to retain the product,</span>
+<span id="cb8-338"><a href="#cb8-338" aria-hidden="true" tabindex="-1"></a>potentially conducting further investigations or collecting more data.</span>
+<span id="cb8-339"><a href="#cb8-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-340"><a href="#cb8-340" aria-hidden="true" tabindex="-1"></a>In conclusion, the Bayesian approach offers a powerful, flexible, and intuitive</span>
+<span id="cb8-341"><a href="#cb8-341" aria-hidden="true" tabindex="-1"></a>framework for business decision-making. By focusing on probabilities and</span>
+<span id="cb8-342"><a href="#cb8-342" aria-hidden="true" tabindex="-1"></a>incorporating prior knowledge, it provides a clearer and more practical basis</span>
+<span id="cb8-343"><a href="#cb8-343" aria-hidden="true" tabindex="-1"></a>for making informed decisions in an uncertain world. This methodology enhances</span>
+<span id="cb8-344"><a href="#cb8-344" aria-hidden="true" tabindex="-1"></a>our ability to navigate uncertainty, ultimately leading to more effective and</span>
+<span id="cb8-345"><a href="#cb8-345" aria-hidden="true" tabindex="-1"></a>strategic business outcomes.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/blm.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/blm.html&amp;title=Business Data Science: What Does it Mean to Be Data-Driven?" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Business Data Science: What Does it Mean to Be Data-Driven?&amp;body=Check out this link:https://book.martinez.fyi/blm.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Business Data Science: What Does it Mean to Be Data-Driven? https://book.martinez.fyi/blm.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/blm.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/blm.html&amp;title=Bayesian linear regression: posteriors over effects, not just point estimates" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Bayesian linear regression: posteriors over effects, not just point estimates&amp;body=Check out this link:https://book.martinez.fyi/blm.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Bayesian linear regression: posteriors over effects, not just point estimates https://book.martinez.fyi/blm.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
 
 
 

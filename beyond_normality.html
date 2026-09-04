@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Real outcomes are rarely bell-shaped. Modeling binary, ordinal, and count data with the likelihood the process actually implies instead of forcing a normal approximation onto it.">
 
-<title>19&nbsp; Beyond Normality – Business Data Science</title>
+<title>18&nbsp; Beyond Normality – Business Data Science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -83,7 +84,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-3d497cff885f6278d37568d0ef0763f8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/social-share.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/all.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -155,19 +156,19 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="19&nbsp; Beyond Normality – Business Data Science">
-<meta property="og:description" content="">
+<meta property="og:title" content="18&nbsp; Beyond Normality – Business Data Science">
+<meta property="og:description" content="Real outcomes are rarely bell-shaped. Modeling binary, ordinal, and count data with the likelihood the process actually implies instead of forcing a normal approximation onto it.">
 <meta property="og:image" content="https://book.martinez.fyi/beyond_normality_files/figure-html/inverse_logit-1.png">
 <meta property="og:site_name" content="Business Data Science">
 <meta property="og:image:height" content="960">
 <meta property="og:image:width" content="1344">
-<meta name="twitter:title" content="19&nbsp; Beyond Normality – Business Data Science">
-<meta name="twitter:description" content="">
+<meta name="twitter:title" content="18&nbsp; Beyond Normality – Business Data Science">
+<meta name="twitter:description" content="Real outcomes are rarely bell-shaped. Modeling binary, ordinal, and count data with the likelihood the process actually implies instead of forcing a normal approximation onto it.">
 <meta name="twitter:image" content="https://book.martinez.fyi/beyond_normality_files/figure-html/inverse_logit-1.png">
 <meta name="twitter:image-height" content="960">
 <meta name="twitter:image-width" content="1344">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="citation_title" content="[19]{.chapter-number}&nbsp; [Beyond Normality]{.chapter-title}">
+<meta name="citation_title" content="[18]{.chapter-number}&nbsp; [Beyond Normality]{.chapter-title}">
 <meta name="citation_fulltext_html_url" content="https://book.martinez.fyi">
 <meta name="citation_language" content="en">
 <meta name="citation_book_title" content="Business Data Science: A guide for data-driven decisions">
@@ -255,7 +256,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./beyond_normality.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Beyond Normality</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./beyond_normality.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -357,32 +358,26 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bad.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./factorial.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Bayesian Factorial Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Bayesian Factorial Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./iv.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Randomized Encouragement Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Randomized Encouragement Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./coordination.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">The Importance of Coordination</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">The Importance of Coordination</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./strength.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -399,19 +394,19 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./matching.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./causalimpact.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
       </ul>
@@ -428,25 +423,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./blm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./meta-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./beyond_normality.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./hurdle.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -463,31 +458,37 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./bcf.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">LongBet: Heterogeneous Treatment Effects in Panel Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">LongBet: Heterogeneous Treatment Effects in Panel Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./phobart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bad.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -508,13 +509,13 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#binary-outcomes-the-coin-flips-of-data" id="toc-binary-outcomes-the-coin-flips-of-data" class="nav-link active" data-scroll-target="#binary-outcomes-the-coin-flips-of-data"><span class="header-section-number">19.1</span> Binary Outcomes: The Coin Flips of Data</a>
+  <li><a href="#binary-outcomes-the-coin-flips-of-data" id="toc-binary-outcomes-the-coin-flips-of-data" class="nav-link active" data-scroll-target="#binary-outcomes-the-coin-flips-of-data"><span class="header-section-number">18.1</span> Binary Outcomes: The Coin Flips of Data</a>
   <ul class="collapse">
   <li><a href="#prior-predictive-checking" id="toc-prior-predictive-checking" class="nav-link" data-scroll-target="#prior-predictive-checking">Prior predictive checking</a></li>
   <li><a href="#fitting-the-model-where-theory-meets-data" id="toc-fitting-the-model-where-theory-meets-data" class="nav-link" data-scroll-target="#fitting-the-model-where-theory-meets-data">Fitting the Model: Where Theory Meets Data</a></li>
   </ul></li>
-  <li><a href="#ordinal-outcomes" id="toc-ordinal-outcomes" class="nav-link" data-scroll-target="#ordinal-outcomes"><span class="header-section-number">19.2</span> Ordinal Outcomes</a></li>
-  <li><a href="#sec-negative-binomial" id="toc-sec-negative-binomial" class="nav-link" data-scroll-target="#sec-negative-binomial"><span class="header-section-number">19.3</span> Count Outcomes</a>
+  <li><a href="#ordinal-outcomes" id="toc-ordinal-outcomes" class="nav-link" data-scroll-target="#ordinal-outcomes"><span class="header-section-number">18.2</span> Ordinal Outcomes</a></li>
+  <li><a href="#sec-negative-binomial" id="toc-sec-negative-binomial" class="nav-link" data-scroll-target="#sec-negative-binomial"><span class="header-section-number">18.3</span> Count Outcomes</a>
   <ul class="collapse">
   <li><a href="#an-example-with-fake-data-video-views-galore" id="toc-an-example-with-fake-data-video-views-galore" class="nav-link" data-scroll-target="#an-example-with-fake-data-video-views-galore">An Example with Fake Data: Video Views Galore</a></li>
   <li><a href="#ols-a-common-but-flawed-approach" id="toc-ols-a-common-but-flawed-approach" class="nav-link" data-scroll-target="#ols-a-common-but-flawed-approach">OLS: A Common, But Flawed, Approach</a></li>
@@ -526,9 +527,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./beyond_normality.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Beyond Normality</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./beyond_normality.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Beyond Normality</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -546,8 +547,8 @@ window.Quarto = {
 
 
 <p>In the preceding chapters, we basked in the warm glow of normality, a simplifying assumption that allowed us to model outcomes as if they arose from the familiar bell curve. Yet, the real world often serves up data generated by far more diverse processes. Outcomes might be binary choices (to adopt or reject), rankings on an ordinal scale (like satisfaction surveys), or simple counts (such as the number of subscribers). In this chapter, we embark on an expedition beyond the comfortable confines of normality, charting the terrain of these alternative data types and the specialized tools we need to analyze them.</p>
-<section id="binary-outcomes-the-coin-flips-of-data" class="level2" data-number="19.1">
-<h2 data-number="19.1" class="anchored" data-anchor-id="binary-outcomes-the-coin-flips-of-data"><span class="header-section-number">19.1</span> Binary Outcomes: The Coin Flips of Data</h2>
+<section id="binary-outcomes-the-coin-flips-of-data" class="level2" data-number="18.1">
+<h2 data-number="18.1" class="anchored" data-anchor-id="binary-outcomes-the-coin-flips-of-data"><span class="header-section-number">18.1</span> Binary Outcomes: The Coin Flips of Data</h2>
 <p>Binary outcomes are the coin flips of the data world – two sides, two possibilities. Think success/failure, yes/no, or the ever-important adopt/reject decision. To model these, we turn to the trusty logistic regression. While linear probability models are also used, logistic regression has the distinct advantage of keeping our predictions bounded between the sensible limits of 0 and 1.</p>
 <p>This workhorse of a model is a type of generalized linear model, employing a logit link function:</p>
 <p><span class="math display">\[
@@ -759,15 +760,15 @@ $ y     &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS
 </div>
 </section>
 </section>
-<section id="ordinal-outcomes" class="level2" data-number="19.2">
-<h2 data-number="19.2" class="anchored" data-anchor-id="ordinal-outcomes"><span class="header-section-number">19.2</span> Ordinal Outcomes</h2>
+<section id="ordinal-outcomes" class="level2" data-number="18.2">
+<h2 data-number="18.2" class="anchored" data-anchor-id="ordinal-outcomes"><span class="header-section-number">18.2</span> Ordinal Outcomes</h2>
 <p>Ordinal outcomes are a rather curious beast in the realm of causal inference. They have a natural order - think of a survey respondent rating their satisfaction on a scale from “very dissatisfied” to “very satisfied” - but the intervals between the values don’t necessarily hold equal weight. The distance between “dissatisfied” and “neutral” may not be the same as that between “satisfied” and “very satisfied.” This lack of equal spacing is a challenge we must address head-on when analyzing the impact of an intervention or treatment.</p>
 <p>This nuance of ordinal outcomes is also present in other domains, such as user experience ratings (e.g., poor, fair, good, excellent), or educational attainment levels (e.g., less than high school, high school diploma, some college, college degree). In each case, there’s a clear order, but the spacing between levels is not uniform.</p>
 <p>This lack of uniform spacing can complicate our analysis, particularly when applying traditional regression models designed for continuous outcomes. We need a tailored approach that respects the ordinal nature of the data, while still allowing us to draw meaningful causal inferences.</p>
 <p>TODO</p>
 </section>
-<section id="sec-negative-binomial" class="level2" data-number="19.3">
-<h2 data-number="19.3" class="anchored" data-anchor-id="sec-negative-binomial"><span class="header-section-number">19.3</span> Count Outcomes</h2>
+<section id="sec-negative-binomial" class="level2" data-number="18.3">
+<h2 data-number="18.3" class="anchored" data-anchor-id="sec-negative-binomial"><span class="header-section-number">18.3</span> Count Outcomes</h2>
 <p>In this section, we’re talking about events we can tally—website visits, customer complaints, product sales, you name it. These outcomes are inherently non-negative integers, reflecting the discrete nature of the events we’re counting.</p>
 <p>The go-to tool for analyzing count outcomes is often Poisson regression. However, real-world data frequently throws us a curveball in the form of overdispersion, where the variance of the count data outstrips its mean. This is where negative binomial regression swoops in to save the day. It’s a souped-up version of Poisson regression that accounts for overdispersion by adding an extra parameter to the model.</p>
 <p>Count data pops up in all sorts of scenarios. We might be interested in the effect of a new marketing campaign on app downloads or the impact of a software update on user logins. With count outcomes, the possibilities are as endless as the events we can count.</p>
@@ -1334,391 +1335,392 @@ Var(y_i)  \sim \mu_i + \frac{\mu_i^2}{\phi}
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./meta-analysis.html" class="pagination-link" aria-label="Meta-Analysis">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./hurdle.html" class="pagination-link" aria-label="Hurdle Models">
-        <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Beyond Normality"</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/beyond_normality.html"</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "Business Data Science: What Does it Mean to Be Data-Driven?"</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>In the preceding chapters, we basked in the warm glow of normality, a</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>simplifying assumption that allowed us to model outcomes as if they arose from</span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>the familiar bell curve. Yet, the real world often serves up data generated by</span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>far more diverse processes. Outcomes might be binary choices (to adopt or</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>reject), rankings on an ordinal scale (like satisfaction surveys), or simple</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>counts (such as the number of subscribers). In this chapter, we embark on an</span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>expedition beyond the comfortable confines of normality, charting the terrain of</span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>these alternative data types and the specialized tools we need to analyze them.</span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Binary Outcomes: The Coin Flips of Data</span></span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>Binary outcomes are the coin flips of the data world – two sides, two</span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>possibilities. Think success/failure, yes/no, or the ever-important adopt/reject</span>
-<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>decision. To model these, we turn to the trusty logistic regression. While</span>
-<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>linear probability models are also used, logistic regression has the distinct</span>
-<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>advantage of keeping our predictions bounded between the sensible limits of 0</span>
-<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>and 1.</span>
-<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>This workhorse of a model is a type of generalized linear model, employing a</span>
-<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>logit link function:</span>
-<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>\text{BernoulliLogit}(y|\theta) = \text{Bernoulli}(y|\text{logit}^{-1}(\theta))</span>
-<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>where</span>
-<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>\text{logit}^{-1}(\theta) = \frac{1}{1 + \exp(-\theta)}</span>
-<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r inverse_logit, fig.align = 'center', message=FALSE, warning=FALSE}</span></span>
-<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(theta) {</span>
-<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>theta)))</span>
-<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">stat_function</span>(<span class="at">fun =</span> inv_logit) <span class="sc">+</span></span>
-<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">xlab</span>(<span class="fu">expression</span>(theta))</span>
-<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a>To illustrate, let's cook up some fake data:</span>
-<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Real outcomes are rarely bell-shaped. Modeling binary, ordinal, and count data with the likelihood the process actually implies instead of forcing a normal approximation onto it."</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/beyond_normality.html"</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "Beyond normality: modeling binary, ordinal, and count outcomes"</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>In the preceding chapters, we basked in the warm glow of normality, a</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>simplifying assumption that allowed us to model outcomes as if they arose from</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>the familiar bell curve. Yet, the real world often serves up data generated by</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>far more diverse processes. Outcomes might be binary choices (to adopt or</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>reject), rankings on an ordinal scale (like satisfaction surveys), or simple</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>counts (such as the number of subscribers). In this chapter, we embark on an</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>expedition beyond the comfortable confines of normality, charting the terrain of</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>these alternative data types and the specialized tools we need to analyze them.</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## Binary Outcomes: The Coin Flips of Data</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>Binary outcomes are the coin flips of the data world – two sides, two</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>possibilities. Think success/failure, yes/no, or the ever-important adopt/reject</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>decision. To model these, we turn to the trusty logistic regression. While</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>linear probability models are also used, logistic regression has the distinct</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>advantage of keeping our predictions bounded between the sensible limits of 0</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>and 1.</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>This workhorse of a model is a type of generalized linear model, employing a</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>logit link function:</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>\text{BernoulliLogit}(y|\theta) = \text{Bernoulli}(y|\text{logit}^{-1}(\theta))</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>where</span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>\text{logit}^{-1}(\theta) = \frac{1}{1 + \exp(-\theta)}</span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{r inverse_logit, fig.align = 'center', message=FALSE, warning=FALSE}</span></span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(theta) {</span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>theta)))</span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">stat_function</span>(<span class="at">fun =</span> inv_logit) <span class="sc">+</span></span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">5</span>, <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">xlab</span>(<span class="fu">expression</span>(theta))</span>
+<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a>To illustrate, let's cook up some fake data:</span>
 <span id="cb31-58"><a href="#cb31-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fake_data}</span></span>
-<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Fake data</span></span>
-<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
-<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1982</span>)</span>
-<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a>fake_data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">x1 =</span> <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
-<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">x2 =</span> <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
-<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">treat =</span> <span class="fu">sample</span>(</span>
-<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">size =</span> N, <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb31-69"><a href="#cb31-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>)</span>
-<span id="cb31-70"><a href="#cb31-70" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">r =</span> <span class="fu">runif</span>(<span class="at">n =</span> N, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>)</span>
-<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">p0 =</span> <span class="fu">inv_logit</span>(<span class="at">theta =</span> <span class="sc">-</span><span class="dv">3</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> x1 <span class="sc">+</span> <span class="fl">0.25</span> <span class="sc">*</span> x2),</span>
-<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">p1 =</span> <span class="fu">inv_logit</span>(<span class="at">theta =</span> <span class="sc">-</span><span class="dv">3</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> x1 <span class="sc">+</span> <span class="fl">0.25</span> <span class="sc">*</span> x2 <span class="sc">+</span> <span class="fl">0.2</span>),</span>
-<span id="cb31-76"><a href="#cb31-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">y0 =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(p0 <span class="sc">&gt;</span> r <span class="sc">~</span> <span class="dv">1</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
-<span id="cb31-77"><a href="#cb31-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">y1 =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(p1 <span class="sc">&gt;</span> r <span class="sc">~</span> <span class="dv">1</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
-<span id="cb31-78"><a href="#cb31-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
-<span id="cb31-79"><a href="#cb31-79" aria-hidden="true" tabindex="-1"></a>      treat <span class="sc">~</span> <span class="fu">as.logical</span>(y1),</span>
-<span id="cb31-80"><a href="#cb31-80" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.logical</span>(y0)</span>
-<span id="cb31-81"><a href="#cb31-81" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb31-82"><a href="#cb31-82" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb31-83"><a href="#cb31-83" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(fake_data)</span>
-<span id="cb31-84"><a href="#cb31-84" aria-hidden="true" tabindex="-1"></a>mean_y0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(fake_data<span class="sc">$</span>y0)</span>
-<span id="cb31-85"><a href="#cb31-85" aria-hidden="true" tabindex="-1"></a>mean_y1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(fake_data<span class="sc">$</span>y1)</span>
-<span id="cb31-86"><a href="#cb31-86" aria-hidden="true" tabindex="-1"></a>impact <span class="ot">&lt;-</span> <span class="fu">round</span>((<span class="fu">mean</span>(fake_data<span class="sc">$</span>y1) <span class="sc">-</span> <span class="fu">mean</span>(fake_data<span class="sc">$</span>y0)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
-<span id="cb31-87"><a href="#cb31-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-88"><a href="#cb31-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-89"><a href="#cb31-89" aria-hidden="true" tabindex="-1"></a>In this fabricated dataset, we've engineered a scenario where, without</span>
-<span id="cb31-90"><a href="#cb31-90" aria-hidden="true" tabindex="-1"></a>intervention, only <span class="in">`r scales::percent(mean_y0)`</span> would have adopted the feature.</span>
-<span id="cb31-91"><a href="#cb31-91" aria-hidden="true" tabindex="-1"></a>Yet, with the intervention applied universally, adoption would have jumped to</span>
-<span id="cb31-92"><a href="#cb31-92" aria-hidden="true" tabindex="-1"></a><span class="in">`r scales::percent(mean_y1)`</span>. The true impact of this intervention is a hefty</span>
-<span id="cb31-93"><a href="#cb31-93" aria-hidden="true" tabindex="-1"></a><span class="in">`r impact`</span> percentage points.</span>
-<span id="cb31-94"><a href="#cb31-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-95"><a href="#cb31-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### Prior predictive checking</span></span>
-<span id="cb31-96"><a href="#cb31-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-97"><a href="#cb31-97" aria-hidden="true" tabindex="-1"></a>As Bayesians, we're not just number crunchers; we're storytellers. We weave</span>
-<span id="cb31-98"><a href="#cb31-98" aria-hidden="true" tabindex="-1"></a>narratives about data, and our priors are the opening chapters. So, before we</span>
-<span id="cb31-99"><a href="#cb31-99" aria-hidden="true" tabindex="-1"></a>unleash our model, let's ponder what our priors imply.</span>
-<span id="cb31-100"><a href="#cb31-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-101"><a href="#cb31-101" aria-hidden="true" tabindex="-1"></a>Our model takes this form:</span>
-<span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-103"><a href="#cb31-103" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-104"><a href="#cb31-104" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb31-105"><a href="#cb31-105" aria-hidden="true" tabindex="-1"></a>\theta &amp;=  \alpha + X \beta + \tau  T <span class="sc">\\</span></span>
-<span id="cb31-106"><a href="#cb31-106" aria-hidden="true" tabindex="-1"></a>\alpha &amp;\sim N(\mu_{\alpha}, sd_{\alpha}) <span class="sc">\\</span></span>
-<span id="cb31-107"><a href="#cb31-107" aria-hidden="true" tabindex="-1"></a>\beta_j &amp;\sim N(\mu_{\beta_j}, sd_{\beta_j}) <span class="sc">\\</span></span>
-<span id="cb31-108"><a href="#cb31-108" aria-hidden="true" tabindex="-1"></a>\tau &amp;\sim N(\mu_{\tau}, sd_{\tau})</span>
-<span id="cb31-109"><a href="#cb31-109" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb31-110"><a href="#cb31-110" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-111"><a href="#cb31-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-112"><a href="#cb31-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{r priors_check, fig.align = 'center', message=FALSE, results = "hide"}</span></span>
-<span id="cb31-113"><a href="#cb31-113" aria-hidden="true" tabindex="-1"></a>logit <span class="ot">&lt;-</span> imt<span class="sc">::</span>logit<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb31-114"><a href="#cb31-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data,</span>
-<span id="cb31-115"><a href="#cb31-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"y"</span>, <span class="co"># this will not be used</span></span>
-<span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"treat"</span>,</span>
-<span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
-<span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_alpha =</span> <span class="sc">-</span><span class="dv">3</span>,</span>
-<span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_alpha =</span> <span class="dv">2</span>,</span>
-<span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_beta =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_beta =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_mean =</span> <span class="fl">0.05</span>,</span>
-<span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="fl">0.5</span>,</span>
-<span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">fit =</span> <span class="cn">FALSE</span> <span class="co"># we will not be fitting the model</span></span>
-<span id="cb31-125"><a href="#cb31-125" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-126"><a href="#cb31-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-127"><a href="#cb31-127" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">plotPrior</span>()</span>
-<span id="cb31-128"><a href="#cb31-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-129"><a href="#cb31-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-130"><a href="#cb31-130" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fitting the Model: Where Theory Meets Data</span></span>
-<span id="cb31-131"><a href="#cb31-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-132"><a href="#cb31-132" aria-hidden="true" tabindex="-1"></a>Satisfied with our priors, we're ready to fit the model to the data:</span>
-<span id="cb31-133"><a href="#cb31-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-134"><a href="#cb31-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fit, fig.align = 'center', message=FALSE, results = "hide"}</span></span>
-<span id="cb31-135"><a href="#cb31-135" aria-hidden="true" tabindex="-1"></a>logit <span class="ot">&lt;-</span> imt<span class="sc">::</span>logit<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb31-136"><a href="#cb31-136" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data,</span>
-<span id="cb31-137"><a href="#cb31-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"y"</span>,</span>
-<span id="cb31-138"><a href="#cb31-138" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"treat"</span>,</span>
-<span id="cb31-139"><a href="#cb31-139" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
-<span id="cb31-140"><a href="#cb31-140" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_alpha =</span> <span class="sc">-</span><span class="dv">3</span>,</span>
-<span id="cb31-141"><a href="#cb31-141" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_alpha =</span> <span class="dv">2</span>,</span>
-<span id="cb31-142"><a href="#cb31-142" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_beta =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb31-143"><a href="#cb31-143" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_beta =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
-<span id="cb31-144"><a href="#cb31-144" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_mean =</span> <span class="fl">0.05</span>,</span>
-<span id="cb31-145"><a href="#cb31-145" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="fl">0.5</span>,</span>
-<span id="cb31-146"><a href="#cb31-146" aria-hidden="true" tabindex="-1"></a>  <span class="at">fit =</span> <span class="cn">TRUE</span></span>
-<span id="cb31-147"><a href="#cb31-147" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-148"><a href="#cb31-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-149"><a href="#cb31-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-150"><a href="#cb31-150" aria-hidden="true" tabindex="-1"></a>Let's glance at the trace plot of tau to ensure our chains mixed well and converged:</span>
-<span id="cb31-151"><a href="#cb31-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fake_data}</span></span>
+<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a><span class="co"># Fake data</span></span>
+<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1982</span>)</span>
+<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a>fake_data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">x1 =</span> <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
+<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">x2 =</span> <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>),</span>
+<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">treat =</span> <span class="fu">sample</span>(</span>
+<span id="cb31-69"><a href="#cb31-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">size =</span> N, <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb31-70"><a href="#cb31-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>)</span>
+<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">r =</span> <span class="fu">runif</span>(<span class="at">n =</span> N, <span class="at">min =</span> <span class="dv">0</span>, <span class="at">max =</span> <span class="dv">1</span>)</span>
+<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">p0 =</span> <span class="fu">inv_logit</span>(<span class="at">theta =</span> <span class="sc">-</span><span class="dv">3</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> x1 <span class="sc">+</span> <span class="fl">0.25</span> <span class="sc">*</span> x2),</span>
+<span id="cb31-76"><a href="#cb31-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">p1 =</span> <span class="fu">inv_logit</span>(<span class="at">theta =</span> <span class="sc">-</span><span class="dv">3</span> <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> x1 <span class="sc">+</span> <span class="fl">0.25</span> <span class="sc">*</span> x2 <span class="sc">+</span> <span class="fl">0.2</span>),</span>
+<span id="cb31-77"><a href="#cb31-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">y0 =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(p0 <span class="sc">&gt;</span> r <span class="sc">~</span> <span class="dv">1</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb31-78"><a href="#cb31-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">y1 =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(p1 <span class="sc">&gt;</span> r <span class="sc">~</span> <span class="dv">1</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>),</span>
+<span id="cb31-79"><a href="#cb31-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb31-80"><a href="#cb31-80" aria-hidden="true" tabindex="-1"></a>      treat <span class="sc">~</span> <span class="fu">as.logical</span>(y1),</span>
+<span id="cb31-81"><a href="#cb31-81" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.logical</span>(y0)</span>
+<span id="cb31-82"><a href="#cb31-82" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb31-83"><a href="#cb31-83" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-84"><a href="#cb31-84" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(fake_data)</span>
+<span id="cb31-85"><a href="#cb31-85" aria-hidden="true" tabindex="-1"></a>mean_y0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(fake_data<span class="sc">$</span>y0)</span>
+<span id="cb31-86"><a href="#cb31-86" aria-hidden="true" tabindex="-1"></a>mean_y1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(fake_data<span class="sc">$</span>y1)</span>
+<span id="cb31-87"><a href="#cb31-87" aria-hidden="true" tabindex="-1"></a>impact <span class="ot">&lt;-</span> <span class="fu">round</span>((<span class="fu">mean</span>(fake_data<span class="sc">$</span>y1) <span class="sc">-</span> <span class="fu">mean</span>(fake_data<span class="sc">$</span>y0)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)</span>
+<span id="cb31-88"><a href="#cb31-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-89"><a href="#cb31-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-90"><a href="#cb31-90" aria-hidden="true" tabindex="-1"></a>In this fabricated dataset, we've engineered a scenario where, without</span>
+<span id="cb31-91"><a href="#cb31-91" aria-hidden="true" tabindex="-1"></a>intervention, only <span class="in">`r scales::percent(mean_y0)`</span> would have adopted the feature.</span>
+<span id="cb31-92"><a href="#cb31-92" aria-hidden="true" tabindex="-1"></a>Yet, with the intervention applied universally, adoption would have jumped to</span>
+<span id="cb31-93"><a href="#cb31-93" aria-hidden="true" tabindex="-1"></a><span class="in">`r scales::percent(mean_y1)`</span>. The true impact of this intervention is a hefty</span>
+<span id="cb31-94"><a href="#cb31-94" aria-hidden="true" tabindex="-1"></a><span class="in">`r impact`</span> percentage points.</span>
+<span id="cb31-95"><a href="#cb31-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-96"><a href="#cb31-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### Prior predictive checking</span></span>
+<span id="cb31-97"><a href="#cb31-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-98"><a href="#cb31-98" aria-hidden="true" tabindex="-1"></a>As Bayesians, we're not just number crunchers; we're storytellers. We weave</span>
+<span id="cb31-99"><a href="#cb31-99" aria-hidden="true" tabindex="-1"></a>narratives about data, and our priors are the opening chapters. So, before we</span>
+<span id="cb31-100"><a href="#cb31-100" aria-hidden="true" tabindex="-1"></a>unleash our model, let's ponder what our priors imply.</span>
+<span id="cb31-101"><a href="#cb31-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a>Our model takes this form:</span>
+<span id="cb31-103"><a href="#cb31-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-104"><a href="#cb31-104" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-105"><a href="#cb31-105" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-106"><a href="#cb31-106" aria-hidden="true" tabindex="-1"></a>\theta &amp;=  \alpha + X \beta + \tau  T <span class="sc">\\</span></span>
+<span id="cb31-107"><a href="#cb31-107" aria-hidden="true" tabindex="-1"></a>\alpha &amp;\sim N(\mu_{\alpha}, sd_{\alpha}) <span class="sc">\\</span></span>
+<span id="cb31-108"><a href="#cb31-108" aria-hidden="true" tabindex="-1"></a>\beta_j &amp;\sim N(\mu_{\beta_j}, sd_{\beta_j}) <span class="sc">\\</span></span>
+<span id="cb31-109"><a href="#cb31-109" aria-hidden="true" tabindex="-1"></a>\tau &amp;\sim N(\mu_{\tau}, sd_{\tau})</span>
+<span id="cb31-110"><a href="#cb31-110" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-111"><a href="#cb31-111" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-112"><a href="#cb31-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-113"><a href="#cb31-113" aria-hidden="true" tabindex="-1"></a><span class="in">```{r priors_check, fig.align = 'center', message=FALSE, results = "hide"}</span></span>
+<span id="cb31-114"><a href="#cb31-114" aria-hidden="true" tabindex="-1"></a>logit <span class="ot">&lt;-</span> imt<span class="sc">::</span>logit<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb31-115"><a href="#cb31-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data,</span>
+<span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"y"</span>, <span class="co"># this will not be used</span></span>
+<span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"treat"</span>,</span>
+<span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
+<span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_alpha =</span> <span class="sc">-</span><span class="dv">3</span>,</span>
+<span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_alpha =</span> <span class="dv">2</span>,</span>
+<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_beta =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_beta =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_mean =</span> <span class="fl">0.05</span>,</span>
+<span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="fl">0.5</span>,</span>
+<span id="cb31-125"><a href="#cb31-125" aria-hidden="true" tabindex="-1"></a>  <span class="at">fit =</span> <span class="cn">FALSE</span> <span class="co"># we will not be fitting the model</span></span>
+<span id="cb31-126"><a href="#cb31-126" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-127"><a href="#cb31-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-128"><a href="#cb31-128" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">plotPrior</span>()</span>
+<span id="cb31-129"><a href="#cb31-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-130"><a href="#cb31-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-131"><a href="#cb31-131" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fitting the Model: Where Theory Meets Data</span></span>
+<span id="cb31-132"><a href="#cb31-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-133"><a href="#cb31-133" aria-hidden="true" tabindex="-1"></a>Satisfied with our priors, we're ready to fit the model to the data:</span>
+<span id="cb31-134"><a href="#cb31-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-135"><a href="#cb31-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fit, fig.align = 'center', message=FALSE, results = "hide"}</span></span>
+<span id="cb31-136"><a href="#cb31-136" aria-hidden="true" tabindex="-1"></a>logit <span class="ot">&lt;-</span> imt<span class="sc">::</span>logit<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb31-137"><a href="#cb31-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data,</span>
+<span id="cb31-138"><a href="#cb31-138" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"y"</span>,</span>
+<span id="cb31-139"><a href="#cb31-139" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"treat"</span>,</span>
+<span id="cb31-140"><a href="#cb31-140" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
+<span id="cb31-141"><a href="#cb31-141" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_alpha =</span> <span class="sc">-</span><span class="dv">3</span>,</span>
+<span id="cb31-142"><a href="#cb31-142" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_alpha =</span> <span class="dv">2</span>,</span>
+<span id="cb31-143"><a href="#cb31-143" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean_beta =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb31-144"><a href="#cb31-144" aria-hidden="true" tabindex="-1"></a>  <span class="at">sd_beta =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb31-145"><a href="#cb31-145" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_mean =</span> <span class="fl">0.05</span>,</span>
+<span id="cb31-146"><a href="#cb31-146" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="fl">0.5</span>,</span>
+<span id="cb31-147"><a href="#cb31-147" aria-hidden="true" tabindex="-1"></a>  <span class="at">fit =</span> <span class="cn">TRUE</span></span>
+<span id="cb31-148"><a href="#cb31-148" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-149"><a href="#cb31-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-150"><a href="#cb31-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-151"><a href="#cb31-151" aria-hidden="true" tabindex="-1"></a>Let's glance at the trace plot of tau to ensure our chains mixed well and converged:</span>
 <span id="cb31-152"><a href="#cb31-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-153"><a href="#cb31-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tracePlot, fig.align = 'center'}</span></span>
-<span id="cb31-154"><a href="#cb31-154" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">tracePlot</span>()</span>
-<span id="cb31-155"><a href="#cb31-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-156"><a href="#cb31-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-157"><a href="#cb31-157" aria-hidden="true" tabindex="-1"></a>To sum up our findings, we have a few handy methods at our disposal:</span>
-<span id="cb31-158"><a href="#cb31-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-153"><a href="#cb31-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-154"><a href="#cb31-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tracePlot, fig.align = 'center'}</span></span>
+<span id="cb31-155"><a href="#cb31-155" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">tracePlot</span>()</span>
+<span id="cb31-156"><a href="#cb31-156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-157"><a href="#cb31-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-158"><a href="#cb31-158" aria-hidden="true" tabindex="-1"></a>To sum up our findings, we have a few handy methods at our disposal:</span>
 <span id="cb31-159"><a href="#cb31-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-160"><a href="#cb31-160" aria-hidden="true" tabindex="-1"></a><span class="in">```{r findings, fig.align = 'center'}</span></span>
-<span id="cb31-161"><a href="#cb31-161" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">pointEstimate</span>()</span>
-<span id="cb31-162"><a href="#cb31-162" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">credibleInterval</span>(<span class="at">width =</span> <span class="fl">0.95</span>)</span>
-<span id="cb31-163"><a href="#cb31-163" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">calcProb</span>(<span class="at">a =</span> <span class="dv">0</span>)</span>
-<span id="cb31-164"><a href="#cb31-164" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-165"><a href="#cb31-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-166"><a href="#cb31-166" aria-hidden="true" tabindex="-1"></a>We can also use the prediction function to predict new data and compare the</span>
-<span id="cb31-167"><a href="#cb31-167" aria-hidden="true" tabindex="-1"></a>differences between groups. The <span class="in">`predict`</span> function takes the <span class="in">`new_data`</span> and</span>
-<span id="cb31-168"><a href="#cb31-168" aria-hidden="true" tabindex="-1"></a><span class="in">`name`</span> argument to name the group. For example, here we will predict the data as</span>
-<span id="cb31-169"><a href="#cb31-169" aria-hidden="true" tabindex="-1"></a>if all units are treated, then make another prediction as if all units are not</span>
-<span id="cb31-170"><a href="#cb31-170" aria-hidden="true" tabindex="-1"></a>treated and summarize the two groups.</span>
-<span id="cb31-171"><a href="#cb31-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-172"><a href="#cb31-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{r predSummary}</span></span>
-<span id="cb31-173"><a href="#cb31-173" aria-hidden="true" tabindex="-1"></a>fake_treated_data <span class="ot">&lt;-</span> fake_data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">treat =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb31-174"><a href="#cb31-174" aria-hidden="true" tabindex="-1"></a>fake_control_data <span class="ot">&lt;-</span> fake_data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">treat =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb31-175"><a href="#cb31-175" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predict</span>(</span>
-<span id="cb31-176"><a href="#cb31-176" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_data =</span> fake_treated_data,</span>
-<span id="cb31-177"><a href="#cb31-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"y1"</span></span>
-<span id="cb31-178"><a href="#cb31-178" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-179"><a href="#cb31-179" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predict</span>(</span>
-<span id="cb31-180"><a href="#cb31-180" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_data =</span> fake_control_data,</span>
-<span id="cb31-181"><a href="#cb31-181" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"y0"</span></span>
-<span id="cb31-182"><a href="#cb31-182" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-183"><a href="#cb31-183" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predSummary</span>(<span class="at">name =</span> <span class="st">"y1"</span>, <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span>)</span>
-<span id="cb31-184"><a href="#cb31-184" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predSummary</span>(<span class="at">name =</span> <span class="st">"y0"</span>, <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span>)</span>
-<span id="cb31-185"><a href="#cb31-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-186"><a href="#cb31-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-187"><a href="#cb31-187" aria-hidden="true" tabindex="-1"></a>We can also compare the differences between two groups of predictions.</span>
-<span id="cb31-188"><a href="#cb31-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-189"><a href="#cb31-189" aria-hidden="true" tabindex="-1"></a><span class="in">```{r predCompare}</span></span>
-<span id="cb31-190"><a href="#cb31-190" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predCompare</span>(<span class="at">name1 =</span> <span class="st">"y1"</span>, <span class="at">name2 =</span> <span class="st">"y0"</span>, <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span>)</span>
-<span id="cb31-191"><a href="#cb31-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-192"><a href="#cb31-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-193"><a href="#cb31-193" aria-hidden="true" tabindex="-1"></a>We can also summarize and compare the predictions conditioning on subgroups.</span>
-<span id="cb31-194"><a href="#cb31-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-195"><a href="#cb31-195" aria-hidden="true" tabindex="-1"></a><span class="in">```{r subgroup}</span></span>
-<span id="cb31-196"><a href="#cb31-196" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predSummary</span>(</span>
-<span id="cb31-197"><a href="#cb31-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"y1"</span>,</span>
-<span id="cb31-198"><a href="#cb31-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup =</span> (fake_data<span class="sc">$</span>x1 <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb31-199"><a href="#cb31-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span></span>
-<span id="cb31-200"><a href="#cb31-200" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-201"><a href="#cb31-201" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predCompare</span>(</span>
-<span id="cb31-202"><a href="#cb31-202" aria-hidden="true" tabindex="-1"></a>  <span class="at">name1 =</span> <span class="st">"y1"</span>,</span>
-<span id="cb31-203"><a href="#cb31-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">name2 =</span> <span class="st">"y0"</span>,</span>
-<span id="cb31-204"><a href="#cb31-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup1 =</span> (fake_treated_data<span class="sc">$</span>x1 <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb31-205"><a href="#cb31-205" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup2 =</span> (fake_control_data<span class="sc">$</span>x1 <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb31-206"><a href="#cb31-206" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span></span>
-<span id="cb31-207"><a href="#cb31-207" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-208"><a href="#cb31-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-209"><a href="#cb31-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-210"><a href="#cb31-210" aria-hidden="true" tabindex="-1"></a>Finally, we can get the posterior predictive draws for advanced analysis.</span>
-<span id="cb31-211"><a href="#cb31-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-212"><a href="#cb31-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{r getPred}</span></span>
-<span id="cb31-213"><a href="#cb31-213" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> logit<span class="sc">$</span><span class="fu">getPred</span>(<span class="at">name =</span> <span class="st">"y1"</span>)</span>
-<span id="cb31-214"><a href="#cb31-214" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-215"><a href="#cb31-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-160"><a href="#cb31-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-161"><a href="#cb31-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{r findings, fig.align = 'center'}</span></span>
+<span id="cb31-162"><a href="#cb31-162" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">pointEstimate</span>()</span>
+<span id="cb31-163"><a href="#cb31-163" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">credibleInterval</span>(<span class="at">width =</span> <span class="fl">0.95</span>)</span>
+<span id="cb31-164"><a href="#cb31-164" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">calcProb</span>(<span class="at">a =</span> <span class="dv">0</span>)</span>
+<span id="cb31-165"><a href="#cb31-165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-166"><a href="#cb31-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-167"><a href="#cb31-167" aria-hidden="true" tabindex="-1"></a>We can also use the prediction function to predict new data and compare the</span>
+<span id="cb31-168"><a href="#cb31-168" aria-hidden="true" tabindex="-1"></a>differences between groups. The <span class="in">`predict`</span> function takes the <span class="in">`new_data`</span> and</span>
+<span id="cb31-169"><a href="#cb31-169" aria-hidden="true" tabindex="-1"></a><span class="in">`name`</span> argument to name the group. For example, here we will predict the data as</span>
+<span id="cb31-170"><a href="#cb31-170" aria-hidden="true" tabindex="-1"></a>if all units are treated, then make another prediction as if all units are not</span>
+<span id="cb31-171"><a href="#cb31-171" aria-hidden="true" tabindex="-1"></a>treated and summarize the two groups.</span>
+<span id="cb31-172"><a href="#cb31-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-173"><a href="#cb31-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r predSummary}</span></span>
+<span id="cb31-174"><a href="#cb31-174" aria-hidden="true" tabindex="-1"></a>fake_treated_data <span class="ot">&lt;-</span> fake_data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">treat =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-175"><a href="#cb31-175" aria-hidden="true" tabindex="-1"></a>fake_control_data <span class="ot">&lt;-</span> fake_data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">treat =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-176"><a href="#cb31-176" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predict</span>(</span>
+<span id="cb31-177"><a href="#cb31-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_data =</span> fake_treated_data,</span>
+<span id="cb31-178"><a href="#cb31-178" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"y1"</span></span>
+<span id="cb31-179"><a href="#cb31-179" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-180"><a href="#cb31-180" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predict</span>(</span>
+<span id="cb31-181"><a href="#cb31-181" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_data =</span> fake_control_data,</span>
+<span id="cb31-182"><a href="#cb31-182" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"y0"</span></span>
+<span id="cb31-183"><a href="#cb31-183" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-184"><a href="#cb31-184" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predSummary</span>(<span class="at">name =</span> <span class="st">"y1"</span>, <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span>)</span>
+<span id="cb31-185"><a href="#cb31-185" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predSummary</span>(<span class="at">name =</span> <span class="st">"y0"</span>, <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span>)</span>
+<span id="cb31-186"><a href="#cb31-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-187"><a href="#cb31-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-188"><a href="#cb31-188" aria-hidden="true" tabindex="-1"></a>We can also compare the differences between two groups of predictions.</span>
+<span id="cb31-189"><a href="#cb31-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-190"><a href="#cb31-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{r predCompare}</span></span>
+<span id="cb31-191"><a href="#cb31-191" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predCompare</span>(<span class="at">name1 =</span> <span class="st">"y1"</span>, <span class="at">name2 =</span> <span class="st">"y0"</span>, <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span>)</span>
+<span id="cb31-192"><a href="#cb31-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-193"><a href="#cb31-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-194"><a href="#cb31-194" aria-hidden="true" tabindex="-1"></a>We can also summarize and compare the predictions conditioning on subgroups.</span>
+<span id="cb31-195"><a href="#cb31-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-196"><a href="#cb31-196" aria-hidden="true" tabindex="-1"></a><span class="in">```{r subgroup}</span></span>
+<span id="cb31-197"><a href="#cb31-197" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predSummary</span>(</span>
+<span id="cb31-198"><a href="#cb31-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"y1"</span>,</span>
+<span id="cb31-199"><a href="#cb31-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup =</span> (fake_data<span class="sc">$</span>x1 <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb31-200"><a href="#cb31-200" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span></span>
+<span id="cb31-201"><a href="#cb31-201" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-202"><a href="#cb31-202" aria-hidden="true" tabindex="-1"></a>logit<span class="sc">$</span><span class="fu">predCompare</span>(</span>
+<span id="cb31-203"><a href="#cb31-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">name1 =</span> <span class="st">"y1"</span>,</span>
+<span id="cb31-204"><a href="#cb31-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">name2 =</span> <span class="st">"y0"</span>,</span>
+<span id="cb31-205"><a href="#cb31-205" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup1 =</span> (fake_treated_data<span class="sc">$</span>x1 <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb31-206"><a href="#cb31-206" aria-hidden="true" tabindex="-1"></a>  <span class="at">subgroup2 =</span> (fake_control_data<span class="sc">$</span>x1 <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb31-207"><a href="#cb31-207" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">0.95</span>, <span class="at">a =</span> <span class="dv">0</span></span>
+<span id="cb31-208"><a href="#cb31-208" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-209"><a href="#cb31-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-210"><a href="#cb31-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-211"><a href="#cb31-211" aria-hidden="true" tabindex="-1"></a>Finally, we can get the posterior predictive draws for advanced analysis.</span>
+<span id="cb31-212"><a href="#cb31-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-213"><a href="#cb31-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r getPred}</span></span>
+<span id="cb31-214"><a href="#cb31-214" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> logit<span class="sc">$</span><span class="fu">getPred</span>(<span class="at">name =</span> <span class="st">"y1"</span>)</span>
+<span id="cb31-215"><a href="#cb31-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb31-216"><a href="#cb31-216" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-217"><a href="#cb31-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-218"><a href="#cb31-218" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ordinal Outcomes</span></span>
-<span id="cb31-219"><a href="#cb31-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-220"><a href="#cb31-220" aria-hidden="true" tabindex="-1"></a>Ordinal outcomes are a rather curious beast in the realm of causal inference.</span>
-<span id="cb31-221"><a href="#cb31-221" aria-hidden="true" tabindex="-1"></a>They have a natural order - think of a survey respondent rating their</span>
-<span id="cb31-222"><a href="#cb31-222" aria-hidden="true" tabindex="-1"></a>satisfaction on a scale from "very dissatisfied" to "very satisfied" - but the</span>
-<span id="cb31-223"><a href="#cb31-223" aria-hidden="true" tabindex="-1"></a>intervals between the values don't necessarily hold equal weight. The distance</span>
-<span id="cb31-224"><a href="#cb31-224" aria-hidden="true" tabindex="-1"></a>between "dissatisfied" and "neutral" may not be the same as that between</span>
-<span id="cb31-225"><a href="#cb31-225" aria-hidden="true" tabindex="-1"></a>"satisfied" and "very satisfied." This lack of equal spacing is a challenge we</span>
-<span id="cb31-226"><a href="#cb31-226" aria-hidden="true" tabindex="-1"></a>must address head-on when analyzing the impact of an intervention or treatment.</span>
-<span id="cb31-227"><a href="#cb31-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-228"><a href="#cb31-228" aria-hidden="true" tabindex="-1"></a>This nuance of ordinal outcomes is also present in other domains, such as user</span>
-<span id="cb31-229"><a href="#cb31-229" aria-hidden="true" tabindex="-1"></a>experience ratings (e.g., poor, fair, good, excellent), or educational</span>
-<span id="cb31-230"><a href="#cb31-230" aria-hidden="true" tabindex="-1"></a>attainment levels (e.g., less than high school, high school diploma, some</span>
-<span id="cb31-231"><a href="#cb31-231" aria-hidden="true" tabindex="-1"></a>college, college degree). In each case, there's a clear order, but the spacing</span>
-<span id="cb31-232"><a href="#cb31-232" aria-hidden="true" tabindex="-1"></a>between levels is not uniform.</span>
-<span id="cb31-233"><a href="#cb31-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-234"><a href="#cb31-234" aria-hidden="true" tabindex="-1"></a>This lack of uniform spacing can complicate our analysis, particularly when</span>
-<span id="cb31-235"><a href="#cb31-235" aria-hidden="true" tabindex="-1"></a>applying traditional regression models designed for continuous outcomes. We need</span>
-<span id="cb31-236"><a href="#cb31-236" aria-hidden="true" tabindex="-1"></a>a tailored approach that respects the ordinal nature of the data, while still</span>
-<span id="cb31-237"><a href="#cb31-237" aria-hidden="true" tabindex="-1"></a>allowing us to draw meaningful causal inferences.</span>
-<span id="cb31-238"><a href="#cb31-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-239"><a href="#cb31-239" aria-hidden="true" tabindex="-1"></a>TODO</span>
-<span id="cb31-240"><a href="#cb31-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-241"><a href="#cb31-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## Count Outcomes {#sec-negative-binomial}</span></span>
-<span id="cb31-242"><a href="#cb31-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-243"><a href="#cb31-243" aria-hidden="true" tabindex="-1"></a>In this section, we're talking about events we can tally—website visits,</span>
-<span id="cb31-244"><a href="#cb31-244" aria-hidden="true" tabindex="-1"></a>customer complaints, product sales, you name it. These outcomes are inherently</span>
-<span id="cb31-245"><a href="#cb31-245" aria-hidden="true" tabindex="-1"></a>non-negative integers, reflecting the discrete nature of the events we're</span>
-<span id="cb31-246"><a href="#cb31-246" aria-hidden="true" tabindex="-1"></a>counting.</span>
-<span id="cb31-247"><a href="#cb31-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-248"><a href="#cb31-248" aria-hidden="true" tabindex="-1"></a>The go-to tool for analyzing count outcomes is often Poisson regression.</span>
-<span id="cb31-249"><a href="#cb31-249" aria-hidden="true" tabindex="-1"></a>However, real-world data frequently throws us a curveball in the form of</span>
-<span id="cb31-250"><a href="#cb31-250" aria-hidden="true" tabindex="-1"></a>overdispersion, where the variance of the count data outstrips its mean. This is</span>
-<span id="cb31-251"><a href="#cb31-251" aria-hidden="true" tabindex="-1"></a>where negative binomial regression swoops in to save the day. It's a souped-up</span>
-<span id="cb31-252"><a href="#cb31-252" aria-hidden="true" tabindex="-1"></a>version of Poisson regression that accounts for overdispersion by adding an</span>
-<span id="cb31-253"><a href="#cb31-253" aria-hidden="true" tabindex="-1"></a>extra parameter to the model.</span>
-<span id="cb31-254"><a href="#cb31-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-255"><a href="#cb31-255" aria-hidden="true" tabindex="-1"></a>Count data pops up in all sorts of scenarios. We might be interested in the</span>
-<span id="cb31-256"><a href="#cb31-256" aria-hidden="true" tabindex="-1"></a>effect of a new marketing campaign on app downloads or the impact of a software</span>
-<span id="cb31-257"><a href="#cb31-257" aria-hidden="true" tabindex="-1"></a>update on user logins. With count outcomes, the possibilities are as endless as</span>
-<span id="cb31-258"><a href="#cb31-258" aria-hidden="true" tabindex="-1"></a>the events we can count.</span>
-<span id="cb31-259"><a href="#cb31-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-260"><a href="#cb31-260" aria-hidden="true" tabindex="-1"></a><span class="fu">### An Example with Fake Data: Video Views Galore</span></span>
-<span id="cb31-261"><a href="#cb31-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-262"><a href="#cb31-262" aria-hidden="true" tabindex="-1"></a>Let's say we're interested in the number of views a video receives in a given</span>
-<span id="cb31-263"><a href="#cb31-263" aria-hidden="true" tabindex="-1"></a>period. This is a perfect opportunity to use the negative binomial distribution</span>
-<span id="cb31-264"><a href="#cb31-264" aria-hidden="true" tabindex="-1"></a>to model the underlying data-generating process. Here's how we can express this:</span>
-<span id="cb31-265"><a href="#cb31-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-266"><a href="#cb31-266" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-267"><a href="#cb31-267" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb31-268"><a href="#cb31-268" aria-hidden="true" tabindex="-1"></a>y_i  &amp; \sim \text{NB}(\mu_i, \phi) <span class="sc">\\</span></span>
-<span id="cb31-269"><a href="#cb31-269" aria-hidden="true" tabindex="-1"></a>log(\mu_i)  &amp; = \alpha + X\beta</span>
-<span id="cb31-270"><a href="#cb31-270" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb31-271"><a href="#cb31-271" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-272"><a href="#cb31-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-273"><a href="#cb31-273" aria-hidden="true" tabindex="-1"></a>In this model, $\mu$ represents the mean (which must be positive, hence the log</span>
-<span id="cb31-274"><a href="#cb31-274" aria-hidden="true" tabindex="-1"></a>link function), and the inverse of $\phi$ controls the overdispersion. A small</span>
-<span id="cb31-275"><a href="#cb31-275" aria-hidden="true" tabindex="-1"></a>$\phi$ means the negative binomial distribution significantly deviates from a</span>
-<span id="cb31-276"><a href="#cb31-276" aria-hidden="true" tabindex="-1"></a>Poisson distribution, while a large $\phi$ brings it closer to a Poisson. This</span>
-<span id="cb31-277"><a href="#cb31-277" aria-hidden="true" tabindex="-1"></a>becomes clear when we look at the variance:</span>
-<span id="cb31-278"><a href="#cb31-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-218"><a href="#cb31-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-219"><a href="#cb31-219" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ordinal Outcomes</span></span>
+<span id="cb31-220"><a href="#cb31-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-221"><a href="#cb31-221" aria-hidden="true" tabindex="-1"></a>Ordinal outcomes are a rather curious beast in the realm of causal inference.</span>
+<span id="cb31-222"><a href="#cb31-222" aria-hidden="true" tabindex="-1"></a>They have a natural order - think of a survey respondent rating their</span>
+<span id="cb31-223"><a href="#cb31-223" aria-hidden="true" tabindex="-1"></a>satisfaction on a scale from "very dissatisfied" to "very satisfied" - but the</span>
+<span id="cb31-224"><a href="#cb31-224" aria-hidden="true" tabindex="-1"></a>intervals between the values don't necessarily hold equal weight. The distance</span>
+<span id="cb31-225"><a href="#cb31-225" aria-hidden="true" tabindex="-1"></a>between "dissatisfied" and "neutral" may not be the same as that between</span>
+<span id="cb31-226"><a href="#cb31-226" aria-hidden="true" tabindex="-1"></a>"satisfied" and "very satisfied." This lack of equal spacing is a challenge we</span>
+<span id="cb31-227"><a href="#cb31-227" aria-hidden="true" tabindex="-1"></a>must address head-on when analyzing the impact of an intervention or treatment.</span>
+<span id="cb31-228"><a href="#cb31-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-229"><a href="#cb31-229" aria-hidden="true" tabindex="-1"></a>This nuance of ordinal outcomes is also present in other domains, such as user</span>
+<span id="cb31-230"><a href="#cb31-230" aria-hidden="true" tabindex="-1"></a>experience ratings (e.g., poor, fair, good, excellent), or educational</span>
+<span id="cb31-231"><a href="#cb31-231" aria-hidden="true" tabindex="-1"></a>attainment levels (e.g., less than high school, high school diploma, some</span>
+<span id="cb31-232"><a href="#cb31-232" aria-hidden="true" tabindex="-1"></a>college, college degree). In each case, there's a clear order, but the spacing</span>
+<span id="cb31-233"><a href="#cb31-233" aria-hidden="true" tabindex="-1"></a>between levels is not uniform.</span>
+<span id="cb31-234"><a href="#cb31-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-235"><a href="#cb31-235" aria-hidden="true" tabindex="-1"></a>This lack of uniform spacing can complicate our analysis, particularly when</span>
+<span id="cb31-236"><a href="#cb31-236" aria-hidden="true" tabindex="-1"></a>applying traditional regression models designed for continuous outcomes. We need</span>
+<span id="cb31-237"><a href="#cb31-237" aria-hidden="true" tabindex="-1"></a>a tailored approach that respects the ordinal nature of the data, while still</span>
+<span id="cb31-238"><a href="#cb31-238" aria-hidden="true" tabindex="-1"></a>allowing us to draw meaningful causal inferences.</span>
+<span id="cb31-239"><a href="#cb31-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-240"><a href="#cb31-240" aria-hidden="true" tabindex="-1"></a>TODO</span>
+<span id="cb31-241"><a href="#cb31-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-242"><a href="#cb31-242" aria-hidden="true" tabindex="-1"></a><span class="fu">## Count Outcomes {#sec-negative-binomial}</span></span>
+<span id="cb31-243"><a href="#cb31-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-244"><a href="#cb31-244" aria-hidden="true" tabindex="-1"></a>In this section, we're talking about events we can tally—website visits,</span>
+<span id="cb31-245"><a href="#cb31-245" aria-hidden="true" tabindex="-1"></a>customer complaints, product sales, you name it. These outcomes are inherently</span>
+<span id="cb31-246"><a href="#cb31-246" aria-hidden="true" tabindex="-1"></a>non-negative integers, reflecting the discrete nature of the events we're</span>
+<span id="cb31-247"><a href="#cb31-247" aria-hidden="true" tabindex="-1"></a>counting.</span>
+<span id="cb31-248"><a href="#cb31-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-249"><a href="#cb31-249" aria-hidden="true" tabindex="-1"></a>The go-to tool for analyzing count outcomes is often Poisson regression.</span>
+<span id="cb31-250"><a href="#cb31-250" aria-hidden="true" tabindex="-1"></a>However, real-world data frequently throws us a curveball in the form of</span>
+<span id="cb31-251"><a href="#cb31-251" aria-hidden="true" tabindex="-1"></a>overdispersion, where the variance of the count data outstrips its mean. This is</span>
+<span id="cb31-252"><a href="#cb31-252" aria-hidden="true" tabindex="-1"></a>where negative binomial regression swoops in to save the day. It's a souped-up</span>
+<span id="cb31-253"><a href="#cb31-253" aria-hidden="true" tabindex="-1"></a>version of Poisson regression that accounts for overdispersion by adding an</span>
+<span id="cb31-254"><a href="#cb31-254" aria-hidden="true" tabindex="-1"></a>extra parameter to the model.</span>
+<span id="cb31-255"><a href="#cb31-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-256"><a href="#cb31-256" aria-hidden="true" tabindex="-1"></a>Count data pops up in all sorts of scenarios. We might be interested in the</span>
+<span id="cb31-257"><a href="#cb31-257" aria-hidden="true" tabindex="-1"></a>effect of a new marketing campaign on app downloads or the impact of a software</span>
+<span id="cb31-258"><a href="#cb31-258" aria-hidden="true" tabindex="-1"></a>update on user logins. With count outcomes, the possibilities are as endless as</span>
+<span id="cb31-259"><a href="#cb31-259" aria-hidden="true" tabindex="-1"></a>the events we can count.</span>
+<span id="cb31-260"><a href="#cb31-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-261"><a href="#cb31-261" aria-hidden="true" tabindex="-1"></a><span class="fu">### An Example with Fake Data: Video Views Galore</span></span>
+<span id="cb31-262"><a href="#cb31-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-263"><a href="#cb31-263" aria-hidden="true" tabindex="-1"></a>Let's say we're interested in the number of views a video receives in a given</span>
+<span id="cb31-264"><a href="#cb31-264" aria-hidden="true" tabindex="-1"></a>period. This is a perfect opportunity to use the negative binomial distribution</span>
+<span id="cb31-265"><a href="#cb31-265" aria-hidden="true" tabindex="-1"></a>to model the underlying data-generating process. Here's how we can express this:</span>
+<span id="cb31-266"><a href="#cb31-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-267"><a href="#cb31-267" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-268"><a href="#cb31-268" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-269"><a href="#cb31-269" aria-hidden="true" tabindex="-1"></a>y_i  &amp; \sim \text{NB}(\mu_i, \phi) <span class="sc">\\</span></span>
+<span id="cb31-270"><a href="#cb31-270" aria-hidden="true" tabindex="-1"></a>log(\mu_i)  &amp; = \alpha + X\beta</span>
+<span id="cb31-271"><a href="#cb31-271" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-272"><a href="#cb31-272" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-273"><a href="#cb31-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-274"><a href="#cb31-274" aria-hidden="true" tabindex="-1"></a>In this model, $\mu$ represents the mean (which must be positive, hence the log</span>
+<span id="cb31-275"><a href="#cb31-275" aria-hidden="true" tabindex="-1"></a>link function), and the inverse of $\phi$ controls the overdispersion. A small</span>
+<span id="cb31-276"><a href="#cb31-276" aria-hidden="true" tabindex="-1"></a>$\phi$ means the negative binomial distribution significantly deviates from a</span>
+<span id="cb31-277"><a href="#cb31-277" aria-hidden="true" tabindex="-1"></a>Poisson distribution, while a large $\phi$ brings it closer to a Poisson. This</span>
+<span id="cb31-278"><a href="#cb31-278" aria-hidden="true" tabindex="-1"></a>becomes clear when we look at the variance:</span>
 <span id="cb31-279"><a href="#cb31-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-280"><a href="#cb31-280" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-281"><a href="#cb31-281" aria-hidden="true" tabindex="-1"></a>Var(y_i)  \sim \mu_i + \frac{\mu_i^2}{\phi}</span>
-<span id="cb31-282"><a href="#cb31-282" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb31-283"><a href="#cb31-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-284"><a href="#cb31-284" aria-hidden="true" tabindex="-1"></a>Let's whip up some fake data to illustrate:</span>
-<span id="cb31-285"><a href="#cb31-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-280"><a href="#cb31-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-281"><a href="#cb31-281" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-282"><a href="#cb31-282" aria-hidden="true" tabindex="-1"></a>Var(y_i)  \sim \mu_i + \frac{\mu_i^2}{\phi}</span>
+<span id="cb31-283"><a href="#cb31-283" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-284"><a href="#cb31-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-285"><a href="#cb31-285" aria-hidden="true" tabindex="-1"></a>Let's whip up some fake data to illustrate:</span>
 <span id="cb31-286"><a href="#cb31-286" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-287"><a href="#cb31-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-288"><a href="#cb31-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, warning=FALSE}</span></span>
-<span id="cb31-289"><a href="#cb31-289" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9782</span>)</span>
-<span id="cb31-290"><a href="#cb31-290" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb31-291"><a href="#cb31-291" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb31-292"><a href="#cb31-292" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb31-293"><a href="#cb31-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-294"><a href="#cb31-294" aria-hidden="true" tabindex="-1"></a>fake_data <span class="ot">&lt;-</span></span>
-<span id="cb31-295"><a href="#cb31-295" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">x1 =</span> <span class="fu">runif</span>(N, <span class="dv">2</span>, <span class="dv">9</span>), <span class="at">x2 =</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb31-296"><a href="#cb31-296" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb31-297"><a href="#cb31-297" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> <span class="fu">exp</span>(<span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">1.7</span> <span class="sc">*</span> x1 <span class="sc">+</span> <span class="fl">4.2</span> <span class="sc">*</span> x2),</span>
-<span id="cb31-298"><a href="#cb31-298" aria-hidden="true" tabindex="-1"></a>    <span class="at">y0 =</span> <span class="fu">rnbinom</span>(N, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">mu =</span> mu), <span class="co"># here size is phi</span></span>
-<span id="cb31-299"><a href="#cb31-299" aria-hidden="true" tabindex="-1"></a>    <span class="at">y1 =</span> y0 <span class="sc">*</span> <span class="fl">1.05</span>,</span>
-<span id="cb31-300"><a href="#cb31-300" aria-hidden="true" tabindex="-1"></a>    <span class="at">t =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">size =</span> <span class="fu">n</span>(), <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>)),</span>
-<span id="cb31-301"><a href="#cb31-301" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">case_when</span>(t <span class="sc">~</span> <span class="fu">as.integer</span>(y1),</span>
-<span id="cb31-302"><a href="#cb31-302" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="fu">as.integer</span>(y0)</span>
-<span id="cb31-303"><a href="#cb31-303" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb31-304"><a href="#cb31-304" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb31-305"><a href="#cb31-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(y <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
-<span id="cb31-306"><a href="#cb31-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-307"><a href="#cb31-307" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the histogram using ggplot2</span></span>
-<span id="cb31-308"><a href="#cb31-308" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fake_data, <span class="fu">aes</span>(<span class="at">x =</span> y)) <span class="sc">+</span></span>
-<span id="cb31-309"><a href="#cb31-309" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(</span>
-<span id="cb31-310"><a href="#cb31-310" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins =</span> <span class="dv">100</span>,</span>
-<span id="cb31-311"><a href="#cb31-311" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"black"</span>,</span>
-<span id="cb31-312"><a href="#cb31-312" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.7</span></span>
-<span id="cb31-313"><a href="#cb31-313" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb31-314"><a href="#cb31-314" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>t) <span class="sc">+</span></span>
-<span id="cb31-315"><a href="#cb31-315" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of y"</span>, <span class="at">x =</span> <span class="st">"y"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
-<span id="cb31-316"><a href="#cb31-316" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="fl">1e4</span>) <span class="sc">+</span></span>
-<span id="cb31-317"><a href="#cb31-317" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">20</span>)</span>
-<span id="cb31-318"><a href="#cb31-318" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-319"><a href="#cb31-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-320"><a href="#cb31-320" aria-hidden="true" tabindex="-1"></a><span class="fu">### OLS: A Common, But Flawed, Approach</span></span>
-<span id="cb31-321"><a href="#cb31-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-322"><a href="#cb31-322" aria-hidden="true" tabindex="-1"></a>A typical way to estimate the lift of an intervention in this scenario is to run</span>
-<span id="cb31-323"><a href="#cb31-323" aria-hidden="true" tabindex="-1"></a>ordinary least squares (OLS) on the natural logarithm of the outcome. Then,</span>
-<span id="cb31-324"><a href="#cb31-324" aria-hidden="true" tabindex="-1"></a>folks often look at the point estimate and 95% confidence interval for the</span>
-<span id="cb31-325"><a href="#cb31-325" aria-hidden="true" tabindex="-1"></a>treatment effect. Doing this with our fake data might lead you to conclude that</span>
-<span id="cb31-326"><a href="#cb31-326" aria-hidden="true" tabindex="-1"></a>the intervention is ineffective, as the 95% confidence interval includes zero.</span>
-<span id="cb31-327"><a href="#cb31-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-288"><a href="#cb31-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-289"><a href="#cb31-289" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, message=FALSE, warning=FALSE}</span></span>
+<span id="cb31-290"><a href="#cb31-290" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9782</span>)</span>
+<span id="cb31-291"><a href="#cb31-291" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb31-292"><a href="#cb31-292" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb31-293"><a href="#cb31-293" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb31-294"><a href="#cb31-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-295"><a href="#cb31-295" aria-hidden="true" tabindex="-1"></a>fake_data <span class="ot">&lt;-</span></span>
+<span id="cb31-296"><a href="#cb31-296" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">x1 =</span> <span class="fu">runif</span>(N, <span class="dv">2</span>, <span class="dv">9</span>), <span class="at">x2 =</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-297"><a href="#cb31-297" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb31-298"><a href="#cb31-298" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> <span class="fu">exp</span>(<span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">1.7</span> <span class="sc">*</span> x1 <span class="sc">+</span> <span class="fl">4.2</span> <span class="sc">*</span> x2),</span>
+<span id="cb31-299"><a href="#cb31-299" aria-hidden="true" tabindex="-1"></a>    <span class="at">y0 =</span> <span class="fu">rnbinom</span>(N, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">mu =</span> mu), <span class="co"># here size is phi</span></span>
+<span id="cb31-300"><a href="#cb31-300" aria-hidden="true" tabindex="-1"></a>    <span class="at">y1 =</span> y0 <span class="sc">*</span> <span class="fl">1.05</span>,</span>
+<span id="cb31-301"><a href="#cb31-301" aria-hidden="true" tabindex="-1"></a>    <span class="at">t =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="at">size =</span> <span class="fu">n</span>(), <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>)),</span>
+<span id="cb31-302"><a href="#cb31-302" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">case_when</span>(t <span class="sc">~</span> <span class="fu">as.integer</span>(y1),</span>
+<span id="cb31-303"><a href="#cb31-303" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> <span class="fu">as.integer</span>(y0)</span>
+<span id="cb31-304"><a href="#cb31-304" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb31-305"><a href="#cb31-305" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb31-306"><a href="#cb31-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(y <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb31-307"><a href="#cb31-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-308"><a href="#cb31-308" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the histogram using ggplot2</span></span>
+<span id="cb31-309"><a href="#cb31-309" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fake_data, <span class="fu">aes</span>(<span class="at">x =</span> y)) <span class="sc">+</span></span>
+<span id="cb31-310"><a href="#cb31-310" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(</span>
+<span id="cb31-311"><a href="#cb31-311" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins =</span> <span class="dv">100</span>,</span>
+<span id="cb31-312"><a href="#cb31-312" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"black"</span>,</span>
+<span id="cb31-313"><a href="#cb31-313" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.7</span></span>
+<span id="cb31-314"><a href="#cb31-314" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb31-315"><a href="#cb31-315" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>t) <span class="sc">+</span></span>
+<span id="cb31-316"><a href="#cb31-316" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of y"</span>, <span class="at">x =</span> <span class="st">"y"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb31-317"><a href="#cb31-317" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="fl">1e4</span>) <span class="sc">+</span></span>
+<span id="cb31-318"><a href="#cb31-318" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">20</span>)</span>
+<span id="cb31-319"><a href="#cb31-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-320"><a href="#cb31-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-321"><a href="#cb31-321" aria-hidden="true" tabindex="-1"></a><span class="fu">### OLS: A Common, But Flawed, Approach</span></span>
+<span id="cb31-322"><a href="#cb31-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-323"><a href="#cb31-323" aria-hidden="true" tabindex="-1"></a>A typical way to estimate the lift of an intervention in this scenario is to run</span>
+<span id="cb31-324"><a href="#cb31-324" aria-hidden="true" tabindex="-1"></a>ordinary least squares (OLS) on the natural logarithm of the outcome. Then,</span>
+<span id="cb31-325"><a href="#cb31-325" aria-hidden="true" tabindex="-1"></a>folks often look at the point estimate and 95% confidence interval for the</span>
+<span id="cb31-326"><a href="#cb31-326" aria-hidden="true" tabindex="-1"></a>treatment effect. Doing this with our fake data might lead you to conclude that</span>
+<span id="cb31-327"><a href="#cb31-327" aria-hidden="true" tabindex="-1"></a>the intervention is ineffective, as the 95% confidence interval includes zero.</span>
 <span id="cb31-328"><a href="#cb31-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-331"><a href="#cb31-331" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb31-332"><a href="#cb31-332" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(<span class="at">data =</span> fake_data, <span class="fu">log</span>(y) <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> t) <span class="sc">%&gt;%</span> broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb31-333"><a href="#cb31-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-334"><a href="#cb31-334" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-335"><a href="#cb31-335" aria-hidden="true" tabindex="-1"></a><span class="fu">### Taming Overdispersion: The Bayesian Negative Binomial Advantage</span></span>
-<span id="cb31-336"><a href="#cb31-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-337"><a href="#cb31-337" aria-hidden="true" tabindex="-1"></a>Enter the Bayesian negative binomial model, easily implemented using the {imt}</span>
-<span id="cb31-338"><a href="#cb31-338" aria-hidden="true" tabindex="-1"></a>package in R. This approach has two key advantages. First, it better captures</span>
-<span id="cb31-339"><a href="#cb31-339" aria-hidden="true" tabindex="-1"></a>the true data-generating process. Second, being Bayesian, it lets us incorporate</span>
-<span id="cb31-340"><a href="#cb31-340" aria-hidden="true" tabindex="-1"></a>prior information and express our findings in a way that's more directly</span>
-<span id="cb31-341"><a href="#cb31-341" aria-hidden="true" tabindex="-1"></a>relevant to business decisions.</span>
-<span id="cb31-342"><a href="#cb31-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-343"><a href="#cb31-343" aria-hidden="true" tabindex="-1"></a><span class="in">```{r NB, message=FALSE, results = "hide"}</span></span>
-<span id="cb31-344"><a href="#cb31-344" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(imt)</span>
-<span id="cb31-345"><a href="#cb31-345" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> negativeBinomial<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb31-346"><a href="#cb31-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data, <span class="at">y =</span> <span class="st">"y"</span>, <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
-<span id="cb31-347"><a href="#cb31-347" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"t"</span>, <span class="at">tau_mean =</span> <span class="fl">0.0</span>, <span class="at">tau_sd =</span> <span class="fl">0.025</span></span>
-<span id="cb31-348"><a href="#cb31-348" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-349"><a href="#cb31-349" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-350"><a href="#cb31-350" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-351"><a href="#cb31-351" aria-hidden="true" tabindex="-1"></a>A quick check of the trace plot is always a good idea:</span>
-<span id="cb31-352"><a href="#cb31-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-329"><a href="#cb31-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-332"><a href="#cb31-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-333"><a href="#cb31-333" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(<span class="at">data =</span> fake_data, <span class="fu">log</span>(y) <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> t) <span class="sc">%&gt;%</span> broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-334"><a href="#cb31-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-335"><a href="#cb31-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-336"><a href="#cb31-336" aria-hidden="true" tabindex="-1"></a><span class="fu">### Taming Overdispersion: The Bayesian Negative Binomial Advantage</span></span>
+<span id="cb31-337"><a href="#cb31-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-338"><a href="#cb31-338" aria-hidden="true" tabindex="-1"></a>Enter the Bayesian negative binomial model, easily implemented using the {imt}</span>
+<span id="cb31-339"><a href="#cb31-339" aria-hidden="true" tabindex="-1"></a>package in R. This approach has two key advantages. First, it better captures</span>
+<span id="cb31-340"><a href="#cb31-340" aria-hidden="true" tabindex="-1"></a>the true data-generating process. Second, being Bayesian, it lets us incorporate</span>
+<span id="cb31-341"><a href="#cb31-341" aria-hidden="true" tabindex="-1"></a>prior information and express our findings in a way that's more directly</span>
+<span id="cb31-342"><a href="#cb31-342" aria-hidden="true" tabindex="-1"></a>relevant to business decisions.</span>
+<span id="cb31-343"><a href="#cb31-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-344"><a href="#cb31-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{r NB, message=FALSE, results = "hide"}</span></span>
+<span id="cb31-345"><a href="#cb31-345" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(imt)</span>
+<span id="cb31-346"><a href="#cb31-346" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> negativeBinomial<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb31-347"><a href="#cb31-347" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> fake_data, <span class="at">y =</span> <span class="st">"y"</span>, <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"x1"</span>, <span class="st">"x2"</span>),</span>
+<span id="cb31-348"><a href="#cb31-348" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="st">"t"</span>, <span class="at">tau_mean =</span> <span class="fl">0.0</span>, <span class="at">tau_sd =</span> <span class="fl">0.025</span></span>
+<span id="cb31-349"><a href="#cb31-349" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-350"><a href="#cb31-350" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-351"><a href="#cb31-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-352"><a href="#cb31-352" aria-hidden="true" tabindex="-1"></a>A quick check of the trace plot is always a good idea:</span>
 <span id="cb31-353"><a href="#cb31-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-354"><a href="#cb31-354" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tp}</span></span>
-<span id="cb31-355"><a href="#cb31-355" aria-hidden="true" tabindex="-1"></a>nb<span class="sc">$</span><span class="fu">tracePlot</span>()</span>
-<span id="cb31-356"><a href="#cb31-356" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-357"><a href="#cb31-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-358"><a href="#cb31-358" aria-hidden="true" tabindex="-1"></a>Now for the payoff. We can readily obtain a point estimate for the impact using</span>
-<span id="cb31-359"><a href="#cb31-359" aria-hidden="true" tabindex="-1"></a><span class="in">`nb$pointEstimate()`</span> (<span class="in">`r scales::percent(nb$pointEstimate())`</span>) and a 95%</span>
-<span id="cb31-360"><a href="#cb31-360" aria-hidden="true" tabindex="-1"></a>credible interval using <span class="in">`nb$credibleInterval(width = 0.95, round = 2)`</span></span>
-<span id="cb31-361"><a href="#cb31-361" aria-hidden="true" tabindex="-1"></a>(`r nb$credibleInterval(width</span>
-<span id="cb31-362"><a href="#cb31-362" aria-hidden="true" tabindex="-1"></a>= 0.95, round = 2)`). But what if we want to know</span>
-<span id="cb31-363"><a href="#cb31-363" aria-hidden="true" tabindex="-1"></a>the probability that the impact is at least 1% (or any other threshold)? Easy</span>
-<span id="cb31-364"><a href="#cb31-364" aria-hidden="true" tabindex="-1"></a>peasy! We use <span class="in">`nb$posteriorProb(threshold = 0.01)`</span></span>
-<span id="cb31-365"><a href="#cb31-365" aria-hidden="true" tabindex="-1"></a>(<span class="in">`r nb$posteriorProb(threshold = 0.01)`</span>). Finally, to visualize the evolution of</span>
-<span id="cb31-366"><a href="#cb31-366" aria-hidden="true" tabindex="-1"></a>our understanding from prior to posterior, we employ <span class="in">`nb$vizdraws()`</span>.</span>
-<span id="cb31-367"><a href="#cb31-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-368"><a href="#cb31-368" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
-<span id="cb31-369"><a href="#cb31-369" aria-hidden="true" tabindex="-1"></a><span class="in">```{r vz, message=FALSE}</span></span>
-<span id="cb31-370"><a href="#cb31-370" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr knitr::is_html_output()</span></span>
-<span id="cb31-371"><a href="#cb31-371" aria-hidden="true" tabindex="-1"></a>nb<span class="sc">$</span><span class="fu">vizdraws</span>(<span class="at">display_mode_name =</span> <span class="cn">TRUE</span>, <span class="at">breaks =</span> <span class="fl">0.01</span>,</span>
-<span id="cb31-372"><a href="#cb31-372" aria-hidden="true" tabindex="-1"></a>            <span class="at">break_names =</span> <span class="fu">c</span>(<span class="st">"&lt; 0.01"</span>, <span class="st">"&gt; 0.01"</span>))</span>
-<span id="cb31-373"><a href="#cb31-373" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb31-374"><a href="#cb31-374" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb31-354"><a href="#cb31-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-355"><a href="#cb31-355" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tp}</span></span>
+<span id="cb31-356"><a href="#cb31-356" aria-hidden="true" tabindex="-1"></a>nb<span class="sc">$</span><span class="fu">tracePlot</span>()</span>
+<span id="cb31-357"><a href="#cb31-357" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-358"><a href="#cb31-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-359"><a href="#cb31-359" aria-hidden="true" tabindex="-1"></a>Now for the payoff. We can readily obtain a point estimate for the impact using</span>
+<span id="cb31-360"><a href="#cb31-360" aria-hidden="true" tabindex="-1"></a><span class="in">`nb$pointEstimate()`</span> (<span class="in">`r scales::percent(nb$pointEstimate())`</span>) and a 95%</span>
+<span id="cb31-361"><a href="#cb31-361" aria-hidden="true" tabindex="-1"></a>credible interval using <span class="in">`nb$credibleInterval(width = 0.95, round = 2)`</span></span>
+<span id="cb31-362"><a href="#cb31-362" aria-hidden="true" tabindex="-1"></a>(`r nb$credibleInterval(width</span>
+<span id="cb31-363"><a href="#cb31-363" aria-hidden="true" tabindex="-1"></a>= 0.95, round = 2)`). But what if we want to know</span>
+<span id="cb31-364"><a href="#cb31-364" aria-hidden="true" tabindex="-1"></a>the probability that the impact is at least 1% (or any other threshold)? Easy</span>
+<span id="cb31-365"><a href="#cb31-365" aria-hidden="true" tabindex="-1"></a>peasy! We use <span class="in">`nb$posteriorProb(threshold = 0.01)`</span></span>
+<span id="cb31-366"><a href="#cb31-366" aria-hidden="true" tabindex="-1"></a>(<span class="in">`r nb$posteriorProb(threshold = 0.01)`</span>). Finally, to visualize the evolution of</span>
+<span id="cb31-367"><a href="#cb31-367" aria-hidden="true" tabindex="-1"></a>our understanding from prior to posterior, we employ <span class="in">`nb$vizdraws()`</span>.</span>
+<span id="cb31-368"><a href="#cb31-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-369"><a href="#cb31-369" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb31-370"><a href="#cb31-370" aria-hidden="true" tabindex="-1"></a><span class="in">```{r vz, message=FALSE}</span></span>
+<span id="cb31-371"><a href="#cb31-371" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr knitr::is_html_output()</span></span>
+<span id="cb31-372"><a href="#cb31-372" aria-hidden="true" tabindex="-1"></a>nb<span class="sc">$</span><span class="fu">vizdraws</span>(<span class="at">display_mode_name =</span> <span class="cn">TRUE</span>, <span class="at">breaks =</span> <span class="fl">0.01</span>,</span>
+<span id="cb31-373"><a href="#cb31-373" aria-hidden="true" tabindex="-1"></a>            <span class="at">break_names =</span> <span class="fu">c</span>(<span class="st">"&lt; 0.01"</span>, <span class="st">"&gt; 0.01"</span>))</span>
+<span id="cb31-374"><a href="#cb31-374" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-375"><a href="#cb31-375" aria-hidden="true" tabindex="-1"></a>::: </span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/beyond_normality.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/beyond_normality.html&amp;title=Business Data Science: What Does it Mean to Be Data-Driven?" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Business Data Science: What Does it Mean to Be Data-Driven?&amp;body=Check out this link:https://book.martinez.fyi/beyond_normality.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Business Data Science: What Does it Mean to Be Data-Driven? https://book.martinez.fyi/beyond_normality.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/beyond_normality.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/beyond_normality.html&amp;title=Beyond normality: modeling binary, ordinal, and count outcomes" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Beyond normality: modeling binary, ordinal, and count outcomes&amp;body=Check out this link:https://book.martinez.fyi/beyond_normality.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Beyond normality: modeling binary, ordinal, and count outcomes https://book.martinez.fyi/beyond_normality.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
 
 
 
