@@ -802,7 +802,7 @@ run_simulations <-
            tau_sd,
            periods,
            threshold,
-           num_cores = max(1, parallel::detectCores() - 1)) {
+           num_cores = min(4, max(1, parallel::detectCores() - 1))) {
     # Function to run a single simulation
     run_single_sim <- function(i) {
       # Generate synthetic data with a unique seed
@@ -871,7 +871,7 @@ simulations <- run_simulations(
   tau_sd = 2,
   periods = c(1, 2, 3),
   threshold = 0.01,
-  num_cores = max(1, parallel::detectCores() - 1)
+  num_cores = min(4, max(1, parallel::detectCores() - 1))
 )
 ```
 
@@ -901,7 +901,7 @@ simulations <- run_simulations(
   tau_sd = 2,
   periods = c(1, 2, 3),
   threshold = 0.01,
-  num_cores = max(1, parallel::detectCores() - 1)
+  num_cores = min(4, max(1, parallel::detectCores() - 1))
 )
 ```
 
@@ -930,7 +930,7 @@ simulations <- run_simulations(
   tau_sd = 2,
   periods = c(1, 2, 3),
   threshold = 0.01,
-  num_cores = max(1, parallel::detectCores() - 1)
+  num_cores = min(4, max(1, parallel::detectCores() - 1))
 )
 ```
 

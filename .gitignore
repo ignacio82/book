@@ -13,3 +13,6 @@ docs/
 _docker_build/
 cache/
 **/*.quarto_ipynb
+*_cache/
+*.knit.md
+/strength_files/
