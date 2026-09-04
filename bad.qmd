@@ -96,26 +96,15 @@ the cost-effective decision is to do nothing (Control).
 When designing an experimentation strategy for this problem, data
 science teams typically choose between three approaches:
 
-```{mermaid}
-flowchart TD
-    Start["Candidate Experimentation Strategies"]
-    Start --> RCT["1. Static RCT<br/>Equal Allocation"]
-    Start --> MAB["2. Global MAB<br/>Non-Contextual"]
-    Start --> BCF["3. BCF Thompson Sampling<br/>Personalized, Contextual"]
+| | **1. Static RCT** | **2. Global MAB** | **3. BCF Thompson Sampling** |
+|---|---|---|---|
+| **Allocation** | Fixed 25% per arm, for the whole run | Adapts, but pools every customer together | Adapts per customer, on their covariates |
+| **What it learns** | Unbiased CATEs for every arm | A single population-average winner | The full CATE surface $\tau_k(X)$ |
+| **In-trial cost** | High regret throughout | Converges fast, then exploits | Pays to explore first, profits later |
+| **Failure mode** | Burns revenue for the entire trial | Starves the segments it did not crown | Slow to beat a bandit that got lucky |
+| **What you own at the end** | Data, and a model you still have to fit | One winning arm | A deployable personalized policy |
 
-    RCT --> RCT1["Equal 25% split"]
-    RCT --> RCT2["Unbiased CATE estimates"]
-    RCT --> RCT3["High regret, slow to react"]
-    RCT --> RCT4["Massive revenue loss during the run"]
-
-    MAB --> MAB1["Pools all users together"]
-    MAB --> MAB2["Converges to one population winner"]
-    MAB --> MAB3["Starves minority customer segments"]
-
-    BCF --> BCF1["Models the CATE surface tau_k(X)"]
-    BCF --> BCF2["Routes each user by posterior net ROI"]
-    BCF --> BCF3["Balances exploration and exploitation"]
-```
+: Three candidate experimentation strategies {tbl-colwidths="[16,21,21,21]"}
 
 ### 1. Static RCT Baseline (Uniform 25% Allocation)
 In a traditional A/B/C/D test, you divide incoming traffic equally
