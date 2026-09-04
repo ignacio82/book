@@ -96,7 +96,7 @@ science teams typically choose between three approaches:
 ```{mermaid}
 flowchart TD
     Start["Candidate Experimentation Strategies"]
-    Start --> RCT["1. Static RCT<br/>Uniform 1/K Allocation"]
+    Start --> RCT["1. Static RCT<br/>Equal Allocation"]
     Start --> MAB["2. Global MAB<br/>Non-Contextual"]
     Start --> BCF["3. BCF Thompson Sampling<br/>Personalized, Contextual"]
 
@@ -119,20 +119,24 @@ In a traditional A/B/C/D test, you divide incoming traffic equally
 (125 callers per arm each week) for a fixed period (e.g., 10 weeks).
 While statistically straightforward, it comes at a crushing business
 cost: you knowingly assign 75% of callers to suboptimal or
-cost-ineffective offers for months, losing hundreds of salvageable
-customers and tens of thousands in revenue.
+cost-ineffective offers for months. We put a precise price on that
+below.
 
 ### 2. Global (Non-Contextual) Multi-Armed Bandit
 Product teams often ask: *"Why not just run an off-the-shelf
 multi-armed bandit (e.g., Beta-Bernoulli Thompson Sampling)?"* When
 treatment effects are heterogeneous, **a global bandit suffers from
-a catastrophic winner-takes-all failure mode**. It pools all
-customers together and converges to a single *population-average*
-winner (e.g., Arm 1). In doing so, it completely starves minority
-customer segments of the treatments they uniquely need: new users
-never get Onboarding (Arm 3) and power users never get Feature
-Upgrades (Arm 2), destroying value for over 60% of the customer
-base.
+a winner-takes-all failure mode**. It pools all customers together
+and converges to whichever single arm has the best
+*population-average* net value. In the simulation below that turns
+out to be Arm 3, the cheap Onboarding Assist — a perfectly sensible
+average bet, which is exactly what makes the failure mode so hard to
+spot on a dashboard. Having crowned it, the bandit hands Onboarding
+to nearly every caller: long-tenure price-sensitive subscribers
+never see the credit that would have kept them, power users bumping
+against feature limits never get the upgrade, and the sizeable group
+who would have stayed anyway gets a $2 offer they never needed. It
+is right for roughly a third of the base and wrong for the rest.
 
 ### 3. Personalized Contextual Bandit via Bayesian Causal Forests (BCF)
 By pairing response-adaptive randomization [@finucane2018works]
@@ -160,6 +164,14 @@ $$
 Y_i = \mu\left(X_i, \hat{\boldsymbol{\pi}}(X_i)\right) +
   \sum_{k=1}^K \tau_k(X_i) Z_{i, k} + \epsilon_i
 $$
+
+Here $K = 3$ indexes the *active* arms; Control is the reference
+level, encoded as $Z_i = (0, 0, 0)$, so the four candidate actions
+of the business problem become three treatment contrasts plus a
+baseline. $\hat{\boldsymbol{\pi}}(X_i) =
+(\hat\pi_1(X_i), \hat\pi_2(X_i), \hat\pi_3(X_i))$ is the
+assignment-probability **vector** — one entry per active arm, not a
+single scalar. Keeping it a vector matters in the code below.
 
 In a response-adaptive trial, assignment probabilities
 $\boldsymbol{\pi}(X)$ change dynamically as the model learns. In
@@ -207,6 +219,7 @@ Non-Contextual Bandit**, and a **Static RCT**.
 ```{r setup, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(stochtree)
+library(patchwork)
 
 set.seed(42)
 
@@ -234,15 +247,24 @@ generate_customers <- function(n, week = 1) {
 }
 
 # Baseline retention probability under Control (Arm 0). Rises with
-# tenure and usage; clipped to a plausible 15%-90% band for
-# cancellation-desk callers (the raw logistic curve alone would
-# reach as high as ~98% for the most engaged, longest-tenured
-# callers).
+# tenure and usage, spanning roughly 10%-53%: these are callers who
+# have already entered the cancellation flow, so most of them leave
+# if you do nothing.
+#
+# The coefficients are deliberately chosen so that p_base(X) plus
+# the largest uplift any arm can deliver never exceeds 1. That is
+# not cosmetic: if we had to clip p_base + tau into [0, 1], the
+# *realised* uplift would be smaller than tau wherever the clip
+# bites, and `true_cate_uplift()` below would no longer be the true
+# CATE of the process generating our data. Every "ground truth"
+# claim in this chapter would then be measured against a quantity
+# the simulation never actually produced. We assert this explicitly
+# in `draw_outcomes()` rather than trusting the arithmetic.
 true_baseline_retention <- function(df) {
   x1 <- df$tenure
   x2 <- df$usage
-  logits <- -1.6 + 0.20 * x1 + 0.22 * x2 + 0.015 * (x1 * x2)
-  pmin(pmax(1 / (1 + exp(-logits)), 0.15), 0.90)
+  logits <- -2.2 + 0.085 * x1 + 0.095 * x2 + 0.005 * (x1 * x2)
+  1 / (1 + exp(-logits))
 }
 
 # True CATE uplift in retention probability for Arms 1, 2, 3
@@ -260,8 +282,10 @@ true_cate_uplift <- function(df) {
   tau[, 3] <- 0.48 * exp(-0.08 * (x1 - 2.5)^2 - 0.06 * (x2 - 7.5)^2)
 
   # Arm 3 (Onboarding Assist, $2 Cost): Peak at Tenure=2.0, Usage=2.0
-  # (up to +32%)
-  tau[, 4] <- 0.32 * exp(-0.08 * (x1 - 2.0)^2 - 0.08 * (x2 - 2.0)^2)
+  # (up to +32%). Its bump is the widest of the three, so it is also
+  # the arm with the best *population-average* net value - which is
+  # exactly the trap the non-contextual bandit walks into below.
+  tau[, 4] <- 0.32 * exp(-0.05 * (x1 - 2.0)^2 - 0.05 * (x2 - 2.0)^2)
 
   return(tau)
 }
@@ -276,6 +300,19 @@ compute_true_net_values <- function(df) {
 get_true_optimal_arms <- function(df) {
   net_vals <- compute_true_net_values(df)
   max.col(net_vals, ties.method = "random") - 1
+}
+
+# Single outcome generator shared by all three strategies, so no
+# strategy can accidentally be simulated under a different DGP.
+# The stopifnot() is the guard rail described above: if a tuning
+# change ever pushes a retention probability outside [0, 1], the
+# chapter fails loudly instead of silently redefining its own
+# ground truth.
+draw_outcomes <- function(p_base, tau_mat, arms) {
+  n <- length(arms)
+  p <- p_base + tau_mat[cbind(seq_len(n), arms + 1)]
+  stopifnot(all(p >= 0 & p <= 1))
+  rbinom(n, 1, p)
 }
 ```
 
@@ -311,15 +348,27 @@ ggplot(grid_df, aes(x = tenure, y = usage, fill = optimal_arm)) +
   theme(legend.position = "right")
 ```
 
-Notice that every single arm—including **Arm 0 (Control)**—has a
-distinct territory:
+```{r truth_shares, echo=FALSE}
+grid_share <- prop.table(table(grid_df$optimal_arm))
+```
 
-- **Arm 0 (Control)** dominates in regions where no treatment
-  produces enough uplift to overcome its cost.
-- **Arm 1 ($5 Credit)** dominates for veteran, lower-usage users.
-- **Arm 2 (Feature Upgrade)** dominates for newer power users.
-- **Arm 3 (Onboarding Assist)** dominates for brand-new, low-usage
-  users.
+Notice that every single arm—including **Arm 0 (Control)**—has a
+distinct territory. Measured over the feature space:
+
+- **Arm 0 (Control)** — `r sprintf("%.0f%%", 100 * grid_share[1])` —
+  dominates wherever no treatment produces enough uplift to overcome
+  its cost.
+- **Arm 1 ($5 Credit)** — `r sprintf("%.0f%%", 100 * grid_share[2])` —
+  dominates for veteran, lower-usage users.
+- **Arm 2 (Feature Upgrade)** — `r sprintf("%.0f%%", 100 * grid_share[3])` —
+  dominates for newer power users. It has the largest raw uplift of
+  any arm (+48%) but also the highest cost ($8), so its profitable
+  territory is the smallest of the four.
+- **Arm 3 (Onboarding Assist)** — `r sprintf("%.0f%%", 100 * grid_share[4])` —
+  dominates for brand-new, low-usage users.
+
+No single arm is right for even 40% of the population. That is the
+whole problem in one sentence.
 
 ---
 
@@ -348,12 +397,12 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
     # Strategy 1: Static RCT Baseline (Uniform 25% Allocation)
     # -----------------------------------------------------------
     rct_cohort <- cohort
-    rct_cohort$assigned_arm <- sample(0:3, n_per_week, replace = TRUE)
-    rct_uplift <- tau_mat[
-      cbind(seq_len(n_per_week), rct_cohort$assigned_arm + 1)
-    ]
-    rct_prob <- pmin(pmax(p_base + rct_uplift, 0), 1)
-    rct_cohort$retained <- rbinom(n_per_week, 1, rct_prob)
+    # Exactly n/4 callers per arm each week (a permuted block), not
+    # an i.i.d. coin flip - this is what "125 per arm" means.
+    rct_cohort$assigned_arm <- sample(rep(0:3, each = n_per_week / 4))
+    rct_cohort$retained <- draw_outcomes(
+      p_base, tau_mat, rct_cohort$assigned_arm
+    )
     rct_cohort$cost <- ARM_COSTS[rct_cohort$assigned_arm + 1]
     rct_cohort$net_value <-
       rct_cohort$retained * SAVED_CUSTOMER_LTV - rct_cohort$cost
@@ -378,11 +427,9 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
     glb_cohort$assigned_arm <-
       max.col(sampled_net, ties.method = "random") - 1
 
-    glb_uplift <- tau_mat[
-      cbind(seq_len(n_per_week), glb_cohort$assigned_arm + 1)
-    ]
-    glb_prob <- pmin(pmax(p_base + glb_uplift, 0), 1)
-    glb_cohort$retained <- rbinom(n_per_week, 1, glb_prob)
+    glb_cohort$retained <- draw_outcomes(
+      p_base, tau_mat, glb_cohort$assigned_arm
+    )
     glb_cohort$cost <- ARM_COSTS[glb_cohort$assigned_arm + 1]
     glb_cohort$net_value <-
       glb_cohort$retained * SAVED_CUSTOMER_LTV - glb_cohort$cost
@@ -402,9 +449,12 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
     bcf_cohort <- cohort
 
     if (w <= warm_start_weeks) {
-      # Initial warm-start exploration phase: pure uniform draw
-      bcf_cohort$assigned_arm <- sample(0:3, n_per_week, replace = TRUE)
-      bcf_cohort$alloc_prob <- 0.25
+      # Initial warm-start exploration phase: uniform blocks.
+      # alloc_prob is stored as a full [n, 4] matrix column - the
+      # design probability of *every* arm, not just the one that
+      # happened to be drawn. That distinction matters below.
+      bcf_cohort$assigned_arm <- sample(rep(0:3, each = n_per_week / 4))
+      bcf_cohort$alloc_prob <- matrix(0.25, nrow = n_per_week, ncol = 4)
     } else {
       # Ingest historical accumulated data
       past_bcf <- bind_rows(bcf_records)
@@ -418,7 +468,15 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
       }
 
       y_train <- past_bcf$retained
-      pi_train <- past_bcf$alloc_prob
+
+      # The prognostic forest conditions on the assignment
+      # probability *vector* pi(X) = (pi_1, pi_2, pi_3), one column
+      # per active arm, matching the columns of Z. Handing BCF a
+      # single number - say, the propensity of whichever arm the
+      # customer happened to receive - would be a post-randomisation
+      # quantity, not a function of X alone, and would leak the
+      # realised assignment into the prognostic term.
+      pi_train <- past_bcf$alloc_prob[, 2:4, drop = FALSE]
 
       # Fit Multivariate BCF
       bcf_fit <- bcf(
@@ -426,9 +484,9 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
         Z_train = Z_train,
         y_train = y_train,
         propensity_train = pi_train,
-        num_gfr = 5,
-        num_burnin = 80,
-        num_mcmc = 50,
+        num_gfr = 10,
+        num_burnin = 150,
+        num_mcmc = 200,
         general_params = list(num_threads = 2, random_seed = 42 + w)
       )
 
@@ -438,23 +496,23 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
         bcf_fit,
         X = X_new,
         Z = matrix(0, nrow = n_per_week, ncol = 3),
-        propensity = rep(0.25, n_per_week),
+        propensity = matrix(0.25, nrow = n_per_week, ncol = 3),
         terms = "cate",
         type = "posterior"
-      ) # Shape: [n_per_week, num_mcmc, 3]
+      ) # Shape: [n_per_week, 3, num_mcmc]
 
-      num_mcmc <- dim(tau_draws)[2]
+      num_mcmc <- dim(tau_draws)[3]
 
       # Full 4-arm net-value draws (Arm 0 uplift is fixed at 0)
-      tau_draws_all <- array(0, dim = c(n_per_week, num_mcmc, 4))
-      tau_draws_all[, , 2:4] <- tau_draws
+      tau_draws_all <- array(0, dim = c(n_per_week, 4, num_mcmc))
+      tau_draws_all[, 2:4, ] <- tau_draws
       net_draws <- sweep(
-        tau_draws_all * SAVED_CUSTOMER_LTV, 3, ARM_COSTS, "-"
+        tau_draws_all * SAVED_CUSTOMER_LTV, 2, ARM_COSTS, "-"
       )
 
       # Which arm wins the net value in each posterior draw, for
       # every customer: an [n_per_week, num_mcmc] matrix of arms.
-      winner_by_draw <- apply(net_draws, c(1, 2), which.max) - 1
+      winner_by_draw <- apply(net_draws, c(1, 3), which.max) - 1
 
       # Exact per-arm Thompson-sampling win probability: the share
       # of the full posterior ensemble in which that arm is the
@@ -483,19 +541,16 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
       bcf_cohort$assigned_arm <-
         ifelse(explore, random_choice, ts_choice)
 
-      # The known design propensity of the arm actually assigned -
-      # exact by construction, so it eliminates Regularization-
-      # Induced Confounding rather than merely approximating it.
-      bcf_cohort$alloc_prob <- design_prob[
-        cbind(seq_len(n_per_week), bcf_cohort$assigned_arm + 1)
-      ]
+      # Keep the entire [n, 4] design matrix. Every entry is known
+      # exactly - we built the assignment mechanism - so this
+      # eliminates Regularization-Induced Confounding by
+      # construction rather than approximating it away.
+      bcf_cohort$alloc_prob <- design_prob
     }
 
-    bcf_uplift <- tau_mat[
-      cbind(seq_len(n_per_week), bcf_cohort$assigned_arm + 1)
-    ]
-    bcf_prob <- pmin(pmax(p_base + bcf_uplift, 0), 1)
-    bcf_cohort$retained <- rbinom(n_per_week, 1, bcf_prob)
+    bcf_cohort$retained <- draw_outcomes(
+      p_base, tau_mat, bcf_cohort$assigned_arm
+    )
     bcf_cohort$cost <- ARM_COSTS[bcf_cohort$assigned_arm + 1]
     bcf_cohort$net_value <-
       bcf_cohort$retained * SAVED_CUSTOMER_LTV - bcf_cohort$cost
@@ -511,6 +566,38 @@ simulate_experiment_suite <- function(n_weeks = 10, n_per_week = 500,
 }
 
 sim_results <- simulate_experiment_suite(n_weeks = 10, n_per_week = 500)
+```
+
+Every headline number quoted in the rest of this chapter is computed
+from `sim_results` here and then referenced inline, so the prose
+cannot drift away from what the simulation actually produced:
+
+```{r headline_numbers}
+final_week_acc <- function(df) {
+  mean(df$assigned_arm[df$week == 10] == df$true_opt_arm[df$week == 10])
+}
+pct <- function(x) sprintf("%.0f%%", 100 * x)
+usd <- function(x) paste0("$", formatC(round(x), big.mark = ",", format = "d"))
+
+acc_bcf <- final_week_acc(sim_results$bcf)
+acc_glb <- final_week_acc(sim_results$global)
+acc_rct <- final_week_acc(sim_results$rct)
+
+val_bcf <- sum(sim_results$bcf$net_value)
+val_glb <- sum(sim_results$global$net_value)
+val_rct <- sum(sim_results$rct$net_value)
+
+# Which single arm did the non-contextual bandit settle on?
+glb_final_mix <- table(sim_results$global$assigned_arm[
+  sim_results$global$week == 10
+])
+glb_winner <- as.integer(names(which.max(glb_final_mix)))
+glb_winner_share <- max(glb_final_mix) / sum(glb_final_mix)
+
+# Share of the customer population each arm is truly best for.
+truth_share <- prop.table(table(factor(
+  sim_results$rct$true_opt_arm, levels = 0:3
+)))
 ```
 
 ---
@@ -534,10 +621,10 @@ final_bcf <- bcf(
   X_train = X_train_final,
   Z_train = Z_train_final,
   y_train = past_bcf$retained,
-  propensity_train = past_bcf$alloc_prob,
-  num_gfr = 5,
-  num_burnin = 100,
-  num_mcmc = 50,
+  propensity_train = past_bcf$alloc_prob[, 2:4, drop = FALSE],
+  num_gfr = 10,
+  num_burnin = 150,
+  num_mcmc = 200,
   general_params = list(num_threads = 2, random_seed = 999)
 )
 
@@ -546,7 +633,7 @@ grid_pred <- predict(
   final_bcf,
   X = grid_X,
   Z = matrix(0, nrow = nrow(grid_X), ncol = 3),
-  propensity = rep(0.25, nrow(grid_X)),
+  propensity = matrix(0.25, nrow = nrow(grid_X), ncol = 3),
   terms = "cate",
   type = "mean"
 )
@@ -561,32 +648,72 @@ grid_df$bcf_optimal_arm <- factor(
   levels = 0:3, labels = ARM_NAMES
 )
 
-p1 <- ggplot(grid_df, aes(x = tenure, y = usage, fill = optimal_arm)) +
-  geom_raster(interpolate = TRUE) +
-  scale_fill_manual(values = setNames(ARM_COLORS, ARM_NAMES)) +
-  labs(
-    title = "Ground Truth Optimal Landscape",
-    x = "Tenure (Months)", y = "Usage (x10 Hours)", fill = "Arm"
-  ) +
-  theme_minimal() + theme(legend.position = "none")
+# drop = FALSE keeps all four arms in the legend even when a panel
+# happens not to use one of them, so the two maps stay comparable.
+landscape_panel <- function(fill_var, title) {
+  ggplot(grid_df, aes(x = tenure, y = usage, fill = .data[[fill_var]])) +
+    geom_raster(interpolate = TRUE) +
+    scale_fill_manual(
+      values = setNames(ARM_COLORS, ARM_NAMES),
+      limits = ARM_NAMES, drop = FALSE
+    ) +
+    labs(
+      title = title,
+      x = "Tenure (Months)", y = "Usage (x10 Hours)", fill = "Arm"
+    ) +
+    theme_minimal(base_size = 11)
+}
 
-p2 <- ggplot(
-  grid_df, aes(x = tenure, y = usage, fill = bcf_optimal_arm)
+agreement <- mean(grid_df$optimal_arm == grid_df$bcf_optimal_arm)
+
+# Agreement alone does not say whether the disagreements matter.
+# Price them: what net value does BCF's choice forgo against the
+# oracle's, cell by cell?
+grid_true_net <- compute_true_net_values(grid_df)
+oracle_cell <- grid_true_net[
+  cbind(seq_len(nrow(grid_df)), as.integer(grid_df$optimal_arm))
+]
+bcf_cell <- grid_true_net[
+  cbind(seq_len(nrow(grid_df)), as.integer(grid_df$bcf_optimal_arm))
+]
+regret_cell <- oracle_cell - bcf_cell
+mean_regret_where_wrong <- mean(regret_cell[regret_cell > 1e-9])
+max_regret <- max(regret_cell)
+value_captured <- sum(bcf_cell) / sum(oracle_cell)
+
+wrap_plots(
+  landscape_panel("optimal_arm", "Ground Truth Optimal Landscape"),
+  landscape_panel("bcf_optimal_arm", "BCF Learned Decision Landscape"),
+  ncol = 2
 ) +
-  geom_raster(interpolate = TRUE) +
-  scale_fill_manual(values = setNames(ARM_COLORS, ARM_NAMES)) +
-  labs(
-    title = "BCF Learned Decision Landscape",
-    x = "Tenure (Months)", y = "Usage (x10 Hours)", fill = "Arm"
-  ) +
-  theme_minimal() + theme(legend.position = "right")
-
-gridExtra::grid.arrange(p1, p2, ncol = 2)
+  plot_layout(guides = "collect") +
+  plot_annotation(
+    caption = sprintf(
+      "The two maps agree on %.0f%% of the customer feature space.",
+      100 * agreement
+    )
+  ) &
+  theme(legend.position = "bottom")
 ```
 
-The side-by-side comparison demonstrates that **Multivariate BCF
-successfully reconstructs the non-linear decision regions** without
-any prespecified feature engineering or manual subgroup binning.
+The two maps agree on **`r pct(agreement)`** of the feature space,
+with no prespecified feature engineering and no manual subgroup
+binning: BCF recovered four curved, cost-dependent regions from
+binary retention outcomes alone.
+
+The remaining `r pct(1 - agreement)` is worth pricing rather than
+apologizing for. Where the two maps disagree, BCF's choice gives up
+an average of
+`r scales::dollar(mean_regret_where_wrong, accuracy = 0.01)` of net
+value per customer against the oracle's choice (worst case
+`r scales::dollar(max_regret, accuracy = 0.01)`), because the
+disagreements sit on the *boundaries* between regions — precisely
+where two arms have nearly equal net value and picking the
+runner-up costs almost nothing. Summed across the whole feature
+space, the learned map still captures **`r pct(value_captured)`** of
+the oracle's achievable value. A decision rule does not need the
+effect surface to be right; it needs the *ranking* to be right where
+the ranking matters, and that is a much easier target.
 
 ---
 
@@ -637,9 +764,12 @@ ggplot(
   )) +
   labs(
     title = "Dynamic Routing Accuracy to Personal Optimal Arm Over Time",
-    subtitle = paste(
-      "BCF learns the multi-treatment landscape, climbing to",
-      "~85% personalized accuracy"
+    subtitle = sprintf(
+      paste(
+        "By the final week BCF routes %.0f%% of customers to their",
+        "personal best arm, against %.0f%% for the global bandit"
+      ),
+      100 * acc_bcf, 100 * acc_glb
     ),
     x = "Customer Sequence Within Strategy",
     y = "Proportion Assigned to True Optimal Arm",
@@ -651,15 +781,33 @@ ggplot(
 
 **Key Takeaways:**
 
-- **Static RCT (Red)**: Stays flat at exactly 25% (random guessing).
-- **Global Bandit (Orange)**: Converges to whichever single arm has
-  the highest population-average performance, plateauing at only
-  ~35–40% accuracy. It permanently fails the 60%+ of customers who
-  belong to other segments.
-- **BCF Thompson Sampling (Blue)**: Starts at 25% during warm-start
-  exploration, then rapidly discovers the non-linear boundaries
-  across Tenure and Usage, climbing to **~80–85%+ personalized
-  accuracy**.
+- **Static RCT (Red)**: hovers around 25% — it is guessing, by
+  design, forever. It ends the trial at `r pct(acc_rct)`. The
+  wobble around that line is just sampling noise in a 250-customer
+  rolling window, not learning.
+- **Global Bandit (Orange)**: converges on
+  **`r ARM_NAMES[glb_winner + 1]`**, the arm with the best
+  *population-average* net value, and by the final week hands it to
+  `r pct(glb_winner_share)` of all callers. That is the right answer
+  for the `r pct(truth_share[glb_winner + 1])` of customers this arm
+  genuinely suits and the wrong one for everybody else, which caps
+  it at `r pct(acc_glb)`. Note *which* arm it crowned: the cheap
+  Onboarding Assist is a perfectly reasonable population-average
+  bet, and that is precisely what makes the failure mode so easy to
+  miss in a dashboard.
+- **BCF Thompson Sampling (Blue)**: starts at 25% during warm-start
+  exploration, then discovers the non-linear boundaries across
+  Tenure and Usage, ending the trial at **`r pct(acc_bcf)`**.
+
+That last number deserves a caveat that is easy to gloss over.
+`r pct(acc_bcf)` is *not* the accuracy of the policy you would
+deploy — it is the accuracy of a system that is **still
+deliberately exploring**. Thompson sampling routes from a random
+posterior draw, not from the posterior mean, and the
+$\epsilon$-floor sends another 5% of traffic to a uniformly random
+arm. Both are costs paid on purpose, during the trial, to buy a
+better model at the end of it. We measure the deployed policy
+separately in Section 6.
 
 ---
 
@@ -686,7 +834,7 @@ predict_slice <- function(X_slice) {
     final_bcf,
     X = as.matrix(X_slice),
     Z = matrix(0, N_test, 3),
-    propensity = rep(0.25, N_test),
+    propensity = matrix(0.25, N_test, 3),
     terms = "cate",
     type = "posterior"
   )
@@ -700,34 +848,53 @@ slice_summary <- bind_rows(
     slice = "Arm 1: $5 Credit (Usage = 2.5)",
     x_val = eval_range,
     true_tau = true_cate_uplift(X_slice1)[, 2],
-    post_mean = apply(draws_s1[, , 1], 1, mean),
-    ci_lower = apply(draws_s1[, , 1], 1, quantile, 0.025),
-    ci_upper = apply(draws_s1[, , 1], 1, quantile, 0.975),
+    post_mean = apply(draws_s1[, 1, ], 1, mean),
+    ci_lower = apply(draws_s1[, 1, ], 1, quantile, 0.025),
+    ci_upper = apply(draws_s1[, 1, ], 1, quantile, 0.975),
     arm_color = ARM_COLORS[2]
   ),
   tibble(
     slice = "Arm 2: 2-Mo Upgrade (Tenure = 2.5)",
     x_val = eval_range,
     true_tau = true_cate_uplift(X_slice2)[, 3],
-    post_mean = apply(draws_s2[, , 2], 1, mean),
-    ci_lower = apply(draws_s2[, , 2], 1, quantile, 0.025),
-    ci_upper = apply(draws_s2[, , 2], 1, quantile, 0.975),
+    post_mean = apply(draws_s2[, 2, ], 1, mean),
+    ci_lower = apply(draws_s2[, 2, ], 1, quantile, 0.025),
+    ci_upper = apply(draws_s2[, 2, ], 1, quantile, 0.975),
     arm_color = ARM_COLORS[3]
   ),
   tibble(
     slice = "Arm 3: Onboarding Assist (Diagonal)",
     x_val = eval_range,
     true_tau = true_cate_uplift(X_slice3)[, 4],
-    post_mean = apply(draws_s3[, , 3], 1, mean),
-    ci_lower = apply(draws_s3[, , 3], 1, quantile, 0.025),
-    ci_upper = apply(draws_s3[, , 3], 1, quantile, 0.975),
+    post_mean = apply(draws_s3[, 3, ], 1, mean),
+    ci_lower = apply(draws_s3[, 3, ], 1, quantile, 0.025),
+    ci_upper = apply(draws_s3[, 3, ], 1, quantile, 0.975),
     arm_color = ARM_COLORS[4]
   )
 )
 
+# Fraction of slice points whose 95% interval actually covers the
+# truth - stated rather than asserted.
+coverage <- mean(
+  slice_summary$true_tau >= slice_summary$ci_lower &
+    slice_summary$true_tau <= slice_summary$ci_upper
+)
+
+# How much of each true peak does the posterior mean recover?
+peak_recovery <- slice_summary %>%
+  group_by(slice) %>%
+  summarise(ratio = post_mean[which.max(true_tau)] / max(true_tau)) %>%
+  pull(ratio)
+
+# slice_colors keys the palette to the facet, so each panel is drawn
+# in that arm's colour from ARM_COLORS instead of ggplot's defaults.
+slice_colors <- setNames(
+  unique(slice_summary$arm_color), unique(slice_summary$slice)
+)
+
 ggplot(slice_summary, aes(x = x_val)) +
   geom_line(
-    aes(y = true_tau), linetype = "dashed", color = "#d93025",
+    aes(y = true_tau), linetype = "dashed", color = "grey20",
     linewidth = 1
   ) +
   geom_point(aes(y = post_mean, color = slice), size = 2) +
@@ -735,15 +902,19 @@ ggplot(slice_summary, aes(x = x_val)) +
     aes(ymin = ci_lower, ymax = ci_upper, color = slice),
     width = 0.25, alpha = 0.7
   ) +
+  scale_color_manual(values = slice_colors) +
   facet_wrap(~ slice, scales = "free_x") +
   labs(
     title = paste(
       "BCF Posterior Credible Intervals vs. Ground Truth CATE",
       "Along Characteristic Slices"
     ),
-    subtitle = paste(
-      "Red dashed line: True Uplift. Points and bars: BCF",
-      "Posterior Mean and 95% Credible Interval."
+    subtitle = sprintf(
+      paste(
+        "Grey dashed line: true uplift. Points and bars: BCF",
+        "posterior mean and 95%% credible interval (%.0f%% coverage)."
+      ),
+      100 * coverage
     ),
     x = "Feature Value",
     y = "Treatment Uplift in Retention (tau)"
@@ -752,11 +923,22 @@ ggplot(slice_summary, aes(x = x_val)) +
   theme(legend.position = "none")
 ```
 
-The credible intervals accurately envelope the non-linear treatment
-effect peaks. Where data density is high, the intervals shrink
-tightly around the truth; where data is sparse, the credible
-intervals naturally expand, providing the uncertainty signals
-necessary for calibrated exploration.
+The intervals cover the truth at **`r pct(coverage)`** of the
+evaluated points, and the shape of the residual error is
+instructive. BCF's posterior mean is visibly *flatter* than the true
+Gaussian bumps: at the three peaks it recovers only
+`r pct(min(peak_recovery))`–`r pct(max(peak_recovery))` of the true
+height, and it drifts away from zero out in the tails where the true
+effect has already died off. That is BART's regularization prior
+doing its job: it shrinks towards a simpler
+surface unless the data insist otherwise, which is precisely why the
+method is stable enough to route live traffic on. For a decision
+rule this attenuation is largely harmless, because ranking arms by
+net value only requires getting the *ordering* right, not the
+magnitude — which is why policy accuracy (Section 6) holds up far
+better than the pointwise CATE fit does. If you needed calibrated
+effect *sizes* rather than a routing decision, you would want more
+data per region than an adaptive design chooses to collect.
 
 ---
 
@@ -770,48 +952,69 @@ directly: the exact `alloc_prob` computed for every BCF-routed
 customer once the model started making assignments (Week 2 onward).
 
 ```{r propensity_plot, fig.width=8, fig.height=4.5}
-propensity_df <- sim_results$bcf %>%
-  filter(week > 1) %>%
-  mutate(
-    assigned_arm_name = factor(
-      assigned_arm, levels = 0:3, labels = ARM_NAMES
-    )
-  )
+adaptive_bcf <- sim_results$bcf %>% filter(week > 1)
 
-ggplot(propensity_df, aes(x = alloc_prob, fill = assigned_arm_name)) +
+# Every customer-arm pair, not only the pair that was realised:
+# this is the quantity that has to stay away from zero for overlap
+# to hold.
+propensity_df <- tibble(
+  arm = rep(0:3, each = nrow(adaptive_bcf)),
+  prob = as.vector(adaptive_bcf$alloc_prob)
+) %>%
+  mutate(arm_name = factor(arm, levels = 0:3, labels = ARM_NAMES))
+
+min_prop <- min(propensity_df$prob)
+
+ggplot(propensity_df, aes(x = prob, fill = arm_name)) +
   geom_histogram(bins = 40, alpha = 0.85) +
   geom_vline(
     xintercept = EPSILON_FLOOR / 4, linetype = "dashed",
     color = "grey30"
   ) +
+  scale_x_continuous(limits = c(0, 1)) +
   scale_fill_manual(values = setNames(ARM_COLORS, ARM_NAMES)) +
   labs(
-    title = "Exact Design Propensity of the Assigned Arm",
-    subtitle = paste(
-      "Dashed line marks the epsilon/4 exploration floor;",
-      "no customer ever hits exactly zero"
+    title = "Exact Design Propensity of Every Customer-Arm Pair",
+    subtitle = sprintf(
+      paste(
+        "Dashed line marks the epsilon/4 = %.4f floor.",
+        "Observed minimum across all pairs: %.4f"
+      ),
+      EPSILON_FLOOR / 4, min_prop
     ),
     x = "P(this arm | X, adaptive design)",
     y = "Count",
-    fill = "Assigned Arm"
+    fill = "Arm"
   ) +
   theme_minimal(base_size = 11) +
   theme(legend.position = "bottom")
 ```
 
-Every bar sits to the right of the dashed exploration floor
-($\epsilon / 4$): no customer-arm pair ever collapses to exactly
-zero probability, so BCF's causal trees can always find
-counterfactual observations to learn from. The spread above the
-floor also shows the design at work — propensities climb toward 1
-exactly where the posterior is confident an arm dominates, and stay
-near the floor where the arms are still close.
+Nothing falls below the dashed line. The distribution instead piles
+up *exactly at* the floor $\epsilon/4 = `r sprintf("%.4f", EPSILON_FLOOR / 4)`$ —
+that spike is every customer-arm pair the posterior has already
+ruled out, held open by the $\epsilon$-blend rather than by any
+residual uncertainty. The observed minimum across all
+`r format(nrow(propensity_df), big.mark = ",")` customer-arm pairs is
+`r sprintf("%.4f", min_prop)`, so no pair ever collapses to zero and
+BCF's causal trees can always find counterfactual observations to
+learn from. The mass climbing toward 1 is the design at work:
+propensities approach certainty exactly where the posterior is
+confident an arm dominates.
 
 ---
 
 ### 5. Cumulative Net Business Value ($) Generated
 
 ```{r financial_plot, fig.width=9, fig.height=4.8}
+# When does BCF's cumulative value overtake the global bandit's?
+# Early on it is behind: it is buying information it has not yet
+# cashed in.
+cum_bcf <- cumsum(sim_results$bcf$net_value)
+cum_glb <- cumsum(sim_results$global$net_value)
+behind <- which(cum_bcf <= cum_glb)
+crossover_idx <- if (length(behind) > 0) max(behind) + 1L else 1L
+
 financial_summary <- bind_rows(
   sim_results$bcf %>% mutate(strategy = "BCF Thompson Sampling"),
   sim_results$global %>% mutate(strategy = "Global Bandit"),
@@ -822,10 +1025,6 @@ financial_summary <- bind_rows(
     customer_idx = row_number(),
     cum_net = cumsum(net_value)
   )
-
-total_bcf_val <- sum(sim_results$bcf$net_value)
-total_glb_val <- sum(sim_results$global$net_value)
-total_rct_val <- sum(sim_results$rct$net_value)
 
 ggplot(
   financial_summary,
@@ -845,10 +1044,10 @@ ggplot(
     ),
     subtitle = sprintf(
       paste(
-        "BCF Thompson Sampling generates +$%.0f over Global",
-        "Bandit and +$%.0f over Static RCT"
+        "Over 5,000 customers: BCF %s, Global Bandit %s,",
+        "Static RCT %s"
       ),
-      total_bcf_val - total_glb_val, total_bcf_val - total_rct_val
+      usd(val_bcf), usd(val_glb), usd(val_rct)
     ),
     x = "Customer Timeline",
     y = "Cumulative Net Value ($)",
@@ -858,10 +1057,195 @@ ggplot(
   theme(legend.position = "bottom")
 ```
 
-The economic lift of personalization is undeniable: by routing each
-user to their cost-effective sweet spot, **BCF Thompson Sampling
-generates tens of thousands in incremental profit during the trial
-itself**.
+Read this chart honestly, because it does not say what an
+adaptive-design pitch deck usually says.
+
+Against the static RCT the gap is large and unambiguous:
+**`r usd(val_bcf - val_rct)`** over 5,000 customers, or
+`r scales::dollar((val_bcf - val_rct) / 5000, accuracy = 0.01)` per caller. That is the real
+price of holding 75% of your traffic on offers you already suspect
+are wrong, and it is money the RCT burns whether or not the trial
+ever reaches significance.
+
+Against the *global bandit*, though, the story is more interesting.
+For the first **`r format(crossover_idx, big.mark = ",")` customers
+BCF is actually behind**: the blue line sits below the orange one
+while the model spends real money exploring arms it is not yet sure
+about. It only pulls ahead for good after that, and finishes just
+**`r usd(val_bcf - val_glb)`** up — a
+`r sprintf("%.1f%%", 100 * (val_bcf - val_glb) / val_glb)`
+improvement, well inside the noise you would see across seeds. This
+is not a defect in the method; it is what response-adaptive
+allocation actually buys you. The global bandit converged fast onto
+a cheap, broadly-decent arm and spent the whole trial exploiting it,
+while BCF spent the trial paying for exploration. In-trial regret is
+the *wrong* place to look for the value of personalization.
+
+The right place is the policy you own when the trial ends.
+
+---
+
+### 6. The Number That Actually Matters: Deployed Policy Value
+
+A trial of 5,000 customers is a rounding error next to the customers
+who come after it. What you are really buying with ten weeks of
+experimentation is a **decision rule** that runs indefinitely. So
+let's evaluate the rule, not the trial: freeze each strategy's final
+policy, apply it to a fresh population of 20,000 callers the models
+have never seen, and score it against the true net values.
+
+```{r policy_value, fig.width=9, fig.height=4.4}
+set.seed(2024)
+holdout <- generate_customers(20000, week = 99)
+holdout_net <- compute_true_net_values(holdout)
+holdout_opt <- max.col(holdout_net, ties.method = "first")
+n_hold <- nrow(holdout)
+
+# Value per customer of an arbitrary arm-assignment vector
+score_policy <- function(choice_1based) {
+  mean(holdout_net[cbind(seq_len(n_hold), choice_1based)])
+}
+
+# The RCT also yields a policy: fit the same model to its balanced
+# data. This is the fair comparison, and the one that shows what
+# adaptive allocation does and does not buy.
+rct_dat <- sim_results$rct
+Z_rct <- matrix(0, nrow(rct_dat), 3)
+for (k in 1:3) Z_rct[rct_dat$assigned_arm == k, k] <- 1.0
+rct_bcf <- bcf(
+  X_train = as.matrix(rct_dat[, c("tenure", "usage")]),
+  Z_train = Z_rct,
+  y_train = rct_dat$retained,
+  propensity_train = matrix(0.25, nrow(rct_dat), 3),
+  num_gfr = 10, num_burnin = 150, num_mcmc = 200,
+  general_params = list(num_threads = 2, random_seed = 4321)
+)
+
+greedy_choice <- function(fit) {
+  tau_hat <- predict(
+    fit,
+    X = as.matrix(holdout[, c("tenure", "usage")]),
+    Z = matrix(0, n_hold, 3),
+    propensity = matrix(0.25, n_hold, 3),
+    terms = "cate", type = "mean"
+  )
+  max.col(
+    sweep(cbind(0, tau_hat) * SAVED_CUSTOMER_LTV, 2, ARM_COSTS, "-"),
+    ties.method = "first"
+  )
+}
+
+choice_bcf <- greedy_choice(final_bcf)
+choice_rct <- greedy_choice(rct_bcf)
+
+policy_tbl <- tibble(
+  policy = c(
+    "Oracle (knows the truth)",
+    "BCF policy from adaptive trial",
+    "BCF policy from static RCT data",
+    sprintf("Global bandit (always %s)", ARM_NAMES[glb_winner + 1]),
+    "Untargeted (random offer)"
+  ),
+  value = c(
+    score_policy(holdout_opt),
+    score_policy(choice_bcf),
+    score_policy(choice_rct),
+    mean(holdout_net[, glb_winner + 1]),
+    mean(holdout_net)
+  ),
+  accuracy = c(
+    1,
+    mean(choice_bcf == holdout_opt),
+    mean(choice_rct == holdout_opt),
+    mean(holdout_opt == glb_winner + 1),
+    0.25
+  )
+)
+
+ANNUAL_CUSTOMERS <- 500 * 52
+policy_tbl <- policy_tbl %>%
+  mutate(
+    annual = value * ANNUAL_CUSTOMERS,
+    policy = factor(policy, levels = rev(policy))
+  )
+
+ggplot(policy_tbl, aes(x = value, y = policy, fill = value > 0)) +
+  geom_col(alpha = 0.9) +
+  geom_vline(xintercept = 0, color = "grey40") +
+  geom_text(
+    aes(label = sprintf("%s  (%.0f%% correct)",
+                        scales::dollar(value, accuracy = 0.01),
+                        100 * accuracy),
+        hjust = ifelse(value > 0, -0.08, 1.08)),
+    size = 3.1
+  ) +
+  scale_fill_manual(values = c(`TRUE` = "#1a73e8", `FALSE` = "#d93025")) +
+  scale_x_continuous(
+    labels = scales::dollar_format(),
+    expand = expansion(mult = c(0.55, 0.55))
+  ) +
+  labs(
+    title = "Value of the Deployed Policy on 20,000 Unseen Customers",
+    subtitle = paste(
+      "Incremental net value per customer versus doing nothing,",
+      "after the trial has ended"
+    ),
+    x = "Net Value per Future Customer ($)", y = NULL
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "none")
+```
+
+```{r policy_numbers, echo=FALSE}
+v <- setNames(policy_tbl$value, as.character(policy_tbl$policy))
+a <- setNames(policy_tbl$accuracy, as.character(policy_tbl$policy))
+v_oracle <- v[["Oracle (knows the truth)"]]
+v_bcf <- v[["BCF policy from adaptive trial"]]
+v_rctp <- v[["BCF policy from static RCT data"]]
+v_glb <- v[[sprintf("Global bandit (always %s)", ARM_NAMES[glb_winner + 1])]]
+v_none <- v[["Untargeted (random offer)"]]
+a_bcf <- a[["BCF policy from adaptive trial"]]
+a_rctp <- a[["BCF policy from static RCT data"]]
+```
+
+Four things fall out of this chart, and only one of them is the
+thing the pitch deck would have told you.
+
+**The deployed policy is far sharper than the trial made it look.**
+Routing the holdout greedily from the posterior *mean* gets
+**`r pct(a_bcf)`** of customers to their true best arm, against
+`r pct(acc_bcf)` during the trial itself. The gap is the exploration
+you were paying for: Thompson draws and the $\epsilon$-floor, both
+switched off the moment you deploy. The learned policy captures
+**`r pct(v_bcf / v_oracle)`** of what a perfectly-informed oracle
+could earn.
+
+**Personalization is worth real money, but annually, not weekly.**
+At 500 callers a week the deployed BCF policy is worth
+`r scales::dollar(v_bcf - v_glb, accuracy = 0.01)` per customer more than the global bandit's
+single-arm rule — **`r usd((v_bcf - v_glb) * ANNUAL_CUSTOMERS)` a
+year** across `r format(ANNUAL_CUSTOMERS, big.mark = ",")` callers.
+*This* is where the "tens of thousands" lives. It was never in the
+ten-week trial.
+
+**Untargeted treatment destroys value.** Handing every caller a
+random offer is worth `r scales::dollar(v_none, accuracy = 0.01)`
+per customer — negative. Averaged over the population, these
+incentives cost more than the retention they buy. The entire value
+of the exercise is knowing *whom* to treat, which is exactly the
+question a non-contextual bandit cannot ask.
+
+**And the honest one: adaptive allocation is not what made the model
+good.** A policy trained on the static RCT's perfectly balanced data
+scores `r scales::dollar(v_rctp, accuracy = 0.01)` per customer at
+`r pct(a_rctp)` accuracy — close to the adaptive design's
+`r scales::dollar(v_bcf, accuracy = 0.01)`. Balanced data is
+excellent for *estimation*. What the adaptive design bought was the
+`r usd(val_bcf - val_rct)` of in-trial revenue the RCT gave away to
+get there. Adaptive design is a regret-minimization technique that
+happens to leave you with a good model — not an estimation
+technique that happens to make money. If you only ever quote one
+sentence from this chapter to a stakeholder, quote that one.
 
 ---
 
@@ -872,8 +1256,16 @@ Product teams often ask: *"Why build a causal forest when an
 off-the-shelf bandit is so simple?"* As shown above, when treatment
 effects are heterogeneous, **a non-contextual bandit suffers from a
 winner-takes-all failure mode**. It crowns a single majority arm and
-starves everyone else. In customer retention, that means driving
-high-churn minority segments straight out the door.
+starves everyone else.
+
+What makes this dangerous in practice is that the bandit does not
+look broken. It converged quickly, it beat the RCT on revenue, and
+its dashboard shows a clean winner with a tight interval — every
+signal a reviewer normally checks comes back green. It was simply
+answering "which offer is best *on average*?" when the business
+question was "which offer is best *for this caller*?" No amount of
+additional data fixes a question mismatch: the non-contextual
+bandit converges faster and faster onto the wrong quantity.
 
 ### 2. Always Include an Exploration Floor ($\epsilon$)
 Pure greedy Thompson sampling can prematurely collapse allocation to
@@ -894,10 +1286,27 @@ no closed form for "the probability arm $k$ wins the posterior
 argmax for this customer," so the simulation computes it directly:
 for every posterior draw, tally which arm has the highest net value,
 then average across the full MCMC ensemble (blended with the
-$\epsilon$-floor). Passing this exact per-customer, per-arm design
-propensity into StochTree's `propensity_train` — rather than a rough
-placeholder — is what actually eliminates Regularization-Induced
-Confounding by construction.
+$\epsilon$-floor).
+
+Two details are easy to get wrong here, and both silently degrade
+the model rather than throwing an error.
+
+First, **pass the whole vector**. `propensity_train` takes an
+$n \times K$ matrix whose columns line up with the columns of `Z`.
+It is tempting to pass a single column — the propensity of the arm
+the customer actually received — but that is a *post-randomization*
+quantity: it depends on the coin flip, not on $X$ alone. Feeding it
+to the prognostic forest leaks the realized assignment into
+$\mu(\cdot)$, which is the very confounding channel BCF exists to
+close.
+
+Second, **store the design probabilities as you go**. They are a
+property of the model that was live *at the moment of assignment*,
+and that model no longer exists once you refit next week. In the
+simulation, `alloc_prob` is carried on each cohort as a full
+$n \times 4$ matrix for exactly this reason. Reconstructing
+propensities after the fact from a later model is not the same
+quantity and quietly reintroduces the bias.
 
 ### 4. Handling Delayed Feedback Loops
 In our case study, retention was observable immediately at the
@@ -929,10 +1338,33 @@ retention offers to every future customer in real time.
 
 Bayesian Adaptive Design powered by Multivariate BCF bridges the gap
 between **rigorous causal inference** and **modern algorithmic
-decision-making**. It allows business data scientists to replace
-static, high-regret A/B tests with dynamic learning systems that
-protect customer relationships and maximize company revenue from the
-very first week.
+decision-making**. It lets you replace a static, high-regret A/B/C/D
+test with a system that earns while it learns — and, crucially,
+hands you a *personalized decision rule* at the end rather than a
+single winning arm.
+
+Three numbers from this chapter are worth carrying out of it:
+
+1. **`r usd(val_bcf - val_rct)`** — what adaptive allocation saved
+   against the static RCT over a single ten-week trial. This is the
+   regret-minimization benefit, and it is real and immediate.
+2. **`r usd((v_bcf - v_glb) * ANNUAL_CUSTOMERS)` per year** — what
+   the *learned policy* is worth against the non-contextual bandit's
+   single-arm rule, once deployed. This is the personalization
+   benefit, and it dwarfs the first.
+3. **`r scales::dollar(v_none, accuracy = 0.01)`** — the value of
+   treating everyone with an untargeted offer. Negative. Knowing
+   whom *not* to treat is most of the prize.
+
+And one caution. The adaptive design did not produce a meaningfully
+better *model* than the balanced RCT would have; it produced a
+comparable model far more cheaply. Reach for response-adaptive
+randomization when in-trial regret is expensive — live customers,
+real incentives, revenue on the line. If your priority is a
+precisely estimated effect surface, especially in regions where the
+optimal action is already obvious, a balanced design is still the
+better instrument. Knowing which of those two problems you have is
+the actual skill.
 
 ::: {.callout-tip}
 ## Learn more
@@ -942,6 +1374,6 @@ very first week.
 - @hahn2020bayesian: *Bayesian regression tree models for causal
   inference: Regularization, confounding, and heterogeneous
   effects.* Bayesian Analysis.
-- @stochastictree: *StochTree: High-performance stochastic tree
-  ensembles for causal inference and machine learning.*
+- @stochastictree: *stochtree: Stochastic tree ensembles (XBART and
+  BART) for supervised learning and causal inference.*
 :::

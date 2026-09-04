@@ -53,6 +53,7 @@ jobs:
             any::broom
             any::scales
             any::patchwork
+            any::zoo
             any::ggiraph
             any::ggpubr
             any::stochtree
