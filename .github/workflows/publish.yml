@@ -28,6 +28,12 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          # Must match the Quarto in the Docker image that generates
+          # _freeze locally. Quarto hashes differ across versions, so a
+          # mismatch silently invalidates every committed freeze and CI
+          # re-executes the whole book.
+          version: 1.9.38
 
       - name: Setup R
         uses: r-lib/actions/setup-r@v2

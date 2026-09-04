@@ -256,6 +256,10 @@ estimateTypeSM <- function(p_true_control, lift, n_per_group, alpha, n_sim) {
   )
 }
 
+# Seeded so the Type S / Type M figures quoted below are reproducible.
+# Without this the counts drift on every render, which is how the
+# published numbers changed between builds.
+set.seed(42)
 results <- estimateTypeSM(p_true_control = 0.05, lift = 0.02, n_per_group = 500, alpha = 0.05, n_sim = 10000)
 ```
 
