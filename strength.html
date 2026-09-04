@@ -736,7 +736,7 @@ window.Quarto = {
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">estimateTypeSM</span>(<span class="at">p_true_control =</span> <span class="fl">0.05</span>, <span class="at">lift =</span> <span class="fl">0.02</span>, <span class="at">n_per_group =</span> <span class="dv">500</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">n_sim =</span> <span class="dv">10000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Out of the 10,000 simulations, only 2609 yielded a statistically significant result. Among these statistically significant results, 0.04% incorrectly estimated the direction of the effect (Type S error). The average exaggeration of the effect size (Type M error) among the significant results was 1.94x.</p>
+<p>Out of the 10,000 simulations, only 2621 yielded a statistically significant result. Among these statistically significant results, 0.19% incorrectly estimated the direction of the effect (Type S error). The average exaggeration of the effect size (Type M error) among the significant results was 1.93x.</p>
 </section>
 </section>
 <section id="profit-maximizing-ab-testing-a-test-roll-approach" class="level2" data-number="12.2">
@@ -1159,7 +1159,7 @@ $ y      &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>           tau_sd,</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>           periods,</span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>           threshold,</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)) {</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))) {</span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Function to run a single simulation</span></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    run_single_sim <span class="ot">&lt;-</span> <span class="cf">function</span>(i) {</span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Generate synthetic data with a unique seed</span></span>
@@ -1222,7 +1222,7 @@ $ y      &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="dv">2</span>,</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="fl">0.01</span>,</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))</span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The simulation results tell us that, with our chosen priors, model, pilot size, and decision rule, we correctly kill the new feature (when it truly has a meaningful impact) in approximately 70% of the simulated pilot studies.</p>
@@ -1242,7 +1242,7 @@ $ y      &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="dv">2</span>,</span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="fl">0.01</span>,</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now we can see that if the pilot only has 1000 observations, we would make the right decision only 68% of the time.</p>
@@ -1262,7 +1262,7 @@ $ y      &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="dv">2</span>,</span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="fl">0.01</span>,</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))</span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>In this case, the probability of making the right choice (rolling out the new feature when it has no meaningful impact on churn) is 82%.</p>
@@ -2576,7 +2576,7 @@ McDonnell Feit, Elea, and Ron Berman. 2018. <span>“Test &amp; Roll: Profit-Max
 <span id="cb13-820"><a href="#cb13-820" aria-hidden="true" tabindex="-1"></a>           tau_sd,</span>
 <span id="cb13-821"><a href="#cb13-821" aria-hidden="true" tabindex="-1"></a>           periods,</span>
 <span id="cb13-822"><a href="#cb13-822" aria-hidden="true" tabindex="-1"></a>           threshold,</span>
-<span id="cb13-823"><a href="#cb13-823" aria-hidden="true" tabindex="-1"></a>           <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)) {</span>
+<span id="cb13-823"><a href="#cb13-823" aria-hidden="true" tabindex="-1"></a>           <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))) {</span>
 <span id="cb13-824"><a href="#cb13-824" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Function to run a single simulation</span></span>
 <span id="cb13-825"><a href="#cb13-825" aria-hidden="true" tabindex="-1"></a>    run_single_sim <span class="ot">&lt;-</span> <span class="cf">function</span>(i) {</span>
 <span id="cb13-826"><a href="#cb13-826" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Generate synthetic data with a unique seed</span></span>
@@ -2645,7 +2645,7 @@ McDonnell Feit, Elea, and Ron Berman. 2018. <span>“Test &amp; Roll: Profit-Max
 <span id="cb13-891"><a href="#cb13-891" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="dv">2</span>,</span>
 <span id="cb13-892"><a href="#cb13-892" aria-hidden="true" tabindex="-1"></a>  <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
 <span id="cb13-893"><a href="#cb13-893" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="fl">0.01</span>,</span>
-<span id="cb13-894"><a href="#cb13-894" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb13-894"><a href="#cb13-894" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))</span>
 <span id="cb13-895"><a href="#cb13-895" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-896"><a href="#cb13-896" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-897"><a href="#cb13-897" aria-hidden="true" tabindex="-1"></a></span>
@@ -2675,7 +2675,7 @@ McDonnell Feit, Elea, and Ron Berman. 2018. <span>“Test &amp; Roll: Profit-Max
 <span id="cb13-923"><a href="#cb13-923" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="dv">2</span>,</span>
 <span id="cb13-924"><a href="#cb13-924" aria-hidden="true" tabindex="-1"></a>  <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
 <span id="cb13-925"><a href="#cb13-925" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="fl">0.01</span>,</span>
-<span id="cb13-926"><a href="#cb13-926" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb13-926"><a href="#cb13-926" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))</span>
 <span id="cb13-927"><a href="#cb13-927" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-928"><a href="#cb13-928" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-929"><a href="#cb13-929" aria-hidden="true" tabindex="-1"></a></span>
@@ -2704,7 +2704,7 @@ McDonnell Feit, Elea, and Ron Berman. 2018. <span>“Test &amp; Roll: Profit-Max
 <span id="cb13-954"><a href="#cb13-954" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau_sd =</span> <span class="dv">2</span>,</span>
 <span id="cb13-955"><a href="#cb13-955" aria-hidden="true" tabindex="-1"></a>  <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
 <span id="cb13-956"><a href="#cb13-956" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="fl">0.01</span>,</span>
-<span id="cb13-957"><a href="#cb13-957" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb13-957"><a href="#cb13-957" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_cores =</span> <span class="fu">min</span>(<span class="dv">4</span>, <span class="fu">max</span>(<span class="dv">1</span>, parallel<span class="sc">::</span><span class="fu">detectCores</span>() <span class="sc">-</span> <span class="dv">1</span>))</span>
 <span id="cb13-958"><a href="#cb13-958" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-959"><a href="#cb13-959" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-960"><a href="#cb13-960" aria-hidden="true" tabindex="-1"></a></span>
