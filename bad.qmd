@@ -14,6 +14,8 @@ share:
 
 ## The Business Dilemma: The Cancellation Desk
 
+<img src="img/bad.jpeg" align="right" height="280" alt="Bayesian Adaptive Design: a stream of arriving customers is routed up four branches of a tree, each branch carrying a different share of traffic to a different retention offer" />
+
 Imagine you are the Principal Data Scientist at a subscription-based
 platform—whether a streaming service, an enterprise SaaS tool, or a
 cloud developer product. Every week, roughly **500 paying
