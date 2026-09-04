@@ -1,8 +1,9 @@
 ---
 title: "The Potential Outcomes Framework"
+description: "The Rubin Causal Model: potential outcomes, the fundamental problem of causal inference, the estimands worth targeting, selection bias, and why causal inference is a missing-data problem."
 share:
   permalink: "https://book.martinez.fyi/potential_outcome.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "The potential outcomes framework: defining causal effects you can actually estimate"
   linkedin: true
   email: true
   mastodon: true

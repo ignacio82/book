@@ -1,8 +1,9 @@
 ---
 title: "What Does it Mean to Be Data-Driven?"
+description: "Being data-driven means more than collecting data. This chapter separates correlation from causation and introduces counterfactual thinking as the foundation of every business decision."
 share:
   permalink: "https://book.martinez.fyi/chapter_01.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "What it actually means to be data-driven: correlation, causation, and counterfactuals"
   linkedin: true
   email: true
   mastodon: true

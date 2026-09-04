@@ -1,8 +1,9 @@
 ---
 title: "Bayesian Factorial Design"
+description: "When the goal is to design the best treatment rather than test a single one, factorial designs vary several factors at once. A Bayesian approach to main effects and interactions."
 share:
   permalink: "https://book.martinez.fyi/factorial.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Bayesian factorial design: testing multiple factors at once to build the best treatment"
   linkedin: true
   email: true
   mastodon: true

@@ -1,8 +1,9 @@
 ---
 title: "Surrogates"
+description: "When the outcome you care about takes months to observe, surrogate metrics stand in for it. What makes a surrogate valid, and how to estimate long-term impact from short-term signals."
 share:
   permalink: "https://book.martinez.fyi/surrogates.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Surrogates: estimating long-term impact from short-term measures"
   linkedin: true
   email: true
   mastodon: true

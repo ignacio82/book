@@ -1,8 +1,9 @@
 ---
 title: "Randomized Encouragement Design"
+description: "You cannot force users into a behavior, but you can encourage them. Randomized encouragement designs and instrumental variables, intention-to-treat versus complier effects, and the assumptions behind them."
 share:
   permalink: "https://book.martinez.fyi/iv.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Randomized encouragement design: causal effects when you cannot randomize behavior"
   linkedin: true
   email: true
   mastodon: true

@@ -1,8 +1,9 @@
 ---
 title: "Bayesian Additive Regression Trees (BART)"
+description: "Bayesian Additive Regression Trees, a non-parametric ensemble that learns non-linearities and interactions directly from data, worked through examples adding covariates and propensity scores."
 share:
   permalink: "https://book.martinez.fyi/bart.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "BART: Bayesian Additive Regression Trees for flexible causal modeling"
   linkedin: true
   email: true
   mastodon: true

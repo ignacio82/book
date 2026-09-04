@@ -2,6 +2,13 @@
 title: "Bayes 101"
 filters:
   - shinylive
+description: "Bayes rule, priors, and posteriors, plus why credible intervals answer the question decision-makers actually asked. Worked through declining user engagement and Karl Broman's socks."
+share:
+  permalink: "https://book.martinez.fyi/bayes101.html"
+  description: "Bayes 101: priors, posteriors, and credible intervals for business decisions"
+  linkedin: true
+  email: true
+  mastodon: true
 ---
 
 <img src="img/bayes.webp" align="right" height="280" alt="Bayes 101" />

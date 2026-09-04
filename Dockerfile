@@ -13,7 +13,7 @@ RUN Rscript -e "install.packages('pak', repos = sprintf('https://r-lib.github.io
 RUN Rscript -e "pak::pkg_install(c( \
     'knitr', 'rmarkdown', 'downlit', 'xml2', 'ggplot2', 'dplyr', \
     'tidyr', 'tibble', 'purrr', 'tidyverse', 'broom', 'scales', \
-    'patchwork', 'ggiraph', 'ggpubr', 'stochtree', 'CausalImpact', \
+    'patchwork', 'zoo', 'ggiraph', 'ggpubr', 'stochtree', 'CausalImpact', \
     'bsynth', 'rstan', 'bayesplot', 'posterior', 'vizdraws', 'glossary', \
     'furrr', 'tictoc', 'glue', 'shinydashboard', 'shinylive', 'remotes', \
     'MatchIt', 'coda', 'rpart', 'rpart.plot', 'shiny', 'shinybusy', \

@@ -1,8 +1,9 @@
 ---
 title: "Beyond Normality"
+description: "Real outcomes are rarely bell-shaped. Modeling binary, ordinal, and count data with the likelihood the process actually implies instead of forcing a normal approximation onto it."
 share:
   permalink: "https://book.martinez.fyi/beyond_normality.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Beyond normality: modeling binary, ordinal, and count outcomes"
   linkedin: true
   email: true
   mastodon: true

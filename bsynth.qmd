@@ -1,8 +1,9 @@
 ---
 title: "Bayesian Synthetic Control"
+description: "Synthetic control builds a weighted combination of untreated units to stand in for the treated one. What the Bayesian formulation adds in honest uncertainty quantification."
 share:
   permalink: "https://book.martinez.fyi/bsynth.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Bayesian synthetic control: building a counterfactual from a weighted donor pool"
   linkedin: true
   email: true
   mastodon: true

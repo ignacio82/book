@@ -1,5 +1,12 @@
 ---
 title: Introduction
+description: "Why data does not speak for itself, and what it takes to be its voice: an introduction to causal inference and decision-focused analysis for business data scientists."
+share:
+  permalink: "https://book.martinez.fyi/"
+  description: "Business Data Science: a guide to causal inference for data-driven decisions"
+  linkedin: true
+  email: true
+  mastodon: true
 ---
 
 <link rel="me" href="https://mastodon.social/@ignacio">

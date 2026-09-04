@@ -1,8 +1,9 @@
 ---
 title: "Causal Propensity Modeling"
+description: "Move from predicting who will convert to identifying whom your intervention will actually move. Targeting on uplift rather than propensity, and why building the control group comes first."
 share:
   permalink: "https://book.martinez.fyi/causalPropensity.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Causal propensity: target who you can persuade, not who converts anyway"
   linkedin: true
   email: true
   mastodon: true

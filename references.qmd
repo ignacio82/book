@@ -1,3 +1,13 @@
+---
+description: "Works cited throughout Business Data Science: the causal inference, Bayesian statistics, and experimental design literature the book builds on."
+share:
+  permalink: "https://book.martinez.fyi/references.html"
+  description: "Business Data Science: references and further reading"
+  linkedin: true
+  email: true
+  mastodon: true
+---
+
 ### References
 
 ::: {#refs}

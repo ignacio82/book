@@ -1,8 +1,9 @@
 ---
 title: "Bayesian Causal Forest (BCF)"
+description: "Bayesian Causal Forests separate the prognostic surface from the treatment-effect surface and condition on the propensity score, fixing BART's weaknesses for heterogeneous effects."
 share:
   permalink: "https://book.martinez.fyi/bcf.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "Bayesian Causal Forest: heterogeneous treatment effects without induced confounding"
   linkedin: true
   email: true
   mastodon: true

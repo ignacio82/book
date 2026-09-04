@@ -1,8 +1,9 @@
 ---
 title: "LongBet: Heterogeneous Treatment Effects in Panel Data"
+description: "LongBet extends Bayesian causal forests to panel data, estimating heterogeneous and time-varying treatment effects across periods without the rigidity of traditional panel methods."
 share:
   permalink: "https://book.martinez.fyi/longbet.html"
-  description: "Business Data Science: What Does it Mean to Be Data-Driven?"
+  description: "LongBet: heterogeneous, time-varying treatment effects in panel data"
   linkedin: true
   email: true
   mastodon: true

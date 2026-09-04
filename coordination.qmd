@@ -1,5 +1,6 @@
 ---
 title: "The Importance of Coordination"
+description: "When several teams run experiments at once without coordinating, randomizing independently does not save you. How experimental interference biases results, and what coordinated designs recover."
 share:
   permalink: "https://book.martinez.fyi/coordination.html"
   description: "Understanding and managing experimental interference in business settings"
