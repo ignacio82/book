@@ -15,11 +15,18 @@ RUN Rscript -e "pak::pkg_install(c( \
     'tidyr', 'tibble', 'purrr', 'tidyverse', 'broom', 'scales', \
     'patchwork', 'zoo', 'ggiraph', 'ggpubr', 'stochtree', 'CausalImpact', \
     'bsynth', 'rstan', 'bayesplot', 'posterior', 'vizdraws', 'glossary', \
-    'furrr', 'tictoc', 'glue', 'shinydashboard', 'shinylive', 'remotes', \
+    'furrr', 'tictoc', 'glue', 'shinydashboard', 'remotes', \
     'MatchIt', 'coda', 'rpart', 'rpart.plot', 'shiny', 'shinybusy', \
     'arm', 'future', 'lubridate', 'brms', 'google/imt', 'google/biva', \
-    'ignacio82/longbet@v0.5.2' \
+    'ignacio82/longbet@v0.5.2', \
+    'shinylive@0.5.0' \
     ))"
+
+# Bake the shinylive WebAssembly bundle into the image. The Quarto extension
+# downloads it mid-render if it is missing, which turns every render into a
+# network-dependent operation; doing it here makes local renders reproducible
+# and offline-safe, and matches what CI pre-fetches.
+RUN R -q -e "shinylive::assets_ensure()"
 
 # install.packages() does not set a non-zero exit status when a package fails
 # to build, so a broken compile would otherwise produce an image that only

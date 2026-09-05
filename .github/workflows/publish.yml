@@ -75,7 +75,12 @@ jobs:
             any::tictoc
             any::glue
             any::shinydashboard
-            any::shinylive
+            # Pinned: the vendored Quarto extension (_extensions/quarto-ext/
+            # shinylive, v0.2.0) drives this package through the PRIVATE entry
+            # point shinylive:::quarto_ext(). A private function is not covered
+            # by any compatibility promise, so an unpinned upgrade can break the
+            # publish on a commit that has nothing to do with Shiny.
+            shinylive@0.5.0
             any::remotes
             any::MatchIt
             any::coda
@@ -91,6 +96,49 @@ jobs:
             google/biva
             ignacio82/longbet@v0.5.2
 
+      # The shinylive filter shells out to Rscript mid-render and, if the
+      # WebAssembly bundle is not already on disk, downloads it from the
+      # network right then. That is a live dependency inside the publish: run
+      # 33981765601 died on it with `pandoc.pipe.error {command: "Rscript",
+      # error_code: 1, output: ""}`, reported by the filter as "Perhaps you
+      # need to install / update the 'shinylive' R package", which it was not.
+      # Fetch the bundle up front instead, so a network failure surfaces here
+      # in seconds with a real message rather than twenty minutes into a
+      # render as a misleading one.
+      - name: Shinylive assets version
+        id: shinylive
+        run: echo "version=$(Rscript -e 'cat(as.character(shinylive::assets_version()))')" >> "$GITHUB_OUTPUT"
+
+      # Safe to cache, unlike _freeze: these are immutable, version-addressed
+      # downloads restored into a directory nothing else writes, and the key
+      # is exact with no restore-keys, so there is no stale-hit path.
+      - name: Cache shinylive assets
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/shinylive
+          key: shinylive-assets-${{ steps.shinylive.outputs.version }}
+
+      - name: Ensure shinylive assets
+        run: |
+          for attempt in 1 2 3; do
+            if Rscript -e 'shinylive::assets_ensure()'; then exit 0; fi
+            echo "shinylive asset download failed (attempt $attempt); retrying"
+            sleep $((attempt * 15))
+          done
+          echo "::error::Could not fetch shinylive assets after 3 attempts"
+          exit 1
+
+      # Known, unfixed: the script Quarto runs for each shinylive block comes
+      # from that asset bundle, and its line 5 is
+      #   import { readLines } from "https://deno.land/std/io/mod.ts";
+      # with no version. Every render therefore re-resolves "latest" against
+      # deno.land, which is a second network dependency and a second way an
+      # unrelated upstream release could break this build. Caching DENO_DIR
+      # does not help -- an unpinned specifier is revalidated over the network
+      # regardless -- and the file lives inside a downloaded cache directory,
+      # so patching it would have to be redone on every refresh. Left alone
+      # deliberately: it has not failed, and a half-measure here would be
+      # harder to reason about than the exposure.
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
