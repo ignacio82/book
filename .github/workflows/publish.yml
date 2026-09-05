@@ -15,13 +15,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Cache _freeze
-        uses: actions/cache@v4
-        with:
-          path: _freeze
-          key: ${{ runner.os }}-quarto-freeze-${{ hashFiles('**/*.qmd') }}
-          restore-keys: |
-            ${{ runner.os }}-quarto-freeze-
+      # No _freeze cache on purpose. Every chapter's _freeze is committed to
+      # the repo, so the checkout already carries the correct, matching
+      # results. actions/cache extracts its archive ON TOP of the checkout,
+      # so a restore-key (inexact) hit would overwrite those freshly
+      # committed freezes with stale ones from an older run, breaking the
+      # hash match and forcing Quarto to re-execute the chapter. That is
+      # exactly what made strength.qmd re-render for 1h39m in run
+      # 33928690616 despite its freeze being committed alongside it.
 
       - name: Install System Dependencies
         run: sudo apt-get update && sudo apt-get install -y libv8-dev libboost-all-dev
