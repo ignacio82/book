@@ -42,6 +42,15 @@ jobs:
           r-version: 'release'
           use-public-rspm: true
         
+      # NOTE: everything under extra-packages is a literal package list, not
+      # YAML structure -- a '#' line in there is handed to pak as a package
+      # ref and the step dies. Explanations belong out here.
+      #
+      # shinylive is pinned: the vendored Quarto extension
+      # (_extensions/quarto-ext/shinylive, v0.2.0) drives it through the
+      # PRIVATE entry point shinylive:::quarto_ext(), which no compatibility
+      # promise covers, so an unpinned upgrade can break the publish on a
+      # commit that has nothing to do with Shiny.
       - name: Setup R Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -75,11 +84,6 @@ jobs:
             any::tictoc
             any::glue
             any::shinydashboard
-            # Pinned: the vendored Quarto extension (_extensions/quarto-ext/
-            # shinylive, v0.2.0) drives this package through the PRIVATE entry
-            # point shinylive:::quarto_ext(). A private function is not covered
-            # by any compatibility promise, so an unpinned upgrade can break the
-            # publish on a commit that has nothing to do with Shiny.
             shinylive@0.5.0
             any::remotes
             any::MatchIt
