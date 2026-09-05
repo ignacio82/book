@@ -339,11 +339,14 @@ cat("Share of sellers with a broad catalog (>= 50 listings):",
 
 ### Covariates handed to the model
 
-LongBet takes **time-invariant** covariates, and its C++ backend requires the
-continuous columns to come first, followed by the categorical ones, whose count
-is passed as `pcat`. Two of our five columns are summaries of the seller's own
-lookback window --- their average level and their trend --- and they matter
-more than they look. This is discussed in @sec-longbet-baseline.
+Covariates passed as `x` are **time-invariant**: one row per seller, held fixed
+across the panel. (The fork also accepts genuinely time-varying covariates
+through a separate argument --- see @sec-longbet-timevarying --- but nothing in
+this rollout needs one.) The C++ backend requires the continuous columns to
+come first, followed by the categorical ones, whose count is passed as `pcat`.
+Two of our five columns are summaries of the seller's own lookback window ---
+their average level and their trend --- and they matter more than they look.
+This is discussed in @sec-longbet-baseline.
 
 ```{r covariates}
 wb         <- week_base - mean(week_base)
@@ -471,9 +474,12 @@ problems that showed up here:
     `predict.longbet(t = NULL)`, which read a variable from the global
     environment.
 
-The fork also adds things this chapter does not use: unbalanced panels
-(`y` may contain `NA`), binary outcomes by probit augmentation, and an
-optional AR(1) error. The model, the priors and the estimands are otherwise
+The fork also adds things this chapter does not use: **time-varying
+covariates** (@sec-longbet-timevarying), unbalanced panels (`y` may contain
+`NA`), binary outcomes by probit augmentation, an optional AR(1) error, and the
+propensity-score argument that the published version accepts and silently
+ignores --- which matters for observational panels, though not for a randomized
+rollout like this one. The model, the priors and the estimands are otherwise
 unchanged. `NEWS.md` in the fork carries the derivations and the measurements,
 including for the two options that were implemented, measured, and then left
 switched off because they made the estimates worse.
@@ -1528,9 +1534,39 @@ seller-weeks, respects the block structure.
     way to know which row of a new `x` is which training unit, and the
     treatment effect is a within-unit contrast from which $\gamma_i$ cancels
     anyway. Add it yourself when you want in-sample fitted values.
-  - **Covariates must be time-invariant.** Anything that changes over the panel
-    has to be summarized into a pre-treatment number, which is a real
-    restriction and the most obvious direction for future work on the model.
+### Covariates that change over the panel {#sec-longbet-timevarying}
+
+Everything in `x` is one number per seller, fixed for the whole study. That is
+the published model's contract, and until recently the only way to use a
+covariate that moves --- a seller's weekly ad spend, their price, whether they
+were running a promotion --- was to flatten it into a pre-treatment summary and
+accept the loss.
+
+The fork lifts the restriction. `x_tv` and `x_tv_trt` take covariates shaped
+like the panel itself, one value per seller-week, for the prognostic and
+treatment forests respectively:
+
+```r
+longbet(y = y_train, x = x, x_trt = x, z = z_train, t = week_study, pcat = 2,
+        x_tv = list(ad_spend), x_tv_trt = list(ad_spend))
+```
+
+The mechanism is the one the model already used for time. A tree in LongBet can
+split on time since adoption, which means it can already send one seller's
+week 3 down one branch and their week 9 down another; a time-varying covariate
+is simply another axis of that kind. Which forest you give it to decides what
+it can do, and the distinction is sharp: in the fork's own test, a covariate
+supplied only to the prognostic forest cut the residual standard deviation from
+1.55 to 0.43 against a truth of 0.4 and left the estimated effect heterogeneity
+completely flat, because effect heterogeneity lives in the treatment forest.
+Supplied to both, the conditional effects came back exactly.
+
+For this chapter it would change nothing --- vertical seasonality is a function
+of calendar time, which the prognostic forest can already split on, and the
+rest of what distinguishes one seller from another is genuinely fixed. Where it
+would matter is the diagnostic in @sec-longbet-limits: that design effect
+measures unit-level structure the covariates failed to explain, and its
+counterpart in the time dimension is exactly what `x_tv` is for.
 
 ### Design notes for the experiment itself
 
