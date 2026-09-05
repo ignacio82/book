@@ -452,22 +452,31 @@ problems that showed up here:
 
   - **Unit-level random intercepts** (`random_intercept`, on by default). The
     published model has no unit effects at all, so each unit's persistent level
-    has to be rebuilt by the prognostic forest out of $X_i$. @sec-longbet-baseline
-    measures what that costs and what the fix buys.
+    has to be rebuilt by the prognostic forest out of $X_i$.
+    @sec-longbet-baseline measures what that costs and what the fix buys.
   - **A fixed covariance factorisation** in the sampler for $\beta_S$. The
     published code factors a covariance matrix as $U\,\mathrm{diag}(s)$ where a
     factor has to be $U\,\mathrm{diag}(\sqrt{s})$, which made the training draw
     of $\beta$ collapse onto its conditional mean and the credible intervals
     too narrow.
-  - **A seed for the projection.** `predict.longbet()` gains `random_seed`, so
-    the extrapolated region no longer changes between identical calls.
-  - **A one-line fix** to `predict.longbet(t = NULL)`, which read a variable
-    from the global environment.
+  - **A constant mean for the $\beta_S$ process** (`gp_constant_mean`, on by
+    default), so that a projection far past the observed window reverts to the
+    level the trajectory settled at rather than to zero. @sec-longbet-forecast
+    is where that matters.
+  - **Regularization that does not depend on the units of the outcome.** The
+    published code derives the leaf-variance priors from the variance of the
+    raw outcome and then applies them to a standardized one, so the same data
+    in dollars rather than log dollars is regularized differently.
+  - **A seed for the projection**, and a one-line fix to
+    `predict.longbet(t = NULL)`, which read a variable from the global
+    environment.
 
-Everything else --- the model, the priors, the estimands --- is unchanged, and
-`random_intercept = FALSE` recovers the published sampler apart from the
-covariance fix. `NEWS.md` in the fork carries the derivations and the
-measurements.
+The fork also adds things this chapter does not use: unbalanced panels
+(`y` may contain `NA`), binary outcomes by probit augmentation, and an
+optional AR(1) error. The model, the priors and the estimands are otherwise
+unchanged. `NEWS.md` in the fork carries the derivations and the measurements,
+including for the two options that were implemented, measured, and then left
+switched off because they made the estimates worse.
 :::
 
 ```{r fit}
@@ -600,10 +609,12 @@ $\beta_S\,\nu(X_i, S, t)$, and nothing in the likelihood pins down how a common
 scale factor is divided between the two. Halve every $\beta$, double every leaf
 of $\nu$, and the fit is unchanged. The sampler is free to slide along that
 ridge, and it does --- which is what the middle panel shows. The product is
-identified, and the right panel shows it fluctuating around a stable level with
-roughly a third of the relative variability. Nothing downstream is at risk,
-including the projection of @sec-longbet-forecast: that extrapolates $\beta$ and
-multiplies it by $\nu$ *from the same sweep*, so the ridge cancels there too.
+identified, and the right panel shows it varying less --- not dramatically
+less, but the swing that matters is the one in the quantity you report, and
+that one is stationary around its posterior mean. Nothing downstream is at
+risk, including the projection of @sec-longbet-forecast: that extrapolates
+$\beta$ and multiplies it by $\nu$ *from the same sweep*, so the ridge cancels
+there too.
 
 The practical rule: **diagnose the quantity you will report, not the parameter
 that produces it.** Here that means the ATT or the CATT, which `get_att()` and
@@ -1215,33 +1226,33 @@ Two lessons come out of that table and figure, and neither is about LongBet
 specifically.
 
 **The lengthscale decides how much of the past the projection listens to, and
-there is no good value.** A short `lambda` forgets the data almost immediately
-and falls to zero, because that is where a zero-mean Gaussian process goes when
-it stops listening --- not because anything in the study suggested a collapse.
-A long `lambda` does the opposite: it conditions on the *whole* observed path,
-which in this rollout is a declining one, and confidently extrapolates the
-decline. Something in the middle holds the recent level. Nothing in the
-observed window tells you which of those is right, and the in-window fit is
-identical in all three panels of @fig-forecast, so you cannot choose by fit
-either. You are picking a prior about how product effects behave in your
-business, and you should pick it as one.
+the two ends fail in opposite directions.** A short `lambda` stops listening
+almost immediately and reverts to the process mean, which is why the left panel
+of @fig-forecast holds a level rather than collapsing --- with a zero-mean
+process, as published LongBet has, that same setting walks the effect to zero
+and would tell you to kill a feature that works. A long `lambda` does the
+opposite: it conditions on the *whole* observed path, and because that path
+declines it keeps declining, straight through zero by week 20 in the right
+panel. Something in the middle holds the recent level and widens honestly.
 
-**A longer lengthscale buys confidence, not accuracy.** Note what happens to
-the bands as `lambda` grows: they narrow, because the projected periods are
-more strongly correlated with periods you have actually seen. That is a real
-consequence of the prior and not a bug --- but it means the settings that look
-most decisive are the ones committing hardest to an assumption the data never
-checked. The widest band in @fig-forecast belongs to the least informative
-setting; it is also the one being honest.
+Nothing in the observed window tells you which is right. The in-window fit is
+identical in all three panels; the fits are the same fit. You are choosing a
+prior about how product effects behave in your business, and it is worth
+choosing it deliberately rather than inheriting whichever default the package
+shipped with.
 
-**Do not shrink `sigma` to make the bands look good, either.** Tightening the
-prior variance narrows the projected interval around whatever the lengthscale
-happened to imply, and the table shows the cost in coverage.
+**A longer lengthscale buys confidence before it buys accuracy.** Watch the
+bands: they narrow as `lambda` grows, because the projected periods are more
+strongly correlated with periods actually observed. That is a real consequence
+of the prior. But it means the settings that look most decisive are the ones
+committing hardest to an assumption nothing checked --- the right-hand panel is
+both the most confident and the only one that is wrong. Widening `sigma` is not
+a way out either; the table shows it buys coverage by buying width, which at
+short lengthscales means a band running from -0.25 to +0.47.
 
-There is also a structural reason a projection can understate a
-still-compounding effect, and it is a property of the model rather than a
-tuning failure. The shared factor and the population-average effect do not
-decline at the same rate:
+One thing worth checking before you trust any of this, because it is not
+guaranteed: how much of the trajectory actually lives in the factor being
+projected.
 
 ```{r beta-decline}
 post_sweeps <- (lb_fit$model_params$burnin + 1):ncol(lb_fit$beta_values)
