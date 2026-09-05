@@ -1534,6 +1534,7 @@ seller-weeks, respects the block structure.
     way to know which row of a new `x` is which training unit, and the
     treatment effect is a within-unit contrast from which $\gamma_i$ cancels
     anyway. Add it yourself when you want in-sample fitted values.
+
 ### Covariates that change over the panel {#sec-longbet-timevarying}
 
 Everything in `x` is one number per seller, fixed for the whole study. That is
@@ -1543,30 +1544,170 @@ were running a promotion --- was to flatten it into a pre-treatment summary and
 accept the loss.
 
 The fork lifts the restriction. `x_tv` and `x_tv_trt` take covariates shaped
-like the panel itself, one value per seller-week, for the prognostic and
-treatment forests respectively:
+like the panel itself, one value per seller-week, for the prognostic and the
+treatment forest respectively. The mechanism is the one the model already used
+for time: a tree can split on time since adoption, which means it can already
+send one seller's week 3 down one branch and their week 9 down another. A
+time-varying covariate is another axis of the same kind.
 
-```r
-longbet(y = y_train, x = x, x_trt = x, z = z_train, t = week_study, pcat = 2,
-        x_tv = list(ad_spend), x_tv_trt = list(ad_spend))
+The rollout analysed above has no use for one --- vertical seasonality is a
+function of calendar time, which the prognostic forest could always split on,
+and everything else that distinguishes these sellers is genuinely fixed. So
+here is a variant that does. Suppose the marketplace also runs promotional
+pushes, that each seller's exposure to them varies week to week, and that the
+optimizer's advantage is larger when there is more traffic to capture:
+
+```{r promo-dgp}
+# Promotional intensity: a site-wide weekly component plus seller-specific
+# participation. Continuous, and genuinely a function of the cell rather than
+# of the seller or the week alone.
+set.seed(515)
+promo <- plogis(
+  matrix(rep(rnorm(length(week_study), 0, 0.9), each = n), n, length(week_study)) +
+  matrix(rnorm(n * length(week_study), 0, 0.7), n, length(week_study))
+)
+
+tau_study   <- tau_true[, week_study]
+tau_promo   <- tau_study * (1 + 1.2 * promo)   # the effect is amplified
+y_promo     <- y0[, week_study] + 0.8 * promo + tau_promo
+
+treated <- z_train == 1
+
+# How big is the promotional channel? Because promo enters multiplicatively,
+# the part of the effect it drives is 1.2 * tau * (promo - mean promo) --- and
+# it is worth knowing its size before asking a model to find it.
+promo_sd <- sd(1.2 * tau_study[treated] * (promo[treated] - mean(promo[treated])))
+
+cat("promotional intensity: ", scales::percent(min(promo), 1), " to ",
+    scales::percent(max(promo), 1), " across ", length(unique(as.vector(promo))),
+    " distinct seller-weeks\n",
+    "effect SD ", round(sd(tau_promo[treated]), 3),
+    ", of which the promotional channel contributes ", round(promo_sd, 3), "\n", sep = "")
 ```
 
-The mechanism is the one the model already used for time. A tree in LongBet can
-split on time since adoption, which means it can already send one seller's
-week 3 down one branch and their week 9 down another; a time-varying covariate
-is simply another axis of that kind. Which forest you give it to decides what
-it can do, and the distinction is sharp: in the fork's own test, a covariate
-supplied only to the prognostic forest cut the residual standard deviation from
-1.55 to 0.43 against a truth of 0.4 and left the estimated effect heterogeneity
-completely flat, because effect heterogeneity lives in the treatment forest.
-Supplied to both, the conditional effects came back exactly.
+Note the two channels. Promotions lift GMV on their own, which is a prognostic
+effect, *and* they change how much the optimizer is worth, which is a treatment
+effect. The two need the covariate in different forests, and giving it to one
+does nothing for the other.
 
-For this chapter it would change nothing --- vertical seasonality is a function
-of calendar time, which the prognostic forest can already split on, and the
-rest of what distinguishes one seller from another is genuinely fixed. Where it
-would matter is the diagnostic in @sec-longbet-limits: that design effect
-measures unit-level structure the covariates failed to explain, and its
-counterpart in the time dimension is exactly what `x_tv` is for.
+```{r promo-fit}
+#| cache: true
+#| message: false
+#| output: false
+
+# Lighter sampler settings than the main analysis: this section is an
+# illustration, not the result the chapter turns on.
+fit_promo <- function(tv) {
+  f <- longbet(y = y_promo, x = x, x_trt = x, z = z_train, t = week_study,
+               pcat = 2, x_tv = tv, x_tv_trt = tv,
+               num_sweeps = 100, num_burnin = 35,
+               num_trees_pr = 30, num_trees_trt = 30,
+               sig_knl = 1, lambda_knl = 2, random_intercept = TRUE)
+  p <- predict.longbet(f, x, x, z_train, t = week_study, x_tv = tv,
+                       x_tv_trt = tv, random_seed = 1)
+  list(sd = { post <- (f$model_params$burnin + 1):ncol(f$sigma0_draws)
+              mean(f$sigma0_draws[, post]) * f$sdy },
+       catt = get_catt(p)$catt)
+}
+promo_blind <- fit_promo(NULL)
+promo_aware <- fit_promo(list(promo))
+```
+
+```{r}
+#| label: fig-promo
+#| fig-cap: >-
+#|   Effect on the treated against promotional intensity in the same week.
+#|   Without the covariate the model has nothing to condition on and returns
+#|   something close to a flat line through the average --- it even turns down
+#|   in the top decile; with it, the moderation is recovered. The
+#|   covariate takes a different value in every seller-week, so no summary of
+#|   it attached to the seller could have carried this.
+#| fig-width: 8.5
+#| fig-height: 4.4
+#| message: false
+
+tibble(
+  promo = rep(promo[treated], 3),
+  catt  = c(tau_promo[treated], promo_aware$catt[treated],
+            promo_blind$catt[treated]),
+  which = rep(c("Truth", "With the covariate", "Without it"),
+              each = sum(treated))
+) %>%
+  mutate(bin = cut(promo, quantile(promo, 0:10 / 10), include.lowest = TRUE)) %>%
+  group_by(which, bin) %>%
+  summarise(promo = mean(promo), catt = mean(catt), .groups = "drop") %>%
+  ggplot(aes(promo, catt, colour = which)) +
+  geom_line(linewidth = 0.9) +
+  geom_point(size = 1.6) +
+  scale_colour_manual(values = c(Truth = "#000000",
+                                 `With the covariate` = PAL[["LongBet"]],
+                                 `Without it` = PAL[["DiD vs holdout"]])) +
+  labs(x = "Promotional intensity that week", y = "Effect on log weekly GMV",
+       colour = NULL,
+       title = "An effect that depends on this week, not on this seller") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r promo-table}
+slope <- function(v) coef(lm(v[treated] ~ promo[treated]))[2]
+tibble(
+  Model = c("Without the covariate", "With the covariate", "Truth"),
+  `Residual SD` = c(promo_blind$sd, promo_aware$sd, NA_real_),
+  `Slope in promo` = c(slope(promo_blind$catt), slope(promo_aware$catt),
+                       slope(tau_promo)),
+  `CATT RMSE` = c(sqrt(mean((promo_blind$catt[treated] - tau_promo[treated])^2)),
+                  sqrt(mean((promo_aware$catt[treated] - tau_promo[treated])^2)),
+                  0)
+) %>%
+  kable(digits = 3, caption = paste(
+    "A continuous covariate that varies within a seller over time. The true",
+    "residual standard deviation is 0.28."
+  ))
+```
+
+Read the slope column, not the RMSE column. The true effect rises with
+promotional intensity at `r round(slope(tau_promo), 3)` per unit; the model
+that cannot see the covariate returns `r round(slope(promo_blind$catt), 3)`,
+essentially the flat line through the average that @fig-promo shows, while the
+model that can returns `r round(slope(promo_aware$catt), 3)`. This is a kind of
+heterogeneity that no amount of seller-level covariate engineering reaches,
+because the thing that varies is the *week*, and it varies differently for each
+seller.
+
+Overall CATT accuracy, meanwhile, is a wash --- if anything slightly worse with
+the covariate than without. That is not a contradiction, and it is worth
+understanding rather than explaining away. The promotional channel contributes
+a standard deviation of only `r round(promo_sd, 3)` to an effect whose own
+standard deviation is `r round(sd(tau_promo[treated]), 3)`; the catalog-breadth
+heterogeneity does the rest, and both models already capture that. So the
+signal the covariate unlocks is smaller than the error either model carries
+from everything else, and buying the freedom to look for it costs a little
+variance. The moderation is recovered; the aggregate score cannot see it.
+
+The residual SD column is the other half of the picture, and there the
+covariate does pay. Promotions lift GMV directly, and a model with no way to
+see them has to leave that variation in the error term: the blind fit reports
+`r round(promo_blind$sd, 3)` against a true 0.28,
+while the covariate-aware fit reports `r round(promo_aware$sd, 3)`. That is the
+prognostic channel being absorbed rather than the treatment channel being
+resolved --- which is exactly why the two arguments are separate, and why the
+covariate went into both forests here.
+
+The lesson generalizes. A time-varying covariate earns its place when the
+question is *whether the effect depends on it* --- which is a targeting
+question, and the one the slope column answers --- and not as a general
+accuracy upgrade. If the marketplace wants to know whether to time the rollout
+to its promotional calendar, the blind model says no and is wrong. If it wants
+the tightest possible estimate of each seller's average lift, the covariate
+does not help here, and a larger sample would help more.
+
+Three practical points. Give the covariate to whichever forest needs it ---
+prognostic for a cleaner baseline, treatment for effect moderation, both if
+both. It must be observed in every cell, including cells where `y` is `NA`,
+because it is an input rather than an outcome. And it must be passed to
+`predict.longbet()` as well, in the same order, since the fitted trees record
+which axis each split used.
 
 ### Design notes for the experiment itself
 
