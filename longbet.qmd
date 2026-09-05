@@ -22,7 +22,8 @@ report the same "average treatment effect." They are worth completely different
 amounts a year later, and they lead to opposite decisions.
 
 LongBet, introduced by @wang2024longbet, extends the Bayesian Causal Forest
-(BCF) model of @hahn2020bayesian to panel data so that the treatment effect
+family --- BCF [@hahn2020bayesian] and its accelerated successor XBCF, whose
+XBART-style sampler it inherits --- to panel data so that the treatment effect
 becomes a function of two things at once: **who** the unit is, and **how long
 it has been treated**. It was designed for short panels with large
 cross-sections and observed confounders --- the shape of data that
@@ -39,8 +40,12 @@ where:
   - $Y_{it}$ is the outcome for unit $i$ at time $t$
   - $X_i$ are time-invariant, pre-treatment covariates
   - $T = t$ is calendar time, shared by every unit
-  - $S_{it} = \sum_{s \le t} Z_{is}$ is the time elapsed since unit $i$ adopted
-    the treatment ($S_{it} = 0$ for a unit that has not adopted yet)
+  - $S_{it} = \sum_{s \le t} Z_{is}$ is unit $i$'s **exposure index**: the
+    number of periods it has been treated, so $S_{it} = 0$ before adoption and
+    $S_{it} = 1$ in the first treated period. It is loosely called "time since
+    adoption" --- including in this chapter, and in the paper --- and under
+    absorbing treatment with no gaps the two coincide. They are not the same
+    quantity in general, and the model indexes on the count
   - $\mu(\cdot)$ is the prognostic function: what the outcome would have done
     anyway
   - $\alpha$ is a single scalar that lets the sampler rescale the whole
@@ -54,6 +59,19 @@ where:
     multiplied by the value at its own exposure, $\beta_{S_{it}}$
   - $\epsilon_{it}$ is an independent Gaussian error term
 
+::: {.callout-note title="Which LongBet is this?"}
+The equation above is the published model. The results in this chapter come
+from a **fork**, `ignacio82/longbet`, which fixes several bugs and adds a unit
+random intercept, a constant Gaussian-process mean, time-varying covariates,
+and a seeded projection. Two of those change what the numbers mean rather than
+just making them correct --- the random intercept alters the error model, and
+the constant GP mean changes where a long-horizon forecast reverts to. The full
+list, with the derivations and the measurements, is in @sec-longbet-fitting.
+
+Read every result below as a statement about the fork. Where the two would
+differ materially, the text says so.
+:::
+
 Both $\mu(\cdot)$ and $\nu(\cdot)$ are XBART forests [@he2019xbart] that are
 allowed to split on the time dimensions as well as on $X$. The treatment effect
 estimator is the contrast between being $S$ periods into treatment and not
@@ -64,7 +82,12 @@ $$
 $$
 
 so that the effect realized by unit $i$ at time $t$ is
-$\tau_{it} = \tau_t(X_i, S_{it})$.
+$\tau_{it} = \tau_t(X_i, S_{it})$. The implementation carries two further
+scalars, $b_0$ and $b_1$, multiplying the treatment term for untreated and
+treated cells; they are XBCF's parameter expansion for mixing, they cancel out
+of nothing and appear in the estimand as
+$b_1\beta_S\nu(\cdot) - b_0\beta_0\nu(\cdot, 0)$, and this chapter leaves
+them at the package default of $b_0 = b_1 = 1$.
 
 Two pieces of that expression do different jobs, and it is worth separating
 them. $\beta_S$ is **one** curve over time-since-adoption, shared by the whole
@@ -89,13 +112,23 @@ largest $S$ in the data.
 4.  **Separate regularization.** As in BCF, prognostic and treatment surfaces
     get separate forests and separate priors, so the model can be flexible
     about the baseline while staying conservative about the effect.
-5.  **No parallel trends requirement.** Identification comes from conditioning
-    on $X_i$, not from assuming treated and untreated units would have moved
-    in parallel.
+5.  **No parallel trends assumption.** LongBet does not identify effects by
+    assuming treated and untreated units would have moved in parallel. That
+    buys less than it sounds like: in an observational panel it swaps parallel
+    trends for selection on observables --- conditional on what is in the
+    model, treatment timing has to be unconfounded, with positivity --- which
+    is a different assumption, not the absence of one. In the experiment
+    below, neither is doing the work: randomization is.
 6.  **Forecasting.** The Gaussian process on $\beta_S$ projects the effect
     beyond the end of the observation window.
-7.  **Bayesian uncertainty.** Every quantity above --- including the effect for
-    a single unit at a single time --- comes with a posterior.
+7.  **Bayesian uncertainty.** Every quantity above comes with a posterior,
+    down to the effect at a single unit's covariate profile at a single time.
+    Read that last one carefully: it is a posterior for the *conditional*
+    effect $\tau(x_i, S, t)$ evaluated at seller $i$'s covariates, not for
+    seller $i$'s own unobservable causal effect. Two sellers with identical
+    covariates get identical posteriors, however differently the treatment
+    would actually have landed on them. The chapter says "seller-level
+    effect" throughout for brevity; it always means the conditional one.
 
 ## What a Panel Model Buys You in a Randomized Experiment {#sec-longbet-why}
 
@@ -130,8 +163,11 @@ What you do not get for free is everything else:
 Keep the division of labour clear. **Randomization is what makes the estimate
 credible; the model is what makes it useful.** If LongBet's average effect and
 a simple difference-in-differences against the holdout disagree materially, the
-simple estimator is the one to trust for the average, and the disagreement is a
-signal to go debug the model. What the simple estimator *cannot* do is tell you
+design-based estimator is the primary causal benchmark for the average, and the
+disagreement is a signal to go debug the model before trusting its extra
+detail. That is a statement about the point estimate, which randomization
+protects; it does not make the benchmark's *interval* assumption-free, since
+the standard error computed below still treats sellers as independent draws. What the simple estimator *cannot* do is tell you
 which sellers to ship to.
 
 ::: {.callout-note title="Assumptions still required"}
@@ -165,8 +201,10 @@ observational panel data hard to analyze. Instead, you randomize the order:
 sellers are assigned at random (stratified on vertical, catalog size, and
 fulfillment status) to one of four weekly launch waves or to a **holdout** that
 stays on the old experience for the duration of the study. The result is a
-**randomized staggered rollout** --- a real experiment that happens to produce
-panel data with four independent replications of the launch.
+**randomized staggered rollout** --- a single experiment with four randomized
+launch cohorts and one common holdout. Not four independent replications: the
+cohorts share the holdout, the population, the calendar, and whatever
+interference runs between them.
 
 Three questions have to be answered before the decision can be made:
 
@@ -212,6 +250,11 @@ library(ggplot2)
 library(purrr)
 library(knitr)
 
+# Pin the fork explicitly. Several results in this chapter depend on defaults
+# that differ from published LongBet, so a silent version change should stop
+# the build rather than quietly move the numbers.
+stopifnot(packageVersion("longbet") >= "0.5.2")
+
 set.seed(1982)
 
 PAL <- c(LongBet = "#0072B2", `DiD vs holdout` = "#D55E00",
@@ -250,7 +293,10 @@ seller_sd <- rnorm(n)                             # latent seller scale
 # launch *order* rather than to treatment status.
 strata <- interaction(
   vertical,
-  cut(listings, quantile(listings, 0:3 / 3), include.lowest = TRUE),
+  # unique() on the breaks: listings is discrete, so on another seed two
+  # tercile boundaries can coincide and cut() errors on duplicated breaks.
+  # A no-op here; it degrades to fewer strata rather than failing.
+  cut(listings, unique(quantile(listings, 0:3 / 3)), include.lowest = TRUE),
   fulfilled, drop = TRUE
 )
 deal_waves <- function(k) {
@@ -306,11 +352,30 @@ w_i = \text{logit}^{-1}\!\left(\frac{\log L_i - \log 50}{0.35}\right)
 $$
 
 A seller with a **broad catalog** ($L_i$ well above 50 listings) has a lot of
-inventory for the optimizer to keep improving, and better listings earn better
-placement, which earns more sales, which earns better placement: their lift
-climbs toward 30% and stays. A seller with a **narrow catalog** optimizes their
-handful of listings once, gets a 20% bump, and reverts. Nothing in the model
-will be told about the threshold at 50 listings; it has to find it.
+inventory for the optimizer to keep improving: their effect climbs toward an
+asymptote of 0.30 and stays. A seller with a **narrow catalog** optimizes their
+handful of listings once, peaks at 0.20, and reverts. Nothing in the model will
+be told about the threshold at 50 listings; it has to find it.
+
+**Those are effects on log GMV, and they are not 30% and 20% lifts.** The
+outcome is $\log$ weekly GMV, so a coefficient $\tau$ multiplies GMV by
+$e^{\tau}$: the compounding asymptote is a
+`r scales::percent(exp(0.30) - 1, 0.1)` lift in dollars, and the novelty peak is
+`r scales::percent(exp(0.20) - 1, 0.1)`. The gap is small here and grows fast
+--- a log effect of 0.7 is a doubling. Every dollar figure later in the chapter
+goes through `exp(tau) - 1` for exactly this reason, and it is the single most
+common way a log-scale model gets misreported to a business audience.
+
+One more piece of honesty about the simulation. The paragraph above tells a
+story about placement and feedback --- better listings earn better placement,
+which earns more sales, which earns better placement. None of that is
+*simulated*. There is no ranking, no competition, no buyer traffic, no
+feedback loop; $\tau_i(S)$ is written down directly, and the story is a reason
+for choosing that shape rather than something the code derives. This matters
+later: because the mechanism is asserted rather than modelled, the simulation
+cannot speak to what happens when treated sellers take placement *from*
+untreated ones, which is precisely the threat @sec-longbet-limits raises
+against every dollar figure in the chapter.
 
 Note what this $\tau_i(S)$ does *not* contain: calendar time. LongBet is willing
 to let the effect depend on $T = t$ as well as on $S$ --- a feature launched in
@@ -444,7 +509,7 @@ Because the rollout was randomized, this non-parallelism is not a threat to
 identification --- it is a threat to *precision*, and a large one. Any
 estimator that does not explain it has to carry it as noise.
 
-## Fitting LongBet
+## Fitting LongBet {#sec-longbet-fitting}
 
 ::: {.callout-note title="Which LongBet this chapter uses"}
 The code below runs
@@ -611,16 +676,45 @@ reason to distrust everything downstream.
 
 It is not, and the reason is worth internalizing because it recurs in every
 model of this shape. The treatment term enters as the *product*
-$\beta_S\,\nu(X_i, S, t)$, and nothing in the likelihood pins down how a common
-scale factor is divided between the two. Halve every $\beta$, double every leaf
-of $\nu$, and the fit is unchanged. The sampler is free to slide along that
-ridge, and it does --- which is what the middle panel shows. The product is
-identified, and the right panel shows it varying less --- not dramatically
-less, but the swing that matters is the one in the quantity you report, and
-that one is stationary around its posterior mean. Nothing downstream is at
-risk, including the projection of @sec-longbet-forecast: that extrapolates
-$\beta$ and multiplies it by $\nu$ *from the same sweep*, so the ridge cancels
-there too.
+$\beta_S\,\nu(X_i, S, t)$, and nothing in the likelihood pins down how it is
+divided between the two. Halve every $\beta$, double every leaf of $\nu$, and
+the fit is unchanged. The sampler is free to slide along that ridge, and it
+does --- which is what the middle panel shows. The product is identified, and
+the right panel shows it varying less: the swing that matters is the one in the
+quantity you report, and that one is stationary around its posterior mean.
+
+It is worth being precise about how large this ridge is, because it is bigger
+than a scale. LongBet lets the treatment forest split on $S$ as well --- that
+is `split_time_trt`, on by default, and it is the whole reason the model can
+give broad and narrow catalogs different *shapes*. But then for any positive
+function $c(S)$,
+
+$$
+\beta'_S = c(S)\,\beta_S,
+\qquad
+\nu'(X_i, S, t) = \frac{\nu(X_i, S, t)}{c(S)}
+$$
+
+reproduces the product exactly. What is unidentified is not a single number but
+the entire *allocation of time-shape* between the shared factor and the forest.
+Which of the two carries the decline in @fig-att is settled by the priors --- the
+Gaussian process on $\beta$, the leaf prior on $\nu$ --- and not by the data.
+
+Inside the observed window this costs nothing, because only the product is ever
+reported. Outside it, it costs something real, and this is the caveat to carry
+into @sec-longbet-forecast. Extrapolation extends $\beta$ with the Gaussian
+process while the forest stays frozen at its last trained value. Under the
+reparameterization above, the GP is handed $c(S)\beta_S$ --- a different
+function of $S$ --- and continues *that* instead, while the frozen forest
+contributes $\nu/c(S_{\max})$. The two projections do not agree, even though
+the two in-window fits are identical. So the forecast depends on a split
+between $\beta$ and $\nu$ that the likelihood never determined. That is not a
+reason to distrust the projection; it is the reason the projection is a
+statement about a prior rather than a reading of the data, which is what
+@sec-longbet-forecast spends its length on. It is also the strongest argument
+for the `split_time_trt = FALSE` variant discussed there: forbidding the forest
+to move with $S$ removes $c(S)$, forces all exposure-time shape into $\beta$,
+and makes the extrapolated component mean something specific.
 
 The practical rule: **diagnose the quantity you will report, not the parameter
 that produces it.** Here that means the ATT or the CATT, which `get_att()` and
@@ -670,6 +764,21 @@ S_observed  <- max(rowSums(z_train))   # longest time-since-launch in the study
 S_max       <- max(rowSums(z_ext))     # longest available for forecasting
 ```
 
+Before either estimator, the estimand. "The ATT" in this chapter always means
+the **event-time ATT**,
+
+$$
+\mathrm{ATT}(S) = \mathbb{E}\!\left[\tau_i(S) \mid i \text{ has reached exposure } S\right],
+$$
+
+averaged over treated sellers with sample-size weights across the waves that
+have reached exposure $S$ inside the study window. The conditioning set changes
+with $S$: all four waves contribute at $S = 1$, and only W1 by $S = 14$. So the
+curve is not one fixed population followed through time, and the thinning at
+its right-hand end is a change in *who* is being averaged as well as a loss of
+precision. Both estimators below target this same quantity with the same
+weights, which is what makes them comparable.
+
 The benchmark is the estimator a careful analyst would reach for first:
 for each wave and each week since its launch, take the change in log GMV
 relative to the common pre-launch window (weeks 7--10) and subtract the same
@@ -687,7 +796,7 @@ colnames(dY) <- weeks_all        # index by calendar week, not column position
 # `keep` restricts the whole comparison -- treated waves and holdout alike --
 # to a subpopulation, which is how the same estimator is run on a subgroup
 # later in the chapter.
-did_event_study <- function(keep = rep(TRUE, n)) {
+did_event_study <- function(keep = rep(TRUE, n), D = dY) {
   hold <- is_hold & keep
   map_dfr(1:S_observed, function(s) {
     # Waves that have reached event time s before the study window closes
@@ -699,15 +808,15 @@ did_event_study <- function(keep = rep(TRUE, n)) {
 
     col <- match(as.integer(LAUNCH[ws] + s - 1), weeks_all)
     treated_mean     <- vapply(seq_along(ws), function(j)
-      mean(dY[wave == ws[j] & keep, col[j]]), numeric(1))
+      mean(D[wave == ws[j] & keep, col[j]]), numeric(1))
     # variance *of each wave mean*, i.e. already divided by that wave's size
     var_treated_mean <- vapply(seq_along(ws), function(j)
-      var(dY[wave == ws[j] & keep, col[j]]) / nt[j], numeric(1))
+      var(D[wave == ws[j] & keep, col[j]]) / nt[j], numeric(1))
 
     # Every wave is compared against the *same* holdout sellers, so the holdout
     # contributes one weighted combination per seller. Treating the waves'
     # holdout means as independent would understate the variance.
-    h_combo <- as.vector(dY[hold, col, drop = FALSE] %*% a)
+    h_combo <- as.vector(D[hold, col, drop = FALSE] %*% a)
 
     est <- sum(a * treated_mean) - mean(h_combo)
     se  <- sqrt(sum(a^2 * var_treated_mean) + var(h_combo) / sum(hold))
@@ -716,15 +825,38 @@ did_event_study <- function(keep = rep(TRUE, n)) {
 }
 
 did_holdout <- did_event_study()
+
+# A fairer comparator. The estimator above already removes each seller's level
+# by differencing; what it does not do is adjust for the covariates that
+# predict how a seller *moves*. That is what the prognostic forest is for, and
+# a careful analyst does not need a forest to try it: regress the differenced
+# outcome on the baseline covariates, then estimate the effect on the residual.
+# This is ANCOVA, and in the experimentation literature, CUPED.
+#
+# The adjustment is fitted on holdout sellers only. That keeps it independent
+# of the treated outcomes, so it cannot manufacture an effect -- it can only
+# remove variance that the covariates genuinely explain.
+xdf <- as.data.frame(x)
+xdf$vertical  <- factor(xdf$vertical)
+xdf$fulfilled <- factor(xdf$fulfilled)
+
+dY_adj <- dY
+for (cc in seq_len(ncol(dY))) {
+  ctrl_fit    <- lm(dY[is_hold, cc] ~ ., data = xdf[is_hold, , drop = FALSE])
+  dY_adj[, cc] <- dY[, cc] - predict(ctrl_fit, newdata = xdf)
+}
+did_ancova <- did_event_study(D = dY_adj)
 ```
 
 ```{r}
 #| label: fig-att
 #| fig-cap: >-
 #|   Average effect on the treated by weeks since launch, on the log GMV scale.
-#|   Both estimators track the truth. LongBet's credible bands are far narrower
-#|   because the prognostic forest has already explained away seller level and
-#|   vertical seasonality before the effect is read off.
+#|   Both track the truth. LongBet's credible bands are narrower because the
+#|   prognostic forest has already explained away seller level and vertical
+#|   seasonality before the effect is read off --- though as the scorecard
+#|   below shows, a covariate-adjusted comparison recovers much of that gap
+#|   without any forest at all.
 #| fig-width: 8.5
 #| fig-height: 4.6
 #| message: false
@@ -777,22 +909,47 @@ bind_rows(
     mutate(Estimator = "LongBet", .before = 1),
   score(did_holdout$estimate, did_holdout$lower, did_holdout$upper,
         truth_att[ins_]) %>%
-    mutate(Estimator = "DiD vs holdout", .before = 1)
+    mutate(Estimator = "DiD vs holdout", .before = 1),
+  score(did_ancova$estimate, did_ancova$lower, did_ancova$upper,
+        truth_att[ins_]) %>%
+    mutate(Estimator = "DiD + covariate adjustment", .before = 1)
 ) %>%
   kable(digits = 4, caption = paste(
-    "Accuracy and precision of the two estimators across the",
-    S_observed, "observed event times. Both are aimed at the same estimand."
+    "Accuracy and precision of three estimators across the",
+    S_observed, "observed event times. All three are aimed at the same",
+    "estimand, and all three are unbiased by randomization."
   ))
 ```
 
-Both estimators recover the shape, which is the reassurance we wanted: the
-model is not inventing anything the randomization does not support. The
-difference is width. LongBet's intervals are
+All three recover the shape, which is the reassurance we wanted: the model is
+not inventing anything the randomization does not support. The difference is
+width, and the third row is there to keep the comparison honest.
+
+It would be easy --- and wrong --- to put the whole precision gap down to
+LongBet. The plain holdout comparison differences out each seller's level but
+adjusts for nothing else, and beating it establishes only that modelling beats
+not modelling. The interesting question is whether LongBet buys anything beyond
+what a careful experimental analyst already has, so the third row is the
+standard answer: regress the differenced outcome on the same five baseline
+covariates, fit on holdouts, and read the effect off the residual. That is
+ANCOVA, or CUPED as the experimentation literature calls it, and it needs no
+forest and no panel model.
+
+It closes much of the gap. LongBet's intervals are
 `r sprintf("%.1f", mean(did_holdout$upper - did_holdout$lower) / mean(lb_att$intervals[2, ins_] - lb_att$intervals[1, ins_]))`
-times narrower on average, and that is not a free lunch --- it is the payoff
-for having modelled $\mu(X_i, t)$ explicitly rather than differencing it away.
-The same precision would otherwise have to be bought with a bigger experiment
-or a longer one.
+times narrower than the unadjusted comparison but only
+`r sprintf("%.1f", mean(did_ancova$upper - did_ancova$lower) / mean(lb_att$intervals[2, ins_] - lb_att$intervals[1, ins_]))`
+times narrower than the covariate-adjusted one --- so most of what looked like
+a win for the panel model is really a win for covariate adjustment, which was
+available all along and costs one line of `lm()`. What remains is the part
+attributable to a *flexible* $\mu(X_i, t)$: the linear adjustment cannot bend
+with the vertical-specific seasonality in the data-generating process, and the
+forest can.
+
+That residual is the honest headline for precision, and it is not the reason to
+reach for this model. Neither comparison row can produce a per-seller effect
+curve, a segment-specific trajectory, or a projection past the end of the
+study, which is what the rest of the chapter is about.
 
 ::: {.callout-important title="One realization is not a coverage study"}
 The "contained truth" column above is *not* an estimate of coverage. The
@@ -806,6 +963,15 @@ assumptions the difference-in-differences intervals do not need --- that the
 covariates capture what distinguishes one seller from another, and that the
 errors are independent across weeks. @sec-longbet-limits is about what happens
 when they do not.
+
+The same scoping applies to the whole chapter. This simulation is built to
+teach a business decision --- one population, one realization, one set of
+effect shapes chosen because they make the targeting question interesting. It
+is not a validation study, and nothing here establishes that LongBet is more
+accurate than its alternatives in general. @wang2024longbet is where to look
+for that: 100 Monte Carlo replications across parallel and non-parallel
+prognostic trends, homogeneous and heterogeneous effects, scored on RMSE and
+coverage against DiD, non-linear DiD and DiD imputation.
 :::
 
 Read literally, @fig-att is discouraging. The lift peaks at about
@@ -985,6 +1151,19 @@ GMV and the optimizer costs \$500 per seller per year, so a seller is worth
 enabling only if the extra GMV they generate, valued at the take rate, clears
 that cost.
 
+A causal model supplies only half of that arithmetic. It gives a percentage
+lift; the dollars need a **baseline revenue path** to apply the percentage to,
+and that is a separate forecasting problem the causal model does not solve. It
+is easy to reach for the seller's GMV during the lookback window because it is
+sitting right there in the data, and in this simulation that would be a year
+stale: sellers drift and verticals trend, so the lookback level understates the
+revenue the decision is actually about, by the margin the chunk below reports.
+We use each seller's expected untreated GMV at the end of the study instead,
+held flat across the decision year --- flat
+because the trend terms in this DGP were built for a 30-week window and running
+them out another year is extrapolation of exactly the kind
+@sec-longbet-forecast is sceptical about.
+
 We value one year of exposure per seller. For the first 14 weeks we use the
 model's own trajectory, $\hat\tau_i(1), \dots, \hat\tau_i(14)$; for the
 remaining 38 weeks we hold the effect at its week-14 level. That second
@@ -1003,8 +1182,29 @@ difference is small at these effect sizes and embarrassing at large ones.
 TAKE_RATE   <- 0.12
 ANNUAL_COST <- 500
 HOLD_WEEKS  <- 52 - S_target      # weeks held at the week-14 effect
+# NB: this is a flat-tail assumption over 38 weeks, and the forecast section
+# validates the machinery over six. See the caveat below the policy table.
 
-gmv_week <- rowMeans(exp(y[, week_base]))   # observed baseline $/week per seller
+# A lift is worth the GMV it is a lift *on*, so the baseline matters as much as
+# the effect. The obvious shortcut -- take each seller's GMV during the
+# lookback window and multiply by 52 -- prices the decision against revenue
+# from a year earlier, and in this simulation every seller has a drift and a
+# vertical-specific trend on top of it. Use the level they have reached by the
+# time the decision is made instead.
+#
+# Held flat across the decision year rather than extrapolated. The trend terms
+# in this DGP are fitted to weeks 1-30 and one of them is quadratic; running it
+# out another year would say Electronics sellers grow twentyfold, which is an
+# artefact of extrapolating a curve past its range and exactly the mistake the
+# forecast section warns about. Holding the baseline flat is an assumption, and
+# it is stated rather than hidden.
+gmv_week <- rowMeans(exp(
+  matrix(level_i, n, length(week_future)) +
+  outer(drift_i, week_future, "*") +
+  season(matrix(vertical, n, length(week_future)),
+         matrix(rep(week_future, each = n), n, length(week_future))) +
+  0.28^2 / 2                              # E[exp(y)] for log-normal noise
+))
 
 # Effect trajectory for every seller over 14 weeks of exposure: [n x 14 x draws]
 tau_path_draws <- pred_all$tauhats[, (sum(week_study < 11) + 1):ncol(z_all), ]
@@ -1013,7 +1213,8 @@ tau_path_draws <- pred_all$tauhats[, (sum(week_study < 11) + 1):ncol(z_all), ]
 annual_lift <- apply(exp(tau_path_draws) - 1, c(1, 3), sum) +
                HOLD_WEEKS * (exp(tau_hat_draws) - 1)
 
-net_draws <- TAKE_RATE * gmv_week * annual_lift - ANNUAL_COST
+annual_gmv_lift <- gmv_week * annual_lift
+net_draws <- TAKE_RATE * annual_gmv_lift - ANNUAL_COST
 p_worth   <- rowMeans(net_draws > 0)
 
 # The same quantity computed from the known truth, for scoring the decision.
@@ -1024,10 +1225,18 @@ net_true <- TAKE_RATE * gmv_week * annual_lift_true - ANNUAL_COST
 
 breakeven <- ANNUAL_COST / (TAKE_RATE * 52 * gmv_week)
 
+# What the lookback shortcut would have cost, on incremental GMV rather than on
+# net value: net value is revenue minus a flat fee, so its total is a small
+# difference of large numbers and a ratio of two such totals means nothing.
+flat_gap <- 1 - mean(rowMeans(exp(y[, week_base])) * annual_lift) /
+                mean(annual_gmv_lift)
+
 cat("Break-even annual GMV lift -- median seller: ",
     scales::percent(median(breakeven), 0.1),
     "; the smallest quarter of sellers need at least ",
-    scales::percent(quantile(breakeven, 0.75), 0.1), "\n", sep = "")
+    scales::percent(quantile(breakeven, 0.75), 0.1), "\n",
+    "Holding the baseline flat at lookback GMV would understate the total by ",
+    scales::percent(flat_gap, 0.1), "\n", sep = "")
 ```
 
 ```{r policy-table}
@@ -1053,16 +1262,26 @@ policy_value <- function(keep, label) {
 rn_keep      <- rowMeans(net_draws) > 0
 rn_shortfall <- 1 - sum(rowMeans(net_draws)[rn_keep]) / sum(net_true[rn_keep])
 
+# Onboarding is capacity-constrained, so a policy is really an ordering plus a
+# cut-off. Rank by posterior expected net value and take as many as the team
+# can absorb.
+by_value <- order(rowMeans(net_draws), decreasing = TRUE)
+top_k <- function(K) { keep <- rep(FALSE, n); keep[by_value[seq_len(K)]] <- TRUE; keep }
+n_positive <- sum(rowMeans(net_draws) > 0)
+
 bind_rows(
   policy_value(rep(FALSE, n),          "Kill the feature"),
   policy_value(rep(TRUE, n),           "Ship to everyone"),
   policy_value(broad,                  "Ship to broad catalogs (>= 50 listings)"),
-  policy_value(rowMeans(net_draws) > 0,"Ship where E(net value) > 0"),
+  policy_value(top_k(450),             "Best 450 by E(net value)  -- 1 week of capacity"),
+  policy_value(top_k(900),             "Best 900 by E(net value)  -- 2 weeks"),
+  policy_value(top_k(1350),            "Best 1350 by E(net value) -- 3 weeks"),
+  policy_value(rowMeans(net_draws) > 0,"Ship where E(net value) > 0  (uncapped)"),
   policy_value(p_worth >= 0.90,        "Ship where P(net value > 0) >= 0.90"),
   policy_value(net_true > 0,           "Oracle (knows the truth)")
 ) %>%
   kable(digits = 0, caption = paste0(
-    "Annual net marketplace revenue under five rollout policies, in thousands ",
+    "Annual net marketplace revenue under nine rollout policies, in thousands ",
     "of US dollars per year. 'Estimated' is the posterior from the fitted ",
     "model; 'Realized' scores the same policy against the true effects."
   ))
@@ -1083,22 +1302,27 @@ tibble(
   ))
 ```
 
-Four things to take from these tables.
+Five things to take from these tables.
 
 First, **blanket rollout is profitable and still leaves a great deal on the
 table.** Shipping to everyone beats killing the feature, which is the
 conclusion a well-run experiment reporting only an average effect would reach
---- and it is worth roughly a third less than the best available policy,
-because a large share of the population is being charged \$500 a year for an
-effect that has gone to zero long before the bill arrives.
+--- and it realizes
+`r scales::percent(1 - sum(net_true) / sum(net_true[net_true > 0]), 1)`
+less than targeting does, because a large share of the population is being
+charged \$500 a year for an effect that has gone to zero long before the bill
+arrives.
 
 Second, and less obviously, **effect heterogeneity is not value
 heterogeneity.** The "broad catalog" rule follows the treatment effect, which
 is what @fig-catt-segments and @fig-catt-listings are about. The money follows
 effect *times* seller size, because the \$500 is flat. The second table prices
-that gap: roughly one narrow-catalog seller in six is worth enabling anyway,
-because they are large enough that a small residual lift still pays the bill,
-while about one broad-catalog seller in thirteen is not. A rule read straight
+that gap:
+`r scales::percent(mean(net_true[!broad] > 0), 0.1)`
+of narrow-catalog sellers are worth enabling anyway, because they are large
+enough that a small residual lift still pays the bill, while
+`r scales::percent(mean(net_true[broad] <= 0), 0.1)`
+of broad-catalog sellers are not. A rule read straight
 off the heterogeneity plot gets both groups wrong. The rule you want is written
 on the posterior of *net value*, not on the posterior of the effect.
 
@@ -1113,26 +1337,79 @@ seller off again after three months is a real relationship cost, and a
 programme that visibly misfires on a tenth of its participants can lose its
 funding regardless of the aggregate. But it should be a decision someone makes
 on those grounds, not the accidental consequence of reaching for a 95% interval
-out of habit.
+out of habit. And the grounds can be made explicit rather than left to taste:
+in a binary enable/don't decision where a wrong enable costs $C_{\text{FP}}$
+and a missed one costs $C_{\text{FN}}$, the expected-loss-minimising rule is to
+enable when
 
-Fourth, **the model is conservative about the money.** The estimated column sits
-below the realized column for every policy --- by
-`r scales::percent(rn_shortfall, 1)` on the risk-neutral rule. That is the treatment prior doing its job:
-BCF-style models shrink $\tau$ toward homogeneity, and because the dollar total
-is dominated by the largest sellers, shrinkage that looks mild on the log scale
-is not mild once it is multiplied by their GMV. A second, opposing force is
-present too --- selecting sellers on `P(net value > 0) >= 0.90` and then valuing
-that same selection with the same posterior double-counts the noise that pushed
-marginal sellers over the threshold. Here shrinkage is the larger of the two,
-but on a smaller experiment, or with a looser threshold, the winner's curse can
-dominate.
+$$
+\Pr(V_i > 0 \mid \text{data}) > \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}} .
+$$
+
+A 0.90 threshold is therefore not a statistical convention; it is the claim
+that enabling a seller who should not have been is nine times as costly as
+skipping one who should have been. Written that way it becomes a question
+finance can actually answer, and usually the answer is not nine.
+
+Fourth, **the model undervalues the money in this realization.** The estimated
+column sits below the realized column for every policy --- by
+`r scales::percent(rn_shortfall, 1)` on the risk-neutral rule. The natural
+explanation is the treatment prior doing its job: BCF-style regularization
+pulls $\tau$ toward homogeneity, and because the dollar total is dominated by
+the largest sellers, shrinkage that looks mild on the log scale is not mild
+once it is multiplied by their GMV. A second, opposing force is present too ---
+selecting sellers on a posterior and then valuing that same selection with it
+double-counts the noise that pushed marginal sellers over the line.
+
+Be careful how much weight that explanation carries. This is one simulated
+dataset, the shortfall is a single number, and at least four mechanisms are
+running at once: shrinkage, the winner's curse, the nonlinear $e^\tau$
+transformation, and ordinary sampling variation. Nothing here separates them.
+The defensible statement is that the estimate came in low and that shrinkage is
+a plausible reason; establishing *which* mechanism dominates would take
+repeated simulation, and the direction could reverse on a smaller experiment or
+a looser threshold.
+
+Fifth, **capacity changes the question from "who" to "who first".** The chapter
+opened with an onboarding team that can absorb about 450 sellers a week, and
+the uncapped rules quietly ignore it. Once capacity binds, the decision is not
+a threshold at all --- it is an ordering, and you take as far down it as you can
+reach. Ranking by posterior expected net value and stopping at one, two and
+three weeks of capacity recovers a large share of the uncapped value from the
+first slice, because the ordering puts the largest sellers with the most
+durable effects at the top. That is worth knowing before the programme starts:
+the question the model is most useful for is not "is this feature worth
+shipping" but "if I can only reach 450 sellers this week, which 450". Note also
+where the frontier stops paying --- only
+`r scales::comma(n_positive)` sellers have positive expected value at all, so
+capacity beyond that is not a constraint to relieve but a budget to leave
+unspent.
+
+::: {.callout-warning title="The annual figure rests on a 38-week assumption the chapter never tests"}
+Every dollar number above holds the effect flat at its week-14 value for the
+remaining `r HOLD_WEEKS` weeks of the year. @sec-longbet-forecast validates the
+projection machinery against **six** withheld weeks. Nothing here validates a
+38-week flat tail, and under this chapter's own DGP the narrow-catalog effect
+is still decaying at week 14, so the assumption is not neutral --- it is
+generous to exactly the sellers the targeting rule is trying to exclude.
+
+Treat the single annual number as one scenario rather than the answer, and put
+the business case on a band: flat at week 14, the Gaussian-process projection,
+exponential decay to zero over a year, and nothing at all after week 14. If the
+decision flips across that band, the experiment has not run long enough, and no
+amount of modelling substitutes for the missing weeks.
+:::
 
 Outside a simulation there is no realized column to check against, and the
 standard defence is **cross-fitting**: split the sellers, fit the model and
 choose the targeting rule on one half, then value that rule using the other
 half's data. The selection and the valuation no longer share the noise, so the
-business case you take to finance is one the finance team can hold you to. It
-costs you nothing but a second fit.
+business case you take to finance is one the finance team can hold you to.
+Strictly this is sample splitting rather than cross-fitting; the $K$-fold
+version reuses every seller in turn and is the better default. Neither is free:
+you pay in computation, and in a targeting rule chosen on half the sellers,
+which is a noisier rule than the one the whole sample would have given you. The
+honesty is worth the precision, but it is a trade rather than a free lunch.
 
 ## Projecting Past the End of the Study {#sec-longbet-forecast}
 
@@ -1151,16 +1428,23 @@ much the projection is worth:
     splits beyond the largest $S$ it was trained on, so it is frozen at its
     last value. Whatever *shape* heterogeneity the forest discovered inside the
     window is rescaled by the projection, not extended by it.
-  - **The Gaussian process has mean zero.** Far enough past the data, the
-    projection says the effect goes away --- because that is what the prior
-    says, not because the data said so. `lambda` controls how fast "far enough"
-    arrives.
+  - **Far enough past the data, the projection reverts to the process mean,**
+    because that is what the prior says and not because the data said so.
+    `lambda` controls how fast "far enough" arrives. *Which* mean it reverts to
+    is a choice, and the two implementations differ: published LongBet uses a
+    zero-mean process, so the effect is walked to nothing, while the fork used
+    here estimates a constant mean (`gp_constant_mean`, on by default) and
+    reverts to the level the trajectory settled at. Neither is more correct in
+    general; they encode different beliefs about what a feature does after you
+    stop watching it, and on a long horizon they are the difference between
+    killing a feature and keeping it. Every forecast figure below is the
+    constant-mean version.
 
 Weeks 25--30 of our simulation were never shown to the model, so we can score
-the projection instead of admiring it. (The projected draws are not seeded
-reproducibly --- see @sec-longbet-limits --- so re-running this code moves the
-numbers to the right of week `r S_observed` a little, while everything to the
-left of it is fixed.)
+the projection instead of admiring it. (Every `predict.longbet()` call in this
+chapter passes `random_seed`, which the fork added; on published LongBet the
+projected draws come from system entropy and the numbers to the right of week
+`r S_observed` move on every run. See @sec-longbet-limits.)
 
 ```{r forecast-grid}
 #| cache: true
@@ -1303,9 +1587,15 @@ the forecast from either one deserves a wide error bar.
 
 The practical guidance that follows is deliberately modest. Use the projection
 to ask *how sensitive is my business case to the effect decaying*, not to
-produce the number that goes in the plan. Set `lambda` at least as long as the
-horizon you intend to project. And sanity check it against what you can already
-see: in @fig-catt-segments the broad-catalog trajectory is at its maximum at
+produce the number that goes in the plan. Do not set `lambda` from the horizon
+you intend to project --- a lengthscale is a smoothness belief, not a range
+setting, and stretching it to cover a long horizon just asserts that the
+trajectory cannot bend in between. Set it from what you know about how effects
+of this kind move, report the sensitivity band across substantially shorter and
+longer values as @fig-forecast does, and if you have previous launches, tune it
+honestly: train through week $t$, project the next $k$ weeks, score, and
+calibrate before you point it at the launch you actually care about. And sanity
+check it against what you can already see: in @fig-catt-segments the broad-catalog trajectory is at its maximum at
 week 14 with no sign of turning down, so any projection in which it collapses
 is contradicting evidence you already have.
 
@@ -1435,6 +1725,14 @@ here, against
 without them. The random intercept does not fight good covariates; it fills in
 behind them.
 
+What it does not do is fix confounding. In this randomized rollout $\gamma_i$
+is a precision device, and that is all it is asked to be. In an observational
+panel it is tempting to read a unit effect as absorbing whatever made the unit
+adopt early, and it does not: if adoption timing depends on a latent seller
+trait, adding an intercept to the *outcome* model leaves that dependence
+exactly where it was. Unmeasured confounding in treatment timing is a problem
+for the design or for the covariates, never for the error structure.
+
 One caveat the model cannot fix. A unit treated in *every* observed period has
 no untreated week to pin its baseline against, so $\gamma_i$ and its treatment
 effect are separated only by the prior. `longbet()` warns when it sees such
@@ -1501,8 +1799,14 @@ survive contact with XBART: after quasi-differencing, the model's prediction at
 $(i,t)$ is $\mu(X_i,t) - \rho\,\mu(X_i,t-1)$, a difference of two leaf values
 that sit in different leaves as soon as the tree splits on time, and the
 conjugate leaf update stops being exact. Until someone does it properly, widen
-the intervals instead: a bootstrap that resamples whole sellers, rather than
-seller-weeks, respects the block structure.
+the intervals instead. A bootstrap that resamples whole sellers, rather than
+seller-weeks, respects the block structure and is a reasonable frequentist
+robustness check on the effect curve. It is not a repair of the posterior:
+resampling units does not recalibrate a Bayesian interval that came from a
+misspecified error model, and reporting the two as if the second fixed the
+first would be its own error. Treat a gap between them as a diagnostic, and if
+it matters to the decision, model the correlation rather than patching the
+interval.
 
 ### Column order, `pcat`, and other sharp edges
 
@@ -1549,6 +1853,31 @@ treatment forest respectively. The mechanism is the one the model already used
 for time: a tree can split on time since adoption, which means it can already
 send one seller's week 3 down one branch and their week 9 down another. A
 time-varying covariate is another axis of the same kind.
+
+::: {.callout-important title="A time-varying covariate is not automatically a legitimate one"}
+The mechanics are easy and the causal question is not. Before a variable that
+moves goes into the treatment forest, ask **when it was determined relative to
+the exposure whose effect you are estimating**, and whether the treatment could
+have changed it.
+
+  - **Fixed seller attributes, or anything settled before launch.** Safe. This
+    is ordinary covariate adjustment.
+  - **A variable realized just before the week being scored, and not itself
+    affected by the treatment.** Usually fine, and often the point --- weather,
+    a site-wide promotional calendar, a competitor's outage.
+  - **Anything the treatment can move.** Not safe for the total effect. Ad
+    spend, price, listing quality and traffic are all plausible *consequences*
+    of an optimizer that rewrites listings. Conditioning on a consequence
+    blocks the part of the effect that flows through it, so what comes back is
+    a direct effect holding the mediator fixed --- a different estimand, and
+    almost never the one the business asked for. The estimate does not look
+    wrong when this happens; it looks smaller.
+
+The covariate in the example below is deliberately in the second category: the
+promotional calendar is set by the marketplace, not by the seller's optimizer,
+so treatment cannot move it. That is what makes it a legitimate moderator, and
+it is an assumption about the world rather than a property of the data.
+:::
 
 The rollout analysed above has no use for one --- vertical seasonality is a
 function of calendar time, which the prognostic forest could always split on,
@@ -1633,7 +1962,7 @@ tibble(
   which = rep(c("Truth", "With the covariate", "Without it"),
               each = sum(treated))
 ) %>%
-  mutate(bin = cut(promo, quantile(promo, 0:10 / 10), include.lowest = TRUE)) %>%
+  mutate(bin = dplyr::ntile(promo, 10)) %>%
   group_by(which, bin) %>%
   summarise(promo = mean(promo), catt = mean(catt), .groups = "drop") %>%
   ggplot(aes(promo, catt, colour = which)) +
