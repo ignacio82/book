@@ -89,7 +89,7 @@ jobs:
             any::brms
             google/imt
             google/biva
-            ignacio82/longbet
+            ignacio82/longbet@v0.5.1
 
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
