@@ -724,7 +724,7 @@ intercept absorbed into a forest, or the cutpoints of an ordinal model that
 share a shift with the latent scale. Confusing a ridge in the posterior with a
 failure to converge will send you off lengthening chains that were fine.
 
-## What the Average Effect Says
+## What the Average Effect Says {#sec-longbet-scorecard}
 
 The natural summary of a staggered rollout is the average effect on the treated
 as a function of **time since launch**, with every wave aligned on its own
@@ -956,9 +956,10 @@ The "contained truth" column above is *not* an estimate of coverage. The
 14 event times share the same treated sellers and the same holdout, so their
 errors are strongly correlated: a single unlucky draw can push the whole curve
 off at once. Interval *width* is stable enough to compare from one run;
-coverage is not. @wang2024longbet report 94%--98% coverage for LongBet's ATT
-across 100 Monte Carlo replications of a similar design, which is the kind of
-evidence that claim requires. And keep in mind that LongBet's intervals rest on
+coverage is not. Coverage needs repeated sampling, so @sec-longbet-operating
+does exactly that --- forty independent redraws of the whole rollout, all three
+estimators scored against each draw's own truth --- and the answer there is
+more interesting than the one this table can give. And keep in mind that LongBet's intervals rest on
 assumptions the difference-in-differences intervals do not need --- that the
 covariates capture what distinguishes one seller from another, and that the
 errors are independent across weeks. @sec-longbet-limits is about what happens
@@ -1745,7 +1746,7 @@ estimate of the treatment contrast survives that, but the residual variance
 does not: it is deflated by the leakage, and every credible interval
 downstream of it inherits the deflation.
 
-### The error term is independent by assumption
+### The error term is independent by assumption {#sec-longbet-serial}
 
 LongBet's $\epsilon_{it}$ is independent across units *and* across time. Real
 panels usually are not, and the cheapest way to find out is to look at the
@@ -2037,6 +2038,200 @@ both. It must be observed in every cell, including cells where `y` is `NA`,
 because it is an input rather than an outcome. And it must be passed to
 `predict.longbet()` as well, in the same order, since the fitted trees record
 which axis each split used.
+
+### Operating characteristics {#sec-longbet-operating}
+
+@sec-longbet-scorecard scored three estimators on one dataset and warned that
+the "contained truth" column was not a coverage estimate. That warning is easy
+to write and easy to leave standing. The honest version costs a few minutes of
+compute: redraw the whole experiment many times and see how the estimators
+behave in repeated sampling, which is the only setting in which words like
+*unbiased* and *95% interval* mean anything.
+
+Each replication draws a fresh population of sellers, a fresh randomization
+into waves, fresh noise, and scores every estimator against **its own**
+realized truth. The data-generating process is the one from the top of the
+chapter --- same effect shapes, same seasonality, same non-parallel trends.
+
+```{r mc-settings}
+#| cache: true
+N_REPS <- 40      # replications
+MC_N   <- 1200    # sellers per replication (the headline fit uses 3000)
+```
+
+```{r mc-run}
+#| cache: true
+#| dependson: ["mc-settings"]
+#| message: false
+#| warning: false
+library(furrr)
+
+# One complete replication: simulate a rollout, fit all three estimators, and
+# score them against the truth for that draw. Deliberately smaller and coarser
+# than the headline fit -- see the note under the table.
+mc_replication <- function(seed, n = MC_N, sweeps = 80, trees = 25) {
+  set.seed(seed)
+  weeks_all <- c(week_base, week_study)
+  Tn        <- length(weeks_all)
+
+  vertical  <- sample(c("Apparel", "Home", "Electronics"), n, TRUE, c(.40, .35, .25))
+  fulfilled <- rbinom(n, 1, 0.45)
+  listings  <- pmax(1, round(exp(rnorm(n, log(35), 0.9))))
+  seller_sd <- rnorm(n)
+
+  strata <- interaction(vertical,
+    cut(listings, unique(quantile(listings, 0:3 / 3)), include.lowest = TRUE),
+    fulfilled, drop = TRUE)
+  deal <- function(k) sample(rep(c("W1", "W2", "W3", "W4", "Holdout"),
+            diff(round(k * cumsum(c(0, .15, .15, .15, .15, .40))))))
+  wave <- character(n)
+  for (st in levels(strata)) {
+    ii <- which(strata == st); wave[ii] <- deal(length(ii))
+  }
+  launch <- LAUNCH[wave]
+
+  level_i <- 6.4 + .55 * seller_sd + .45 * log(listings / 35) +
+             .25 * fulfilled + rnorm(n, 0, .35)
+  drift_i <- .004 * seller_sd +
+             c(Apparel = 0, Home = .002, Electronics = .008)[vertical]
+  tmat <- matrix(rep(weeks_all, each = n), n, Tn)
+  y0 <- matrix(level_i, n, Tn) + outer(drift_i, weeks_all, "*") +
+        season(matrix(vertical, n, Tn), tmat) + matrix(rnorm(n * Tn, 0, .28), n, Tn)
+
+  S <- tmat - matrix(launch, n, Tn) + 1
+  S[!is.finite(S) | S < 0] <- 0
+  S <- matrix(as.numeric(S), n, Tn)
+  Z <- matrix(as.integer(S > 0), n, Tn)
+  w_i <- plogis((log(listings) - log(50)) / 0.35)
+  tau <- ifelse(S > 0, w_i * h_grow(S) + (1 - w_i) * h_fade(S), 0)
+  y   <- y0 + tau
+
+  wb <- week_base - mean(week_base)
+  x  <- cbind(rowMeans(y[, week_base]),
+              as.vector((y[, week_base] %*% wb) / sum(wb^2)),
+              log(listings), fulfilled, as.integer(factor(vertical)))
+  colnames(x) <- c("base_level", "base_slope", "log_listings",
+                   "fulfilled", "vertical")
+
+  z_tr  <- Z[, week_study]
+  S_obs <- max(rowSums(z_tr))
+  truth <- event_time_truth(tau[, week_study], z_tr)[seq_len(S_obs)]
+
+  f <- longbet(y = y[, week_study], x = x, x_trt = x, z = z_tr, t = week_study,
+               pcat = 2, num_sweeps = sweeps, num_burnin = sweeps %/% 3,
+               num_trees_pr = trees, num_trees_trt = trees,
+               sig_knl = 1, lambda_knl = 2, random_intercept = TRUE,
+               random_seed = seed, verbose = FALSE)
+  a <- get_att(predict.longbet(f, x, x, z_tr, t = week_study, random_seed = seed))
+
+  # The same two comparison estimators, rebuilt for this draw.
+  pre <- 7:10
+  is_hold <- wave == "Holdout"
+  dY <- y - rowMeans(y[, pre]); colnames(dY) <- weeks_all
+  xdf <- as.data.frame(x)
+  xdf$vertical  <- factor(xdf$vertical)
+  xdf$fulfilled <- factor(xdf$fulfilled)
+  dY_adj <- dY
+  for (cc in seq_len(ncol(dY))) {
+    m <- lm(dY[is_hold, cc] ~ ., data = xdf[is_hold, , drop = FALSE])
+    dY_adj[, cc] <- dY[, cc] - predict(m, newdata = xdf)
+  }
+  did <- function(D) map_dfr(seq_len(S_obs), function(s) {
+    ws <- c("W1", "W2", "W3", "W4")
+    ws <- ws[LAUNCH[ws] + s - 1 <= max(week_study)]
+    nt <- vapply(ws, function(w) sum(wave == w), integer(1))
+    ws <- ws[nt > 1]; nt <- nt[nt > 1]; aw <- nt / sum(nt)
+    col <- match(as.integer(LAUNCH[ws] + s - 1), weeks_all)
+    tm <- vapply(seq_along(ws), function(j) mean(D[wave == ws[j], col[j]]), numeric(1))
+    vm <- vapply(seq_along(ws), function(j) var(D[wave == ws[j], col[j]]) / nt[j], numeric(1))
+    hc <- as.vector(D[is_hold, col, drop = FALSE] %*% aw)
+    est <- sum(aw * tm) - mean(hc)
+    se  <- sqrt(sum(aw^2 * vm) + var(hc) / sum(is_hold))
+    tibble(s = s, estimate = est, lower = est - 1.96 * se, upper = est + 1.96 * se)
+  })
+
+  bind_rows(
+    tibble(estimator = "LongBet", s = seq_len(S_obs),
+           estimate = a$att[seq_len(S_obs)],
+           lower = a$intervals[1, seq_len(S_obs)],
+           upper = a$intervals[2, seq_len(S_obs)]),
+    did(dY)     %>% mutate(estimator = "DiD vs holdout"),
+    did(dY_adj) %>% mutate(estimator = "DiD + covariate adjustment")
+  ) %>% mutate(truth = truth[s], seed = seed)
+}
+
+plan(multisession, workers = max(1, min(8, parallel::detectCores() %/% 2)))
+mc <- future_map_dfr(1000 + seq_len(N_REPS), mc_replication,
+        .options = furrr_options(seed = TRUE,
+          packages = c("longbet", "dplyr", "tibble", "purrr")))
+plan(sequential)
+```
+
+```{r mc-table}
+mc %>%
+  group_by(Estimator = estimator) %>%
+  summarise(Bias = mean(estimate - truth),
+            RMSE = sqrt(mean((estimate - truth)^2)),
+            Coverage = mean(truth >= lower & truth <= upper),
+            `Interval width` = mean(upper - lower), .groups = "drop") %>%
+  arrange(RMSE) %>%
+  mutate(Coverage = scales::percent(Coverage, 0.1)) %>%
+  kable(digits = 4, caption = paste(
+    N_REPS, "independent replications of the whole rollout, each scored",
+    "against its own truth over", max(mc$s), "event times.",
+    "Nominal coverage is 95%."
+  ))
+```
+
+Four things, and the third is the one to take away.
+
+**All three are unbiased.** Bias is two orders of magnitude below the effects
+being estimated, for every estimator. That is randomization doing its job, and
+it is the result that would have been alarming had it come out otherwise.
+
+**LongBet is the most accurate and the most precise.** Lowest RMSE, narrowest
+intervals, and the ordering of interval widths matches the single realization
+in @sec-longbet-scorecard --- so the precision comparison there was not a
+lucky draw.
+
+**LongBet's intervals under-cover, and the plain comparison over-covers.**
+Against a nominal 95%, LongBet lands near
+`r scales::percent(mean(with(subset(mc, estimator == "LongBet"), truth >= lower & truth <= upper)), 0.1)`
+and the unadjusted difference-in-differences near
+`r scales::percent(mean(with(subset(mc, estimator == "DiD vs holdout"), truth >= lower & truth <= upper)), 0.1)`.
+Neither is a scandal, and they fail in opposite directions for
+understandable reasons. The difference-in-differences standard error is
+conservative here. LongBet's intervals are too narrow for a reason this
+chapter has already diagnosed and measured: @sec-longbet-serial finds a design
+effect of about 3 from within-seller serial correlation the model does not
+represent, and an interval computed as though weeks were independent is
+exactly the interval that will be too narrow. The single realization hinted at
+this --- 13 of 14 --- but could not distinguish it from luck. Forty
+replications can.
+
+**The covariate-adjusted comparison is the best calibrated of the three.** It
+gets nominal coverage almost exactly, at the cost of intervals
+`r sprintf("%.0f%%", 100 * (mean(subset(mc, estimator == "DiD + covariate adjustment")$upper - subset(mc, estimator == "DiD + covariate adjustment")$lower) / mean(subset(mc, estimator == "LongBet")$upper - subset(mc, estimator == "LongBet")$lower) - 1))`
+wider than LongBet's. If what you need is an interval you can defend line by
+line, that is a real argument for the simpler estimator, and it costs one
+`lm()`.
+
+::: {.callout-note title="What this does and does not establish"}
+These replications use `r MC_N` sellers and `r 80` sweeps, against `r n` and
+200 in the headline fit. That is deliberate --- forty full-scale fits would
+dominate the build --- but it means the numbers describe the operating
+characteristics *of this configuration*, and a bigger sample with a longer
+sampler should do at least as well on bias and RMSE. Coverage is the quantity
+least safe to extrapolate, because the serial correlation driving the
+shortfall does not shrink with more sweeps; it is a feature of the error model,
+not of the sampler.
+
+It also remains one data-generating process. Nothing here says LongBet
+under-covers in general --- only that it does under a design whose errors are
+correlated within units in a way the likelihood ignores. @wang2024longbet
+reports 94--98% coverage across 100 replications of a design without that
+feature, which is consistent with both results.
+:::
 
 ### Treatment has to stay on {#sec-longbet-absorbing}
 
