@@ -98,7 +98,7 @@ jobs:
             any::brms
             google/imt
             google/biva
-            ignacio82/longbet@v0.5.2
+            ignacio82/longbet@v0.5.5
 
       # The shinylive filter shells out to Rscript mid-render and, if the
       # WebAssembly bundle is not already on disk, downloads it from the

@@ -253,7 +253,7 @@ library(knitr)
 # Pin the fork explicitly. Several results in this chapter depend on defaults
 # that differ from published LongBet, so a silent version change should stop
 # the build rather than quietly move the numbers.
-stopifnot(packageVersion("longbet") >= "0.5.2")
+stopifnot(packageVersion("longbet") >= "0.5.5")
 
 set.seed(1982)
 
@@ -723,6 +723,59 @@ multiplies or adds two things it never separately identifies --- a global
 intercept absorbed into a forest, or the cutpoints of an ordinal model that
 share a shift with the latent scale. Confusing a ridge in the posterior with a
 failure to converge will send you off lengthening chains that were fine.
+
+There is a second, less obvious way a sweep count can be wrong, and it does not
+show up in @fig-sweeps at all. XBART grows a *fresh forest every sweep* rather
+than walking one chain through tree space, so what comes back is an
+approximation to the posterior whose quality depends on how many sweeps you
+average over. Consecutive forests are correlated, so 200 sweeps is not 200
+draws --- and a 2.5% quantile estimated from a couple of dozen effective draws
+is not a trustworthy interval endpoint. The point estimate settles long before
+the interval does, which is what makes this easy to miss: the ATT looks fine
+while the band around it is too narrow.
+
+```{r sweep-ess}
+stab <- att_stability(lb_pred)
+stab$summary %>%
+  transmute(`Post-burn-in sweeps` = draws,
+            `Effective sweeps (median)` = ess_median,
+            `Effective sweeps (worst event time)` = ess_min,
+            `Monte Carlo SE of the ATT` = mcse,
+            `Second/first half width` = width_ratio,
+            `Interval reliable?` = reliable) %>%
+  kable(digits = c(0, 1, 1, 5, 2, 0), caption = paste(
+    "How much of the posterior the sampler actually saw. Effective sweeps",
+    "come from the autocorrelation of the per-sweep ATT series; the width",
+    "ratio compares the two halves of the run and is a drift check."
+  ))
+```
+
+`att_stability()` is in the fork for this reason. It reports the effective
+sweep count behind the quantity you are about to publish, and warns when that
+number is too small to support an interval. @sec-longbet-operating measures
+what happens when you ignore it: at 80 sweeps the ATT intervals on this design
+cover about 89% of the time against a nominal 95%, and the shortfall closes
+when the sampler runs longer. Note which half of the output moves --- the
+interval barely widens; the estimate gets better.
+
+One thing the function deliberately does *not* do is let the last column
+decide the verdict. Splitting the sweeps and asking whether the second half's
+interval is wider is the obvious diagnostic, and it fails at this job: sweeps
+are roughly exchangeable after burn-in, so both halves come out narrow
+together, and on a fit whose coverage is known to be 89% the ratio is 0.93 ---
+against 0.96 for a fit that is well calibrated. It cannot tell the two apart.
+
+The ratio here is
+`r sprintf("%.2f", stab$summary$width_ratio)`,
+and it is worth being clear that this is not a warning about the interval.
+What the split half does detect is *drift* --- a sampler still moving because
+burn-in was set too short --- which is a real problem and a different one. An
+earlier version of this chapter folded it into the reliability verdict, which
+had the effect of failing this very fit --- the one @sec-longbet-operating goes
+on to measure at nominal coverage across forty replications. Reliability now
+rests on the effective sweep count alone, because
+that is the only column here calibrated against coverage that was actually
+measured.
 
 ## What the Average Effect Says {#sec-longbet-scorecard}
 
@@ -2057,6 +2110,8 @@ chapter --- same effect shapes, same seasonality, same non-parallel trends.
 #| cache: true
 N_REPS <- 40      # replications
 MC_N   <- 1200    # sellers per replication (the headline fit uses 3000)
+MC_SWEEPS <- c(80, 200)   # run the whole thing at two sampler lengths
+                          # (200 is what the headline fit uses)
 ```
 
 ```{r mc-run}
@@ -2064,8 +2119,6 @@ MC_N   <- 1200    # sellers per replication (the headline fit uses 3000)
 #| dependson: ["mc-settings"]
 #| message: false
 #| warning: false
-library(furrr)
-
 # One complete replication: simulate a rollout, fit all three estimators, and
 # score them against the truth for that draw. Deliberately smaller and coarser
 # than the headline fit -- see the note under the table.
@@ -2123,6 +2176,10 @@ mc_replication <- function(seed, n = MC_N, sweeps = 80, trees = 25) {
                sig_knl = 1, lambda_knl = 2, random_intercept = TRUE,
                random_seed = seed, verbose = FALSE)
   a <- get_att(predict.longbet(f, x, x, z_tr, t = week_study, random_seed = seed))
+  # The fit and its posterior arrays are the bulk of the memory here, and at
+  # the longer sampler length several workers holding one at once is enough to
+  # get a worker killed. Nothing below needs them.
+  rm(f); gc(verbose = FALSE)
 
   # The same two comparison estimators, rebuilt for this draw.
   pre <- 7:10
@@ -2160,16 +2217,25 @@ mc_replication <- function(seed, n = MC_N, sweeps = 80, trees = 25) {
   ) %>% mutate(truth = truth[s], seed = seed)
 }
 
-plan(multisession, workers = max(1, min(8, parallel::detectCores() %/% 2)))
-mc <- future_map_dfr(1000 + seq_len(N_REPS), mc_replication,
-        .options = furrr_options(seed = TRUE,
-          packages = c("longbet", "dplyr", "tibble", "purrr")))
-plan(sequential)
+# Sequential on purpose. Each replication holds a full posterior array, and
+# parallel workers were repeatedly killed for memory on a 16 GB machine at the
+# longer sampler length -- a slow chunk that finishes beats a fast one that
+# dies. It is cached, so the cost is paid once.
+mc <- map_dfr(MC_SWEEPS, function(sw) {
+  map_dfr(1000 + seq_len(N_REPS),
+          function(seed) mc_replication(seed, sweeps = sw)) %>%
+    mutate(sweeps = sw)
+})
 ```
 
 ```{r mc-table}
 mc %>%
-  group_by(Estimator = estimator) %>%
+  # the two comparison estimators do not depend on the sampler, so report
+  # them once rather than twice
+  filter(estimator == "LongBet" | sweeps == max(MC_SWEEPS)) %>%
+  mutate(Estimator = ifelse(estimator == "LongBet",
+                            paste0("LongBet (", sweeps, " sweeps)"), estimator)) %>%
+  group_by(Estimator) %>%
   summarise(Bias = mean(estimate - truth),
             RMSE = sqrt(mean((estimate - truth)^2)),
             Coverage = mean(truth >= lower & truth <= upper),
@@ -2183,54 +2249,88 @@ mc %>%
   ))
 ```
 
-Four things, and the third is the one to take away.
+Three things, and the second is the one to take away.
 
-**All three are unbiased.** Bias is two orders of magnitude below the effects
-being estimated, for every estimator. That is randomization doing its job, and
-it is the result that would have been alarming had it come out otherwise.
+**All three estimators are unbiased.** Bias is two orders of magnitude below
+the effects being estimated. That is randomization doing its job, and it is the
+result that would have been alarming had it come out otherwise.
 
-**LongBet is the most accurate and the most precise.** Lowest RMSE, narrowest
-intervals, and the ordering of interval widths matches the single realization
-in @sec-longbet-scorecard --- so the precision comparison there was not a
-lucky draw.
+**Coverage is a property of how long you run the sampler, not of the model.**
+At `r min(MC_SWEEPS)` sweeps LongBet's intervals cover
+`r scales::percent(mean(with(subset(mc, estimator == "LongBet" & sweeps == min(MC_SWEEPS)), truth >= lower & truth <= upper)), 0.1)`
+of the time against a nominal 95%. At `r max(MC_SWEEPS)` sweeps, on the same
+data-generating process and the same seeds, they cover
+`r scales::percent(mean(with(subset(mc, estimator == "LongBet" & sweeps == max(MC_SWEEPS)), truth >= lower & truth <= upper)), 0.1)`.
+Nothing about the panel changed. What changed is that the sampler had longer to
+explore, and XBART grows a fresh forest every sweep rather than walking one
+chain through tree space, so its posterior is an *approximation* whose quality
+is a function of how many sweeps you average over. Too few and you are looking
+at a slice of the posterior rather than the posterior, which is narrow for the
+same reason any under-explored posterior is narrow.
 
-**LongBet's intervals under-cover, and the plain comparison over-covers.**
-Against a nominal 95%, LongBet lands near
-`r scales::percent(mean(with(subset(mc, estimator == "LongBet"), truth >= lower & truth <= upper)), 0.1)`
-and the unadjusted difference-in-differences near
-`r scales::percent(mean(with(subset(mc, estimator == "DiD vs holdout"), truth >= lower & truth <= upper)), 0.1)`.
-Neither is a scandal, and they fail in opposite directions for
-understandable reasons. The difference-in-differences standard error is
-conservative here. LongBet's intervals are too narrow for a reason this
-chapter has already diagnosed and measured: @sec-longbet-serial finds a design
-effect of about 3 from within-seller serial correlation the model does not
-represent, and an interval computed as though weeks were independent is
-exactly the interval that will be too narrow. The single realization hinted at
-this --- 13 of 14 --- but could not distinguish it from luck. Forty
-replications can.
+Notice that the intervals barely widen ---
+`r sprintf("%.4f", mean(subset(mc, estimator == "LongBet" & sweeps == min(MC_SWEEPS))$upper - subset(mc, estimator == "LongBet" & sweeps == min(MC_SWEEPS))$lower))`
+to
+`r sprintf("%.4f", mean(subset(mc, estimator == "LongBet" & sweeps == max(MC_SWEEPS))$upper - subset(mc, estimator == "LongBet" & sweeps == max(MC_SWEEPS))$lower))`
+--- while RMSE improves by
+`r sprintf("%.0f%%", 100 * (1 - sqrt(mean((subset(mc, estimator == "LongBet" & sweeps == max(MC_SWEEPS))$estimate - subset(mc, estimator == "LongBet" & sweeps == max(MC_SWEEPS))$truth)^2)) / sqrt(mean((subset(mc, estimator == "LongBet" & sweeps == min(MC_SWEEPS))$estimate - subset(mc, estimator == "LongBet" & sweeps == min(MC_SWEEPS))$truth)^2))))`.
+The extra sweeps buy coverage mostly by moving the *estimate* onto the truth,
+not by widening the band around it. That is the practical rule: **a sampler
+setting adequate for a point estimate can be inadequate for an interval**, and
+`att_stability()` (@sec-longbet-sampler) is how you tell without running forty
+replications: it reports the effective sweep count, and the two arms here are
+what calibrates it --- a median near 23 at `r min(MC_SWEEPS)` sweeps, where
+coverage is
+`r scales::percent(mean(with(subset(mc, estimator == "LongBet" & sweeps == min(MC_SWEEPS)), truth >= lower & truth <= upper)), 0.1)`,
+against a median near 42 at `r max(MC_SWEEPS)`, where it is nominal. The
+package's default threshold sits between them for that reason, and it is a
+smoke alarm rather than a theorem: effective sweeps depend on the panel, so on
+data unlike this the number to read is the count itself, not the verdict. The headline fit in this
+chapter uses 200 sweeps, nearer the calibrated end than the `r min(MC_SWEEPS)`
+used here to keep forty replications affordable.
 
-**The covariate-adjusted comparison is the best calibrated of the three.** It
-gets nominal coverage almost exactly, at the cost of intervals
-`r sprintf("%.0f%%", 100 * (mean(subset(mc, estimator == "DiD + covariate adjustment")$upper - subset(mc, estimator == "DiD + covariate adjustment")$lower) / mean(subset(mc, estimator == "LongBet")$upper - subset(mc, estimator == "LongBet")$lower) - 1))`
-wider than LongBet's. If what you need is an interval you can defend line by
-line, that is a real argument for the simpler estimator, and it costs one
-`lm()`.
+**LongBet is more precise than either comparison, and the covariate-adjusted
+one is the best calibrated.** LongBet has the lowest RMSE and the narrowest
+intervals at both sampler lengths, and the ordering of widths reproduces the
+single realization in @sec-longbet-scorecard, so that comparison was not a
+lucky draw. The unadjusted difference-in-differences over-covers, at
+`r scales::percent(mean(with(subset(mc, estimator == "DiD vs holdout"), truth >= lower & truth <= upper)), 0.1)`
+--- its standard error is conservative here --- while the covariate-adjusted
+version lands closest to nominal. If what you need is an interval you can
+defend line by line, without a sampler-length caveat attached, that remains a
+real argument for the simpler estimator, and it costs one `lm()`.
+
+::: {.callout-important title="What this changed about the chapter's own diagnosis"}
+An earlier draft of this section attributed the under-coverage to the serial
+correlation documented in @sec-longbet-serial: a design effect near 3, from
+within-seller dependence the likelihood does not represent, producing intervals
+computed as though weeks were independent. The story was tidy and it was
+wrong. A design effect is a property of the data, so it cannot be what more
+sweeps repaired --- and more sweeps repaired it, on the same panels. The serial
+correlation is real and still worth knowing about; it is not what drives this.
+
+Two other candidates were checked and can also be set aside. In a separate run
+not reproduced here --- 24 replications at `r min(MC_SWEEPS)` sweeps --- turning
+the unit random intercept off moved coverage from 89.3% to 89.0%, which is
+nothing, so $\gamma_i$ is not what is holding coverage up and a richer unit
+effect such as a random slope would not be aimed at the right target. And the
+estimand here is
+the *realized sample* ATT of the units actually drawn, computed by
+`event_time_truth()`, so there is no finite-population term the posterior is
+missing.
+:::
 
 ::: {.callout-note title="What this does and does not establish"}
-These replications use `r MC_N` sellers and `r 80` sweeps, against `r n` and
-200 in the headline fit. That is deliberate --- forty full-scale fits would
-dominate the build --- but it means the numbers describe the operating
-characteristics *of this configuration*, and a bigger sample with a longer
-sampler should do at least as well on bias and RMSE. Coverage is the quantity
-least safe to extrapolate, because the serial correlation driving the
-shortfall does not shrink with more sweeps; it is a feature of the error model,
-not of the sampler.
+These replications use `r MC_N` sellers against `r n` in the headline fit. That
+is deliberate --- forty full-scale fits at two sampler lengths would dominate
+the build --- but it means the numbers describe the operating characteristics
+*of this configuration*, and a larger sample should do at least as well on bias
+and RMSE.
 
-It also remains one data-generating process. Nothing here says LongBet
-under-covers in general --- only that it does under a design whose errors are
-correlated within units in a way the likelihood ignores. @wang2024longbet
-reports 94--98% coverage across 100 replications of a design without that
-feature, which is consistent with both results.
+It also remains one data-generating process, and one that this chapter chose to
+make a business point. Nothing here establishes how LongBet behaves in general.
+@wang2024longbet reports 94--98% coverage across 100 replications of a
+different design, which is consistent with what the longer sampler gives here.
 :::
 
 ### Treatment has to stay on {#sec-longbet-absorbing}

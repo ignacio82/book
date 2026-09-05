@@ -18,7 +18,7 @@ RUN Rscript -e "pak::pkg_install(c( \
     'furrr', 'tictoc', 'glue', 'shinydashboard', 'remotes', \
     'MatchIt', 'coda', 'rpart', 'rpart.plot', 'shiny', 'shinybusy', \
     'arm', 'future', 'lubridate', 'brms', 'google/imt', 'google/biva', \
-    'ignacio82/longbet@v0.5.2', \
+    'ignacio82/longbet@v0.5.5', \
     'shinylive@0.5.0' \
     ))"
 
@@ -33,8 +33,9 @@ RUN R -q -e "shinylive::assets_ensure()"
 # fails much later, during the render, with a confusing error. Fail here.
 RUN R -q -e "stopifnot( \
     requireNamespace('longbet', quietly = TRUE), \
-    packageVersion('longbet') >= '0.5.2', \
+    packageVersion('longbet') >= '0.5.5', \
     is.function(longbet::get_catt), \
+    is.function(longbet::att_stability), \
     is.function(longbet::predict.longbet), \
     'x_tv_trt' %in% names(formals(longbet::longbet)) \
     ); cat('longbet', as.character(packageVersion('longbet')), 'ok\n')"
