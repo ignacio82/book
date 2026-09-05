@@ -537,7 +537,7 @@ window.Quarto = {
   <li><a href="#looking-at-the-data-before-modelling-it" id="toc-looking-at-the-data-before-modelling-it" class="nav-link" data-scroll-target="#looking-at-the-data-before-modelling-it"><span class="header-section-number">22.6</span> Looking at the Data Before Modelling It</a></li>
   <li><a href="#fitting-longbet" id="toc-fitting-longbet" class="nav-link" data-scroll-target="#fitting-longbet"><span class="header-section-number">22.7</span> Fitting LongBet</a>
   <ul class="collapse">
-  <li><a href="#checking-the-sampler" id="toc-checking-the-sampler" class="nav-link" data-scroll-target="#checking-the-sampler">Checking the sampler</a></li>
+  <li><a href="#sec-longbet-sampler" id="toc-sec-longbet-sampler" class="nav-link" data-scroll-target="#sec-longbet-sampler">Checking the sampler</a></li>
   </ul></li>
   <li><a href="#what-the-average-effect-says" id="toc-what-the-average-effect-says" class="nav-link" data-scroll-target="#what-the-average-effect-says"><span class="header-section-number">22.8</span> What the Average Effect Says</a></li>
   <li><a href="#what-the-average-hides" id="toc-what-the-average-hides" class="nav-link" data-scroll-target="#what-the-average-hides"><span class="header-section-number">22.9</span> What the Average Hides</a></li>
@@ -549,6 +549,7 @@ window.Quarto = {
   <li><a href="#the-error-term-is-independent-by-assumption" id="toc-the-error-term-is-independent-by-assumption" class="nav-link" data-scroll-target="#the-error-term-is-independent-by-assumption">The error term is independent by assumption</a></li>
   <li><a href="#column-order-pcat-and-other-sharp-edges" id="toc-column-order-pcat-and-other-sharp-edges" class="nav-link" data-scroll-target="#column-order-pcat-and-other-sharp-edges">Column order, <code>pcat</code>, and other sharp edges</a></li>
   <li><a href="#sec-longbet-timevarying" id="toc-sec-longbet-timevarying" class="nav-link" data-scroll-target="#sec-longbet-timevarying">Covariates that change over the panel</a></li>
+  <li><a href="#sec-longbet-absorbing" id="toc-sec-longbet-absorbing" class="nav-link" data-scroll-target="#sec-longbet-absorbing">Treatment has to stay on</a></li>
   <li><a href="#design-notes-for-the-experiment-itself" id="toc-design-notes-for-the-experiment-itself" class="nav-link" data-scroll-target="#design-notes-for-the-experiment-itself">Design notes for the experiment itself</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">22.13</span> Conclusion</a></li>
@@ -939,8 +940,8 @@ Figure&nbsp;22.2: Mean log weekly GMV among holdout sellers only. The three vert
 <p><code>predict.longbet()</code> accepts <code>t = NULL</code>, and on <code>google/longbet</code> that branch reads a variable named <code>longbet.fit</code> from the global environment, failing with <code>object 'longbet.fit' not found</code> unless one happens to exist — which it does in the package’s own examples, because they name the fitted object exactly that. The fork reads <code>model$time</code> instead. Either way, <code>t</code> still defaults to the <em>training</em> grid, which silently mismatches a longer prediction panel, so pass it explicitly whenever you are predicting past the end of the study.</p>
 </div>
 </div>
-<section id="checking-the-sampler" class="level3">
-<h3 class="anchored" data-anchor-id="checking-the-sampler">Checking the sampler</h3>
+<section id="sec-longbet-sampler" class="level3">
+<h3 class="anchored" data-anchor-id="sec-longbet-sampler">Checking the sampler</h3>
 <p>LongBet is an XBART-style sampler: it grows a fresh forest every <em>sweep</em> rather than nudging an existing one, and <code>longbet()</code> seeds itself internally, so there is no second chain to compare against and no <span class="math inline">\(\hat{R}\)</span> to compute. What is left is to look at the sweeps — and to be careful about <em>which</em> quantity you look at.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>burnin_n <span class="ot">&lt;-</span> lb_fit<span class="sc">$</span>model_params<span class="sc">$</span>burnin</span>
@@ -2078,6 +2079,13 @@ Figure&nbsp;22.8: Effect on the treated against promotional intensity in the sam
 <p>The lesson generalizes. A time-varying covariate earns its place when the question is <em>whether the effect depends on it</em> — which is a targeting question, and the one the slope column answers — and not as a general accuracy upgrade. If the marketplace wants to know whether to time the rollout to its promotional calendar, the blind model says no and is wrong. If it wants the tightest possible estimate of each seller’s average lift, the covariate does not help here, and a larger sample would help more.</p>
 <p>Three practical points. Give the covariate to whichever forest needs it — prognostic for a cleaner baseline, treatment for effect moderation, both if both. It must be observed in every cell, including cells where <code>y</code> is <code>NA</code>, because it is an input rather than an outcome. And it must be passed to <code>predict.longbet()</code> as well, in the same order, since the fitted trees record which axis each split used.</p>
 </section>
+<section id="sec-longbet-absorbing" class="level3">
+<h3 class="anchored" data-anchor-id="sec-longbet-absorbing">Treatment has to stay on</h3>
+<p>Everything above assumes <strong>absorbing</strong> treatment: a seller who launches stays launched. That is not a convention of the example, it is a requirement of the model, and it is worth being explicit about because the failure is not graceful.</p>
+<p><span class="math inline">\(\beta_S\)</span> is a single trajectory indexed by time since adoption, and the index is computed once from a unit’s first treated period and then counted forward. Nothing rereads <span class="math inline">\(z\)</span> afterwards. So if a unit is switched back off, the index keeps climbing, the model goes on applying an effect through the switched-off weeks, and the number it reports there is close to the full effect rather than zero. In one test panel whose true effect while off was exactly 0, it returned 0.49. As of <code>longbet</code> 0.5.2 a panel like that is rejected with an explanatory error rather than either crashing or answering.</p>
+<p>The temptation, once you have a panel model that handles staggered adoption, is to reach for it on a <strong>switchback</strong> — the design where the same units are toggled on and off, used when there is no clean holdout because the units interfere with each other. Resist it, and not only for the implementation reason. The question a switchback is usually run to answer is how long the effect lingers after it is withdrawn, and <em>for whom</em>. That second half is a heterogeneity in the <em>trajectory itself</em> — some units revert immediately, others keep the gain — which is to say a <span class="math inline">\(\beta\)</span> that varies by unit. <a href="#sec-longbet-sampler" class="quarto-xref"><span>Section 22.7.1</span></a> is about the ridge between <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\nu\)</span> when <span class="math inline">\(\beta\)</span> is one shared scalar per event time; asking <span class="math inline">\(\nu\)</span> to carry unit-level persistence on top of that is asking the two to separate along the direction they are least able to separate. Attempts to estimate it recover the ranking of units unreliably and the level not at all.</p>
+<p>For switchbacks, use randomization inference over the switching sequence, or a distributed-lag model that estimates the carryover decay directly. Both are assumption-lighter exactly where switchbacks are hard. For a geography-level on/off, the <code>CausalImpact</code> and <code>bsynth</code> chapters cover the natural tools.</p>
+</section>
 <section id="design-notes-for-the-experiment-itself" class="level3">
 <h3 class="anchored" data-anchor-id="design-notes-for-the-experiment-itself">Design notes for the experiment itself</h3>
 <ul>
@@ -3164,7 +3172,7 @@ Wang, Meijia, Ignacio Martinez, and P Richard Hahn. 2024. <span>“LongBet: Hete
 <span id="cb43-550"><a href="#cb43-550" aria-hidden="true" tabindex="-1"></a>pass it explicitly whenever you are predicting past the end of the study.</span>
 <span id="cb43-551"><a href="#cb43-551" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb43-552"><a href="#cb43-552" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-553"><a href="#cb43-553" aria-hidden="true" tabindex="-1"></a><span class="fu">### Checking the sampler</span></span>
+<span id="cb43-553"><a href="#cb43-553" aria-hidden="true" tabindex="-1"></a><span class="fu">### Checking the sampler {#sec-longbet-sampler}</span></span>
 <span id="cb43-554"><a href="#cb43-554" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-555"><a href="#cb43-555" aria-hidden="true" tabindex="-1"></a>LongBet is an XBART-style sampler: it grows a fresh forest every *sweep* rather</span>
 <span id="cb43-556"><a href="#cb43-556" aria-hidden="true" tabindex="-1"></a>than nudging an existing one, and <span class="in">`longbet()`</span> seeds itself internally, so there</span>
@@ -4327,93 +4335,128 @@ Wang, Meijia, Ignacio Martinez, and P Richard Hahn. 2024. <span>“LongBet: Hete
 <span id="cb43-1725"><a href="#cb43-1725" aria-hidden="true" tabindex="-1"></a><span class="in">`predict.longbet()`</span> as well, in the same order, since the fitted trees record</span>
 <span id="cb43-1726"><a href="#cb43-1726" aria-hidden="true" tabindex="-1"></a>which axis each split used.</span>
 <span id="cb43-1727"><a href="#cb43-1727" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1728"><a href="#cb43-1728" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design notes for the experiment itself</span></span>
+<span id="cb43-1728"><a href="#cb43-1728" aria-hidden="true" tabindex="-1"></a><span class="fu">### Treatment has to stay on {#sec-longbet-absorbing}</span></span>
 <span id="cb43-1729"><a href="#cb43-1729" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1730"><a href="#cb43-1730" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**The event-time tail is thin.** In this rollout the last event time is</span>
-<span id="cb43-1731"><a href="#cb43-1731" aria-hidden="true" tabindex="-1"></a>    reached by one wave only. Estimates and intervals at the far right of</span>
-<span id="cb43-1732"><a href="#cb43-1732" aria-hidden="true" tabindex="-1"></a>    @fig-att rest on a quarter of the treated sample, and the Gaussian process</span>
-<span id="cb43-1733"><a href="#cb43-1733" aria-hidden="true" tabindex="-1"></a>    extrapolation starts from exactly there. If the long-run effect is the</span>
-<span id="cb43-1734"><a href="#cb43-1734" aria-hidden="true" tabindex="-1"></a>    decision-relevant quantity, launch the waves close together and run the</span>
-<span id="cb43-1735"><a href="#cb43-1735" aria-hidden="true" tabindex="-1"></a>    study longer, rather than spreading the launches out.</span>
-<span id="cb43-1736"><a href="#cb43-1736" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Randomize the launch order, and stratify it.** Letting the field team</span>
-<span id="cb43-1737"><a href="#cb43-1737" aria-hidden="true" tabindex="-1"></a>    choose who goes first turns a clean experiment into an observational study</span>
-<span id="cb43-1738"><a href="#cb43-1738" aria-hidden="true" tabindex="-1"></a>    with targeted selection --- the setting BCF and LongBet were built to</span>
-<span id="cb43-1739"><a href="#cb43-1739" aria-hidden="true" tabindex="-1"></a>    survive, but survival is not the same as free precision.</span>
-<span id="cb43-1740"><a href="#cb43-1740" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**SUTVA does not come with randomization, and here it is the binding</span>
-<span id="cb43-1741"><a href="#cb43-1741" aria-hidden="true" tabindex="-1"></a>    constraint.** Search results are a ranked list of fixed length. If the</span>
-<span id="cb43-1742"><a href="#cb43-1742" aria-hidden="true" tabindex="-1"></a>    optimizer works by moving treated sellers up it, some of the measured lift</span>
-<span id="cb43-1743"><a href="#cb43-1743" aria-hidden="true" tabindex="-1"></a>    is demand *taken from* holdout sellers rather than demand created. Every</span>
-<span id="cb43-1744"><a href="#cb43-1744" aria-hidden="true" tabindex="-1"></a>    dollar figure in @sec-longbet-decision assumes it is created. In the</span>
-<span id="cb43-1745"><a href="#cb43-1745" aria-hidden="true" tabindex="-1"></a>    zero-sum extreme the two policies come apart completely: targeting still</span>
-<span id="cb43-1746"><a href="#cb43-1746" aria-hidden="true" tabindex="-1"></a>    pays, because it moves the ranking advantage to the sellers who monetize it</span>
-<span id="cb43-1747"><a href="#cb43-1747" aria-hidden="true" tabindex="-1"></a>    best, but shipping to *everyone* returns the ranking to where it started</span>
-<span id="cb43-1748"><a href="#cb43-1748" aria-hidden="true" tabindex="-1"></a>    and earns nothing at all --- while still costing \$500 a head. Total GMV</span>
-<span id="cb43-1749"><a href="#cb43-1749" aria-hidden="true" tabindex="-1"></a>    rises only to the extent the optimizer brings in buyers who would not</span>
-<span id="cb43-1750"><a href="#cb43-1750" aria-hidden="true" tabindex="-1"></a>    otherwise have transacted, or converts browsers who would have bounced.</span>
-<span id="cb43-1751"><a href="#cb43-1751" aria-hidden="true" tabindex="-1"></a>    That is an empirical question, and the experiment as designed cannot</span>
-<span id="cb43-1752"><a href="#cb43-1752" aria-hidden="true" tabindex="-1"></a>    answer it: you need to randomize at a level that contains the competition,</span>
-<span id="cb43-1753"><a href="#cb43-1753" aria-hidden="true" tabindex="-1"></a>    such as category, geography, or marketplace, so that whole ranked lists are</span>
-<span id="cb43-1754"><a href="#cb43-1754" aria-hidden="true" tabindex="-1"></a>    treated or untreated together. Seller-level randomization measures who</span>
-<span id="cb43-1755"><a href="#cb43-1755" aria-hidden="true" tabindex="-1"></a>    wins the race; market-level randomization measures whether the race got</span>
-<span id="cb43-1756"><a href="#cb43-1756" aria-hidden="true" tabindex="-1"></a>    faster.</span>
-<span id="cb43-1757"><a href="#cb43-1757" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Serial correlation is still assumed away.** The random intercept handles</span>
-<span id="cb43-1758"><a href="#cb43-1758" aria-hidden="true" tabindex="-1"></a>    the permanent part of within-unit dependence, which on this panel is all of</span>
-<span id="cb43-1759"><a href="#cb43-1759" aria-hidden="true" tabindex="-1"></a>    it. A genuinely autoregressive error is untouched, and the fix is not a</span>
-<span id="cb43-1760"><a href="#cb43-1760" aria-hidden="true" tabindex="-1"></a>    small one --- see @sec-longbet-limits.</span>
-<span id="cb43-1761"><a href="#cb43-1761" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Used observationally, everything rests on $X$.** Outside an experiment,</span>
-<span id="cb43-1762"><a href="#cb43-1762" aria-hidden="true" tabindex="-1"></a>    LongBet trades the parallel trends assumption for the assumption that</span>
-<span id="cb43-1763"><a href="#cb43-1763" aria-hidden="true" tabindex="-1"></a>    $X_i$ contains every confounder of adoption timing and outcome. That is a</span>
-<span id="cb43-1764"><a href="#cb43-1764" aria-hidden="true" tabindex="-1"></a>    different assumption, not a weaker one; it is only an improvement when you</span>
-<span id="cb43-1765"><a href="#cb43-1765" aria-hidden="true" tabindex="-1"></a>    actually observe the drivers of adoption.</span>
-<span id="cb43-1766"><a href="#cb43-1766" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1767"><a href="#cb43-1767" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
-<span id="cb43-1768"><a href="#cb43-1768" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1769"><a href="#cb43-1769" aria-hidden="true" tabindex="-1"></a>LongBet earns its place in a business setting by answering a question that</span>
-<span id="cb43-1770"><a href="#cb43-1770" aria-hidden="true" tabindex="-1"></a>neither a cross-sectional causal forest nor a classical panel estimator can:</span>
-<span id="cb43-1771"><a href="#cb43-1771" aria-hidden="true" tabindex="-1"></a>not *what is the effect*, but *what does the effect do over time, and to whom*.</span>
-<span id="cb43-1772"><a href="#cb43-1772" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1773"><a href="#cb43-1773" aria-hidden="true" tabindex="-1"></a>In this chapter the pooled average told a clean and completely misleading</span>
-<span id="cb43-1774"><a href="#cb43-1774" aria-hidden="true" tabindex="-1"></a>story --- a lift that gave back a third of its peak inside three months, the</span>
-<span id="cb43-1775"><a href="#cb43-1775" aria-hidden="true" tabindex="-1"></a>textbook signature of a novelty effect. The same model, asked one level down,</span>
-<span id="cb43-1776"><a href="#cb43-1776" aria-hidden="true" tabindex="-1"></a>found two populations moving in opposite directions: broad-catalog sellers on a</span>
-<span id="cb43-1777"><a href="#cb43-1777" aria-hidden="true" tabindex="-1"></a>compounding trajectory that showed no sign of turning down when the study</span>
-<span id="cb43-1778"><a href="#cb43-1778" aria-hidden="true" tabindex="-1"></a>ended, and narrow-catalog sellers whose bump was largely spent by the second</span>
-<span id="cb43-1779"><a href="#cb43-1779" aria-hidden="true" tabindex="-1"></a>month. Acting on that distinction was worth roughly half a million dollars a</span>
-<span id="cb43-1780"><a href="#cb43-1780" aria-hidden="true" tabindex="-1"></a>year in a 3,000-seller pilot, and no amount of extra sample would have</span>
-<span id="cb43-1781"><a href="#cb43-1781" aria-hidden="true" tabindex="-1"></a>surfaced it from an average.</span>
-<span id="cb43-1782"><a href="#cb43-1782" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1783"><a href="#cb43-1783" aria-hidden="true" tabindex="-1"></a>Four cautions are worth carrying forward. The randomization, not the model, is</span>
-<span id="cb43-1784"><a href="#cb43-1784" aria-hidden="true" tabindex="-1"></a>what makes the estimates credible: keep a simple difference-in-differences</span>
-<span id="cb43-1785"><a href="#cb43-1785" aria-hidden="true" tabindex="-1"></a>against the holdout in view as a check, and treat disagreement as a bug report.</span>
-<span id="cb43-1786"><a href="#cb43-1786" aria-hidden="true" tabindex="-1"></a>The credible intervals assume errors are independent across units *and* across</span>
-<span id="cb43-1787"><a href="#cb43-1787" aria-hidden="true" tabindex="-1"></a>time, and the residual diagnostic in @sec-longbet-limits shows how quietly that</span>
-<span id="cb43-1788"><a href="#cb43-1788" aria-hidden="true" tabindex="-1"></a>fails even when the errors really are independent. The forecast extrapolates</span>
-<span id="cb43-1789"><a href="#cb43-1789" aria-hidden="true" tabindex="-1"></a>one shared factor under a prior you choose, so it belongs in a sensitivity</span>
-<span id="cb43-1790"><a href="#cb43-1790" aria-hidden="true" tabindex="-1"></a>analysis rather than in the plan. And every dollar figure assumes the lift is</span>
-<span id="cb43-1791"><a href="#cb43-1791" aria-hidden="true" tabindex="-1"></a>demand created rather than demand moved off the holdout --- in a ranked</span>
-<span id="cb43-1792"><a href="#cb43-1792" aria-hidden="true" tabindex="-1"></a>marketplace that is the strongest assumption in the chapter, and no model can</span>
-<span id="cb43-1793"><a href="#cb43-1793" aria-hidden="true" tabindex="-1"></a>test it. Only a market-level randomization can.</span>
-<span id="cb43-1794"><a href="#cb43-1794" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1795"><a href="#cb43-1795" aria-hidden="true" tabindex="-1"></a>One habit generalizes past this model. Diagnose the quantity you are going to</span>
-<span id="cb43-1796"><a href="#cb43-1796" aria-hidden="true" tabindex="-1"></a>report, not the parameter that produces it: LongBet's shared factor drifts</span>
-<span id="cb43-1797"><a href="#cb43-1797" aria-hidden="true" tabindex="-1"></a>because it is identified only up to a scale it shares with the treatment</span>
-<span id="cb43-1798"><a href="#cb43-1798" aria-hidden="true" tabindex="-1"></a>forest, while the effect the two multiply out to sits still.</span>
-<span id="cb43-1799"><a href="#cb43-1799" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-1800"><a href="#cb43-1800" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
-<span id="cb43-1801"><a href="#cb43-1801" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learn more</span></span>
-<span id="cb43-1802"><a href="#cb43-1802" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@wang2024longbet LongBet: Heterogeneous Treatment Effect Estimation in</span>
-<span id="cb43-1803"><a href="#cb43-1803" aria-hidden="true" tabindex="-1"></a>    Panel Data --- the method, its simulation study, and the forecasting</span>
-<span id="cb43-1804"><a href="#cb43-1804" aria-hidden="true" tabindex="-1"></a>    extension.</span>
-<span id="cb43-1805"><a href="#cb43-1805" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@longbetpkg The <span class="in">`longbet`</span> R package.</span>
-<span id="cb43-1806"><a href="#cb43-1806" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@hahn2020bayesian Bayesian regression tree models for causal inference ---</span>
-<span id="cb43-1807"><a href="#cb43-1807" aria-hidden="true" tabindex="-1"></a>    the cross-sectional model LongBet extends.</span>
-<span id="cb43-1808"><a href="#cb43-1808" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@wang2024localgp Local Gaussian process extrapolation for BART models ---</span>
-<span id="cb43-1809"><a href="#cb43-1809" aria-hidden="true" tabindex="-1"></a>    the alternative extrapolation strategy referenced by @wang2024longbet.</span>
-<span id="cb43-1810"><a href="#cb43-1810" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@callaway2021did and @roth2023trending for the econometric literature on</span>
-<span id="cb43-1811"><a href="#cb43-1811" aria-hidden="true" tabindex="-1"></a>    staggered adoption that LongBet is positioned against.</span>
-<span id="cb43-1812"><a href="#cb43-1812" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@deng2013cuped for the variance-reduction idea that $\mu(X_i, t)$</span>
-<span id="cb43-1813"><a href="#cb43-1813" aria-hidden="true" tabindex="-1"></a>    generalizes.</span>
-<span id="cb43-1814"><a href="#cb43-1814" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb43-1730"><a href="#cb43-1730" aria-hidden="true" tabindex="-1"></a>Everything above assumes **absorbing** treatment: a seller who launches stays</span>
+<span id="cb43-1731"><a href="#cb43-1731" aria-hidden="true" tabindex="-1"></a>launched. That is not a convention of the example, it is a requirement of the</span>
+<span id="cb43-1732"><a href="#cb43-1732" aria-hidden="true" tabindex="-1"></a>model, and it is worth being explicit about because the failure is not</span>
+<span id="cb43-1733"><a href="#cb43-1733" aria-hidden="true" tabindex="-1"></a>graceful.</span>
+<span id="cb43-1734"><a href="#cb43-1734" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1735"><a href="#cb43-1735" aria-hidden="true" tabindex="-1"></a>$\beta_S$ is a single trajectory indexed by time since adoption, and the index</span>
+<span id="cb43-1736"><a href="#cb43-1736" aria-hidden="true" tabindex="-1"></a>is computed once from a unit's first treated period and then counted forward.</span>
+<span id="cb43-1737"><a href="#cb43-1737" aria-hidden="true" tabindex="-1"></a>Nothing rereads $z$ afterwards. So if a unit is switched back off, the index</span>
+<span id="cb43-1738"><a href="#cb43-1738" aria-hidden="true" tabindex="-1"></a>keeps climbing, the model goes on applying an effect through the switched-off</span>
+<span id="cb43-1739"><a href="#cb43-1739" aria-hidden="true" tabindex="-1"></a>weeks, and the number it reports there is close to the full effect rather than</span>
+<span id="cb43-1740"><a href="#cb43-1740" aria-hidden="true" tabindex="-1"></a>zero. In one test panel whose true effect while off was exactly 0, it returned</span>
+<span id="cb43-1741"><a href="#cb43-1741" aria-hidden="true" tabindex="-1"></a>0.49. As of <span class="in">`longbet`</span> 0.5.2 a panel like that is rejected with an explanatory</span>
+<span id="cb43-1742"><a href="#cb43-1742" aria-hidden="true" tabindex="-1"></a>error rather than either crashing or answering.</span>
+<span id="cb43-1743"><a href="#cb43-1743" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1744"><a href="#cb43-1744" aria-hidden="true" tabindex="-1"></a>The temptation, once you have a panel model that handles staggered adoption, is</span>
+<span id="cb43-1745"><a href="#cb43-1745" aria-hidden="true" tabindex="-1"></a>to reach for it on a **switchback** --- the design where the same units are</span>
+<span id="cb43-1746"><a href="#cb43-1746" aria-hidden="true" tabindex="-1"></a>toggled on and off, used when there is no clean holdout because the units</span>
+<span id="cb43-1747"><a href="#cb43-1747" aria-hidden="true" tabindex="-1"></a>interfere with each other. Resist it, and not only for the implementation</span>
+<span id="cb43-1748"><a href="#cb43-1748" aria-hidden="true" tabindex="-1"></a>reason. The question a switchback is usually run to answer is how long the</span>
+<span id="cb43-1749"><a href="#cb43-1749" aria-hidden="true" tabindex="-1"></a>effect lingers after it is withdrawn, and *for whom*. That second half is a</span>
+<span id="cb43-1750"><a href="#cb43-1750" aria-hidden="true" tabindex="-1"></a>heterogeneity in the *trajectory itself* --- some units revert immediately,</span>
+<span id="cb43-1751"><a href="#cb43-1751" aria-hidden="true" tabindex="-1"></a>others keep the gain --- which is to say a $\beta$ that varies by unit.</span>
+<span id="cb43-1752"><a href="#cb43-1752" aria-hidden="true" tabindex="-1"></a>@sec-longbet-sampler is about the ridge between $\beta$ and $\nu$ when</span>
+<span id="cb43-1753"><a href="#cb43-1753" aria-hidden="true" tabindex="-1"></a>$\beta$ is one shared scalar per event time; asking $\nu$ to carry unit-level</span>
+<span id="cb43-1754"><a href="#cb43-1754" aria-hidden="true" tabindex="-1"></a>persistence on top of that is asking the two to separate along the direction</span>
+<span id="cb43-1755"><a href="#cb43-1755" aria-hidden="true" tabindex="-1"></a>they are least able to separate. Attempts to estimate it recover the ranking of</span>
+<span id="cb43-1756"><a href="#cb43-1756" aria-hidden="true" tabindex="-1"></a>units unreliably and the level not at all.</span>
+<span id="cb43-1757"><a href="#cb43-1757" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1758"><a href="#cb43-1758" aria-hidden="true" tabindex="-1"></a>For switchbacks, use randomization inference over the switching sequence, or a</span>
+<span id="cb43-1759"><a href="#cb43-1759" aria-hidden="true" tabindex="-1"></a>distributed-lag model that estimates the carryover decay directly. Both are</span>
+<span id="cb43-1760"><a href="#cb43-1760" aria-hidden="true" tabindex="-1"></a>assumption-lighter exactly where switchbacks are hard. For a geography-level</span>
+<span id="cb43-1761"><a href="#cb43-1761" aria-hidden="true" tabindex="-1"></a>on/off, the <span class="in">`CausalImpact`</span> and <span class="in">`bsynth`</span> chapters cover the natural tools.</span>
+<span id="cb43-1762"><a href="#cb43-1762" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1763"><a href="#cb43-1763" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design notes for the experiment itself</span></span>
+<span id="cb43-1764"><a href="#cb43-1764" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1765"><a href="#cb43-1765" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**The event-time tail is thin.** In this rollout the last event time is</span>
+<span id="cb43-1766"><a href="#cb43-1766" aria-hidden="true" tabindex="-1"></a>    reached by one wave only. Estimates and intervals at the far right of</span>
+<span id="cb43-1767"><a href="#cb43-1767" aria-hidden="true" tabindex="-1"></a>    @fig-att rest on a quarter of the treated sample, and the Gaussian process</span>
+<span id="cb43-1768"><a href="#cb43-1768" aria-hidden="true" tabindex="-1"></a>    extrapolation starts from exactly there. If the long-run effect is the</span>
+<span id="cb43-1769"><a href="#cb43-1769" aria-hidden="true" tabindex="-1"></a>    decision-relevant quantity, launch the waves close together and run the</span>
+<span id="cb43-1770"><a href="#cb43-1770" aria-hidden="true" tabindex="-1"></a>    study longer, rather than spreading the launches out.</span>
+<span id="cb43-1771"><a href="#cb43-1771" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Randomize the launch order, and stratify it.** Letting the field team</span>
+<span id="cb43-1772"><a href="#cb43-1772" aria-hidden="true" tabindex="-1"></a>    choose who goes first turns a clean experiment into an observational study</span>
+<span id="cb43-1773"><a href="#cb43-1773" aria-hidden="true" tabindex="-1"></a>    with targeted selection --- the setting BCF and LongBet were built to</span>
+<span id="cb43-1774"><a href="#cb43-1774" aria-hidden="true" tabindex="-1"></a>    survive, but survival is not the same as free precision.</span>
+<span id="cb43-1775"><a href="#cb43-1775" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**SUTVA does not come with randomization, and here it is the binding</span>
+<span id="cb43-1776"><a href="#cb43-1776" aria-hidden="true" tabindex="-1"></a>    constraint.** Search results are a ranked list of fixed length. If the</span>
+<span id="cb43-1777"><a href="#cb43-1777" aria-hidden="true" tabindex="-1"></a>    optimizer works by moving treated sellers up it, some of the measured lift</span>
+<span id="cb43-1778"><a href="#cb43-1778" aria-hidden="true" tabindex="-1"></a>    is demand *taken from* holdout sellers rather than demand created. Every</span>
+<span id="cb43-1779"><a href="#cb43-1779" aria-hidden="true" tabindex="-1"></a>    dollar figure in @sec-longbet-decision assumes it is created. In the</span>
+<span id="cb43-1780"><a href="#cb43-1780" aria-hidden="true" tabindex="-1"></a>    zero-sum extreme the two policies come apart completely: targeting still</span>
+<span id="cb43-1781"><a href="#cb43-1781" aria-hidden="true" tabindex="-1"></a>    pays, because it moves the ranking advantage to the sellers who monetize it</span>
+<span id="cb43-1782"><a href="#cb43-1782" aria-hidden="true" tabindex="-1"></a>    best, but shipping to *everyone* returns the ranking to where it started</span>
+<span id="cb43-1783"><a href="#cb43-1783" aria-hidden="true" tabindex="-1"></a>    and earns nothing at all --- while still costing \$500 a head. Total GMV</span>
+<span id="cb43-1784"><a href="#cb43-1784" aria-hidden="true" tabindex="-1"></a>    rises only to the extent the optimizer brings in buyers who would not</span>
+<span id="cb43-1785"><a href="#cb43-1785" aria-hidden="true" tabindex="-1"></a>    otherwise have transacted, or converts browsers who would have bounced.</span>
+<span id="cb43-1786"><a href="#cb43-1786" aria-hidden="true" tabindex="-1"></a>    That is an empirical question, and the experiment as designed cannot</span>
+<span id="cb43-1787"><a href="#cb43-1787" aria-hidden="true" tabindex="-1"></a>    answer it: you need to randomize at a level that contains the competition,</span>
+<span id="cb43-1788"><a href="#cb43-1788" aria-hidden="true" tabindex="-1"></a>    such as category, geography, or marketplace, so that whole ranked lists are</span>
+<span id="cb43-1789"><a href="#cb43-1789" aria-hidden="true" tabindex="-1"></a>    treated or untreated together. Seller-level randomization measures who</span>
+<span id="cb43-1790"><a href="#cb43-1790" aria-hidden="true" tabindex="-1"></a>    wins the race; market-level randomization measures whether the race got</span>
+<span id="cb43-1791"><a href="#cb43-1791" aria-hidden="true" tabindex="-1"></a>    faster.</span>
+<span id="cb43-1792"><a href="#cb43-1792" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Serial correlation is still assumed away.** The random intercept handles</span>
+<span id="cb43-1793"><a href="#cb43-1793" aria-hidden="true" tabindex="-1"></a>    the permanent part of within-unit dependence, which on this panel is all of</span>
+<span id="cb43-1794"><a href="#cb43-1794" aria-hidden="true" tabindex="-1"></a>    it. A genuinely autoregressive error is untouched, and the fix is not a</span>
+<span id="cb43-1795"><a href="#cb43-1795" aria-hidden="true" tabindex="-1"></a>    small one --- see @sec-longbet-limits.</span>
+<span id="cb43-1796"><a href="#cb43-1796" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Used observationally, everything rests on $X$.** Outside an experiment,</span>
+<span id="cb43-1797"><a href="#cb43-1797" aria-hidden="true" tabindex="-1"></a>    LongBet trades the parallel trends assumption for the assumption that</span>
+<span id="cb43-1798"><a href="#cb43-1798" aria-hidden="true" tabindex="-1"></a>    $X_i$ contains every confounder of adoption timing and outcome. That is a</span>
+<span id="cb43-1799"><a href="#cb43-1799" aria-hidden="true" tabindex="-1"></a>    different assumption, not a weaker one; it is only an improvement when you</span>
+<span id="cb43-1800"><a href="#cb43-1800" aria-hidden="true" tabindex="-1"></a>    actually observe the drivers of adoption.</span>
+<span id="cb43-1801"><a href="#cb43-1801" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1802"><a href="#cb43-1802" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
+<span id="cb43-1803"><a href="#cb43-1803" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1804"><a href="#cb43-1804" aria-hidden="true" tabindex="-1"></a>LongBet earns its place in a business setting by answering a question that</span>
+<span id="cb43-1805"><a href="#cb43-1805" aria-hidden="true" tabindex="-1"></a>neither a cross-sectional causal forest nor a classical panel estimator can:</span>
+<span id="cb43-1806"><a href="#cb43-1806" aria-hidden="true" tabindex="-1"></a>not *what is the effect*, but *what does the effect do over time, and to whom*.</span>
+<span id="cb43-1807"><a href="#cb43-1807" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1808"><a href="#cb43-1808" aria-hidden="true" tabindex="-1"></a>In this chapter the pooled average told a clean and completely misleading</span>
+<span id="cb43-1809"><a href="#cb43-1809" aria-hidden="true" tabindex="-1"></a>story --- a lift that gave back a third of its peak inside three months, the</span>
+<span id="cb43-1810"><a href="#cb43-1810" aria-hidden="true" tabindex="-1"></a>textbook signature of a novelty effect. The same model, asked one level down,</span>
+<span id="cb43-1811"><a href="#cb43-1811" aria-hidden="true" tabindex="-1"></a>found two populations moving in opposite directions: broad-catalog sellers on a</span>
+<span id="cb43-1812"><a href="#cb43-1812" aria-hidden="true" tabindex="-1"></a>compounding trajectory that showed no sign of turning down when the study</span>
+<span id="cb43-1813"><a href="#cb43-1813" aria-hidden="true" tabindex="-1"></a>ended, and narrow-catalog sellers whose bump was largely spent by the second</span>
+<span id="cb43-1814"><a href="#cb43-1814" aria-hidden="true" tabindex="-1"></a>month. Acting on that distinction was worth roughly half a million dollars a</span>
+<span id="cb43-1815"><a href="#cb43-1815" aria-hidden="true" tabindex="-1"></a>year in a 3,000-seller pilot, and no amount of extra sample would have</span>
+<span id="cb43-1816"><a href="#cb43-1816" aria-hidden="true" tabindex="-1"></a>surfaced it from an average.</span>
+<span id="cb43-1817"><a href="#cb43-1817" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1818"><a href="#cb43-1818" aria-hidden="true" tabindex="-1"></a>Four cautions are worth carrying forward. The randomization, not the model, is</span>
+<span id="cb43-1819"><a href="#cb43-1819" aria-hidden="true" tabindex="-1"></a>what makes the estimates credible: keep a simple difference-in-differences</span>
+<span id="cb43-1820"><a href="#cb43-1820" aria-hidden="true" tabindex="-1"></a>against the holdout in view as a check, and treat disagreement as a bug report.</span>
+<span id="cb43-1821"><a href="#cb43-1821" aria-hidden="true" tabindex="-1"></a>The credible intervals assume errors are independent across units *and* across</span>
+<span id="cb43-1822"><a href="#cb43-1822" aria-hidden="true" tabindex="-1"></a>time, and the residual diagnostic in @sec-longbet-limits shows how quietly that</span>
+<span id="cb43-1823"><a href="#cb43-1823" aria-hidden="true" tabindex="-1"></a>fails even when the errors really are independent. The forecast extrapolates</span>
+<span id="cb43-1824"><a href="#cb43-1824" aria-hidden="true" tabindex="-1"></a>one shared factor under a prior you choose, so it belongs in a sensitivity</span>
+<span id="cb43-1825"><a href="#cb43-1825" aria-hidden="true" tabindex="-1"></a>analysis rather than in the plan. And every dollar figure assumes the lift is</span>
+<span id="cb43-1826"><a href="#cb43-1826" aria-hidden="true" tabindex="-1"></a>demand created rather than demand moved off the holdout --- in a ranked</span>
+<span id="cb43-1827"><a href="#cb43-1827" aria-hidden="true" tabindex="-1"></a>marketplace that is the strongest assumption in the chapter, and no model can</span>
+<span id="cb43-1828"><a href="#cb43-1828" aria-hidden="true" tabindex="-1"></a>test it. Only a market-level randomization can.</span>
+<span id="cb43-1829"><a href="#cb43-1829" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1830"><a href="#cb43-1830" aria-hidden="true" tabindex="-1"></a>One habit generalizes past this model. Diagnose the quantity you are going to</span>
+<span id="cb43-1831"><a href="#cb43-1831" aria-hidden="true" tabindex="-1"></a>report, not the parameter that produces it: LongBet's shared factor drifts</span>
+<span id="cb43-1832"><a href="#cb43-1832" aria-hidden="true" tabindex="-1"></a>because it is identified only up to a scale it shares with the treatment</span>
+<span id="cb43-1833"><a href="#cb43-1833" aria-hidden="true" tabindex="-1"></a>forest, while the effect the two multiply out to sits still.</span>
+<span id="cb43-1834"><a href="#cb43-1834" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-1835"><a href="#cb43-1835" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb43-1836"><a href="#cb43-1836" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learn more</span></span>
+<span id="cb43-1837"><a href="#cb43-1837" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@wang2024longbet LongBet: Heterogeneous Treatment Effect Estimation in</span>
+<span id="cb43-1838"><a href="#cb43-1838" aria-hidden="true" tabindex="-1"></a>    Panel Data --- the method, its simulation study, and the forecasting</span>
+<span id="cb43-1839"><a href="#cb43-1839" aria-hidden="true" tabindex="-1"></a>    extension.</span>
+<span id="cb43-1840"><a href="#cb43-1840" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@longbetpkg The <span class="in">`longbet`</span> R package.</span>
+<span id="cb43-1841"><a href="#cb43-1841" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@hahn2020bayesian Bayesian regression tree models for causal inference ---</span>
+<span id="cb43-1842"><a href="#cb43-1842" aria-hidden="true" tabindex="-1"></a>    the cross-sectional model LongBet extends.</span>
+<span id="cb43-1843"><a href="#cb43-1843" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@wang2024localgp Local Gaussian process extrapolation for BART models ---</span>
+<span id="cb43-1844"><a href="#cb43-1844" aria-hidden="true" tabindex="-1"></a>    the alternative extrapolation strategy referenced by @wang2024longbet.</span>
+<span id="cb43-1845"><a href="#cb43-1845" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@callaway2021did and @roth2023trending for the econometric literature on</span>
+<span id="cb43-1846"><a href="#cb43-1846" aria-hidden="true" tabindex="-1"></a>    staggered adoption that LongBet is positioned against.</span>
+<span id="cb43-1847"><a href="#cb43-1847" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>@deng2013cuped for the variance-reduction idea that $\mu(X_i, t)$</span>
+<span id="cb43-1848"><a href="#cb43-1848" aria-hidden="true" tabindex="-1"></a>    generalizes.</span>
+<span id="cb43-1849"><a href="#cb43-1849" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
