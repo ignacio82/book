@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,13 +13,10 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -100,10 +97,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-c59812dc4b7252543fb1ef09c0f56260.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/social-share.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/social-share-0.1.0/all.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -225,6 +222,11 @@ div.csl-indent {
 <meta name="citation_reference" content="citation_title=A unified bayesian nonparametric framework for ordinal, survival, and density regression using the complementary log-log link;,citation_author=Entejar Alam;,citation_author=Antonio R Linero;,citation_publication_date=2025;,citation_cover_date=2025;,citation_year=2025;,citation_journal_title=arXiv preprint arXiv:2502.00606;">
 <meta name="citation_reference" content="citation_title=Analyzing ordinal data with metric models: What could possibly go wrong?;,citation_author=Torrin M Liddell;,citation_author=John K Kruschke;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_doi=10.1016/j.jesp.2018.08.009;,citation_volume=79;,citation_journal_title=Journal of Experimental Social Psychology;">
 <meta name="citation_reference" content="citation_title=The equivalence of two models for ordinal data;,citation_author=Esa Läärä;,citation_author=John N S Matthews;,citation_publication_date=1985;,citation_cover_date=1985;,citation_year=1985;,citation_issue=1;,citation_doi=10.1093/biomet/72.1.206;,citation_volume=72;,citation_journal_title=Biometrika;">
+<meta name="citation_reference" content="citation_title=On the likelihood that one unknown probability exceeds another in view of the evidence of two samples;,citation_author=William R Thompson;,citation_publication_date=1933;,citation_cover_date=1933;,citation_year=1933;,citation_issue=3-4;,citation_doi=10.1093/biomet/25.3-4.285;,citation_volume=25;,citation_journal_title=Biometrika;">
+<meta name="citation_reference" content="citation_title=A tutorial on thompson sampling;,citation_author=Daniel J Russo;,citation_author=Benjamin Van Roy;,citation_author=Abbas Kazerouni;,citation_author=Ian Osband;,citation_author=Zheng Wen;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_issue=1;,citation_doi=10.1561/2200000070;,citation_volume=11;,citation_journal_title=Foundations and Trends in Machine Learning;">
+<meta name="citation_reference" content="citation_title=Response-adaptive randomization in clinical trials: From myths to practical considerations;,citation_author=David S Robertson;,citation_author=Kim May Lee;,citation_author=Boryana C López-Kolkovska;,citation_author=Sofía S Villar;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=2;,citation_doi=10.1214/22-STS865;,citation_volume=38;,citation_journal_title=Statistical Science;">
+<meta name="citation_reference" content="citation_title=Confidence intervals for policy evaluation in adaptive experiments;,citation_author=Vitor Hadad;,citation_author=David A Hirshberg;,citation_author=Ruohan Zhan;,citation_author=Stefan Wager;,citation_author=Susan Athey;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_issue=15;,citation_doi=10.1073/pnas.2014602118;,citation_volume=118;,citation_journal_title=Proceedings of the National Academy of Sciences;">
+<meta name="citation_reference" content="citation_title=Estimation considerations in contextual bandits;,citation_author=Maria Dimakopoulou;,citation_author=Zhengyuan Zhou;,citation_author=Susan Athey;,citation_author=Guido Imbens;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_fulltext_html_url=https://arxiv.org/abs/1711.07077;">
 </head>
 
 <body class="nav-sidebar floating quarto-light">
@@ -639,16 +641,16 @@ Kassler, Daniel, Ira Nichols-Barrer, and Mariel Finucane. 2018. <em>Beyond <span
     }
     function toggleCodeHandler(show) {
       return function(e) {
-        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
-        for (let i=0; i<cellDetails.length; i++) {
-          const details = cellDetails[i];
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
           if (show) {
             details.open = true;
           } else {
             details.removeAttribute("open");
           }
         }
-        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
         const fromCls = show ? "hidden" : "unhidden";
         const toCls = show ? "unhidden" : "hidden";
         for (let i=0; i<cellCodeDivs.length; i++) {
