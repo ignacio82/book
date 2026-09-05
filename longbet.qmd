@@ -546,7 +546,7 @@ the *training* grid, which silently mismatches a longer prediction panel, so
 pass it explicitly whenever you are predicting past the end of the study.
 :::
 
-### Checking the sampler
+### Checking the sampler {#sec-longbet-sampler}
 
 LongBet is an XBART-style sampler: it grows a fresh forest every *sweep* rather
 than nudging an existing one, and `longbet()` seeds itself internally, so there
@@ -1708,6 +1708,41 @@ both. It must be observed in every cell, including cells where `y` is `NA`,
 because it is an input rather than an outcome. And it must be passed to
 `predict.longbet()` as well, in the same order, since the fitted trees record
 which axis each split used.
+
+### Treatment has to stay on {#sec-longbet-absorbing}
+
+Everything above assumes **absorbing** treatment: a seller who launches stays
+launched. That is not a convention of the example, it is a requirement of the
+model, and it is worth being explicit about because the failure is not
+graceful.
+
+$\beta_S$ is a single trajectory indexed by time since adoption, and the index
+is computed once from a unit's first treated period and then counted forward.
+Nothing rereads $z$ afterwards. So if a unit is switched back off, the index
+keeps climbing, the model goes on applying an effect through the switched-off
+weeks, and the number it reports there is close to the full effect rather than
+zero. In one test panel whose true effect while off was exactly 0, it returned
+0.49. As of `longbet` 0.5.2 a panel like that is rejected with an explanatory
+error rather than either crashing or answering.
+
+The temptation, once you have a panel model that handles staggered adoption, is
+to reach for it on a **switchback** --- the design where the same units are
+toggled on and off, used when there is no clean holdout because the units
+interfere with each other. Resist it, and not only for the implementation
+reason. The question a switchback is usually run to answer is how long the
+effect lingers after it is withdrawn, and *for whom*. That second half is a
+heterogeneity in the *trajectory itself* --- some units revert immediately,
+others keep the gain --- which is to say a $\beta$ that varies by unit.
+@sec-longbet-sampler is about the ridge between $\beta$ and $\nu$ when
+$\beta$ is one shared scalar per event time; asking $\nu$ to carry unit-level
+persistence on top of that is asking the two to separate along the direction
+they are least able to separate. Attempts to estimate it recover the ranking of
+units unreliably and the level not at all.
+
+For switchbacks, use randomization inference over the switching sequence, or a
+distributed-lag model that estimates the carryover decay directly. Both are
+assumption-lighter exactly where switchbacks are hard. For a geography-level
+on/off, the `CausalImpact` and `bsynth` chapters cover the natural tools.
 
 ### Design notes for the experiment itself
 

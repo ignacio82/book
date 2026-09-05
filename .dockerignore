@@ -1,0 +1,11 @@
+# Build context hygiene. Without this the context ships the rendered site and
+# Quarto's scratch directories -- ~60MB of it -- and a root-owned
+# quarto-session-temp left behind by an interrupted container render makes the
+# build fail outright with "permission denied" from the context sender.
+.quarto/
+docs/
+.git/
+*_files/
+_book/
+.Rproj.user/
+.Rhistory

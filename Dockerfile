@@ -18,8 +18,19 @@ RUN Rscript -e "pak::pkg_install(c( \
     'furrr', 'tictoc', 'glue', 'shinydashboard', 'shinylive', 'remotes', \
     'MatchIt', 'coda', 'rpart', 'rpart.plot', 'shiny', 'shinybusy', \
     'arm', 'future', 'lubridate', 'brms', 'google/imt', 'google/biva', \
-    'ignacio82/longbet@v0.5.1' \
+    'ignacio82/longbet@v0.5.2' \
     ))"
+
+# install.packages() does not set a non-zero exit status when a package fails
+# to build, so a broken compile would otherwise produce an image that only
+# fails much later, during the render, with a confusing error. Fail here.
+RUN R -q -e "stopifnot( \
+    requireNamespace('longbet', quietly = TRUE), \
+    packageVersion('longbet') >= '0.5.2', \
+    is.function(longbet::get_catt), \
+    is.function(longbet::predict.longbet), \
+    'x_tv_trt' %in% names(formals(longbet::longbet)) \
+    ); cat('longbet', as.character(packageVersion('longbet')), 'ok\n')"
 
 WORKDIR /book
 COPY . .
