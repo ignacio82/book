@@ -16,3 +16,4 @@ cache/
 *_cache/
 *.knit.md
 /strength_files/
+/bad_files/
