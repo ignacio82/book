@@ -1741,8 +1741,7 @@ units unreliably and the level not at all.
 
 For switchbacks, use randomization inference over the switching sequence, or a
 distributed-lag model that estimates the carryover decay directly. Both are
-assumption-lighter exactly where switchbacks are hard. For a geography-level
-on/off, the `CausalImpact` and `bsynth` chapters cover the natural tools.
+assumption-lighter exactly where switchbacks are hard.
 
 ### Design notes for the experiment itself
 
