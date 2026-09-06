@@ -253,7 +253,7 @@ library(knitr)
 # Pin the fork explicitly. Several results in this chapter depend on defaults
 # that differ from published LongBet, so a silent version change should stop
 # the build rather than quietly move the numbers.
-stopifnot(packageVersion("longbet") >= "0.5.5")
+stopifnot(packageVersion("longbet") >= "0.7.2")
 
 set.seed(1982)
 
@@ -541,8 +541,8 @@ problems that showed up here:
 
 The fork also adds things this chapter does not use: **time-varying
 covariates** (@sec-longbet-timevarying), unbalanced panels (`y` may contain
-`NA`), binary outcomes by probit augmentation, an optional AR(1) error, and the
-propensity-score argument that the published version accepts and silently
+`NA`), binary outcomes by probit augmentation, unit-level random effects on
+the treatment effect (@sec-longbet-unitre), and the propensity-score argument that the published version accepts and silently
 ignores --- which matters for observational panels, though not for a randomized
 rollout like this one. The model, the priors and the estimands are otherwise
 unchanged. `NEWS.md` in the fork carries the derivations and the measurements,
@@ -1975,6 +1975,7 @@ does nothing for the other.
 
 ```{r promo-fit}
 #| cache: true
+#| dependson: ["promo-dgp"]
 #| message: false
 #| output: false
 
@@ -2091,6 +2092,298 @@ both. It must be observed in every cell, including cells where `y` is `NA`,
 because it is an input rather than an outcome. And it must be passed to
 `predict.longbet()` as well, in the same order, since the fitted trees record
 which axis each split used.
+
+### When the effect varies beyond what the covariates explain {#sec-longbet-unitre}
+
+There is an assumption buried in every effect this chapter has reported, and
+it is easy to miss because the model never states it: **a seller's treatment
+effect is whatever their covariates say it is.** Two sellers with the same
+catalog breadth, vertical, fulfillment status and lookback history get the
+same $\tau$, always. The DGP at the top of the chapter was built that way, so
+nothing has yet gone wrong.
+
+Reality is not usually so tidy. Two sellers alike on every recorded variable
+can still respond differently --- one has photographs the optimizer can
+improve and the other does not, one prices well and the other does not, and
+neither fact is in `x`. Write that as
+
+$$
+\tau_i(S) = \underbrace{\nu(X_i, S)}_{\text{what the covariates explain}} + \underbrace{\delta_i}_{\text{what they do not},}
+$$
+
+with $\delta_i$ a seller-level departure the model cannot predict but can, in
+principle, *detect* --- because seller $i$ contributes their own before-and-after
+contrast.
+
+Without somewhere to put $\delta_i$, a model has only one option: call it
+noise. The consequence is not a slightly worse point estimate. It is an
+interval that is confidently wrong. On a panel whose unit-level departures
+have standard deviation 0.25, fitting the model as this chapter has fitted it
+throughout gives a nominal 95% interval that covers **30%** of the time. At
+0.15 it covers 46%. Those are not conservative intervals; they are broken
+ones, and nothing in the fit announces it.
+
+`longbet()` gained `treat_effect_re = TRUE` for this. It adds
+$\delta_i \cdot Z_{it}$ to the effect, with a half-Cauchy prior on the spread
+of the $\delta$'s, and identifies it from each unit's own pre/post contrast ---
+so it needs at least one untreated and one treated period per unit, which is
+exactly the condition @sec-longbet-baseline already warns about for $\gamma_i$.
+
+| true spread of $\delta$ | coverage without | coverage with | RMSE without | RMSE with |
+|---:|---:|---:|---:|---:|
+| 0.15 | 0.46 | **0.92** | 0.150 | 0.129 |
+| 0.25 | 0.30 | **0.91** | 0.247 | 0.173 |
+
+Coverage returns to nominal and the effects get sharper. The fitted $\delta$'s
+correlate around 0.7 with the true ones, and the estimated spread comes back
+near the truth --- 0.29 against 0.25.
+
+**It is off by default, and the reason is worth understanding rather than
+working around.** When there is no unit-level departure --- when the covariates
+really do explain everything, as in this chapter's own simulation --- turning it
+on costs about 30% in CATT RMSE, because several hundred unit effects that are
+truly zero still have to be estimated. That cost is not a tuning failure. Four
+prior scales spanning a factor of ten were tried, and all of them settled at an
+estimated spread near 0.07: with a handful of treated periods per seller, a
+$\delta$ of that size is simply not distinguishable from noise. It is a
+property of the data, not of the prior.
+
+So the decision is genuinely the analyst's, and the fit hands you the number to
+make it with. Run it once with `treat_effect_re = TRUE` and compare
+`fit$sigma_delta` --- the estimated spread of the unit departures --- against the
+spread of the effects themselves. If it is a meaningful fraction, the
+heterogeneity is real and the intervals need it. If it is a rounding error,
+switch it off and keep the precision. The asymmetry argues for checking: 30%
+wasted precision is an annoyance, and a 95% interval that covers 30% of the
+time is a wrong answer presented with confidence.
+
+### More than one outcome at a time {#sec-longbet-multi}
+
+Everything so far has treated GMV as *the* outcome. Almost no real rollout is
+scored that way. The optimizer rewrites listings, and the product team cares
+about GMV, about whether sellers keep using the marketplace at all, about
+support load. The interesting question is rarely about one of these; it is
+about several at once --- **is this seller worth \$500 a year, given that the
+\$500 only pays back if they are still here to earn it?**
+
+Fitting one LongBet per outcome cannot answer that, and the reason is worth
+being precise about. Posterior draws from separate fits are independent *by
+construction*. Multiply the two marginal probabilities together and you have
+assumed the two effects are uncorrelated --- which is the very thing the
+question is asking about.
+
+`longbet_multi()` fits the outcomes in one sampler and ties their errors
+together. Outcome $m$ is fitted to an **orthogonalized** target,
+
+$$
+\tilde y^{(m)}_{it} = y^{(m)}_{it} - \sum_{l<m} \Gamma_{ml}\,\varepsilon^{(l)}_{it},
+$$
+
+where $\varepsilon^{(l)}$ are the current residuals of the outcomes before it.
+That is the triangular factorization $\Sigma = A_0^{-1} H A_0^{-\top}$ from
+@huber2022bavart, and its virtue is that each equation stays an ordinary
+univariate problem, so $M$ outcomes cost about $M$ fits rather than anything
+worse.
+
+Add a second outcome to the rollout: **support contacts**, the weekly number
+of times a seller has to ask the marketplace for help. It is the natural
+counterweight to GMV here --- an optimizer that rewrites listings gives
+sellers more to ask about --- and it is the reason the decision is not simply
+"does GMV go up". Its shocks are correlated with the GMV shocks, because a bad
+week on the marketplace is bad for both. Its *effect*, though, runs the other
+way from the GMV effect: the sellers who gain least are the ones who generate
+the most support load, so the two outcomes pull against each other and the
+decision has to weigh them together.
+
+```{r multi-dgp}
+set.seed(818)
+ws   <- week_study
+n_ws <- length(ws)
+
+# One shock per seller-week, shared between the two outcomes. Rebuilt from
+# the same components as y0 rather than patched onto it, so the GMV series has
+# exactly one noise term and its correlation with the second outcome is the
+# rho below and nothing else.
+rho_true <- 0.6
+shock    <- matrix(rnorm(n * n_ws), n, n_ws)
+gmv_e    <- rho_true * shock + sqrt(1 - rho_true^2) * matrix(rnorm(n * n_ws), n, n_ws)
+
+base_gmv <- matrix(level_i, n, n_ws) + outer(drift_i, ws, "*") +
+            season(matrix(vertical, n, n_ws), matrix(rep(ws, each = n), n, n_ws))
+y_gmv    <- base_gmv + tau_true[, ws] + 0.28 * gmv_e
+
+# Support contacts, on a log scale. The optimizer generates questions, and it
+# generates them from the sellers least equipped to answer them themselves:
+# a narrow-catalog seller has the tool rewrite their whole shopfront at once
+# and comes asking why. Broad catalogs absorb it. So the support cost falls
+# where the GMV gain is smallest -- which is what makes the decision a
+# trade-off rather than a ranking.
+lin_sup  <- 1.10 + 0.42 * scale(log(listings))[, 1]
+tau_sup  <- ifelse(z_train == 1, 0.30 * (1 - w_i), 0)
+y_sup    <- matrix(lin_sup, n, n_ws) + tau_sup + 0.30 * shock
+
+cat("true shock correlation: ", rho_true, "\n",
+    "support effect -- broad catalogs: ",
+    sprintf("%.2f", mean(tau_sup[z_train == 1 & broad])),
+    ", narrow: ", sprintf("%.2f", mean(tau_sup[z_train == 1 & !broad])), "\n",
+    "GMV effect     -- broad catalogs: ",
+    sprintf("%.2f", mean(tau_true[, ws][z_train == 1 & broad])),
+    ", narrow: ", sprintf("%.2f", mean(tau_true[, ws][z_train == 1 & !broad])),
+    "\n", sep = "")
+```
+
+```{r multi-fit}
+#| cache: true
+#| dependson: ["multi-dgp"]
+#| message: false
+#| output: false
+# Lighter sampler settings than the main analysis, as in
+# @sec-longbet-timevarying: this section illustrates a capability rather than
+# producing a number the chapter turns on.
+mfit <- longbet_multi(
+  y = list(y_gmv, y_sup), x = x, x_trt = x, z = z_train, t = ws, pcat = 2,
+  outcome = "continuous",
+  num_sweeps = 60, num_burnin = 20,
+  num_trees_pr = 20, num_trees_trt = 20,
+  sig_knl = 1, lambda_knl = 2, random_intercept = TRUE, random_seed = 4
+)
+mpred <- predict(mfit, x, x, z_train, t = ws)
+```
+
+The first thing to look at is not an effect at all. It is whether the two
+outcomes were coupled, which the model estimates rather than assumes:
+
+```{r multi-cor}
+mcor <- outcome_correlation(mfit)
+cat("estimated correlation between the GMV and support shocks: ",
+    sprintf("%.2f", mcor[1, 2]), " (truth ", rho_true, ")\n", sep = "")
+```
+
+Now the decision. Shipping to a seller is worth it if the optimizer raises
+their GMV **and** does not bury the support team --- a compound condition, and
+one that separate fits cannot evaluate, because their draws are independent by
+construction. With draws from a joint posterior it is a matter of counting:
+
+```{r multi-joint}
+S_t   <- ncol(z_train)                          # score at the end of the study
+trt   <- z_train[, S_t] == 1
+gmv_d <- effect_draws(mpred$preds[[1]])[, S_t, ]
+sup_d <- effect_draws(mpred$preds[[2]])[, S_t, ]
+
+# "Worth it": a GMV lift above the median treated seller's, without a support
+# increase above the median treated seller's.
+g_cut <- median(apply(gmv_d[trt, ], 1, mean))
+s_cut <- median(apply(sup_d[trt, ], 1, mean))
+
+p_joint <- rowMeans(gmv_d > g_cut & sup_d < s_cut)
+p_prod  <- rowMeans(gmv_d > g_cut) * rowMeans(sup_d < s_cut)
+
+tibble(
+  Seller = c("Broad catalog (>= 50 listings)", "Narrow catalog (< 50)"),
+  `P(both) from joint draws` = c(mean(p_joint[trt & broad]),
+                                 mean(p_joint[trt & !broad])),
+  `P(both) as a product`     = c(mean(p_prod[trt & broad]),
+                                 mean(p_prod[trt & !broad]))
+) %>%
+  kable(digits = 3, caption = paste(
+    "Probability that the optimizer raises a seller's GMV above the median",
+    "lift without raising their support load above the median, by catalog",
+    "breadth. The product column is what separate fits force you to compute."
+  ))
+```
+
+```{r multi-gap}
+gap_jp   <- mean(abs(p_joint[trt] - p_prod[trt]))
+eff_cor  <- median(vapply(which(trt), function(i)
+              suppressWarnings(cor(gmv_d[i, ], sup_d[i, ])), numeric(1)),
+              na.rm = TRUE)
+cat("mean |joint - product| across treated sellers: ", sprintf("%.3f", gap_jp),
+    "\nmedian posterior correlation of the two effects: ",
+    sprintf("%.2f", eff_cor), "\n", sep = "")
+```
+
+Two lessons, and the second is the one that generalizes.
+
+**The shortcut was fine here, and the joint fit is how you learn that.** Look
+at what the numbers actually say. The model recovers the shock correlation
+almost exactly --- `r sprintf("%.2f", mcor[1, 2])` against a true `r rho_true`,
+never having been told it --- and the joint probabilities still come out within
+`r sprintf("%.3f", gap_jp)` of simply multiplying the marginals. A large error
+correlation did *not* make the shortcut wrong.
+
+That is worth sitting with, because the intuition says otherwise. Multiplying
+marginals assumes the two *effects* are independent given the data, and
+whether that holds is a question about the effect posteriors, not about the
+errors. Here their correlation is `r sprintf("%.2f", eff_cor)`: near enough to
+independent that the product is right. The reason is the same one @sec-longbet-multi opened with
+--- both effects are driven by catalog breadth, both forests have
+`log_listings`, and each finds the structure unaided --- so the shared shock
+never reaches the effects.
+
+The value of fitting jointly, then, is not that it always changes the answer.
+It is that it *tells you whether the answer needed changing*, and separate
+fits cannot: they assume independence and report the product with no way to
+check. Here the check passed. Where it would not pass is when the effects vary
+across units for reasons the covariates cannot reach, which is exactly the
+situation @sec-longbet-unitre is about --- unexplained unit-level heterogeneity
+is shared across outcomes in a way covariate-driven heterogeneity is not.
+
+**Correlated *errors* are not the same as correlated *effects*.** Two outcomes
+can share a strong cell-level shock and still have nearly independent effect
+posteriors, and that is what happened here: shocks correlated `r rho_true`,
+effects correlated `r sprintf("%.2f", eff_cor)`.
+
+The reason is worth following, because it decides when the shortcut is safe.
+Two effect posteriors correlate to the extent their *estimation errors* do, and
+an effect is estimated by pooling every treated cell for that seller. The
+shared shock averages out of that pool. With 3,000 sellers and 18 weeks there
+is a great deal of averaging, so almost nothing survives into the effect
+posteriors. On a smaller panel less averages away: the same data-generating
+process at 1,200 sellers over 15 weeks leaves the effect posteriors correlated
+around 0.35, and there the product of marginals is visibly wrong.
+
+So the gap between the joint probability and the product is not governed by how
+correlated the outcomes look. It is governed by how much estimation error they
+still share, which shrinks as the panel grows. Big panel, covariate-driven
+effects: multiply the marginals, you will be right. Short panel, or effects
+that vary for reasons the covariates cannot see: do not.
+
+::: {.callout-important title="Fit jointly for the joint question, not for sharper effects"}
+It is worth being blunt about what this does and does not buy, because the
+obvious guess is wrong.
+
+**It does not estimate any single effect more accurately.** Orthogonalization
+genuinely shrinks the innovation variance --- on a controlled panel with shock
+correlation 0.8 the second outcome's residual SD fell from 0.499 to 0.307,
+against a theoretical floor of 0.30 --- and that is a large, real reduction.
+It does not translate into a better $\tau$. Compared against literally
+fitting a separate `longbet()` per outcome, over 12 replications in each of
+four conditions crossing correlated effects with correlated errors, the CATT
+RMSE differences ran from $-0.9\%$ to $+7.4\%$ and **not one was
+distinguishable from zero** (all $|t| < 1.3$). Whatever limits CATT accuracy
+here, it is not the part of the error the coupling removes.
+
+**What it buys is the joint posterior**, and separate fits cannot produce that
+at any sample size. That is the whole case for the feature.
+
+**One caveat with a diagnostic attached.** The residual one outcome conditions
+on is meant to be pure shock, but whatever of that outcome's *own* effect the
+forest has not yet fitted stays in it --- and when the two effects are
+correlated, subtracting it strips real signal from the next outcome. That
+leakage is a small-sample and short-sampler problem, and it is measurable: at
+$n = 700$ over 10 periods with 50 sweeps the joint fit was 16% worse than
+separate fits, at $n = 1200$ over 15 periods with 100 sweeps the gap was gone,
+and by $n = 2000$ with 150 sweeps it had turned slightly positive. The remedy
+is the sampler-length check of @sec-longbet-sampler: `att_stability()` flags an
+under-sampled fit, and an under-sampled fit is exactly the one that leaks.
+
+**One trap it avoids for you.** A probit's latent scale is fixed by the link,
+so its residual variance is pinned at 1 and orthogonalizing it makes the fit
+*worse* --- measurably, about 10% on effect RMSE. `longbet_multi()` therefore
+leaves binary outcomes un-orthogonalized: they share the sampler, so their
+draws stay paired for joint inference, but each is fitted exactly as it would
+be alone.
+:::
 
 ### Operating characteristics {#sec-longbet-operating}
 
