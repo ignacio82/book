@@ -432,7 +432,7 @@ z_train <- Z[, week_study]
 z_ext   <- Z[, c(week_study, week_future)]   # extended horizon for forecasting
 ```
 
-## Looking at the Data Before Modelling It
+## Looking at the Data Before Modeling It
 
 Two pictures are worth drawing before any model is fit. The first, @fig-rollout,
 is the design itself: who is treated when.
@@ -1695,6 +1695,170 @@ check it against what you can already see: in @fig-catt-segments the broad-catal
 week 14 with no sign of turning down, so any projection in which it collapses
 is contradicting evidence you already have.
 
+## What Happens Without the Randomization {#sec-longbet-observational}
+
+Everything so far has leaned on the rollout being randomized, and
+@sec-longbet-why was careful about the division of labor: randomization
+supplies identification, the model supplies resolution. But LongBet was not
+built for randomized rollouts. It was built for observational panels, where
+the argument is that conditioning on $X_i$ can stand in for parallel trends
+[@wang2024longbet]. The chapter has asserted that and never tested it. This
+section does, because the claim is easy to overread in both directions.
+
+Keep everything --- the same sellers, the same covariates, the same effect
+curves --- and change only **how launch dates are assigned**. Two versions.
+
+In the first, the marketplace rolls the optimizer out to its **fastest-growing
+sellers first**. Growth is visible: it is `base_slope`, the pre-period trend
+already sitting in `x`. This breaks parallel trends by construction, because
+treated sellers were climbing before they were treated.
+
+In the second, the field team picks sellers on something the data never
+records --- call it ambition. Ambitious sellers adopt earlier, and they would
+also have grown faster anyway. Nothing in the lookback window reveals it.
+
+```{r obs-dgp}
+u_i <- rnorm(n)                      # unrecorded, drives adoption and growth
+
+make_obs <- function(scenario) {
+  y0s <- matrix(level_i, n, Tn) + outer(drift_i, weeks_all, "*") +
+         season(matrix(vertical, n, Tn), tmat) +
+         matrix(rnorm(n * Tn, 0, 0.28), n, Tn)
+  if (scenario == "hidden") {
+    # ambition lifts the untreated path from week 11, after the lookback ends
+    y0s <- y0s + 0.15 * u_i * matrix(rep(weeks_all >= 11, each = n), n, Tn)
+  }
+  wb  <- week_base - mean(week_base)
+  bl  <- rowMeans(y0s[, week_base])
+  bs  <- as.vector((y0s[, week_base] %*% wb) / sum(wb^2))
+
+  # Who goes first. The only line that differs between the two scenarios.
+  score <- if (scenario == "observed")
+             1.5 * scale(bs)[, 1] + 0.6 * scale(log(listings))[, 1] + rnorm(n, 0, .5)
+           else
+             1.5 * u_i + rnorm(n, 0, .5)
+
+  # Same arm sizes as the experiment: four waves of 15%, a 40% holdout.
+  q <- quantile(score, c(.40, .55, .70, .85))
+  wv <- ifelse(score >= q[4], "W1", ifelse(score >= q[3], "W2",
+        ifelse(score >= q[2], "W3", ifelse(score >= q[1], "W4", "Holdout"))))
+  lc <- LAUNCH[wv]
+  Sm <- tmat - matrix(lc, n, Tn) + 1
+  Sm[!is.finite(Sm) | Sm < 0] <- 0
+  Sm <- matrix(as.numeric(Sm), n, Tn)
+  Zm <- matrix(as.integer(Sm > 0), n, Tn)
+  tm <- ifelse(Sm > 0, w_i * h_grow(Sm) + (1 - w_i) * h_fade(Sm), 0)
+
+  list(y = y0s + tm, z = Zm, S = Sm, tau = tm, wave = wv,
+       x = cbind(bl, bs, log(listings), fulfilled, as.integer(factor(vertical))))
+}
+```
+
+```{r obs-fit}
+#| cache: true
+#| dependson: ["obs-dgp"]
+#| message: false
+#| output: false
+
+# Event-time truth, and the same holdout comparison the experiment used:
+# each wave against the never-treated group, differenced from a common
+# pre-window, pooled by sample size.
+obs_truth <- function(d) vapply(seq_len(S_observed), function(s) {
+  m <- d$S[, week_study] == s
+  if (any(m)) mean(d$tau[, week_study][m]) else NA_real_
+}, numeric(1))
+
+obs_did <- function(d) {
+  pre <- 7:10
+  dY  <- d$y - rowMeans(d$y[, pre]); colnames(dY) <- weeks_all
+  vapply(seq_len(S_observed), function(s) {
+    ws <- c("W1", "W2", "W3", "W4")
+    ws <- ws[LAUNCH[ws] + s - 1 <= max(week_study)]
+    nt <- vapply(ws, function(w) sum(d$wave == w), integer(1))
+    ws <- ws[nt > 1]; nt <- nt[nt > 1]; a <- nt / sum(nt)
+    col <- match(as.integer(LAUNCH[ws] + s - 1), weeks_all)
+    tm  <- vapply(seq_along(ws), function(j)
+             mean(dY[d$wave == ws[j], col[j]]), numeric(1))
+    sum(a * tm) - mean(as.vector(dY[d$wave == "Holdout", col, drop = FALSE] %*% a))
+  }, numeric(1))
+}
+
+obs_longbet <- function(d) {
+  f <- longbet(y = d$y[, week_study], x = d$x, x_trt = d$x,
+               z = d$z[, week_study], t = week_study, pcat = 2,
+               num_sweeps = 60, num_burnin = 20,
+               num_trees_pr = 20, num_trees_trt = 20,
+               sig_knl = 1, lambda_knl = 2, random_intercept = TRUE,
+               random_seed = 1, verbose = FALSE)
+  a <- get_att(predict.longbet(f, d$x, d$x, d$z[, week_study],
+                               t = week_study, random_seed = 1))
+  out <- a$att[seq_len(S_observed)]
+  rm(f); gc(verbose = FALSE)
+  out
+}
+
+obs_res <- map_dfr(c("observed", "hidden"), function(sc) {
+  d <- make_obs(sc); tr <- obs_truth(d)
+  tibble(scenario = sc,
+         did = mean(obs_did(d) - tr), did_rmse = sqrt(mean((obs_did(d) - tr)^2)),
+         lb  = mean(obs_longbet(d) - tr),
+         lb_rmse = sqrt(mean((obs_longbet(d) - tr)^2)),
+         truth = mean(tr))
+})
+```
+
+```{r obs-table}
+obs_res %>%
+  transmute(
+    `How launch dates were set` = c(
+      "Fastest-growing sellers first (visible in x)",
+      "Chosen on something x never records")[match(scenario, c("observed", "hidden"))],
+    `DiD bias` = did, `DiD RMSE` = did_rmse,
+    `LongBet bias` = lb, `LongBet RMSE` = lb_rmse,
+    `True effect` = truth) %>%
+  kable(digits = 4, caption = paste(
+    "The same sellers and the same effects, with randomization removed.",
+    "Bias and RMSE are against the event-time truth over the",
+    S_observed, "observed event times."
+  ))
+```
+
+Read the two rows against each other, and against the randomized result in
+@sec-longbet-scorecard where both estimators were close to the truth.
+
+**Selection on something you can see is survivable, and this is what LongBet
+is for.** When the fastest-growing sellers go first, the holdout comparison
+breaks: it differences out each seller's *level*, and the problem is not levels
+but *trends*. Treated sellers were already climbing, differencing does not
+remove that, and the estimate inherits it. LongBet has `base_slope` in `x` and
+conditions on it, so it stays close to the truth --- the bias barely moves from
+the randomized case. That is the paper's claim, and here it holds.
+
+**Selection on something you cannot see is not survivable, and no amount of
+flexibility repairs it.** In the second row the estimate is wrong by more than
+the effect being estimated, for *both* estimators. The forest is
+non-parametric, the panel is large, the sampler is well behaved, and none of it
+helps: the variable doing the confounding is not in the data, so no function of
+the data can adjust for it. LongBet is somewhat less wrong than the holdout
+comparison, and that is cold comfort --- being less wrong is not being right.
+
+::: {.callout-important title="What \"no parallel trends assumption\" actually means"}
+It is not an absence of assumptions; it is a *substitution* of assumptions.
+Difference-in-differences assumes untreated outcomes would have moved in
+parallel and, in exchange, tolerates unobserved unit-level differences that are
+constant over time. LongBet drops parallel trends and, in exchange, requires
+that whatever drives treatment timing is captured by the covariates you supply.
+
+Neither is weaker. They fail in different places, and the two rows above are
+those places. If you are choosing between them, the question is not which
+assumption is smaller but which one your data plausibly satisfies --- and in an
+observational panel, that is a question about how adoption actually happened,
+which is a matter for the people who ran the rollout rather than for the model.
+
+The randomized rollout in the rest of this chapter needs neither assumption,
+which is the entire reason it is worth the operational trouble to randomize.
+:::
+
 ## Practical Notes {#sec-longbet-limits}
 
 ### Where a unit's own level comes from {#sec-longbet-baseline}
@@ -2159,11 +2323,15 @@ contrast.
 
 Without somewhere to put $\delta_i$, a model has only one option: call it
 noise. The consequence is not a slightly worse point estimate. It is an
-interval that is confidently wrong. On a panel whose unit-level departures
-have standard deviation 0.25, fitting the model as this chapter has fitted it
-throughout gives a nominal 95% interval that covers **30%** of the time. At
-0.15 it covers 46%. Those are not conservative intervals; they are broken
-ones, and nothing in the fit announces it.
+interval that is confidently wrong.
+
+This chapter's own simulation has no such departures --- $\tau_i$ there is a
+function of the covariates and nothing else --- so the numbers below come from
+a separate study, on panels built to contain them. Fitting the model as this
+chapter has fitted it throughout, on a panel whose unit-level departures have
+standard deviation 0.25, gives a nominal 95% interval that covers **30%** of
+the time. At 0.15 it covers 46%. Those are not conservative intervals; they
+are broken ones, and nothing in the fit announces it.
 
 `longbet()` gained `treat_effect_re = TRUE` for this. It adds
 $\delta_i \cdot Z_{it}$ to the effect, with a half-Cauchy prior on the spread
@@ -2623,7 +2791,15 @@ At `r min(MC_SWEEPS)` sweeps LongBet's intervals cover
 of the time against a nominal 95%. At `r max(MC_SWEEPS)` sweeps, on the same
 data-generating process and the same seeds, they cover
 `r scales::percent(mean(with(subset(mc, estimator == "LongBet" & sweeps == max(MC_SWEEPS)), truth >= lower & truth <= upper)), 0.1)`.
-Nothing about the panel changed. What changed is that the sampler had longer to
+Nothing about the panel changed.
+
+Take the size of that gap with the Monte Carlo error in the table: about three
+percentage points, against standard errors of one to two on each arm. On these
+forty replications alone the difference is suggestive rather than settled. What
+makes it convincing is that the same mechanism shows up somewhere independent
+--- `att_stability()` puts the effective sweep count at roughly 23 for the
+short arm and above 40 for the long one, and the estimate moves onto the truth
+as it rises. What changed is that the sampler had longer to
 explore, and XBART grows a fresh forest every sweep rather than walking one
 chain through tree space, so its posterior is an *approximation* whose quality
 is a function of how many sweeps you average over. Too few and you are looking
