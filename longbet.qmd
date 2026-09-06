@@ -767,15 +767,11 @@ against 0.96 for a fit that is well calibrated. It cannot tell the two apart.
 
 The ratio here is
 `r sprintf("%.2f", stab$summary$width_ratio)`,
-and it is worth being clear that this is not a warning about the interval.
-What the split half does detect is *drift* --- a sampler still moving because
-burn-in was set too short --- which is a real problem and a different one. An
-earlier version of this chapter folded it into the reliability verdict, which
-had the effect of failing this very fit --- the one @sec-longbet-operating goes
-on to measure at nominal coverage across forty replications. Reliability now
-rests on the effective sweep count alone, because
-that is the only column here calibrated against coverage that was actually
-measured.
+and it is not a warning about the interval. What the split half detects is
+*drift* --- a sampler still moving because burn-in was set too short --- which
+is a real problem and a different one. The reliability verdict rests on the
+effective sweep count alone, that being the only column here calibrated
+against coverage that was actually measured.
 
 ## What the Average Effect Says {#sec-longbet-scorecard}
 
@@ -2592,26 +2588,6 @@ lucky draw. The unadjusted difference-in-differences over-covers, at
 version lands closest to nominal. If what you need is an interval you can
 defend line by line, without a sampler-length caveat attached, that remains a
 real argument for the simpler estimator, and it costs one `lm()`.
-
-::: {.callout-important title="What this changed about the chapter's own diagnosis"}
-An earlier draft of this section attributed the under-coverage to the serial
-correlation documented in @sec-longbet-serial: a design effect near 3, from
-within-seller dependence the likelihood does not represent, producing intervals
-computed as though weeks were independent. The story was tidy and it was
-wrong. A design effect is a property of the data, so it cannot be what more
-sweeps repaired --- and more sweeps repaired it, on the same panels. The serial
-correlation is real and still worth knowing about; it is not what drives this.
-
-Two other candidates were checked and can also be set aside. In a separate run
-not reproduced here --- 24 replications at `r min(MC_SWEEPS)` sweeps --- turning
-the unit random intercept off moved coverage from 89.3% to 89.0%, which is
-nothing, so $\gamma_i$ is not what is holding coverage up and a richer unit
-effect such as a random slope would not be aimed at the right target. And the
-estimand here is
-the *realized sample* ATT of the units actually drawn, computed by
-`event_time_truth()`, so there is no finite-population term the posterior is
-missing.
-:::
 
 ::: {.callout-note title="What this does and does not establish"}
 These replications use `r MC_N` sellers against `r n` in the headline fit. That
