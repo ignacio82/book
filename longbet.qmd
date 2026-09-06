@@ -835,6 +835,19 @@ change among holdout sellers, then pool the waves. Random assignment makes it
 unbiased; the within-seller differencing removes each seller's level entirely,
 which is a stronger adjustment than any covariate.
 
+Note what that is *not*. The reflex for panel data is a two-way fixed effects
+regression with event-time dummies, and under staggered adoption it is the
+wrong reflex: TWFE identifies the effect partly by using already-treated units
+as controls for later-treated ones, which assigns some comparisons negative
+weight and can return an average effect outside the range of every individual
+effect [@callaway2021did; @roth2023trending]. The estimator above sidesteps
+that by construction --- every wave is compared only against the never-treated
+holdout, and the waves are pooled afterwards rather than inside a regression.
+That is the same structure as the group-time approach of @callaway2021did,
+simplified because randomization means no covariate adjustment is needed for
+identification. If your rollout has no holdout, you need that literature's
+machinery; here the design supplies it.
+
 ```{r benchmark}
 pre_weeks <- 7:10                # common pre-launch window for every wave
 is_hold   <- wave == "Holdout"
