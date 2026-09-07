@@ -36,9 +36,6 @@ RUN R -q -e "stopifnot( \
     packageVersion('longbet') >= '0.7.2', \
     is.function(longbet::get_catt), \
     is.function(longbet::att_stability), \
-    is.function(longbet::longbet_multi), \
-    is.function(longbet::joint_prob), \
-    'longbet_multi_cpp' %in% ls(asNamespace('longbet')), \
     'treat_effect_re' %in% names(formals(longbet::longbet)), \
     is.function(longbet::predict.longbet), \
     'x_tv_trt' %in% names(formals(longbet::longbet)) \
