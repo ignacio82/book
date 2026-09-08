@@ -64,10 +64,16 @@ RUN R -q -e "stopifnot( \
     is.function(longbet::getMus), \
     is.function(longbet::plot_rollout), \
     is.function(longbet::longbet), \
-    is.function(getS3method('predict', 'longbet', envir = asNamespace('longbet'))) \
+    is.function(longbet::longbet_multi), \
+    is.function(longbet::joint_prob), \
+    is.function(longbet::outcome_correlation), \
+    is.function(getS3method('predict', 'longbet', envir = asNamespace('longbet'))), \
+    is.function(getS3method('predict', 'longbet_multi', envir = asNamespace('longbet'))), \
+    'cache_forest_evaluations' %in% names(formals(getS3method('predict', 'longbet', envir = asNamespace('longbet')))) \
     ); \
     py <- reticulate::import('longbet'); \
     stopifnot(reticulate::py_has_attr(py, 'LongBet'), \
+              reticulate::py_has_attr(py, 'LongBetMulti'), \
               reticulate::py_has_attr(py, 'att_stability')); \
     cat('longbet R', as.character(packageVersion('longbet')), \
         '/ python', py[['__version__']], 'ok\n')"
