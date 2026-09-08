@@ -49,8 +49,8 @@ When these conditions hold, we can attribute the observed
 differences in outcomes between treated and untreated units to the treatment
 itself, rather than to confounding factors.  
 
-We'll explore three key models in this family: BART, Bayesian Causal Forests
-(BCF), and LongBet. Each of these models builds upon its predecessors, offering
+We'll explore two key models in this family: BART and Bayesian Causal Forests
+(BCF). Each of these models builds upon its predecessors, offering
 improvements in terms of causal effect estimation, handling of confounding, and
 applicability to different data structures.
 

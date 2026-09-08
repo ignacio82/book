@@ -53,7 +53,6 @@ book:
       chapters: 
         - bart.qmd
         - bcf.qmd
-        - longbet.qmd
         - causalPropensity.qmd
         - phobart.qmd
         - bad.qmd
