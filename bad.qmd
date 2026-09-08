@@ -10,6 +10,9 @@ share:
   linkedin: true
   email: true
   mastodon: true
+author:
+  - name: Drew Herren
+  - name: Ignacio Martinez
 ---
 
 ## The Business Dilemma: The Cancellation Desk
