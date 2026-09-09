@@ -1,0 +1,25 @@
+/* Keep long equations and inline code within the chapter's reading column. */
+main .math.display {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+main :not(pre) > code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+  main section > table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  main img[align="right"] {
+    float: none;
+    max-width: 100%;
+    height: auto;
+  }
+}

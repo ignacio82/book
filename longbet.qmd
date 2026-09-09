@@ -1,6 +1,9 @@
 ---
 title: "LongBet: Time-Varying Treatment Effects in Panel Data"
 description: "LongBet extends Bayesian causal forests to panel data. This chapter studies a randomized staggered rollout, checks its estimates, and examines the assumptions behind heterogeneous effects and forecasts."
+format:
+  html:
+    css: longbet.css
 share:
   permalink: "https://book.martinez.fyi/longbet.html"
   description: "LongBet: heterogeneous, time-varying treatment effects in panel data"
@@ -92,8 +95,9 @@ $$
 \tau_t(X_i, S) = b_1\,\beta_S\,\nu(X_i, S, t) \;-\; b_0\,\beta_0\,\nu(X_i, 0, t),
 $$
 
-so that the effect realized by unit $i$ at time $t$ is
-$\tau_{it} = \tau_t(X_i, S_{it})$. Under control the exposure index is $0$, not
+For a treated cell, the realized contrast against never-treatment is
+$\tau_{it} = \tau_t(X_i, S_{it})$; it is zero in untreated cells. Under control
+the exposure index is $0$, not
 $S$: **both** the multiplier and the forest's input change between the factual
 and counterfactual arms. It is *not* $(b_1 - b_0)\,\beta_S\,\nu$. Every
 prediction evaluates the treatment forest twice: once on the factual exposure
@@ -790,7 +794,7 @@ ggplot(df_sweeps, aes(sweep, value, colour = chain)) +
 
 The likelihood depends on a product: multiplying all $\beta_S$ by a
 nonzero constant and dividing the treatment-forest leaves by the same constant
-leaves that product unchanged. The priors are not invariant to this operation.
+leaves that product unchanged. In general, the priors are not invariant to rescaling.
 They define a posterior over the separate coordinates, so persistent drift in
 $\beta$ is a warning to investigate, not behavior to dismiss as harmless.
 The engine includes a joint rescaling proposal, but that does not guarantee
@@ -831,24 +835,23 @@ warmup or retained draws may help, but model specification and sampler behavior
 also require investigation. We use the same rules for auxiliary fits and
 subgroup and policy summaries; success for the average does not validate them.
 
-::: {.callout-note title="Why parameter diagnostics diverge while the causal estimand agrees"}
-The parameter diagnostics row reports elevated $\hat R$ and low ESS because the LongBet
-treatment contrast, $\tau_t(X_i, S) = b_1 \beta_S \nu(X_i, S, t) - b_0 \beta_0 \nu(X_i, 0, t)$,
-has an exact discrete sign symmetry $(\beta, \nu) \leftrightarrow (-\beta, -\nu)$ as well
-as continuous scale trade-offs between $b_1$, the norm of $\beta$, and tree leaves $\nu$.
+::: {.callout-note title="Parameter symmetries do not excuse failed effect diagnostics"}
+The simultaneous sign change $(\beta, \nu) \leftrightarrow (-\beta, -\nu)$
+leaves the likelihood and the centered, symmetric priors unchanged. Chains
+that explore different sign modes can therefore disagree about these raw
+coordinates while agreeing about their product. Continuous rescaling is
+different: the proper priors constrain the separate parameter scales, even
+when the likelihood is unchanged.
 
-In multi-chain sampling with overdispersed initial values, different chains discover
-different allocations along this product ridge: one chain may sample negative $\beta_S$
-with negative tree leaves $\nu$, while another samples positive $\beta_S$ with positive $\nu$.
-Evaluating univariate $\hat R$ across chains on raw coordinate parameters along an
-unidentifiable manifold mechanically inflates between-chain variance.
-
-In contrast, the **causal estimand** $\text{ATT}_S$ is invariant to this gauge freedom.
-Across all four chains, the per-chain ATT point estimates agree within $\pm 0.005$,
-yielding a Monte Carlo standard error below 0.002 across the entire panel. The remaining
-modest $\hat R$ on the ATT reflects finite-sample tree MCMC dynamics: with 250 retained
-sweeps on a 120-tree ensemble where autocorrelation time is $\tau_{\text{int}} \approx 15$,
-rank-based effective sample size is physically bounded below the 400-draw screening threshold.
+Neither observation explains away a failed diagnostic for the ATT itself,
+which is invariant to both transformations. Its worst $\hat R$ here is
+`r sprintf("%.3f", main_diagnostics$summary$rhat_max)`, its minimum bulk ESS is
+`r sprintf("%.1f", main_diagnostics$summary$ess_min)`, and its largest estimated
+Monte Carlo standard error is
+`r sprintf("%.4f", max(main_diagnostics$bytarget$mcse))` log-GMV units.
+These checks must be assessed directly; parameter symmetries do not establish
+that the retained effect draws are representative. The number of trees and
+retained sweeps also impose no universal bound below the ESS threshold.
 :::
 
 `att_stability()` reports rank-normalized bulk and tail ESS, split $\hat R$,
@@ -1374,7 +1377,10 @@ exposure_columns <- which(week_study >= 11)
 tau_path_draws <- pred_all$tauhats[, exposure_columns, , drop = FALSE]
 initial_lift <- apply(expm1(tau_path_draws), c(1, 3), sum)
 rm(pred_all, tau_path_draws)
-gc(verbose = FALSE)
+# A cached counterfactual block does not replay its removal of lb_pred.
+# Release those observed-panel draws here as well on a cached render.
+if (exists("lb_pred", inherits = FALSE)) rm(lb_pred)
+invisible(gc(verbose = FALSE))
 annual_lift <- initial_lift + HOLD_WEEKS * expm1(tau_hat_draws)
 net_draws <- TAKE_RATE * gmv_week * annual_lift - ANNUAL_COST
 stopifnot(all(is.finite(net_draws)), all(gmv_week > 0))
@@ -1608,7 +1614,8 @@ case.
 ## When the Decision Has Three Outcomes {#sec-longbet-multi}
 
 The decision in @sec-longbet-decision had one outcome and one threshold: does
-this seller's extra GMV clear \$500. Launch reviews rarely stay that tidy. The
+12% of this seller's extra annual GMV cover the \$500 annual cost? Launch
+reviews rarely stay that tidy. The
 optimizer rewrites listings, so the questions actually asked are: does it sell
 more, does it save the seller work, and does it put words on the page that
 customers complain about. Three outcomes, three scales, one decision that needs
@@ -1616,8 +1623,9 @@ all three at once.
 
 The tempting move is to fit three models, read off three probabilities and
 multiply. Suppose each requirement holds with probability 0.8. Multiplying
-gives $0.8^3 = 0.512$. But the marginals do not pin the intersection down at
-all: it is as high as 0.8 if the same sellers satisfy all three, and as low as
+gives $0.8^3 = 0.512$. But the marginals do not pin the intersection down
+uniquely: for a given seller, it is as high as 0.8 if the same posterior draws
+satisfy all three, and as low as
 $0.8 + 0.8 + 0.8 - 2 = 0.4$ if the failures are spread as widely as possible.
 Anything in $[0.4, 0.8]$ is consistent with those three numbers, and 0.512 is
 just what you get by *assuming* independence. Those are the Fréchet bounds ---
@@ -1652,8 +1660,8 @@ probability of a complaint week and nothing else.
 
 The heterogeneity is deliberate and signed. Broad-catalog, fulfilled sellers
 gain GMV, save time and attract fewer complaints. Small-catalog, self-shipping
-sellers lose GMV, spend *more* time and attract more. Everyone in between
-trades one against another.
+sellers lose GMV, spend *more* time and attract more. Sellers in between can
+have aligned effects or face trade-offs across outcomes.
 
 ```{r multi-fit-settings}
 # Sampler and sample settings for the supplement, kept separate from the
@@ -2175,15 +2183,15 @@ multi_recovery %>%
 ```
 :::
 
-The recovery table shows that the model successfully separates the two regions
-across all three equations. On workload the model is close to exact: estimated
-region means track the true values (`-0.231` vs `-0.231` in the beneficial
-region, `0.208` vs `0.218` in the adverse one). On complaints, the probability
-change is recovered within a fraction of a percentage point (`-0.021` vs
-`-0.028` in the benefit region, `+0.023` vs `+0.022` in harm), with sign
-accuracy exceeding 98%. On GMV the two regions separate decisively as well
-(`+0.295` in benefit, `-0.133` in harm). **The model finds the harm**: it does
-not merely shrink everyone toward a common positive effect.
+The recovery table compares estimated and true effects in both regions.
+Across its six outcome-region combinations, the estimated regional mean has
+the correct sign in
+`r sum(sign(multi_recovery$est) == sign(multi_recovery$truth))` of
+`r nrow(multi_recovery)` cases. Seller-level sign accuracy ranges from
+`r sprintf("%.1f%%", 100 * min(multi_recovery$sign_acc))` to
+`r sprintf("%.1f%%", 100 * max(multi_recovery$sign_acc))` within these regions.
+This describes point recovery in this simulation; the sampling checks below
+determine whether the intervals and probabilities are ready to interpret.
 
 ### Sampler diagnostics and mixing
 
@@ -2192,37 +2200,42 @@ bind_rows(
   purrr::map_dfr(names(multi_att), ~ tibble::tibble(
     Model = "Joint fit", Outcome = .x,
     `R-hat (max)` = multi_att[[.x]]$rhat_max,
-    `ESS (min)` = multi_att[[.x]]$ess_min)),
+    `Bulk ESS (min)` = multi_att[[.x]]$ess_min,
+    `Tail ESS (min)` = multi_att[[.x]]$ess_tail_min,
+    `Screen passed` = multi_att[[.x]]$ess_ok & multi_att[[.x]]$rhat_ok)),
   purrr::map_dfr(names(multi_sep_att), ~ tibble::tibble(
     Model = "Separate fits", Outcome = .x,
     `R-hat (max)` = multi_sep_att[[.x]]$rhat_max,
-    `ESS (min)` = multi_sep_att[[.x]]$ess_min))
+    `Bulk ESS (min)` = multi_sep_att[[.x]]$ess_min,
+    `Tail ESS (min)` = multi_sep_att[[.x]]$ess_tail_min,
+    `Screen passed` = multi_sep_att[[.x]]$ess_ok & multi_sep_att[[.x]]$rhat_ok))
 ) %>%
   kable(digits = 3, caption = "Sampling diagnostics across event times for joint and separate fits.")
 ```
 
 Read that table before interpreting any probability in this section. Under
-@sec-longbet-sampler's screening rule ($\hat{R} \le 1.01$ and $\text{ESS} \ge 400$),
-**neither the joint fit nor the separate fits pass convergence screening** at
-this sampling budget. $\hat{R}$ values for both joint and standalone continuous
-equations remain elevated around 1.3--1.9, and minimum effective sample sizes
-sit in the low double digits.
+@sec-longbet-sampler's screening rule ($\hat{R} \le 1.01$ and both bulk and tail
+$\text{ESS} \ge 400$),
+**`r sum(vapply(c(multi_att, multi_sep_att), function(d) isTRUE(d$ess_ok & d$rhat_ok), logical(1)))`
+of `r length(multi_att) + length(multi_sep_att)` outcome fits pass** at this
+sampling budget. Across these rows, maximum $\hat{R}$ ranges from
+`r sprintf("%.3f", min(vapply(c(multi_att, multi_sep_att), function(d) d$rhat_max, numeric(1))))`
+to `r sprintf("%.3f", max(vapply(c(multi_att, multi_sep_att), function(d) d$rhat_max, numeric(1))))`,
+and minimum bulk ESS ranges from
+`r sprintf("%.1f", min(vapply(c(multi_att, multi_sep_att), function(d) d$ess_min, numeric(1))))`
+to `r sprintf("%.1f", max(vapply(c(multi_att, multi_sep_att), function(d) d$ess_min, numeric(1))))`.
 
-This is not an artifact of joint fitting: the standalone fits exhibit similarly
-slow exploration across independent chains. Nor is it solely caused by binary
-data: the continuous GMV and workload equations show higher $\hat{R}$ than the
-probit complaint equation. Rather, panel tree ensembles with flexible time
-splittings and Gaussian process exposure factors traverse posterior ridges
-slowly under Metropolis-Hastings proposals. Independent chains can find slightly
-different modes on finite budgets, even while point estimates and subgroup
-rankings remain stable and accurate.
+Failures in separate continuous-outcome fits show that any sampling problem
+cannot be attributed solely to joint fitting or binary data. These diagnostics
+do not identify its cause or establish stable seller rankings. More warmup and
+retained draws, checks of model specification, and investigation of the sampler
+may be needed; no particular increase in sampling budget guarantees a remedy.
 
-Consequently, the joint three-condition probabilities below should be understood
-as **exploratory calculations from an approximate sampler**, not calibrated
-posterior probabilities. Point recovery demonstrates that the model captures the
-structure of multiple trade-offs; posterior uncertainty requires substantially
-larger sampling budgets or specialized blocking moves before being treated as
-settled.
+Until the relevant checks pass, the three-condition probabilities are
+**exploratory calculations from the retained draws**. Good point recovery on
+this dataset does not validate their posterior uncertainty. Event-time ATT
+checks are also only a first screen: seller-level joint events require their
+own sampling diagnostics before use in a decision.
 
 ### What the joint fit bought, and what it cost
 
@@ -2244,21 +2257,24 @@ tibble::tibble(
 ```
 
 The first comparison isolates dependence: `multi_p_product` uses the *same
-fit's* marginals and simply discards the pairing between draws. The two differ
-by only
-`r sprintf("%.3f", abs(mean(multi_p_joint) - mean(multi_p_product)))`
-on average. That is a real finding: at this specific target column (exposure 8),
-posterior dependence between effect draws across outcomes happens to be small,
-meaning that assuming independence within this fit would have produced similar
-probabilities. But you could not have known that without fitting the joint model
-to check.
+fit's* marginals and simply discards the pairing between draws. The mean
+absolute seller-level difference is
+`r sprintf("%.3f", mean(abs(multi_p_joint - multi_p_product)))`, and the largest
+absolute difference is
+`r sprintf("%.3f", max(abs(multi_p_joint - multi_p_product)))`.
+Taking absolute differences before averaging prevents positive and negative
+seller differences from cancelling. This measures the effect of discarding
+dependence for this particular screen at exposure 8 in the retained draws;
+agreement here does not establish independence across outcomes or validate
+either probability while sampling remains unresolved.
 
-The second comparison is with three completely separate models. Separate fits
-yield a slightly lower average pass rate
-(`r sprintf("%.3f", mean(multi_p_separate))` vs `r sprintf("%.3f", mean(multi_p_joint))`)
-and a marginally different Brier score against truth. Because separate models
-cannot share residual covariance, their fitted forests partition variation
-differently.
+The second comparison is with three completely separate models. Their mean
+pass probability is `r sprintf("%.3f", mean(multi_p_separate))`, compared with
+`r sprintf("%.3f", mean(multi_p_joint))` for the joint fit, and the table reports
+their Brier scores against truth. Separate models do not share residual
+covariance, so their fitted forests can partition variation differently.
+Unresolved Monte Carlo error can also contribute to these differences; this
+run does not isolate those explanations.
 
 ### Innovation correlation
 
@@ -2456,12 +2472,13 @@ already sitting in `x`. This breaks parallel trends by construction, because
 treated sellers were climbing before they were treated.
 
 In the second, the field team picks sellers on something the data never
-records --- call it ambition. Ambitious sellers adopt earlier, and they would
-also have grown faster anyway. Nothing in the lookback window reveals it.
+records --- call it ambition. Ambitious sellers adopt earlier and also receive
+a larger persistent boost to untreated log GMV beginning in week 11. Nothing
+in the lookback window reveals that later level shift.
 
 ```{r obs-dgp}
 set.seed(8123)
-u_i <- rnorm(n)                      # unrecorded, drives adoption and growth
+u_i <- rnorm(n)                      # unrecorded, drives adoption and a later level shift
 
 make_obs <- function(scenario) {
   y0s <- matrix(level_i, n, Tn) + outer(drift_i, weeks_all, "*") +
@@ -2481,7 +2498,7 @@ make_obs <- function(scenario) {
            else
              1.5 * u_i + rnorm(n, 0, .5)
 
-  # Same arm sizes as the experiment: four waves of 15%, a 40% holdout.
+  # Same nominal allocation fractions: four waves of 15%, a 40% holdout.
   q <- quantile(score, c(.40, .55, .70, .85))
   wv <- ifelse(score >= q[4], "W1", ifelse(score >= q[3], "W2",
         ifelse(score >= q[2], "W3", ifelse(score >= q[1], "W4", "Holdout"))))
@@ -2507,9 +2524,9 @@ make_obs <- function(scenario) {
 #| message: false
 #| output: false
 
-# Event-time truth, and the same holdout comparison the experiment used:
-# each wave against the never-treated group, differenced from a common
-# pre-window, pooled by sample size.
+# Event-time truth and an unadjusted wave-versus-holdout DiD: each wave
+# against the never-treated group, differenced from a common pre-window,
+# pooled by sample size. There is no randomized-stratum reweighting here.
 obs_truth <- function(d) vapply(seq_len(S_observed), function(s) {
   m <- d$S[, week_study] == s
   if (any(m)) mean(d$tau[, week_study][m]) else NA_real_
@@ -2662,8 +2679,9 @@ fit_variant <- function(xmat, ri) {
                sigma_prior_a = 2, sigma_prior_b = 1,
                num_trees_pr = 60, num_trees_trt = 60,
                sig_knl = 1, lambda_knl = 2, random_intercept = ri, random_seed = 42)
-  # summary_only: this section reads posterior means only, and the full
-  # [n x T x draws] array is several hundred megabytes per variant.
+  # Per-cell posterior means suffice here; exposure-level draws remain
+  # available for intervals and diagnostics. The full [n x T x draws] array
+  # would occupy several hundred megabytes per variant.
   p <- predict(f, x = xmat, z = z_train,
                t = week_study,
                summary_only = TRUE, random_seed = 1)
@@ -2671,11 +2689,22 @@ fit_variant <- function(xmat, ri) {
                            `Residual SD` = as.vector(f$sigma0_draws) * f$sdy)
   if (ri) variant_targets <- rbind(variant_targets,
     `Unit-intercept SD` = sqrt(f$sigma_gamma_draws) * f$sdy)
-  list(fit    = f,
-       att    = get_att(p, alpha = 0.05),
-       mu_hat = p$muhats0.mean,
-       diagnostics = diagnose_draws(variant_targets, f,
-                                    paste("Unit-intercept variant", ri, ncol(xmat))))
+  diagnostics <- diagnose_draws(variant_targets, f,
+                                paste("Unit-intercept variant", ri, ncol(xmat)))
+  # The comparisons below need scale draws and predictions, not the serialized
+  # forests. Retaining three complete fitted models makes this block's memory
+  # use and cache serialization unnecessarily large.
+  result <- list(
+    fit = list(sigma0_draws = f$sigma0_draws, sdy = f$sdy,
+               random_intercept = f$random_intercept,
+               sigma_gamma_draws = f$sigma_gamma_draws),
+    att = get_att(p, alpha = 0.05),
+    mu_hat = p$muhats0.mean,
+    diagnostics = diagnostics
+  )
+  rm(f, p)
+  invisible(gc())
+  result
 }
 
 v_full_no <- fit_variant(x,      FALSE)
@@ -2841,7 +2870,11 @@ under the wrong error model.
     the treatment forest but leaves calendar time visible. It changes the
     model's restrictions, not the need to validate its predictions.
   - **Unit random intercepts included in counterfactuals.** `predict()`
-    automatically incorporates $\gamma_i$ into `muhats0` and `preds`. The
+    incorporates $\gamma_i$ into `muhats0` and `preds` when predicting for the
+    training sellers in their original row order. The implementation matches
+    these intercepts by row position, not seller ID; reordering sellers or
+    replacing them with a new group of the same size would attach the wrong
+    intercepts. The
     estimated unit effects on the outcome scale are
     `rowMeans(fit$gamma_draws) * fit$sdy`, averaging across retained draws.
   - **Named arguments for `predict()`.** Always pass `x`, `z`, and `t` by name.
@@ -2861,8 +2894,10 @@ moves goes into the treatment forest, ask **when it was determined relative to
 the exposure whose effect you are estimating**, and whether the treatment could
 have changed it.
 
-  - **Fixed seller attributes, or anything settled before launch.** Safe. This
-    is ordinary covariate adjustment.
+  - **Fixed seller attributes and other pre-treatment measurements.** These
+    are candidates for ordinary covariate adjustment. Choose them using the
+    causal structure: timing alone does not rule out collider adjustment,
+    especially in an observational panel.
   - **A variable realized just before the week being scored, and not itself
     affected by the treatment.** Usually fine, and often the point --- weather,
     a site-wide promotional calendar, a competitor's outage.
@@ -2988,7 +3023,7 @@ tibble(
                                  `Without it` = PAL[["DiD vs holdout"]])) +
   labs(x = "Promotional intensity that week", y = "Effect on log weekly GMV",
        colour = NULL,
-       title = "An effect that depends on this week, not on this seller") +
+       title = "Promotions also change the treatment effect within a seller") +
   theme_minimal() +
   theme(legend.position = "bottom")
 ```

@@ -77,7 +77,7 @@ format:
     number-depth: 2
     include-in-header:
       text: |
-        <script defer src="https://umami.martinez.fyi/script.js" data-website-id="bc587120-3bd3-4c2d-b463-5eb64dd4e330"></script>
+        <script async src="https://umami.martinez.fyi/script.js" data-website-id="bc587120-3bd3-4c2d-b463-5eb64dd4e330"></script>
     code-tools:
       source: true   
 

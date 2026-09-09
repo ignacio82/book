@@ -78,7 +78,6 @@ RUN R -q -e "stopifnot( \
     cat('longbet R', as.character(packageVersion('longbet')), \
         '/ python', py[['__version__']], 'ok\n')"
 
->>>>>>> longbet
 WORKDIR /book
 COPY . .
 
