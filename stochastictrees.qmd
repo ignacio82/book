@@ -1,80 +1,70 @@
 ---
-title: "Stochastic Trees"
-description: "BART and its causal derivatives: flexible non-parametric models that capture non-linearities and interactions without hand-specified functional forms, and the assumptions they still require."
+title: "Stochastic Trees and Heterogeneous Effects"
+description: "BART and its causal derivatives: flexible non-parametric models that capture non-linearities and interactions without hand-specified functional forms, ordinal outcomes, and adaptive designs."
 share:
   permalink: "https://book.martinez.fyi/stochastictrees.html"
-  description: "Stochastic trees: BART and its derivatives for causal inference"
+  description: "Stochastic trees and heterogeneous effects: BART, BCF, and tree-based causal inference"
   linkedin: true
   email: true
   mastodon: true
 ---
 
-This section will delve into a specific family of non-parametric models that has
-gained considerable traction in the causal inference world: Bayesian Additive
-Regression Trees (BART) and some of its notable derivatives. These models offer
-a unique blend of flexibility and interpretability, making them particularly
-well-suited for causal inference tasks.
+This section delves into a powerful family of non-parametric Bayesian models
+grounded in Bayesian Additive Regression Trees (BART) and its modern derivatives.
+By representing unknown response surfaces as sums of shallow decision trees endowed
+with regularizing priors, these models capture complex non-linearities and high-order
+interactions automatically, without requiring hand-crafted functional forms or polynomial
+expansions.
 
-Before we dive into the specifics of these models, it's crucial to understand
-the fundamental assumptions that underpin their use in causal inference. Like
-many causal inference methods, BART and its derivatives rely on two key
-assumptions: the Stable Unit Treatment Value Assumption (SUTVA) and strong
-ignorability.
+Before applying these methods to causal questions, it is crucial to keep their
+identifying assumptions clearly in view. When estimating causal effects, tree-based
+estimators rely on the standard foundations of causal inference: the Stable Unit
+Treatment Value Assumption (SUTVA) and strong ignorability.
 
 1.  **Stable Unit Treatment Value Assumption (SUTVA):** SUTVA comprises two
     parts:
 
-    a. **No interference:** The treatment applied to one unit doesn't influence 
-    the outcomes of other units. In a business context, a marketing campaign 
-    targeted at one customer wouldn't sway the purchasing decisions of others.
-  
-    b. **No hidden variations of treatments:** There's only one version of
-    each treatment level. If we're studying the effect of a new
-    training program, all employees receive the same version of it.
+    a. **No interference:** The treatment applied to one unit does not influence
+    the potential outcomes of other units. In a marketplace or network setting,
+    interference between units must be addressed by study design or specialized models.
+
+    b. **No hidden variations of treatment:** Each treatment level corresponds to a
+    well-defined, uniform intervention across all recipient units.
 
 2.  **Strong Ignorability:** This assumption consists of two components:
 
-    a. **Unconfoundedness:** Given the observed covariates, treatment 
-    assignment is independent of potential outcomes. In essence, if we account
-    for all relevant variables, whether a unit receives treatment or not 
-    is unrelated to their outcomes under either condition.
+    a. **Unconfoundedness:** Given the observed covariates $X$, treatment assignment
+    is conditionally independent of potential outcomes. No unmeasured confounding
+    may distort the comparison.
   
-    b. **Positivity (or overlap):** Every unit has a non-zero probability of
-    receiving each treatment level. In a business setting, this means 
-    every customer has some chance of being exposed to a new marketing
-    campaign, regardless of their characteristics.
-    
-These assumptions are the bedrock upon which we build causal interpretations.
-When these conditions hold, we can attribute the observed
-differences in outcomes between treated and untreated units to the treatment
-itself, rather than to confounding factors.  
+    b. **Positivity (or overlap):** Every unit in the target population has a
+    non-zero probability of receiving each treatment condition ($0 < P(Z=1 \mid X) < 1$).
+    Forests can extrapolate across sparse regions, but causal identification requires overlap.
 
-We'll explore three key models in this family: BART, Bayesian Causal Forests
-(BCF), and LongBet. Each of these models builds upon its predecessors, offering
-improvements in terms of causal effect estimation, handling of confounding, and
-applicability to different data structures.
+### Roadmap for this part
 
-In our exploration, we'll be leveraging the [stochtree R package](https://stochtree.ai/)
-[@stochastictree], which implements these models using a technique called
-"warm-start" as introduced by @krantsevich23a. The warm-start approach is a
-computational innovation that significantly improves the efficiency and
-effectiveness of these models, particularly for large datasets.
+The chapters in this part explore the tree-based toolkit across diverse modeling roles.
+These methods do not share a single monolithic sampler or engine; different packages
+implement distinct sampling algorithms tailored to their mathematical structure:
 
-The warm-start technique works by using a fast approximation method (XBART) to
-generate initial tree structures, which are then used as starting points for the
-full Bayesian MCMC algorithm. This approach combines the speed of approximate
-methods with the statistical rigor of full Bayesian inference, resulting in
-models that are both computationally efficient and statistically robust.
+- **[BART](bart.qmd):** The classical Bayesian Additive Regression Tree framework,
+  providing flexible surface estimation and coherent posterior uncertainty.
+- **[Bayesian Causal Forests (BCF)](bcf.qmd):** Tailored causal trees that separate
+  prognostic baseline estimation from treatment effect moderation, incorporating
+  the estimated propensity score to prevent regularization-induced confounding.
+- **[Causal Propensity](causalPropensity.qmd):** Modern machine learning and tree-based
+  methods for modeling the assignment mechanism itself.
+- **[PhoBART](phobart.qmd):** Ordinal tree models designed for discrete rating scales,
+  survey scores, and bounded business metrics, illustrating that tree ensembles extend
+  well beyond Gaussian regression.
+- **[Bayesian Adaptive Designs (BAD)](bad.qmd):** Dynamic experimentation and multi-armed
+  bandit allocation, connecting posterior effect estimates directly to sequential sample
+  allocation and operational decisions.
 
-By using warm-start, we can fit these sophisticated models to larger datasets
-and explore more complex causal relationships than was previously feasible. This
-makes these models particularly valuable for business data science applications,
-where we often deal with large, complex datasets and need to uncover nuanced
-causal relationships.
-
-Let's begin our journey into the world of stochastic trees and their
-applications in causal inference, keeping in mind the critical assumptions that
-allow us to draw causal conclusions from these powerful tools.
+When causal questions involve time---such as staggered feature rollouts, market-level
+interventions, or longitudinal panels---we take these ideas further. The subsequent part,
+**[Longitudinal and Panel Causal Inference](longitudinal.qmd)**, brings stochastic trees
+to panel data with **[LongBet](longbet.qmd)**.
 
 ::: {.callout-tip}
 ## Learn more
@@ -82,4 +72,6 @@ allow us to draw causal conclusions from these powerful tools.
     Effects.
   - @stochastictree Stochastic tree ensembles (XBART and BART) for supervised
     learning and causal inference.
-::: 
+  - @hahn2020bayesian Bayesian Regression Tree Models for Causal Inference:
+    Regularization, Confounding, and Heterogeneous Effects.
+:::

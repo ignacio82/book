@@ -14,11 +14,11 @@ In the modern business landscape, data isn't just an asset – it's the raw mate
 
 Throughout this book, we navigate the core principles of causal inference, learning how to confidently identify cause-and-effect relationships within data. Our exploration emphasizes a "decisions first" philosophy, ensuring data analysis is always laser-focused on informing and optimizing decision-making. Topics include:
 
-- The Potential Outcomes Framework & Causal Inference
-- Randomized Controlled Trials (A/B testing, factorial designs)
-- Observational methods (Matching, Causal Impact, Synthetic Control)
-- Generalized Linear Models & Bayesian thinking
-- Stochastic Trees (BART, BCF)
+- The Potential Outcomes Framework & Causal Inference Foundations
+- Randomized Experiments and Observational Comparisons (A/B testing, factorial designs, instrumental variables, matching)
+- Generalized Linear Models & Bayesian Thinking
+- Stochastic Trees & Heterogeneous Effects (BART, BCF, causal propensity, PhoBART, BAD)
+- Longitudinal and Panel Causal Inference (CausalImpact, Synthetic Control, LongBet dynamic effects, decisions, and extensions)
 
 ## 🤖 Meet Iggy: Your AI Data Science Companion
 
@@ -59,7 +59,7 @@ To avoid installing R and all its dependencies directly on your host machine, yo
    make preview
    ```
 
-*Note: When rendering locally, Quarto saves execution outputs to `_freeze/`. Committing `_freeze/` allows GitHub Actions to publish in 1–2 minutes without re-running long MCMC computations in CI.*
+*Note: When rendering locally, Quarto saves execution outputs to `_freeze/`. Committing `_freeze/` allows GitHub Actions to publish in 1–2 minutes without re-running long MCMC computations in CI. After modifying shared LongBet R files, explicitly render all three LongBet chapters (`./render.sh longbet.qmd`, `./render.sh longbet_decisions.qmd`, `./render.sh longbet_extensions.qmd`) to refresh their frozen outputs.*
 
 ## 📄 License
 
