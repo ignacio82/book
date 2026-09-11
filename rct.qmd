@@ -1,9 +1,9 @@
 ---
-title: "The Gold Standard"
-description: "Randomized controlled trials, from 1920s agriculture to the modern A/B test: why randomization is the most credible route to a causal claim, and where its apparent simplicity misleads."
+title: "Randomized Experiments and Observational Comparisons"
+description: "Randomized controlled trials, from 1920s agriculture to modern online experiments, and the bridge to observational comparisons when randomization is impossible."
 share:
   permalink: "https://book.martinez.fyi/rct.html"
-  description: "The gold standard: the promise and the limits of randomized controlled trials"
+  description: "Randomized experiments and observational comparisons: design, identification, and trade-offs"
   linkedin: true
   email: true
   mastodon: true
@@ -18,13 +18,22 @@ Today, RCTs are considered the gold standard for establishing causality in many
 fields, from healthcare to social policy.
 
 In the tech sector, a simplified version of the RCT – the A/B test – has become
-ubiquitous. Companies like Google, Amazon, and Facebook routinely run A/B tests
-to evaluate new features, website designs, and marketing campaigns. The allure
-of A/B testing lies in its simplicity: randomly assign users to different
-groups, expose them to different versions of a product or experience, and
-measure the outcomes. This allows for a clean comparison, isolating the effect
-of the change from other factors that might influence user behavior.
+ubiquitous. Companies routinely run A/B tests to evaluate new features,
+website designs, and marketing campaigns. The allure of A/B testing lies in its
+simplicity: randomly assign users to different groups, expose them to different
+versions of a product or experience, and measure the outcomes. This allows for a
+clean comparison, isolating the effect of the change from other factors that might
+influence user behavior.
 
-
-
-
+Yet in business, pure randomization is not always possible or sufficient.
+Budget constraints, customer experience considerations, and operational
+realities often force us to evaluate interventions using observational data.
+This part concludes with matching, which serves as a conceptual and methodological
+bridge from randomized experiments to observational identification. When treatment
+is not randomized, comparing treated and untreated units requires strong, explicit
+identifying assumptions: that all confounders influencing both assignment and
+potential outcomes are measured (unconfoundedness or conditional exchangeability),
+that every unit has a non-zero probability of receiving either treatment level
+(positivity and overlap), and that there is no interference or hidden treatment
+variation (SUTVA). Matching attempts to recreate balance on observed covariates,
+highlighting what observational designs can adjust for and what they must assume.

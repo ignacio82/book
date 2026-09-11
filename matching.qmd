@@ -53,6 +53,27 @@ based on their various characteristics. By matching on this propensity score, we
 create comparable groups, even when those groups differ on a multitude of
 individual attributes.
 
+## Target Trials and Comparison Groups
+
+When randomized assignment is off the table, constructing a comparison group is not simply an exercise in running a matching algorithm on whatever data happens to be stored in a warehouse. As @hernan2016using emphasize, causal analysis of observational data is most transparently organized as the **emulation of a hypothetical target trial**---the pragmatic randomized experiment we would have conducted to answer the causal question if we had been able to.
+
+In the target trial framework, matching is just one adjustment method within a broader protocol, not another name for that framework or a way to recreate randomization. Emulating a target trial requires explicitly defining seven key protocol components before touching the analysis: eligibility criteria, treatment strategies, assignment procedure, time zero and follow-up window, outcome of interest, causal estimand, and statistical analysis plan.
+
+@tbl-target-trial-bootcamp illustrates how these protocol elements apply to our AI bootcamp example. These protocol details are illustrative; the cross-sectional simulation that follows demonstrates confounding adjustment and its limits, rather than a full longitudinal target trial emulation.
+
+| Protocol element | Target randomized trial | Observational emulation (Bootcamp) |
+| :--- | :--- | :--- |
+| **Eligibility criteria** | Full-time software engineers at TechGiant Inc. with active employment. | Same criteria applied to HR records; excludes contract or part-time staff. |
+| **Treatment strategies** | 1. Attend and complete the AI bootcamp.<br>2. Continue normal engineering work without bootcamp. | 1. Initiated bootcamp participation within enrollment window.<br>2. Did not initiate bootcamp participation. |
+| **Assignment procedure** | Random assignment (1:1) at time zero. | Observational self-selection; unconfoundedness conditional on observed covariates assumed. |
+| **Time zero & follow-up** | Time zero is day of randomization. Follow-up is 12 months post-randomization. | Time zero is cohort announcement date. Follow-up is 12 months post-announcement. |
+| **Outcome** | Salary increase ($) over the 12-month follow-up period. | Salary increase ($) recorded in annual compensation review. |
+| **Causal estimand** | Average treatment effect (ATE) in the eligible engineer population. | Average treatment effect on the treated (ATT) or effect in the matched subpopulation with common overlap. |
+| **Analysis plan** | Intention-to-treat comparison of mean salary increases across randomized arms. | Nearest-neighbor matching on pre-treatment covariates with balance diagnostics and regression adjustment. |
+: Target trial protocol elements applied to the AI bootcamp evaluation {#tbl-target-trial-bootcamp}
+
+A fundamental principle of this framework is temporal alignment: **covariates used for matching must precede treatment** (measured prior to time zero). Matching on post-treatment variables can introduce collider bias or inadvertently control away part of the treatment's effect. Furthermore, achieving observed balance across measured covariates does not prove the absence of unmeasured confounding. Finally, exclusions for lack of overlap necessarily change the target population from the full eligible cohort to the matched subset; when units without common support are trimmed, the estimand shifts from an overall population average to the specific subpopulation for which comparable matches exist.
+
 ## The Mechanics of Matching
 
 Matching typically involves four key steps:
@@ -232,8 +253,10 @@ Based on their findings, King and Nielsen offer several recommendations:
     coarsened exact matching.
 2.  Use PSM Carefully: If using PSM, researchers should be aware of its
     limitations and stop pruning before the paradox kicks in.
-3.  Balance Checking: Regardless of the matching method used, researchers should
-    always check covariate balance before and after matching.
+3.  Balance Checking: Regardless of the matching method used, researchers
+    should always assess covariate balance and overlap directly across the
+    original covariates before and after matching, rather than relying solely
+    on the distribution of a fitted propensity score.
 4.  Consider Alternative Uses: While discouraging PSM for matching, the authors
     note that propensity scores can be useful in other contexts, such as
     weighting or subclassification.
@@ -309,16 +332,16 @@ m.out <- matchit(bootcamp ~ experience,
                  ratio = 1)
 matched_data <- match.data(m.out)
 
-# Estimate ATE on matched data
+# Estimate ATT on the matched sample (1:1 matching pairs each treated participant)
 matched_model <- lm(salary_increase ~ bootcamp,
                     data = matched_data,
                     weights = weights)
-matched_ate <- coef(matched_model)["bootcamp"]
+matched_att <- coef(matched_model)["bootcamp"]
 
 # Print results
-cat("True ATE: $2000\n")
-cat("Naive ATE estimate:", round(naive_ate, 2), "\n")
-cat("Matched ATE estimate:", round(matched_ate, 2), "\n")
+cat("True ATE / ATT: $2000\n")
+cat("Naive comparison estimate:", round(naive_ate, 2), "\n")
+cat("Matched estimate (ATT in matched sample):", round(matched_att, 2), "\n")
 
 # Visualize results
 ggplot(data, aes(x = experience,
@@ -401,13 +424,20 @@ robustness in our results.
 
 Matching, when used judiciously, can be a powerful ally in our quest to uncover
 causal relationships. But like any tool, its effectiveness depends on the skill
-and understanding of those who wield it. As we continue to push the boundaries
-of causal inference, let's carry forward this nuanced understanding of matching,
-always remaining open to new developments and critiques that can refine our
-methodological toolkit.
+and understanding of those who wield it.
+
+In later chapters on stochastic tree ensembles, we will see that propensity
+information plays an essential role even in flexible Bayesian modeling. As
+discussed in [Bayesian Causal Forests](bcf.qmd), incorporating the estimated
+propensity score into the prognostic forest helps mitigate *regularization-induced
+confounding* (RIC) under the model's assumptions. However, neither matching nor
+conditioning on a propensity score eliminates unmeasured confounding: if key
+covariates determining treatment assignment remain unobserved, observational
+estimates remain vulnerable to hidden bias.
 
 ::: {.callout-tip}
 ## Learn more
+ - @hernan2016using Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available.
  - @stuart2011matchit {MatchIt}: Nonparametric Preprocessing for Parametric Causal Inference.
  - @King_Nielsen_2019 Why Propensity Scores Should Not Be Used for Matching.
 :::

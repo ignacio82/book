@@ -1,0 +1,115 @@
+---
+title: "Longitudinal and Panel Causal Inference"
+description: "Causal effects across time: aggregate interventions, donor panels, and staggered rollouts with heterogeneous effects."
+aliases:
+  - /other_methods.html
+share:
+  permalink: "https://book.martinez.fyi/longitudinal.html"
+  description: "Causal inference across time: assumptions, estimation, and decisions"
+  linkedin: true
+  email: true
+  mastodon: true
+---
+
+::: {.callout-note title="Looking for non-experimental cross-sectional methods?"}
+If you arrived here looking for cross-sectional comparison group methods (formerly grouped under non-experimental methods), see **[Matching](matching.qmd)** in the preceding part on randomized experiments and observational comparisons.
+:::
+
+Many of the most important decisions in business cannot be evaluated with a simple
+before-and-after contrast or a static A/B test. Marketing organizations launch regional
+ad campaigns across designated market areas; operations teams roll out warehouse
+upgrades across fulfillment centers; product teams deploy new features gradually across
+seller cohorts. In each case, **time is an active dimension of the causal question**.
+
+When analyzing dynamic interventions, two distinct time scales must be separated:
+
+1. **Calendar time ($t$):** Shared by all units simultaneously. Calendar time carries
+   market-wide macroeconomic shocks, seasonal demand swings, platform outages, and
+   competitor actions.
+2. **Time since adoption ($S$ or exposure time):** Unit-specific elapsed duration since
+   treatment began. Exposure time governs how treatment responses evolve: novelty bumps
+   that fade, cumulative improvements that compound, or operational disruptions that resolve.
+
+In a simultaneous intervention (like a regional ad blitz), calendar time and exposure time
+move in lockstep. In a staggered rollout, different units adopt at different calendar dates,
+disentangling shared calendar seasonality from unit-level duration effects.
+
+## Navigating Longitudinal Causal Methods
+
+This part brings together time series, donor panels, and micro-level longitudinal models.
+These methods are not interchangeable, nor do they rely on a single universal identifying
+assumption like parallel trends. Rather, each method anchors identification in a distinct
+source of empirical leverage.
+
+| Question & Data Structure | Chapter | Source of Identification & Central Assumptions |
+| :--- | :--- | :--- |
+| **Aggregate intervention on a single treated time series** (e.g., nationwide campaign) with contemporaneous control series. | **[CausalImpact / BSTS](causalimpact.qmd)** | **Predictive stability of unaffected controls.** Identification assumes that control series are strictly untreated (no spillover/contamination) and that the pre-intervention predictive relationship between controls and the target series remains stable post-intervention. |
+| **Intervention on one or a few aggregate units** with a donor pool of untreated comparative units over time. | **[Synthetic Control](bsynth.qmd)** | **Pre-treatment convex fit & donor suitability.** Identification rests on constructing a convex combination of untreated donors that closely tracks the treated unit's pre-treatment trajectory. Assumes no anticipation, no donor contamination, and that unobserved time-varying confounders are bounded by good pre-intervention fit. |
+| **Randomized staggered rollout across large micro panels** (e.g., sellers, users, accounts). | **[LongBet](longbet.qmd)** | **Randomized launch timing.** Identification comes directly from randomized assignment to launch cohorts or holdout status. The panel model provides precision and dynamic effect resolution across exposure times, not identification itself. |
+| **Observational staggered rollout / panel data** with self-selected or targeted adoption timing. | **[LongBet Extensions](longbet_extensions.qmd)** | **Conditional exchangeability of adoption timing.** Swaps parallel trends for selection on observables: assumes treatment timing is unconfounded given observed pre-treatment covariates and baseline history. |
+: Method selection across longitudinal and panel causal designs {#tbl-longitudinal-methods}
+
+## History, Confounding, and Serial Dependence
+
+A common misconception in panel analysis is that having a rich pre-treatment history
+automatically eliminates confounding. Pre-treatment observations are invaluable: they allow
+us to model unit-specific baselines, estimate pre-intervention trends, and explain away
+enormous amounts of idiosyncratic variation.
+
+However, **pretreatment history does not automatically remove unobserved or time-varying confounding**.
+If units adopt earlier because of an unmeasured variable that also changes their future trajectory
+(such as manager enthusiasm or unrecorded customer momentum), conditioning on historical
+revenue cannot eliminate the resulting selection bias.
+
+It is equally vital to distinguish **serial dependence** from **confounding**:
+
+- **Serial dependence** is an error structure and uncertainty problem: observations from the
+  same unit across consecutive weeks share autocorrelated innovations. Failing to account for
+  serial correlation leads to understated standard errors and overconfident intervals.
+- **Confounding** is an identification problem: systematic differences in potential outcomes
+  between adoption cohorts. A model can have perfectly modeled AR(1) errors and remain
+  hopelessly confounded, or be cleanly identified by randomization while requiring careful
+  serial correlation diagnostics.
+
+Furthermore, Bayesian posterior intervals in these chapters are conditional on the stated
+structural priors, likelihoods, and identifying assumptions. They provide coherent Bayesian
+uncertainty under those modeling assumptions, but do not promise automatically calibrated
+repeated-sampling coverage if the error or assignment model is misspecified.
+
+## Roadmap for this Part
+
+The chapters in this part form a structured progression from aggregate macro-interventions
+to granular, decision-focused panel modeling:
+
+1. **[CausalImpact](causalimpact.qmd):** Bayesian structural time-series (BSTS) models for
+   aggregate interventions, using contemporaneous control markets and state-space decomposition.
+2. **[Bayesian Synthetic Control](bsynth.qmd):** Panel-based synthetic control with donor weights,
+   shrinkage, and posterior predictive intervals for comparative case studies.
+3. **[LongBet: Dynamic Treatment Effects in Staggered Rollouts](longbet.qmd):** The core
+   LongBet framework, introducing Bayesian causal trees on panel data. We study a randomized
+   capacity-constrained rollout, compare estimates against difference-in-differences and ANCOVA
+   benchmarks, and recover heterogeneous trajectories.
+   *(Readers already familiar with [Bayesian Causal Forests](bcf.qmd) can jump directly into
+   LongBet; prior reading of PhoBART or BAD is not required.)*
+4. **[LongBet: Decisions and Multiple Outcomes](longbet_decisions.qmd):** A direct continuation
+   of the marketplace simulation, translating dynamic effect trajectories into 52-week economic
+   valuations and evaluating joint multi-outcome decisions (GMV, workload, complaints) via
+   triangular SUR modeling.
+5. **[LongBet: Forecasting, Observational Panels, and Diagnostics](longbet_extensions.qmd):**
+   Advanced extensions of the core rollout, covering Gaussian process forecasting beyond the
+   trial window, observational panel identification, unit-level random intercepts, serial
+   correlation checks, time-varying moderators, and operating characteristics.
+
+### Neighboring Methods and Scope
+
+This part focuses on a selected Bayesian and machine learning toolkit for business decisions.
+It does not attempt comprehensive coverage of the entire econometric longitudinal literature.
+Classic two-way fixed effects (TWFE), modern staggered difference-in-differences estimators
+[@callaway2021did; @roth2023trending], and event-study regressions provide indispensable
+benchmarks that we explicitly compare against throughout our analysis.
+
+Finally, a cautionary note on dynamic complexity: simply adding time-varying covariates to a
+regression or tree model does not solve **treatment-confounder feedback** (where past treatments
+affect future confounders, which in turn affect future treatments). Addressing dynamic feedback
+requires specialized longitudinal g-methods or structural marginal models, which remain outside
+the single-adoption framework treated here.
