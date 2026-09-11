@@ -10,7 +10,7 @@
 <meta name="author" content="Ignacio Martinez">
 <meta name="description" content="Measuring the effect of a campaign, price change, or launch against a counterfactual forecast built from control series, with cautionary tales about stability and spillovers.">
 
-<title>14&nbsp; Bayesian Structural Time Series – Business Data Science</title>
+<title>23&nbsp; Bayesian Structural Time Series – Business Data Science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -91,7 +91,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./bsynth.html" rel="next">
-<link href="./matching.html" rel="prev">
+<link href="./longitudinal.html" rel="prev">
 <link href="./hex.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -135,19 +135,19 @@ div.csl-indent {
 <script async="" src="https://umami.martinez.fyi/script.js" data-website-id="bc587120-3bd3-4c2d-b463-5eb64dd4e330"></script>
 
 
-<meta property="og:title" content="14&nbsp; Bayesian Structural Time Series – Business Data Science">
+<meta property="og:title" content="23&nbsp; Bayesian Structural Time Series – Business Data Science">
 <meta property="og:description" content="Measuring the effect of a campaign, price change, or launch against a counterfactual forecast built from control series, with cautionary tales about stability and spillovers.">
 <meta property="og:image" content="https://book.martinez.fyi/causalimpact_files/figure-html/casualimapct-1.png">
 <meta property="og:site_name" content="Business Data Science">
 <meta property="og:image:height" content="960">
 <meta property="og:image:width" content="1344">
-<meta name="twitter:title" content="14&nbsp; Bayesian Structural Time Series – Business Data Science">
+<meta name="twitter:title" content="23&nbsp; Bayesian Structural Time Series – Business Data Science">
 <meta name="twitter:description" content="Measuring the effect of a campaign, price change, or launch against a counterfactual forecast built from control series, with cautionary tales about stability and spillovers.">
 <meta name="twitter:image" content="https://book.martinez.fyi/causalimpact_files/figure-html/casualimapct-1.png">
 <meta name="twitter:image-height" content="960">
 <meta name="twitter:image-width" content="1344">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="citation_title" content="[14]{.chapter-number}&nbsp; [Bayesian Structural Time Series]{.chapter-title}">
+<meta name="citation_title" content="[23]{.chapter-number}&nbsp; [Bayesian Structural Time Series]{.chapter-title}">
 <meta name="citation_author" content="Eray Turkel">
 <meta name="citation_author" content="Ignacio Martinez">
 <meta name="citation_fulltext_html_url" content="https://book.martinez.fyi">
@@ -237,6 +237,7 @@ div.csl-indent {
 <meta name="citation_reference" content="citation_title=Local gaussian process extrapolation for BART models with applications to causal inference;,citation_author=Meijia Wang;,citation_author=Jingyu He;,citation_author=P. Richard Hahn;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_issue=2;,citation_doi=10.1080/10618600.2023.2240384;,citation_volume=33;,citation_journal_title=Journal of Computational and Graphical Statistics;">
 <meta name="citation_reference" content="citation_title=What’s trending in difference-in-differences? A synthesis of the recent econometrics literature;,citation_author=Jonathan Roth;,citation_author=Pedro H. C. Sant’Anna;,citation_author=Alyssa Bilinski;,citation_author=John Poe;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=2;,citation_doi=10.1016/j.jeconom.2023.03.008;,citation_volume=235;,citation_journal_title=Journal of Econometrics;">
 <meta name="citation_reference" content="citation_title=Inference in Bayesian additive vector autoregressive tree models;,citation_author=Florian Huber;,citation_author=Luca Rossini;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_issue=1;,citation_doi=10.1214/21-AOAS1488;,citation_volume=16;,citation_journal_title=The Annals of Applied Statistics;">
+<meta name="citation_reference" content="citation_title=Using big data to emulate a target trial when a randomized trial is not available;,citation_author=Miguel A. Hernán;,citation_author=James M. Robins;,citation_publication_date=2016;,citation_cover_date=2016;,citation_year=2016;,citation_issue=8;,citation_doi=10.1093/aje/kwv254;,citation_volume=183;,citation_journal_title=American Journal of Epidemiology;">
 </head>
 
 <body class="nav-sidebar floating quarto-light">
@@ -248,7 +249,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./other_methods.html">Non Experimental Methods</a></li><li class="breadcrumb-item"><a href="./causalimpact.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./longitudinal.html">Longitudinal and Panel Causal Inference</a></li><li class="breadcrumb-item"><a href="./causalimpact.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -336,7 +337,7 @@ div.csl-indent {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./rct.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">The Gold Standard</span></a>
+ <span class="menu-text">Randomized Experiments and Observational Comparisons</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -372,33 +373,10 @@ div.csl-indent {
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="./other_methods.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Non Experimental Methods</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./matching.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./causalimpact.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
       </ul>
@@ -407,33 +385,33 @@ div.csl-indent {
       <div class="sidebar-item-container"> 
             <a href="./glm.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Generalized Linear Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./blm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./meta-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./beyond_normality.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./hurdle.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -441,7 +419,48 @@ div.csl-indent {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./stochastictrees.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Stochastic Trees</span></a>
+ <span class="menu-text">Stochastic Trees and Heterogeneous Effects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bart.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bcf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./phobart.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bad.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./longitudinal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Longitudinal and Panel Causal Inference</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -449,38 +468,32 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+  <a href="./causalimpact.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bcf.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+  <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">LongBet: Time-Varying Treatment Effects in Panel Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">LongBet: Dynamic Treatment Effects in Staggered Rollouts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+  <a href="./longbet_decisions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">LongBet: Decisions and Multiple Outcomes</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./phobart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./bad.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
+  <a href="./longbet_extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">LongBet: Forecasting, Observational Panels, and Diagnostics</span></span></a>
   </div>
 </li>
       </ul>
@@ -488,7 +501,7 @@ div.csl-indent {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -501,8 +514,8 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#caveats-and-assumptions" id="toc-caveats-and-assumptions" class="nav-link active" data-scroll-target="#caveats-and-assumptions"><span class="header-section-number">14.1</span> Caveats and Assumptions</a></li>
-  <li><a href="#cautionary-tale-stability" id="toc-cautionary-tale-stability" class="nav-link" data-scroll-target="#cautionary-tale-stability"><span class="header-section-number">14.2</span> Cautionary Tale: Stability</a>
+  <li><a href="#caveats-and-assumptions" id="toc-caveats-and-assumptions" class="nav-link active" data-scroll-target="#caveats-and-assumptions"><span class="header-section-number">23.1</span> Caveats and Assumptions</a></li>
+  <li><a href="#cautionary-tale-stability" id="toc-cautionary-tale-stability" class="nav-link" data-scroll-target="#cautionary-tale-stability"><span class="header-section-number">23.2</span> Cautionary Tale: Stability</a>
   <ul class="collapse">
   <li><a href="#simple-setup" id="toc-simple-setup" class="nav-link" data-scroll-target="#simple-setup">Simple Setup</a></li>
   <li><a href="#example-with-seasonality" id="toc-example-with-seasonality" class="nav-link" data-scroll-target="#example-with-seasonality">Example with seasonality</a></li>
@@ -510,20 +523,20 @@ div.csl-indent {
   <li><a href="#what-if-seasonal-patterns-change" id="toc-what-if-seasonal-patterns-change" class="nav-link" data-scroll-target="#what-if-seasonal-patterns-change">What if Seasonal Patterns Change?</a></li>
   <li><a href="#heterogeneous-seasonality" id="toc-heterogeneous-seasonality" class="nav-link" data-scroll-target="#heterogeneous-seasonality">Heterogeneous Seasonality</a></li>
   </ul></li>
-  <li><a href="#cautionary-tale-spillovers" id="toc-cautionary-tale-spillovers" class="nav-link" data-scroll-target="#cautionary-tale-spillovers"><span class="header-section-number">14.3</span> Cautionary Tale: Spillovers</a>
+  <li><a href="#cautionary-tale-spillovers" id="toc-cautionary-tale-spillovers" class="nav-link" data-scroll-target="#cautionary-tale-spillovers"><span class="header-section-number">23.3</span> Cautionary Tale: Spillovers</a>
   <ul class="collapse">
   <li><a href="#example-competing-over-finite-resources" id="toc-example-competing-over-finite-resources" class="nav-link" data-scroll-target="#example-competing-over-finite-resources">Example: Competing over finite resources</a></li>
   </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">14.4</span> Conclusion</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">23.4</span> Conclusion</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ignacio82/book/edit/master/causalimpact.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./other_methods.html">Non Experimental Methods</a></li><li class="breadcrumb-item"><a href="./causalimpact.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./longitudinal.html">Longitudinal and Panel Causal Inference</a></li><li class="breadcrumb-item"><a href="./causalimpact.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -580,8 +593,8 @@ div.csl-indent {
 </div>
 </div>
 <p>The default plot produced by this code consists of three panels. The first panel displays the data alongside a counterfactual prediction for the post-treatment period. The second panel shows the discrepancy between the observed data and the counterfactual predictions, representing the estimated pointwise causal effect. In the third panel, these pointwise contributions are summed, resulting in a plot of the intervention’s cumulative effect.</p>
-<section id="caveats-and-assumptions" class="level2" data-number="14.1">
-<h2 data-number="14.1" class="anchored" data-anchor-id="caveats-and-assumptions"><span class="header-section-number">14.1</span> Caveats and Assumptions</h2>
+<section id="caveats-and-assumptions" class="level2" data-number="23.1">
+<h2 data-number="23.1" class="anchored" data-anchor-id="caveats-and-assumptions"><span class="header-section-number">23.1</span> Caveats and Assumptions</h2>
 <p>When using this tool, we must tread carefully. The allure of a method that promises to quantify causal effects is strong, but like any statistical technique, it comes with caveats that are crucial to understand.</p>
 <p>At the heart of this method lie two critical assumptions:</p>
 <ol type="1">
@@ -603,8 +616,8 @@ Important
 </div>
 </div>
 </section>
-<section id="cautionary-tale-stability" class="level2" data-number="14.2">
-<h2 data-number="14.2" class="anchored" data-anchor-id="cautionary-tale-stability"><span class="header-section-number">14.2</span> Cautionary Tale: Stability</h2>
+<section id="cautionary-tale-stability" class="level2" data-number="23.2">
+<h2 data-number="23.2" class="anchored" data-anchor-id="cautionary-tale-stability"><span class="header-section-number">23.2</span> Cautionary Tale: Stability</h2>
 <p>Misinterpreting the findings of a {causalImpact} study can occur in several ways.</p>
 <p>In practice, it may be relatively straightforward to find exogenous covariates for predicting the outcome that are not directly affected by the treatment themselves.</p>
 <p>A critical threat, even in this setting, is the assumption of stability and generalizability of the relationship between covariates and the treated time series.</p>
@@ -1180,8 +1193,8 @@ For more details, type: summary(impact, "report")</code></pre>
 <p>As we can see, the model’s performance deteriorates further when faced with heterogeneous seasonal patterns. The estimated effect is now nowhere near the true effect, underscoring the challenges inherent in causal inference when seasonality varies across units. In essence, the model is attempting to fit a single seasonal pattern to all cities, while each city exhibits its own unique seasonal fluctuations. This mismatch leads to a significant bias in the estimated treatment effect.</p>
 </section>
 </section>
-<section id="cautionary-tale-spillovers" class="level2" data-number="14.3">
-<h2 data-number="14.3" class="anchored" data-anchor-id="cautionary-tale-spillovers"><span class="header-section-number">14.3</span> Cautionary Tale: Spillovers</h2>
+<section id="cautionary-tale-spillovers" class="level2" data-number="23.3">
+<h2 data-number="23.3" class="anchored" data-anchor-id="cautionary-tale-spillovers"><span class="header-section-number">23.3</span> Cautionary Tale: Spillovers</h2>
 <p>Another key assumption of the CausalImpact model is that the covariates used to predict the outcome of interest are not themselves affected by the intervention.</p>
 <p>In certain situations, this assumption is reasonable, while in others, it’s less so. For example, we might be testing different interventions on our customers, who then communicate with one another.</p>
 <p>Our units of analysis might interact strategically and compete over limited resources, where boosting outcomes for one unit could decrease outcomes for others.</p>
@@ -1328,8 +1341,8 @@ For more details, type: summary(impact, "report")</code></pre>
 <p>Yet, CausalImpact has no way of dealing with this and will erroneously suggest our intervention had a positive effect.</p>
 </section>
 </section>
-<section id="conclusion" class="level2" data-number="14.4">
-<h2 data-number="14.4" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">14.4</span> Conclusion</h2>
+<section id="conclusion" class="level2" data-number="23.4">
+<h2 data-number="23.4" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">23.4</span> Conclusion</h2>
 <p>Bayesian structural time series models, as implemented in the CausalImpact package, offer a powerful tool for businesses seeking to understand the impact of their interventions. However, like all statistical methods, they come with important caveats and assumptions that must be thoroughly understood and validated.</p>
 <p>The key to successful application lies in combining these sophisticated statistical techniques with domain knowledge, careful data preparation, and a healthy dose of skepticism. By doing so, businesses can gain valuable insights into the effectiveness of their strategies and make more informed decisions in an increasingly complex and data-driven world.</p>
 <p>Remember, causality is not something that can be magically extracted from data through algorithmic means. It emerges from our understanding of the world, our theories about how things operate, and the assumptions we are willing to embrace. Use these tools wisely, and they can illuminate the path forward. Use them carelessly, and they may lead you astray.</p>
@@ -1813,13 +1826,13 @@ Brodersen, Kay H, Fabian Gallusser, Jim Koehler, Nicolas Remy, and Steven L Scot
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./matching.html" class="pagination-link" aria-label="Matching">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Matching</span></span>
+      <a href="./longitudinal.html" class="pagination-link" aria-label="Longitudinal and Panel Causal Inference">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Longitudinal and Panel Causal Inference</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./bsynth.html" class="pagination-link" aria-label="Bayesian Synthetic Control">
-        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">

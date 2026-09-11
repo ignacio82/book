@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Escape the null ritual. Start from the decision you need to make, derive the data questions from it, design the study to answer them, and report findings without the lure of incredible certitude.">
+<meta name="description" content="Causal effects across time: aggregate interventions, donor panels, and staggered rollouts with heterogeneous effects.">
 
-<title>5&nbsp; A Decisions First Framework – Business Data Science</title>
+<title>Longitudinal and Panel Causal Inference – Business Data Science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -88,8 +88,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./rce.html" rel="next">
-<link href="./bayes101.html" rel="prev">
+<link href="./causalimpact.html" rel="next">
+<link href="./bad.html" rel="prev">
 <link href="./hex.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -132,18 +132,49 @@ div.csl-indent {
 }</script>
 <script async="" src="https://umami.martinez.fyi/script.js" data-website-id="bc587120-3bd3-4c2d-b463-5eb64dd4e330"></script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<meta property="og:title" content="5&nbsp; A Decisions First Framework – Business Data Science">
-<meta property="og:description" content="Escape the null ritual. Start from the decision you need to make, derive the data questions from it, design the study to answer them, and report findings without the lure of incredible certitude.">
-<meta property="og:image" content="https://book.martinez.fyi/img/decisions_first.jpg">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<meta property="og:title" content="Longitudinal and Panel Causal Inference – Business Data Science">
+<meta property="og:description" content="Causal effects across time: aggregate interventions, donor panels, and staggered rollouts with heterogeneous effects.">
+<meta property="og:image" content="https://book.martinez.fyi/hex.png">
 <meta property="og:site_name" content="Business Data Science">
-<meta property="og:image:alt" content="A decisions-first framework">
-<meta name="twitter:title" content="5&nbsp; A Decisions First Framework – Business Data Science">
-<meta name="twitter:description" content="Escape the null ritual. Start from the decision you need to make, derive the data questions from it, design the study to answer them, and report findings without the lure of incredible certitude.">
-<meta name="twitter:image" content="https://book.martinez.fyi/img/decisions_first.jpg">
-<meta name="twitter:image:alt" content="A decisions-first framework">
+<meta property="og:image:height" content="588">
+<meta property="og:image:width" content="510">
+<meta name="twitter:title" content="Longitudinal and Panel Causal Inference – Business Data Science">
+<meta name="twitter:description" content="Causal effects across time: aggregate interventions, donor panels, and staggered rollouts with heterogeneous effects.">
+<meta name="twitter:image" content="https://book.martinez.fyi/hex.png">
+<meta name="twitter:image-height" content="588">
+<meta name="twitter:image-width" content="510">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="citation_title" content="[5]{.chapter-number}&nbsp; [A Decisions First Framework]{.chapter-title}">
+<meta name="citation_title" content="Longitudinal and Panel Causal Inference">
 <meta name="citation_fulltext_html_url" content="https://book.martinez.fyi">
 <meta name="citation_language" content="en">
 <meta name="citation_book_title" content="Business Data Science: A guide for data-driven decisions">
@@ -243,7 +274,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Introduction</a></li><li class="breadcrumb-item"><a href="./decisions_first.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">A Decisions First Framework</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./longitudinal.html">Longitudinal and Panel Causal Inference</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -310,7 +341,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./decisions_first.html" class="sidebar-item-text sidebar-link active">
+  <a href="./decisions_first.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">A Decisions First Framework</span></span></a>
   </div>
 </li>
@@ -453,7 +484,7 @@ div.csl-indent {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="./longitudinal.html" class="sidebar-item-text sidebar-link">
+            <a href="./longitudinal.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Longitudinal and Panel Causal Inference</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -508,20 +539,21 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#define-the-decisions-the-cornerstone-of-data-driven-choices" id="toc-define-the-decisions-the-cornerstone-of-data-driven-choices" class="nav-link active" data-scroll-target="#define-the-decisions-the-cornerstone-of-data-driven-choices"><span class="header-section-number">5.1</span> Define the Decision(s): The Cornerstone of Data-Driven Choices</a></li>
-  <li><a href="#formulate-data-driven-questions-asking-the-right-questions" id="toc-formulate-data-driven-questions-asking-the-right-questions" class="nav-link" data-scroll-target="#formulate-data-driven-questions-asking-the-right-questions"><span class="header-section-number">5.2</span> Formulate Data-Driven Questions: Asking the Right Questions</a></li>
-  <li><a href="#design-the-study-tailoring-research-to-your-decision" id="toc-design-the-study-tailoring-research-to-your-decision" class="nav-link" data-scroll-target="#design-the-study-tailoring-research-to-your-decision"><span class="header-section-number">5.3</span> Design the Study: Tailoring Research to Your Decision</a></li>
-  <li><a href="#present-findings-and-implications-communicating-clearly-and-transparently" id="toc-present-findings-and-implications-communicating-clearly-and-transparently" class="nav-link" data-scroll-target="#present-findings-and-implications-communicating-clearly-and-transparently"><span class="header-section-number">5.4</span> Present Findings and Implications: Communicating Clearly and Transparently</a></li>
-  <li><a href="#real-world-constraints-and-the-path-forward" id="toc-real-world-constraints-and-the-path-forward" class="nav-link" data-scroll-target="#real-world-constraints-and-the-path-forward"><span class="header-section-number">5.5</span> Real-World Constraints and the Path Forward</a></li>
+  <li><a href="#navigating-longitudinal-causal-methods" id="toc-navigating-longitudinal-causal-methods" class="nav-link active" data-scroll-target="#navigating-longitudinal-causal-methods">Navigating Longitudinal Causal Methods</a></li>
+  <li><a href="#history-confounding-and-serial-dependence" id="toc-history-confounding-and-serial-dependence" class="nav-link" data-scroll-target="#history-confounding-and-serial-dependence">History, Confounding, and Serial Dependence</a></li>
+  <li><a href="#roadmap-for-this-part" id="toc-roadmap-for-this-part" class="nav-link" data-scroll-target="#roadmap-for-this-part">Roadmap for this Part</a>
+  <ul class="collapse">
+  <li><a href="#neighboring-methods-and-scope" id="toc-neighboring-methods-and-scope" class="nav-link" data-scroll-target="#neighboring-methods-and-scope">Neighboring Methods and Scope</a></li>
+  </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/ignacio82/book/edit/master/decisions_first.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/ignacio82/book/edit/master/longitudinal.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Introduction</a></li><li class="breadcrumb-item"><a href="./decisions_first.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">A Decisions First Framework</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">A Decisions First Framework</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Longitudinal and Panel Causal Inference</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -538,121 +570,108 @@ div.csl-indent {
 </header>
 
 
-<style>
-a.glossary {
-  color: purple;
-  text-decoration: underline;
-  cursor: help;
-  position: relative;
-}
-
-/* only needed for popup = "click" */
-/* popup-definition */
-a.glossary .def {
-  display: none;
-  position: absolute;
-  z-index: 1;
-  width: 200px;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -100px;
-  background-color: #333;
-  color: white;
-  padding: 5px;
-  border-radius: 6px;
-}
-/* show on click */
-a.glossary:active .def {
-  display: inline-block;
-}
-/* triangle arrow */
-a.glossary:active .def::after {
-  content: ' ';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #333 transparent transparent transparent;
-}
-</style>
-<p><img src="img/decisions_first.jpg" align="right" height="280" alt="A decisions-first framework"></p>
-<p>In the world of <a class="glossary" title="Describes decision-making that is informed by the analysis and interpretation of data.">data-driven</a> decision-making, it’s all too easy to fall into the trap of the “null ritual.” This ritual, as <span class="citation" data-cites="gigerenzer2004null">Gigerenzer et al. (<a href="references.html#ref-gigerenzer2004null" role="doc-biblioref">2004</a>)</span> point out, involves a slavish adherence to Null Hypothesis Significance Testing (NHST) without truly grasping its foundations or limitations. It’s akin to following a recipe without tasting the ingredients - you might end up with a statistically significant result, but one that lacks real-world meaning or utility.</p>
-<p>Instead of mindlessly performing this ritual, we need a more thoughtful, purposeful approach. Enter the r glossary(“Decisions First Framework”). This approach flips the script, putting the focus squarely on the decisions we need to make and using data as a tool to illuminate the path forward. It helps us sidestep several pitfalls, including what <span class="citation" data-cites="manski2020lure">Manski (<a href="references.html#ref-manski2020lure" role="doc-biblioref">2020</a>)</span> calls the <a class="glossary" title="The tendency to present research findings with unwarranted certainty, often driven by pressure to provide clear-cut answers.">Lure of Incredible Certitude</a>- the tendency to present research findings with unwarranted certainty, often driven by pressure to provide clear-cut answers even when the data is ambiguous or uncertain.</p>
-<p>One crucial reason for this shift is that NHST often misses the mark when it comes to answering the practical questions businesses need to address. Moreover, there’s a widespread misunderstanding of <a class="glossary" title="the probability, assuming a certain statistical model, that a statistical summary of the data (such as the sample mean difference between two groups) would be equal to or more extreme than its observed value. While a P-value indicates how “incompatible” the data are with a specified statistical model, it does not measure the probability that the hypothesis under study is true nor does it measure the probability that the data were produced by random chance alone.">p-values</a>. The American Statistical Association took the unusual step of issuing a statement in 2016 to sound the alarm on this issue <span class="citation" data-cites="wasserstein2016asa">(see <a href="references.html#ref-wasserstein2016asa" role="doc-biblioref">Wasserstein and Lazar 2016</a>)</span>. They noted that “practices that reduce data analysis or scientific inference to mechanical ‘bright-line’ rules (such as ‘p &lt; 0.05’) for justifying scientific claims or conclusions can lead to erroneous beliefs and poor decision making.” They further clarified that “a p-value does not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone.”</p>
-<p>The “Decisions First” framework offers an antidote to the null ritual by embracing a Bayesian perspective. This approach treats learning from data as a continuous process, not a binary “accept/reject” decision based on a single p-value. Rather than fixating on point estimates, p-values, or confidence intervals, it emphasizes estimating probabilities that are relevant to the decisions at hand. It acknowledges the inherent uncertainty in data and seeks to quantify and integrate it into the decision-making process. In essence, <a class="glossary" title="A statistical approach that allows for updating beliefs or probabilities based on new evidence, rather than relying on fixed hypotheses.">Bayesian Statistics</a> allows us to use data to reallocate credibility across various possibilities.</p>
-<section id="define-the-decisions-the-cornerstone-of-data-driven-choices" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="define-the-decisions-the-cornerstone-of-data-driven-choices"><span class="header-section-number">5.1</span> Define the Decision(s): The Cornerstone of Data-Driven Choices</h2>
-<p>The first, and arguably most crucial, step is to <strong>clearly articulate the decision(s) you need to make</strong>. This might involve launching a new product, adjusting pricing strategies, or optimizing marketing campaigns. Some decisions will be binary, but that’s not always the case. The key is that the optimal decision should hinge on the information available. If no amount of evidence will change your mind, there’s little point in designing a study to collect it.</p>
-</section>
-<section id="formulate-data-driven-questions-asking-the-right-questions" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="formulate-data-driven-questions-asking-the-right-questions"><span class="header-section-number">5.2</span> Formulate Data-Driven Questions: Asking the Right Questions</h2>
-<p>With your decision clearly defined, it’s time to craft questions that data can answer and that directly inform your decision. These questions should be focused, actionable, and revolve around <a class="glossary" title="A predetermined level of effect or change that is considered meaningful for decision-making purposes.">meaningful thresholds</a>, rather than fixating solely on the null hypothesis (zero effect).</p>
-<p>For instance, in a scenario involving the implementation of a chatbot, you might ask:</p>
-<ul>
-<li><p>“Will a chatbot reduce average customer wait time by at least 15%?” Here, the threshold of interest isn’t whether there’s any reduction in wait time, but whether the reduction is substantial enough (15% or more) to justify implementing the chatbot.</p></li>
-<li><p>“Will a chatbot increase customer satisfaction scores by at least 10 points?” Similarly, the focus is on a meaningful increase in satisfaction, not just any statistically significant difference from the current baseline.</p></li>
-</ul>
-<p>By establishing these thresholds, we align our data analysis with the real-world impact of our decisions. A 5% reduction in wait times, even if statistically significant, might not justify the cost of implementing a chatbot.</p>
-<p>In many cases, a well-structured question can be surprisingly simple, often following the format “Does <span style="color:#EA4335;">A</span> do <span style="color:#34A853;">B</span> among <span style="color:#4285F4;">C</span> compared to <span style="color:#FBBC04;">D</span>?”</p>
-<ul>
-<li><span style="color:#EA4335;">A</span>: The intervention or action under evaluation (e.g., chatbot, new pricing).</li>
-<li><span style="color:#34A853;">B</span>: Your clear definition of success (e.g., reduce wait times, increase sales).</li>
-<li><span style="color:#4285F4;">C</span>: The target population (e.g., all customers, a specific segment).</li>
-<li><span style="color:#FBBC04;">D</span>: The alternative or baseline for comparison (e.g., no chatbot, current pricing).</li>
-</ul>
-<p>However, sometimes you’ll encounter more nuanced questions like “What works for whom?” These situations involve evaluating multiple alternatives with the understanding that different options might be optimal for different groups within your population.</p>
-</section>
-<section id="design-the-study-tailoring-research-to-your-decision" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="design-the-study-tailoring-research-to-your-decision"><span class="header-section-number">5.3</span> Design the Study: Tailoring Research to Your Decision</h2>
-<p>This stage involves selecting the appropriate research methodology to answer your questions. Crucially, <strong>the study design must be tailored to the specific decision you’re facing.</strong> Factors to consider include data availability, experimental design, and potential biases. <strong>Additionally, ethical considerations should be at the forefront of your design, ensuring the study does no harm and respects the rights of participants.</strong></p>
-<ul>
-<li><strong>Chatbot Example:</strong> If you’re exploring whether to offer a chatbot as an option, an A/B test where some customers are offered the chatbot while others follow the standard process might be suitable. However, if you’re considering making the chatbot the only option, your study design needs to reflect this forced-choice scenario.</li>
-<li><strong>Event Invitation Example:</strong> If you want to understand the value of inviting people to an event, randomizing invitations and analyzing attendance rates is a valid approach. But if you want to understand the value of actually attending the event, you’d focus on outcomes for attendees, even if the data comes from the same experiment.</li>
-</ul>
-<p>The key is to ensure your study design mirrors the real-world conditions of the decision as closely as possible.</p>
-</section>
-<section id="present-findings-and-implications-communicating-clearly-and-transparently" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="present-findings-and-implications-communicating-clearly-and-transparently"><span class="header-section-number">5.4</span> Present Findings and Implications: Communicating Clearly and Transparently</h2>
-<p>After conducting your study, present the results clearly, concisely, and accessibly. Avoid jargon that could confuse your audience. Even a meticulously designed study can lead to misinformed decisions if the findings are poorly communicated. Be transparent about your learnings, acknowledge any limitations of the study, and highlight new questions that have arisen.</p>
-<p>In discussing limitations, it’s crucial to distinguish between <a class="glossary" title="The confidence that the observed effects in a study are truly caused by the factor being studied, rather than other confounding variables.">Internal Validity</a> (the confidence that the observed effects are due to the factor you’re studying) and <a class="glossary" title="The extent to which the results of a study can be generalized to other populations, settings, or situations.">External Validity</a> (the extent to which the results can be generalized to other situations). Even with a flawless experimental design, questions of external validity might remain. For example, a chatbot study conducted with tech-savvy users might not apply to an older demographic.</p>
-</section>
-<section id="real-world-constraints-and-the-path-forward" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="real-world-constraints-and-the-path-forward"><span class="header-section-number">5.5</span> Real-World Constraints and the Path Forward</h2>
-<p>Real-world constraints often prevent us from conducting the “perfect” study with both impeccable internal and external validity. Therefore, it’s essential to view evidence quality as a spectrum, not a binary. Learning is an ongoing process. Embrace uncertainty, acknowledging that no single study provides all the answers. Instead of thinking in terms of “success” or “failure,” consider the weight of evidence, the specific context, and the potential risks and rewards when making decisions.</p>
-<p>By adopting the “Decisions First” framework and embracing a Bayesian approach, you can transform data analysis from a ritualistic exercise into a powerful tool for making informed, impactful decisions. This approach not only aligns your research with your business objectives but also acknowledges the complexities and uncertainties inherent in real-world decision-making.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout callout-style-default callout-note callout-titled" title="Looking for non-experimental cross-sectional methods?">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Learn more
+<span class="screen-reader-only">Note</span>Looking for non-experimental cross-sectional methods?
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><span class="citation" data-cites="duke2019thinking">Duke (<a href="references.html#ref-duke2019thinking" role="doc-biblioref">2019</a>)</span> Thinking in bets: Making smarter decisions when you don’t have all the facts.</p>
+<p>If you arrived here looking for cross-sectional comparison group methods (formerly grouped under non-experimental methods), see <strong><a href="./matching.html">Matching</a></strong> in the preceding part on randomized experiments and observational comparisons.</p>
 </div>
 </div>
+<p>Many of the most important decisions in business cannot be evaluated with a simple before-and-after contrast or a static A/B test. Marketing organizations launch regional ad campaigns across designated market areas; operations teams roll out warehouse upgrades across fulfillment centers; product teams deploy new features gradually across seller cohorts. In each case, <strong>time is an active dimension of the causal question</strong>.</p>
+<p>When analyzing dynamic interventions, two distinct time scales must be separated:</p>
+<ol type="1">
+<li><strong>Calendar time (<span class="math inline">\(t\)</span>):</strong> Shared by all units simultaneously. Calendar time carries market-wide macroeconomic shocks, seasonal demand swings, platform outages, and competitor actions.</li>
+<li><strong>Time since adoption (<span class="math inline">\(S\)</span> or exposure time):</strong> Unit-specific elapsed duration since treatment began. Exposure time governs how treatment responses evolve: novelty bumps that fade, cumulative improvements that compound, or operational disruptions that resolve.</li>
+</ol>
+<p>In a simultaneous intervention (like a regional ad blitz), calendar time and exposure time move in lockstep. In a staggered rollout, different units adopt at different calendar dates, disentangling shared calendar seasonality from unit-level duration effects.</p>
+<section id="navigating-longitudinal-causal-methods" class="level2">
+<h2 class="anchored" data-anchor-id="navigating-longitudinal-causal-methods">Navigating Longitudinal Causal Methods</h2>
+<p>This part brings together time series, donor panels, and micro-level longitudinal models. These methods are not interchangeable, nor do they rely on a single universal identifying assumption like parallel trends. Rather, each method anchors identification in a distinct source of empirical leverage.</p>
+<div id="tbl-longitudinal-methods" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-longitudinal-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Method selection across longitudinal and panel causal designs
+</figcaption>
+<div aria-describedby="tbl-longitudinal-methods-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Question &amp; Data Structure</th>
+<th style="text-align: left;">Chapter</th>
+<th style="text-align: left;">Source of Identification &amp; Central Assumptions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Aggregate intervention on a single treated time series</strong> (e.g., nationwide campaign) with contemporaneous control series.</td>
+<td style="text-align: left;"><strong><a href="./causalimpact.html">CausalImpact / BSTS</a></strong></td>
+<td style="text-align: left;"><strong>Predictive stability of unaffected controls.</strong> Identification assumes that control series are strictly untreated (no spillover/contamination) and that the pre-intervention predictive relationship between controls and the target series remains stable post-intervention.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Intervention on one or a few aggregate units</strong> with a donor pool of untreated comparative units over time.</td>
+<td style="text-align: left;"><strong><a href="./bsynth.html">Synthetic Control</a></strong></td>
+<td style="text-align: left;"><strong>Pre-treatment convex fit &amp; donor suitability.</strong> Identification rests on constructing a convex combination of untreated donors that closely tracks the treated unit’s pre-treatment trajectory. Assumes no anticipation, no donor contamination, and that unobserved time-varying confounders are bounded by good pre-intervention fit.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Randomized staggered rollout across large micro panels</strong> (e.g., sellers, users, accounts).</td>
+<td style="text-align: left;"><strong><a href="./longbet.html">LongBet</a></strong></td>
+<td style="text-align: left;"><strong>Randomized launch timing.</strong> Identification comes directly from randomized assignment to launch cohorts or holdout status. The panel model provides precision and dynamic effect resolution across exposure times, not identification itself.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Observational staggered rollout / panel data</strong> with self-selected or targeted adoption timing.</td>
+<td style="text-align: left;"><strong><a href="./longbet_extensions.html">LongBet Extensions</a></strong></td>
+<td style="text-align: left;"><strong>Conditional exchangeability of adoption timing.</strong> Swaps parallel trends for selection on observables: assumes treatment timing is unconfounded given observed pre-treatment covariates and baseline history.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="history-confounding-and-serial-dependence" class="level2">
+<h2 class="anchored" data-anchor-id="history-confounding-and-serial-dependence">History, Confounding, and Serial Dependence</h2>
+<p>A common misconception in panel analysis is that having a rich pre-treatment history automatically eliminates confounding. Pre-treatment observations are invaluable: they allow us to model unit-specific baselines, estimate pre-intervention trends, and explain away enormous amounts of idiosyncratic variation.</p>
+<p>However, <strong>pretreatment history does not automatically remove unobserved or time-varying confounding</strong>. If units adopt earlier because of an unmeasured variable that also changes their future trajectory (such as manager enthusiasm or unrecorded customer momentum), conditioning on historical revenue cannot eliminate the resulting selection bias.</p>
+<p>It is equally vital to distinguish <strong>serial dependence</strong> from <strong>confounding</strong>:</p>
+<ul>
+<li><strong>Serial dependence</strong> is an error structure and uncertainty problem: observations from the same unit across consecutive weeks share autocorrelated innovations. Failing to account for serial correlation leads to understated standard errors and overconfident intervals.</li>
+<li><strong>Confounding</strong> is an identification problem: systematic differences in potential outcomes between adoption cohorts. A model can have perfectly modeled AR(1) errors and remain hopelessly confounded, or be cleanly identified by randomization while requiring careful serial correlation diagnostics.</li>
+</ul>
+<p>Furthermore, Bayesian posterior intervals in these chapters are conditional on the stated structural priors, likelihoods, and identifying assumptions. They provide coherent Bayesian uncertainty under those modeling assumptions, but do not promise automatically calibrated repeated-sampling coverage if the error or assignment model is misspecified.</p>
+</section>
+<section id="roadmap-for-this-part" class="level2">
+<h2 class="anchored" data-anchor-id="roadmap-for-this-part">Roadmap for this Part</h2>
+<p>The chapters in this part form a structured progression from aggregate macro-interventions to granular, decision-focused panel modeling:</p>
+<ol type="1">
+<li><strong><a href="./causalimpact.html">CausalImpact</a>:</strong> Bayesian structural time-series (BSTS) models for aggregate interventions, using contemporaneous control markets and state-space decomposition.</li>
+<li><strong><a href="./bsynth.html">Bayesian Synthetic Control</a>:</strong> Panel-based synthetic control with donor weights, shrinkage, and posterior predictive intervals for comparative case studies.</li>
+<li><strong><a href="./longbet.html">LongBet: Dynamic Treatment Effects in Staggered Rollouts</a>:</strong> The core LongBet framework, introducing Bayesian causal trees on panel data. We study a randomized capacity-constrained rollout, compare estimates against difference-in-differences and ANCOVA benchmarks, and recover heterogeneous trajectories. <em>(Readers already familiar with <a href="./bcf.html">Bayesian Causal Forests</a> can jump directly into LongBet; prior reading of PhoBART or BAD is not required.)</em></li>
+<li><strong><a href="./longbet_decisions.html">LongBet: Decisions and Multiple Outcomes</a>:</strong> A direct continuation of the marketplace simulation, translating dynamic effect trajectories into 52-week economic valuations and evaluating joint multi-outcome decisions (GMV, workload, complaints) via triangular SUR modeling.</li>
+<li><strong><a href="./longbet_extensions.html">LongBet: Forecasting, Observational Panels, and Diagnostics</a>:</strong> Advanced extensions of the core rollout, covering Gaussian process forecasting beyond the trial window, observational panel identification, unit-level random intercepts, serial correlation checks, time-varying moderators, and operating characteristics.</li>
+</ol>
+<section id="neighboring-methods-and-scope" class="level3">
+<h3 class="anchored" data-anchor-id="neighboring-methods-and-scope">Neighboring Methods and Scope</h3>
+<p>This part focuses on a selected Bayesian and machine learning toolkit for business decisions. It does not attempt comprehensive coverage of the entire econometric longitudinal literature. Classic two-way fixed effects (TWFE), modern staggered difference-in-differences estimators <span class="citation" data-cites="callaway2021did roth2023trending">(<a href="references.html#ref-callaway2021did" role="doc-biblioref">Callaway and Sant’Anna 2021</a>; <a href="references.html#ref-roth2023trending" role="doc-biblioref">Roth et al. 2023</a>)</span>, and event-study regressions provide indispensable benchmarks that we explicitly compare against throughout our analysis.</p>
+<p>Finally, a cautionary note on dynamic complexity: simply adding time-varying covariates to a regression or tree model does not solve <strong>treatment-confounder feedback</strong> (where past treatments affect future confounders, which in turn affect future treatments). Addressing dynamic feedback requires specialized longitudinal g-methods or structural marginal models, which remain outside the single-adoption framework treated here.</p>
 
 
 <!-- -->
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
-<div id="ref-duke2019thinking" class="csl-entry" role="listitem">
-Duke, Annie. 2019. <em>Thinking in Bets: Making Smarter Decisions When You Don’t Have All the Facts</em>. Penguin. <a href="https://www.google.com/books/edition/Thinking_in_Bets/CI-RDwAAQBAJ">https://www.google.com/books/edition/Thinking_in_Bets/CI-RDwAAQBAJ</a>.
+<div id="ref-callaway2021did" class="csl-entry" role="listitem">
+Callaway, Brantly, and Pedro H. C. Sant’Anna. 2021. <span>“Difference-in-Differences with Multiple Time Periods.”</span> <em>Journal of Econometrics</em> 225 (2): 200–230. <a href="https://doi.org/10.1016/j.jeconom.2020.12.001">https://doi.org/10.1016/j.jeconom.2020.12.001</a>.
 </div>
-<div id="ref-gigerenzer2004null" class="csl-entry" role="listitem">
-Gigerenzer, Gerd, Stefan Krauss, and Oliver Vitouch. 2004. <span>“The Null Ritual.”</span> <em>The Sage Handbook of Quantitative Methodology for the Social Sciences</em>, 391–408.
-</div>
-<div id="ref-manski2020lure" class="csl-entry" role="listitem">
-Manski, Charles F. 2020. <span>“The Lure of Incredible Certitude.”</span> <em>Economics &amp; Philosophy</em> 36 (2): 216–45. <a href="https://www.nber.org/system/files/working_papers/w24905/w24905.pdf">https://www.nber.org/system/files/working_papers/w24905/w24905.pdf</a>.
-</div>
-<div id="ref-wasserstein2016asa" class="csl-entry" role="listitem">
-Wasserstein, Ronald L, and Nicole A Lazar. 2016. <span>“The ASA Statement on p-Values: Context, Process, and Purpose.”</span> In <em>The American Statistician</em>, No. 2, vol. 70. Taylor &amp; Francis. <a href="https://www.tandfonline.com/doi/pdf/10.1080/00031305.2016.1154108">https://www.tandfonline.com/doi/pdf/10.1080/00031305.2016.1154108</a>.
+<div id="ref-roth2023trending" class="csl-entry" role="listitem">
+Roth, Jonathan, Pedro H. C. Sant’Anna, Alyssa Bilinski, and John Poe. 2023. <span>“What’s Trending in Difference-in-Differences? A Synthesis of the Recent Econometrics Literature.”</span> <em>Journal of Econometrics</em> 235 (2): 2218–44. <a href="https://doi.org/10.1016/j.jeconom.2023.03.008">https://doi.org/10.1016/j.jeconom.2023.03.008</a>.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -1111,233 +1130,134 @@ Wasserstein, Ronald L, and Nicole A Lazar. 2016. <span>“The ASA Statement on p
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./bayes101.html" class="pagination-link" aria-label="Bayes 101">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bayes 101</span></span>
+      <a href="./bad.html" class="pagination-link" aria-label="Bayesian Adaptive Design">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./rce.html" class="pagination-link" aria-label="Rapid-Cycle Evaluation for Program Improvement">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Rapid-Cycle Evaluation for Program Improvement</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./causalimpact.html" class="pagination-link" aria-label="Bayesian Structural Time Series">
+        <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "A Decisions First Framework"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Escape the null ritual. Start from the decision you need to make, derive the data questions from it, design the study to answer them, and report findings without the lure of incredible certitude."</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/decisions_first.html"</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "A decisions-first framework: start with the decision, not the p-value"</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Longitudinal and Panel Causal Inference"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Causal effects across time: aggregate interventions, donor panels, and staggered rollouts with heterogeneous effects."</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">aliases:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">  - /other_methods.html</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/longitudinal.html"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "Causal inference across time: assumptions, estimation, and decisions"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Looking for non-experimental cross-sectional methods?"}</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>If you arrived here looking for cross-sectional comparison group methods (formerly grouped under non-experimental methods), see **[Matching](matching.qmd)** in the preceding part on randomized experiments and observational comparisons.</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glossary)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_path</span>(<span class="st">"glossary.yml"</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_popup</span>(<span class="st">"hover"</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_style</span>(<span class="st">"purple"</span>, <span class="st">"underline"</span>)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_popup</span>(<span class="st">"hover"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>Many of the most important decisions in business cannot be evaluated with a simple</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>before-and-after contrast or a static A/B test. Marketing organizations launch regional</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>ad campaigns across designated market areas; operations teams roll out warehouse</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>upgrades across fulfillment centers; product teams deploy new features gradually across</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>seller cohorts. In each case, **time is an active dimension of the causal question**.</span>
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"Bayesian Statistics"</span>,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">"A statistical approach that allows for updating beliefs or probabilities based on new evidence, rather than relying on fixed hypotheses."</span>,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"Decisions First Framework"</span>,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">"A decision-making approach that prioritizes clearly defining the decision to be made before gathering and analyzing data."</span>,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"External Validity"</span>,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">"The extent to which the results of a study can be generalized to other populations, settings, or situations."</span>,</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"Internal Validity"</span>,</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">"The confidence that the observed effects in a study are truly caused by the factor being studied, rather than other confounding variables."</span>,</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"Lure of Incredible Certitude"</span>,</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">"The tendency to present research findings with unwarranted certainty, often driven by pressure to provide clear-cut answers."</span>,</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>When analyzing dynamic interventions, two distinct time scales must be separated:</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Calendar time ($t$):** Shared by all units simultaneously. Calendar time carries</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>   market-wide macroeconomic shocks, seasonal demand swings, platform outages, and</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>   competitor actions.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Time since adoption ($S$ or exposure time):** Unit-specific elapsed duration since</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>   treatment began. Exposure time governs how treatment responses evolve: novelty bumps</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>   that fade, cumulative improvements that compound, or operational disruptions that resolve.</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>In a simultaneous intervention (like a regional ad blitz), calendar time and exposure time</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>move in lockstep. In a staggered rollout, different units adopt at different calendar dates,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>disentangling shared calendar seasonality from unit-level duration effects.</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Navigating Longitudinal Causal Methods</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>This part brings together time series, donor panels, and micro-level longitudinal models.</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>These methods are not interchangeable, nor do they rely on a single universal identifying</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>assumption like parallel trends. Rather, each method anchors identification in a distinct</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>source of empirical leverage.</span>
 <span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"Null Ritual"</span>,</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">"The practice of rigidly adhering to NHST without fully understanding its assumptions or limitations."</span>,</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"P-value"</span>,</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">'the probability, assuming a certain statistical model, that a statistical summary of the data (such as the sample mean difference between two groups) would be equal to or more extreme than its observed value. While a P-value indicates how "incompatible" the data are with a specified statistical model, it does not measure the probability that the hypothesis under study is true nor does it measure the probability that the data were produced by random chance alone.'</span>,</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Question &amp; Data Structure <span class="pp">|</span> Chapter <span class="pp">|</span> Source of Identification &amp; Central Assumptions <span class="pp">|</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">| :---</span> <span class="pp">| :---</span> <span class="pp">| :---</span> <span class="pp">|</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Aggregate intervention on a single treated time series** (e.g., nationwide campaign) with contemporaneous control series. | **[CausalImpact / BSTS](causalimpact.qmd)** | **Predictive stability of unaffected controls.** Identification assumes that control series are strictly untreated (no spillover/contamination) and that the pre-intervention predictive relationship between controls and the target series remains stable post-intervention. <span class="pp">|</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Intervention on one or a few aggregate units** with a donor pool of untreated comparative units over time. | **[Synthetic Control](bsynth.qmd)** | **Pre-treatment convex fit &amp; donor suitability.** Identification rests on constructing a convex combination of untreated donors that closely tracks the treated unit's pre-treatment trajectory. Assumes no anticipation, no donor contamination, and that unobserved time-varying confounders are bounded by good pre-intervention fit. <span class="pp">|</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Randomized staggered rollout across large micro panels** (e.g., sellers, users, accounts). | **[LongBet](longbet.qmd)** | **Randomized launch timing.** Identification comes directly from randomized assignment to launch cohorts or holdout status. The panel model provides precision and dynamic effect resolution across exposure times, not identification itself. <span class="pp">|</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Observational staggered rollout / panel data** with self-selected or targeted adoption timing. | **[LongBet Extensions](longbet_extensions.qmd)** | **Conditional exchangeability of adoption timing.** Swaps parallel trends for selection on observables: assumes treatment timing is unconfounded given observed pre-treatment covariates and baseline history. <span class="pp">|</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>: Method selection across longitudinal and panel causal designs {#tbl-longitudinal-methods}</span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_add</span>(<span class="at">term =</span> <span class="st">"Meaningful threshold"</span>,</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>             <span class="at">def =</span> <span class="st">"A predetermined level of effect or change that is considered meaningful for decision-making purposes."</span>,</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">"img/decisions_first.jpg"</span><span class="ot"> align</span><span class="op">=</span><span class="st">"right"</span><span class="ot"> height</span><span class="op">=</span><span class="st">"280"</span><span class="ot"> alt</span><span class="op">=</span><span class="st">"A decisions-first framework"</span><span class="dt">/&gt;</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>In the world of <span class="in">`r glossary("data-driven")`</span> decision-making, it's all too easy to</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>fall into the trap of the "null ritual." This ritual, as @gigerenzer2004null</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>point out, involves a slavish adherence to Null Hypothesis Significance Testing</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>(NHST) without truly grasping its foundations or limitations. It's akin to</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>following a recipe without tasting the ingredients - you might end up with a</span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>statistically significant result, but one that lacks real-world meaning or</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>utility.</span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>Instead of mindlessly performing this ritual, we need a more thoughtful,</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>purposeful approach. Enter the r glossary("Decisions First Framework"). This</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>approach flips the script, putting the focus squarely on the decisions we need</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>to make and using data as a tool to illuminate the path forward. It helps us</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>sidestep several pitfalls, including what @manski2020lure calls the </span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="in">`r glossary("Lure of Incredible Certitude")`</span>- the tendency to present research</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>findings with unwarranted certainty, often driven by pressure to provide</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>clear-cut answers even when the data is ambiguous or uncertain.</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>One crucial reason for this shift is that NHST often misses the mark when it</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>comes to answering the practical questions businesses need to address. Moreover,</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>there's a widespread misunderstanding of <span class="in">`r glossary("p-value", "p-values")`</span>.</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>The American Statistical Association took the unusual step of issuing a</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>statement in 2016 to sound the alarm on this issue <span class="co">[</span><span class="ot">see @wasserstein2016asa</span><span class="co">]</span>.</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>They noted that "practices that reduce data analysis or scientific inference to</span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>mechanical 'bright-line' rules (such as 'p <span class="sc">\&lt;</span> 0.05') for justifying scientific</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>claims or conclusions can lead to erroneous beliefs and poor decision making."</span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>They further clarified that "a p-value does not measure the probability that the</span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>studied hypothesis is true, or the probability that the data were produced by</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>random chance alone."</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>The "Decisions First" framework offers an antidote to the null ritual by</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>embracing a Bayesian perspective. This approach treats learning from data as a</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>continuous process, not a binary "accept/reject" decision based on a single</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>p-value. Rather than fixating on point estimates, p-values, or confidence</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>intervals, it emphasizes estimating probabilities that are relevant to the</span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>decisions at hand. It acknowledges the inherent uncertainty in data and seeks to</span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>quantify and integrate it into the decision-making process. In essence,</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="in">`r glossary("Bayesian Statistics")`</span> allows us to use data to reallocate</span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>credibility across various possibilities.</span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="fu">## Define the Decision(s): The Cornerstone of Data-Driven Choices</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>The first, and arguably most crucial, step is to **clearly articulate the</span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>decision(s) you need to make**. This might involve launching a new product,</span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>adjusting pricing strategies, or optimizing marketing campaigns. Some decisions</span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>will be binary, but that's not always the case. The key is that the optimal</span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>decision should hinge on the information available. If no amount of evidence</span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>will change your mind, there's little point in designing a study to collect it.</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Formulate Data-Driven Questions: Asking the Right Questions</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## History, Confounding, and Serial Dependence</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>A common misconception in panel analysis is that having a rich pre-treatment history</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>automatically eliminates confounding. Pre-treatment observations are invaluable: they allow</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>us to model unit-specific baselines, estimate pre-intervention trends, and explain away</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>enormous amounts of idiosyncratic variation.</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>However, **pretreatment history does not automatically remove unobserved or time-varying confounding**.</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>If units adopt earlier because of an unmeasured variable that also changes their future trajectory</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>(such as manager enthusiasm or unrecorded customer momentum), conditioning on historical</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>revenue cannot eliminate the resulting selection bias.</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>It is equally vital to distinguish **serial dependence** from **confounding**:</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Serial dependence** is an error structure and uncertainty problem: observations from the</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  same unit across consecutive weeks share autocorrelated innovations. Failing to account for</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  serial correlation leads to understated standard errors and overconfident intervals.</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Confounding** is an identification problem: systematic differences in potential outcomes</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>  between adoption cohorts. A model can have perfectly modeled AR(1) errors and remain</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>  hopelessly confounded, or be cleanly identified by randomization while requiring careful</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>  serial correlation diagnostics.</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>Furthermore, Bayesian posterior intervals in these chapters are conditional on the stated</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>structural priors, likelihoods, and identifying assumptions. They provide coherent Bayesian</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>uncertainty under those modeling assumptions, but do not promise automatically calibrated</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>repeated-sampling coverage if the error or assignment model is misspecified.</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="fu">## Roadmap for this Part</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>The chapters in this part form a structured progression from aggregate macro-interventions</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>to granular, decision-focused panel modeling:</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**[CausalImpact](causalimpact.qmd):** Bayesian structural time-series (BSTS) models for</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>   aggregate interventions, using contemporaneous control markets and state-space decomposition.</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**[Bayesian Synthetic Control](bsynth.qmd):** Panel-based synthetic control with donor weights,</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>   shrinkage, and posterior predictive intervals for comparative case studies.</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**[LongBet: Dynamic Treatment Effects in Staggered Rollouts](longbet.qmd):** The core</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>   LongBet framework, introducing Bayesian causal trees on panel data. We study a randomized</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>   capacity-constrained rollout, compare estimates against difference-in-differences and ANCOVA</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>   benchmarks, and recover heterogeneous trajectories.</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>   *(Readers already familiar with <span class="co">[</span><span class="ot">Bayesian Causal Forests</span><span class="co">](bcf.qmd)</span> can jump directly into</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>   LongBet; prior reading of PhoBART or BAD is not required.)*</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**[LongBet: Decisions and Multiple Outcomes](longbet_decisions.qmd):** A direct continuation</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>   of the marketplace simulation, translating dynamic effect trajectories into 52-week economic</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>   valuations and evaluating joint multi-outcome decisions (GMV, workload, complaints) via</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>   triangular SUR modeling.</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**[LongBet: Forecasting, Observational Panels, and Diagnostics](longbet_extensions.qmd):**</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>   Advanced extensions of the core rollout, covering Gaussian process forecasting beyond the</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>   trial window, observational panel identification, unit-level random intercepts, serial</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>   correlation checks, time-varying moderators, and operating characteristics.</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### Neighboring Methods and Scope</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>This part focuses on a selected Bayesian and machine learning toolkit for business decisions.</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>It does not attempt comprehensive coverage of the entire econometric longitudinal literature.</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Classic two-way fixed effects (TWFE), modern staggered difference-in-differences estimators</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@callaway2021did; @roth2023trending</span><span class="co">]</span>, and event-study regressions provide indispensable</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>benchmarks that we explicitly compare against throughout our analysis.</span>
 <span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>With your decision clearly defined, it's time to craft questions that data can</span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>answer and that directly inform your decision. These questions should be</span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>focused, actionable, and revolve around</span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="in">`r glossary("meaningful threshold", "meaningful thresholds")`</span>, rather than</span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>fixating solely on the null hypothesis (zero effect).</span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>For instance, in a scenario involving the implementation of a chatbot, you might</span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>ask:</span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="ss">  + </span>"Will a chatbot reduce average customer wait time by at least 15%?" Here,</span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>    the threshold of interest isn't whether there's any reduction in wait time,</span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>    but whether the reduction is substantial enough (15% or more) to justify</span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>    implementing the chatbot.</span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="ss">  + </span>"Will a chatbot increase customer satisfaction scores by at least 10</span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>    points?" Similarly, the focus is on a meaningful increase in satisfaction,</span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>    not just any statistically significant difference from the current baseline.</span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>By establishing these thresholds, we align our data analysis with the real-world</span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>impact of our decisions. A 5% reduction in wait times, even if statistically</span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>significant, might not justify the cost of implementing a chatbot.</span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>In many cases, a well-structured question can be surprisingly simple, often</span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>following the format "Does <span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#EA4335;"</span><span class="dt">&gt;</span>A<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span> do</span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#34A853;"</span><span class="dt">&gt;</span>B<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span> among</span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#4285F4;"</span><span class="dt">&gt;</span>C<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span> compared to</span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#FBBC04;"</span><span class="dt">&gt;</span>D<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span>?"</span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#EA4335;"</span><span class="dt">&gt;</span>A<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span>: The intervention or action under</span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>    evaluation (e.g., chatbot, new pricing).</span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#34A853;"</span><span class="dt">&gt;</span>B<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span>: Your clear definition of success</span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>    (e.g., reduce wait times, increase sales).</span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#4285F4;"</span><span class="dt">&gt;</span>C<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span>: The target population (e.g., all</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>    customers, a specific segment).</span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#FBBC04;"</span><span class="dt">&gt;</span>D<span class="dt">&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span>: The alternative or baseline for</span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>    comparison (e.g., no chatbot, current pricing).</span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>However, sometimes you'll encounter more nuanced questions like "What works for</span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>whom?" These situations involve evaluating multiple alternatives with the</span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>understanding that different options might be optimal for different groups</span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>within your population.</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="fu">## Design the Study: Tailoring Research to Your Decision  </span></span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>This stage involves selecting the appropriate research methodology to answer</span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>your questions. Crucially, **the study design must be tailored to the specific</span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>decision you're facing.** Factors to consider include data availability,</span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>experimental design, and potential biases. **Additionally, ethical</span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>considerations should be at the forefront of your design, ensuring the study</span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>does no harm and respects the rights of participants.**</span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Chatbot Example:** If you're exploring whether to offer a chatbot as an</span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>    option, an A/B test where some customers are offered the chatbot while</span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>    others follow the standard process might be suitable. However, if you're</span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>    considering making the chatbot the only option, your study design needs to</span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>    reflect this forced-choice scenario.</span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Event Invitation Example:** If you want to understand the value of</span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>    inviting people to an event, randomizing invitations and analyzing</span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>    attendance rates is a valid approach. But if you want to understand the</span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>    value of actually attending the event, you'd focus on outcomes for</span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>    attendees, even if the data comes from the same experiment.</span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>The key is to ensure your study design mirrors the real-world conditions of the</span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>decision as closely as possible.</span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="fu">## Present Findings and Implications: Communicating Clearly and Transparently</span></span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>After conducting your study, present the results clearly, concisely, and</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>accessibly. Avoid jargon that could confuse your audience. Even a meticulously</span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>designed study can lead to misinformed decisions if the findings are poorly</span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>communicated. Be transparent about your learnings, acknowledge any limitations</span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>of the study, and highlight new questions that have arisen.</span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>In discussing limitations, it's crucial to distinguish between</span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a><span class="in">`r glossary("Internal Validity")`</span> (the confidence that the observed effects </span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>are due to the factor you're studying) and <span class="in">`r glossary("External Validity")`</span></span>
-<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>(the extent to which the results can be generalized to other situations).</span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>Even with a flawless experimental design, questions of external validity might</span>
-<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>remain. For example, a chatbot study conducted with tech-savvy users might</span>
-<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>not apply to an older demographic.</span>
-<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="fu">## Real-World Constraints and the Path Forward</span></span>
-<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>Real-world constraints often prevent us from conducting the "perfect" study with</span>
-<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>both impeccable internal and external validity. Therefore, it's essential to</span>
-<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>view evidence quality as a spectrum, not a binary. Learning is an ongoing</span>
-<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>process. Embrace uncertainty, acknowledging that no single study provides all</span>
-<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>the answers. Instead of thinking in terms of "success" or "failure," consider</span>
-<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>the weight of evidence, the specific context, and the potential risks and</span>
-<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>rewards when making decisions.</span>
-<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>By adopting the "Decisions First" framework and embracing a Bayesian approach,</span>
-<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>you can transform data analysis from a ritualistic exercise into a powerful tool</span>
-<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>for making informed, impactful decisions. This approach not only aligns your</span>
-<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>research with your business objectives but also acknowledges the complexities</span>
-<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>and uncertainties inherent in real-world decision-making.</span>
-<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
-<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learn more</span></span>
-<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>@duke2019thinking Thinking in bets: Making smarter decisions when you don't have</span>
-<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>all the facts.</span>
-<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>::: </span>
-</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>Finally, a cautionary note on dynamic complexity: simply adding time-varying covariates to a</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>regression or tree model does not solve **treatment-confounder feedback** (where past treatments</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>affect future confounders, which in turn affect future treatments). Addressing dynamic feedback</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>requires specialized longitudinal g-methods or structural marginal models, which remain outside</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>the single-adoption framework treated here.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/decisions_first.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/decisions_first.html&amp;title=A decisions-first framework: start with the decision, not the p-value" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=A decisions-first framework: start with the decision, not the p-value&amp;body=Check out this link:https://book.martinez.fyi/decisions_first.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=A decisions-first framework: start with the decision, not the p-value https://book.martinez.fyi/decisions_first.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/longitudinal.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/longitudinal.html&amp;title=Causal inference across time: assumptions, estimation, and decisions" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Causal inference across time: assumptions, estimation, and decisions&amp;body=Check out this link:https://book.martinez.fyi/longitudinal.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Causal inference across time: assumptions, estimation, and decisions https://book.martinez.fyi/longitudinal.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
 
 
 

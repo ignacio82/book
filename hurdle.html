@@ -8,7 +8,7 @@
 
 <meta name="description" content="Data with a preponderance of zeros defies conventional distributions. Hurdle models separate whether a value occurs from how large it is, and differ from zero-inflated models in ways that matter.">
 
-<title>19&nbsp; Hurdle Models – Business Data Science</title>
+<title>17&nbsp; Hurdle Models – Business Data Science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -162,17 +162,17 @@ window.Quarto = {
 };
 </script>
 
-<meta property="og:title" content="19&nbsp; Hurdle Models – Business Data Science">
+<meta property="og:title" content="17&nbsp; Hurdle Models – Business Data Science">
 <meta property="og:description" content="Data with a preponderance of zeros defies conventional distributions. Hurdle models separate whether a value occurs from how large it is, and differ from zero-inflated models in ways that matter.">
 <meta property="og:image" content="https://book.martinez.fyi/img/hurdle.jpg">
 <meta property="og:site_name" content="Business Data Science">
 <meta property="og:image:alt" content="Hurdle Models">
-<meta name="twitter:title" content="19&nbsp; Hurdle Models – Business Data Science">
+<meta name="twitter:title" content="17&nbsp; Hurdle Models – Business Data Science">
 <meta name="twitter:description" content="Data with a preponderance of zeros defies conventional distributions. Hurdle models separate whether a value occurs from how large it is, and differ from zero-inflated models in ways that matter.">
 <meta name="twitter:image" content="https://book.martinez.fyi/img/hurdle.jpg">
 <meta name="twitter:image:alt" content="Hurdle Models">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="citation_title" content="[19]{.chapter-number}&nbsp; [Hurdle Models]{.chapter-title}">
+<meta name="citation_title" content="[17]{.chapter-number}&nbsp; [Hurdle Models]{.chapter-title}">
 <meta name="citation_fulltext_html_url" content="https://book.martinez.fyi">
 <meta name="citation_language" content="en">
 <meta name="citation_book_title" content="Business Data Science: A guide for data-driven decisions">
@@ -260,6 +260,7 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=Local gaussian process extrapolation for BART models with applications to causal inference;,citation_author=Meijia Wang;,citation_author=Jingyu He;,citation_author=P. Richard Hahn;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_issue=2;,citation_doi=10.1080/10618600.2023.2240384;,citation_volume=33;,citation_journal_title=Journal of Computational and Graphical Statistics;">
 <meta name="citation_reference" content="citation_title=What’s trending in difference-in-differences? A synthesis of the recent econometrics literature;,citation_author=Jonathan Roth;,citation_author=Pedro H. C. Sant’Anna;,citation_author=Alyssa Bilinski;,citation_author=John Poe;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=2;,citation_doi=10.1016/j.jeconom.2023.03.008;,citation_volume=235;,citation_journal_title=Journal of Econometrics;">
 <meta name="citation_reference" content="citation_title=Inference in Bayesian additive vector autoregressive tree models;,citation_author=Florian Huber;,citation_author=Luca Rossini;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_issue=1;,citation_doi=10.1214/21-AOAS1488;,citation_volume=16;,citation_journal_title=The Annals of Applied Statistics;">
+<meta name="citation_reference" content="citation_title=Using big data to emulate a target trial when a randomized trial is not available;,citation_author=Miguel A. Hernán;,citation_author=James M. Robins;,citation_publication_date=2016;,citation_cover_date=2016;,citation_year=2016;,citation_issue=8;,citation_doi=10.1093/aje/kwv254;,citation_volume=183;,citation_journal_title=American Journal of Epidemiology;">
 </head>
 
 <body class="nav-sidebar floating quarto-light">
@@ -271,7 +272,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./hurdle.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./hurdle.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Hurdle Models</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -359,7 +360,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./rct.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">The Gold Standard</span></a>
+ <span class="menu-text">Randomized Experiments and Observational Comparisons</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -395,33 +396,10 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="./other_methods.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Non Experimental Methods</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./matching.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./causalimpact.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
       </ul>
@@ -430,33 +408,33 @@ window.Quarto = {
       <div class="sidebar-item-container"> 
             <a href="./glm.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Generalized Linear Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./blm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./meta-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./beyond_normality.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./hurdle.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -464,7 +442,48 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./stochastictrees.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Stochastic Trees</span></a>
+ <span class="menu-text">Stochastic Trees and Heterogeneous Effects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bart.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bcf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./phobart.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bad.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./longitudinal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Longitudinal and Panel Causal Inference</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -472,38 +491,32 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+  <a href="./causalimpact.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bcf.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+  <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">LongBet: Time-Varying Treatment Effects in Panel Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">LongBet: Dynamic Treatment Effects in Staggered Rollouts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+  <a href="./longbet_decisions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">LongBet: Decisions and Multiple Outcomes</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./phobart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./bad.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
+  <a href="./longbet_extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">LongBet: Forecasting, Observational Panels, and Diagnostics</span></span></a>
   </div>
 </li>
       </ul>
@@ -511,7 +524,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -524,18 +537,18 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-are-hurdle-models-and-when-are-they-useful" id="toc-what-are-hurdle-models-and-when-are-they-useful" class="nav-link active" data-scroll-target="#what-are-hurdle-models-and-when-are-they-useful"><span class="header-section-number">19.1</span> What are Hurdle Models and When are they Useful?</a>
+  <li><a href="#what-are-hurdle-models-and-when-are-they-useful" id="toc-what-are-hurdle-models-and-when-are-they-useful" class="nav-link active" data-scroll-target="#what-are-hurdle-models-and-when-are-they-useful"><span class="header-section-number">17.1</span> What are Hurdle Models and When are they Useful?</a>
   <ul class="collapse">
   <li><a href="#mathematical-representation-for-a-hurdle-model-with-a-log-normal-component" id="toc-mathematical-representation-for-a-hurdle-model-with-a-log-normal-component" class="nav-link" data-scroll-target="#mathematical-representation-for-a-hurdle-model-with-a-log-normal-component">Mathematical Representation for a Hurdle Model with a Log Normal Component</a></li>
   </ul></li>
-  <li><a href="#simulating-data-for-a-hurdle-model" id="toc-simulating-data-for-a-hurdle-model" class="nav-link" data-scroll-target="#simulating-data-for-a-hurdle-model"><span class="header-section-number">19.2</span> Simulating Data for a Hurdle Model</a></li>
-  <li><a href="#pitfalls-of-naive-ols-regression" id="toc-pitfalls-of-naive-ols-regression" class="nav-link" data-scroll-target="#pitfalls-of-naive-ols-regression"><span class="header-section-number">19.3</span> Pitfalls of Naive OLS Regression</a></li>
-  <li><a href="#bayesian-hurdle-model-using-imt" id="toc-bayesian-hurdle-model-using-imt" class="nav-link" data-scroll-target="#bayesian-hurdle-model-using-imt"><span class="header-section-number">19.4</span> Bayesian Hurdle Model Using {imt}</a>
+  <li><a href="#simulating-data-for-a-hurdle-model" id="toc-simulating-data-for-a-hurdle-model" class="nav-link" data-scroll-target="#simulating-data-for-a-hurdle-model"><span class="header-section-number">17.2</span> Simulating Data for a Hurdle Model</a></li>
+  <li><a href="#pitfalls-of-naive-ols-regression" id="toc-pitfalls-of-naive-ols-regression" class="nav-link" data-scroll-target="#pitfalls-of-naive-ols-regression"><span class="header-section-number">17.3</span> Pitfalls of Naive OLS Regression</a></li>
+  <li><a href="#bayesian-hurdle-model-using-imt" id="toc-bayesian-hurdle-model-using-imt" class="nav-link" data-scroll-target="#bayesian-hurdle-model-using-imt"><span class="header-section-number">17.4</span> Bayesian Hurdle Model Using {imt}</a>
   <ul class="collapse">
   <li><a href="#plot-priors" id="toc-plot-priors" class="nav-link" data-scroll-target="#plot-priors">Plot Priors</a></li>
   <li><a href="#posterior-analysis" id="toc-posterior-analysis" class="nav-link" data-scroll-target="#posterior-analysis">Posterior Analysis</a></li>
   </ul></li>
-  <li><a href="#hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job" id="toc-hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job" class="nav-link" data-scroll-target="#hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job"><span class="header-section-number">19.5</span> Hurdle vs.&nbsp;Zero-Inflated Models: Choosing the Right Tool for the Job</a>
+  <li><a href="#hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job" id="toc-hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job" class="nav-link" data-scroll-target="#hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job"><span class="header-section-number">17.5</span> Hurdle vs.&nbsp;Zero-Inflated Models: Choosing the Right Tool for the Job</a>
   <ul class="collapse">
   <li><a href="#conceptual-differences" id="toc-conceptual-differences" class="nav-link" data-scroll-target="#conceptual-differences">Conceptual Differences</a></li>
   <li><a href="#when-to-use-each" id="toc-when-to-use-each" class="nav-link" data-scroll-target="#when-to-use-each">When to Use Each</a></li>
@@ -546,9 +559,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./hurdle.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./glm.html">Generalized Linear Models</a></li><li class="breadcrumb-item"><a href="./hurdle.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Hurdle Models</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Hurdle Models</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -566,8 +579,8 @@ window.Quarto = {
 
 
 <p><img src="img/hurdle.jpg" align="right" height="280" alt="Hurdle Models"></p>
-<section id="what-are-hurdle-models-and-when-are-they-useful" class="level2" data-number="19.1">
-<h2 data-number="19.1" class="anchored" data-anchor-id="what-are-hurdle-models-and-when-are-they-useful"><span class="header-section-number">19.1</span> What are Hurdle Models and When are they Useful?</h2>
+<section id="what-are-hurdle-models-and-when-are-they-useful" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="what-are-hurdle-models-and-when-are-they-useful"><span class="header-section-number">17.1</span> What are Hurdle Models and When are they Useful?</h2>
 <p>Hurdle models are a specialized statistical tool designed to handle data with a preponderance of zero values, which often defy the assumptions of conventional distributions like the normal or Poisson. These models are particularly valuable when the data-generating process naturally consists of two distinct stages:</p>
 <ol type="1">
 <li><p><strong>Process 1: The Hurdle - Zero or Non-Zero?</strong> This stage acts as the gatekeeper, determining whether the underlying data-generating mechanism is “active” or “dormant.” It essentially answers the question: Is the outcome zero or non-zero?</p></li>
@@ -616,8 +629,8 @@ window.Quarto = {
 </ul>
 </section>
 </section>
-<section id="simulating-data-for-a-hurdle-model" class="level2" data-number="19.2">
-<h2 data-number="19.2" class="anchored" data-anchor-id="simulating-data-for-a-hurdle-model"><span class="header-section-number">19.2</span> Simulating Data for a Hurdle Model</h2>
+<section id="simulating-data-for-a-hurdle-model" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="simulating-data-for-a-hurdle-model"><span class="header-section-number">17.2</span> Simulating Data for a Hurdle Model</h2>
 <p>Let’s bring these concepts to life with a practical example. Imagine you’re part of an online video content company aiming to assess the impact of a novel marketing strategy on video watch time. You notice that certain videos garner substantial watch time, while others remain unwatched. To rigorously test this new strategy, you randomly assign videos to either a treatment or control group. Here’s how we might simulate such data:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
@@ -714,8 +727,8 @@ $ zero_prob_control  &lt;dbl&gt; 0.6224593, 0.6224593, 0.8175745, 0.5744425, 0.8
 </div>
 <p>In this simulated data, the average treatment effect leads to an increase in watch time of approximately 30 hours. Additionally, the probability of having zero hours of watch time decreases by -3 percentage points.</p>
 </section>
-<section id="pitfalls-of-naive-ols-regression" class="level2" data-number="19.3">
-<h2 data-number="19.3" class="anchored" data-anchor-id="pitfalls-of-naive-ols-regression"><span class="header-section-number">19.3</span> Pitfalls of Naive OLS Regression</h2>
+<section id="pitfalls-of-naive-ols-regression" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="pitfalls-of-naive-ols-regression"><span class="header-section-number">17.3</span> Pitfalls of Naive OLS Regression</h2>
 <p>Since treatment assignment is random in our simulation, it might be tempting to use a simple linear regression:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">data =</span> fake_data, </span>
@@ -763,8 +776,8 @@ $ zero_prob_control  &lt;dbl&gt; 0.6224593, 0.6224593, 0.8175745, 0.5744425, 0.8
 </div>
 <p>In this case, the point estimate (18) and the confidence interval ([16, 19]) underestimate the true effect.</p>
 </section>
-<section id="bayesian-hurdle-model-using-imt" class="level2" data-number="19.4">
-<h2 data-number="19.4" class="anchored" data-anchor-id="bayesian-hurdle-model-using-imt"><span class="header-section-number">19.4</span> Bayesian Hurdle Model Using {imt}</h2>
+<section id="bayesian-hurdle-model-using-imt" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="bayesian-hurdle-model-using-imt"><span class="header-section-number">17.4</span> Bayesian Hurdle Model Using {imt}</h2>
 <p><img src="https://raw.githubusercontent.com/google/imt/refs/heads/main/man/figures/logo.png" align="right" height="138" alt="logo of the imt package"></p>
 <p>Let’s use the <a href="https://github.com/google/imt">{imt}</a> package to fit a Bayesian hurdle model:</p>
 <div class="cell">
@@ -871,8 +884,8 @@ $ zero_prob_control  &lt;dbl&gt; 0.6224593, 0.6224593, 0.8175745, 0.5744425, 0.8
 <p>The Bayesian hurdle model, as implemented with {imt}, provides a more nuanced and accurate assessment of the treatment effect in the presence of excessive zeros, outperforming naive OLS approaches.</p>
 </section>
 </section>
-<section id="hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job" class="level2" data-number="19.5">
-<h2 data-number="19.5" class="anchored" data-anchor-id="hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job"><span class="header-section-number">19.5</span> Hurdle vs.&nbsp;Zero-Inflated Models: Choosing the Right Tool for the Job</h2>
+<section id="hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job" class="level2" data-number="17.5">
+<h2 data-number="17.5" class="anchored" data-anchor-id="hurdle-vs.-zero-inflated-models-choosing-the-right-tool-for-the-job"><span class="header-section-number">17.5</span> Hurdle vs.&nbsp;Zero-Inflated Models: Choosing the Right Tool for the Job</h2>
 <p>While hurdle models excel at handling data with excess zeros, it’s crucial to distinguish them from another class of models designed for similar scenarios: zero-inflated models. Both tackle the challenge of zero inflation, but they do so with subtle yet important differences.</p>
 <section id="conceptual-differences" class="level3">
 <h3 class="anchored" data-anchor-id="conceptual-differences">Conceptual Differences</h3>
@@ -1379,12 +1392,12 @@ Team, Stan Development. 2024. <em>Finite Mixtures and Zero-Inflated Models</em>.
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./beyond_normality.html" class="pagination-link" aria-label="Beyond Normality">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./stochastictrees.html" class="pagination-link" aria-label="Stochastic Trees">
-        <span class="nav-page-text">Stochastic Trees</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./stochastictrees.html" class="pagination-link" aria-label="Stochastic Trees and Heterogeneous Effects">
+        <span class="nav-page-text">Stochastic Trees and Heterogeneous Effects</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">

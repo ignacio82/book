@@ -128,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="twitter:image-width" content="794">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="citation_title" content="Business Data Science">
-<meta name="citation_abstract" content="This book provides a comprehensive guide to the principles and applications of business data science, with a focus on making sound, data-driven decisions. We begin by laying the groundwork, introducing core concepts such as the potential outcomes framework, the importance of baselines, and the fundamentals of Bayesian thinking. The book then delves into the gold standard of causal inference: randomized controlled trials (RCTs). We explore the design and analysis of RCTs, including factorial designs and instrumental variable approaches. Recognizing that RCTs are not always feasible, we then present a variety of other powerful methods, including matching, causal impact analysis, and Bayesian structural time-series. The book also covers generalized linear models, from Bayesian linear models to more advanced topics like meta-analysis and hurdle models. Finally, we explore the use of stochastic trees for causal inference, with chapters on Bayesian Additive Regression Trees (BART), Bayesian Causal Forests (BCF), and other cutting-edge techniques. Throughout the book, the emphasis is on the practical application of these methods to solve real-world business problems">
+<meta name="citation_abstract" content="This book provides a comprehensive guide to the principles and applications of business data science, with a focus on making sound, data-driven decisions. We begin by laying the groundwork, introducing core concepts such as the potential outcomes framework, the importance of baselines, and the fundamentals of Bayesian thinking. The book then delves into randomized experiments and observational comparisons, covering the design and analysis of RCTs, factorial designs, instrumental variables, and matching as a bridge to observational identification. Next, we explore generalized linear models, from Bayesian linear models to meta-analysis and hurdle models. We then cover stochastic trees and heterogeneous treatment effects, with chapters on Bayesian Additive Regression Trees (BART), Bayesian Causal Forests (BCF), ordinal modeling, and adaptive experimental designs. Finally, we address longitudinal and panel causal inference across time, from aggregate interventions (BSTS and synthetic control) to micro-level panel dynamics with LongBet, connecting dynamic treatment trajectories directly to business decisions. Throughout the book, the emphasis is on the practical application of these methods to solve real-world business problems.">
 <meta name="citation_author" content="Ignacio Martinez">
 <meta name="citation_publication_date" content="2024-10-04">
 <meta name="citation_cover_date" content="2024-10-04">
@@ -221,6 +221,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="citation_reference" content="citation_title=Local gaussian process extrapolation for BART models with applications to causal inference;,citation_author=Meijia Wang;,citation_author=Jingyu He;,citation_author=P. Richard Hahn;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_issue=2;,citation_doi=10.1080/10618600.2023.2240384;,citation_volume=33;,citation_journal_title=Journal of Computational and Graphical Statistics;">
 <meta name="citation_reference" content="citation_title=What’s trending in difference-in-differences? A synthesis of the recent econometrics literature;,citation_author=Jonathan Roth;,citation_author=Pedro H. C. Sant’Anna;,citation_author=Alyssa Bilinski;,citation_author=John Poe;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=2;,citation_doi=10.1016/j.jeconom.2023.03.008;,citation_volume=235;,citation_journal_title=Journal of Econometrics;">
 <meta name="citation_reference" content="citation_title=Inference in Bayesian additive vector autoregressive tree models;,citation_author=Florian Huber;,citation_author=Luca Rossini;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_issue=1;,citation_doi=10.1214/21-AOAS1488;,citation_volume=16;,citation_journal_title=The Annals of Applied Statistics;">
+<meta name="citation_reference" content="citation_title=Using big data to emulate a target trial when a randomized trial is not available;,citation_author=Miguel A. Hernán;,citation_author=James M. Robins;,citation_publication_date=2016;,citation_cover_date=2016;,citation_year=2016;,citation_issue=8;,citation_doi=10.1093/aje/kwv254;,citation_volume=183;,citation_journal_title=American Journal of Epidemiology;">
 </head>
 
 <body class="nav-sidebar floating quarto-light">
@@ -320,7 +321,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./rct.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">The Gold Standard</span></a>
+ <span class="menu-text">Randomized Experiments and Observational Comparisons</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -356,33 +357,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Study Design</span></span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="./other_methods.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Non Experimental Methods</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./matching.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Matching</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./causalimpact.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
       </ul>
@@ -391,33 +369,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./glm.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Generalized Linear Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./blm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Bayesian Linear Regression</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./meta-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Meta-Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./beyond_normality.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Beyond Normality</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./hurdle.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Hurdle Models</span></span></a>
   </div>
 </li>
       </ul>
@@ -425,7 +403,48 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./stochastictrees.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Stochastic Trees</span></a>
+ <span class="menu-text">Stochastic Trees and Heterogeneous Effects</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bart.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bcf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./phobart.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bad.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./longitudinal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Longitudinal and Panel Causal Inference</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -433,38 +452,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Bayesian Additive Regression Trees (BART)</span></span></a>
+  <a href="./causalimpact.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Bayesian Structural Time Series</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bcf.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Bayesian Causal Forest (BCF)</span></span></a>
+  <a href="./bsynth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Bayesian Synthetic Control</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">LongBet: Time-Varying Treatment Effects in Panel Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">LongBet: Dynamic Treatment Effects in Staggered Rollouts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./causalPropensity.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Causal Propensity Modeling</span></span></a>
+  <a href="./longbet_decisions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">LongBet: Decisions and Multiple Outcomes</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./phobart.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Ordinal Regression with BART and the Cloglog Link</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./bad.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Bayesian Adaptive Design</span></span></a>
+  <a href="./longbet_extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">LongBet: Forecasting, Observational Panels, and Diagnostics</span></span></a>
   </div>
 </li>
       </ul>
@@ -472,7 +485,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -531,7 +544,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div>
   <div class="abstract">
     <div class="block-title">Abstract</div>
-    This book provides a comprehensive guide to the principles and applications of business data science, with a focus on making sound, data-driven decisions. We begin by laying the groundwork, introducing core concepts such as the potential outcomes framework, the importance of baselines, and the fundamentals of Bayesian thinking. The book then delves into the gold standard of causal inference: randomized controlled trials (RCTs). We explore the design and analysis of RCTs, including factorial designs and instrumental variable approaches. Recognizing that RCTs are not always feasible, we then present a variety of other powerful methods, including matching, causal impact analysis, and Bayesian structural time-series. The book also covers generalized linear models, from Bayesian linear models to more advanced topics like meta-analysis and hurdle models. Finally, we explore the use of stochastic trees for causal inference, with chapters on Bayesian Additive Regression Trees (BART), Bayesian Causal Forests (BCF), and other cutting-edge techniques. Throughout the book, the emphasis is on the practical application of these methods to solve real-world business problems
+    This book provides a comprehensive guide to the principles and applications of business data science, with a focus on making sound, data-driven decisions. We begin by laying the groundwork, introducing core concepts such as the potential outcomes framework, the importance of baselines, and the fundamentals of Bayesian thinking. The book then delves into randomized experiments and observational comparisons, covering the design and analysis of RCTs, factorial designs, instrumental variables, and matching as a bridge to observational identification. Next, we explore generalized linear models, from Bayesian linear models to meta-analysis and hurdle models. We then cover stochastic trees and heterogeneous treatment effects, with chapters on Bayesian Additive Regression Trees (BART), Bayesian Causal Forests (BCF), ordinal modeling, and adaptive experimental designs. Finally, we address longitudinal and panel causal inference across time, from aggregate interventions (BSTS and synthetic control) to micro-level panel dynamics with LongBet, connecting dynamic treatment trajectories directly to business decisions. Throughout the book, the emphasis is on the practical application of these methods to solve real-world business problems.
   </div>
 </div>
 
