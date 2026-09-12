@@ -521,12 +521,18 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">LongBet: Forecasting, Observational Panels, and Diagnostics</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./longbet_ordinal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -654,6 +660,7 @@ Table&nbsp;1: Method selection across longitudinal and panel causal designs
 <li><strong><a href="./longbet.html">LongBet: Dynamic Treatment Effects in Staggered Rollouts</a>:</strong> The core LongBet framework, introducing Bayesian causal trees on panel data. We study a randomized capacity-constrained rollout, compare estimates against difference-in-differences and ANCOVA benchmarks, and recover heterogeneous trajectories. <em>(Readers already familiar with <a href="./bcf.html">Bayesian Causal Forests</a> can jump directly into LongBet; prior reading of PhoBART or BAD is not required.)</em></li>
 <li><strong><a href="./longbet_decisions.html">LongBet: Decisions and Multiple Outcomes</a>:</strong> A direct continuation of the marketplace simulation, translating dynamic effect trajectories into 52-week economic valuations and evaluating joint multi-outcome decisions (GMV, workload, complaints) via triangular SUR modeling.</li>
 <li><strong><a href="./longbet_extensions.html">LongBet: Forecasting, Observational Panels, and Diagnostics</a>:</strong> Advanced extensions of the core rollout, covering Gaussian process forecasting beyond the trial window, observational panel identification, unit-level random intercepts, serial correlation checks, time-varying moderators, and operating characteristics.</li>
+<li><strong><a href="./longbet_ordinal.html">LongBet: Ordinal Outcomes and Customer Experience</a>:</strong> Dynamic effects on ordered ratings, comparisons for rare top ratings, and posterior probabilities for customer-experience rollout criteria.</li>
 </ol>
 <section id="neighboring-methods-and-scope" class="level3">
 <h3 class="anchored" data-anchor-id="neighboring-methods-and-scope">Neighboring Methods and Scope</h3>
@@ -1241,20 +1248,23 @@ Roth, Jonathan, Pedro H. C. Sant’Anna, Alyssa Bilinski, and John Poe. 2023. <s
 <span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>   Advanced extensions of the core rollout, covering Gaussian process forecasting beyond the</span>
 <span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>   trial window, observational panel identification, unit-level random intercepts, serial</span>
 <span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>   correlation checks, time-varying moderators, and operating characteristics.</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### Neighboring Methods and Scope</span></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>This part focuses on a selected Bayesian and machine learning toolkit for business decisions.</span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>It does not attempt comprehensive coverage of the entire econometric longitudinal literature.</span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Classic two-way fixed effects (TWFE), modern staggered difference-in-differences estimators</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@callaway2021did; @roth2023trending</span><span class="co">]</span>, and event-study regressions provide indispensable</span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>benchmarks that we explicitly compare against throughout our analysis.</span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>Finally, a cautionary note on dynamic complexity: simply adding time-varying covariates to a</span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>regression or tree model does not solve **treatment-confounder feedback** (where past treatments</span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>affect future confounders, which in turn affect future treatments). Addressing dynamic feedback</span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>requires specialized longitudinal g-methods or structural marginal models, which remain outside</span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>the single-adoption framework treated here.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**[LongBet: Ordinal Outcomes and Customer Experience](longbet_ordinal.qmd):**</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>   Dynamic effects on ordered ratings, comparisons for rare top ratings, and</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>   posterior probabilities for customer-experience rollout criteria.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="fu">### Neighboring Methods and Scope</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>This part focuses on a selected Bayesian and machine learning toolkit for business decisions.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>It does not attempt comprehensive coverage of the entire econometric longitudinal literature.</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Classic two-way fixed effects (TWFE), modern staggered difference-in-differences estimators</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@callaway2021did; @roth2023trending</span><span class="co">]</span>, and event-study regressions provide indispensable</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>benchmarks that we explicitly compare against throughout our analysis.</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>Finally, a cautionary note on dynamic complexity: simply adding time-varying covariates to a</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>regression or tree model does not solve **treatment-confounder feedback** (where past treatments</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>affect future confounders, which in turn affect future treatments). Addressing dynamic feedback</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>requires specialized longitudinal g-methods or structural marginal models, which remain outside</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>the single-adoption framework treated here.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/longitudinal.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/longitudinal.html&amp;title=Causal inference across time: assumptions, estimation, and decisions" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Causal inference across time: assumptions, estimation, and decisions&amp;body=Check out this link:https://book.martinez.fyi/longitudinal.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Causal inference across time: assumptions, estimation, and decisions https://book.martinez.fyi/longitudinal.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
