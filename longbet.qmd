@@ -16,11 +16,12 @@ share:
 ---
 
 ::: {.callout-note title="LongBet chapter sequence"}
-This is the first of three chapters exploring LongBet:
+This is the first of four chapters exploring LongBet:
 
 1. **LongBet: Dynamic Treatment Effects in Staggered Rollouts** (this chapter): Model structure, randomized rollout simulation, model fit, sampler checks, ATT benchmarks, and heterogeneous effects.
 2. **[LongBet: Decisions and Multiple Outcomes](longbet_decisions.qmd)**: Translating dynamic effects into annual business valuations, capacity-constrained targeting, and joint multi-outcome modeling.
 3. **[LongBet: Forecasting, Observational Panels, and Diagnostics](longbet_extensions.qmd)**: Gaussian process forecasting, observational panel identification, unit-level baselines, time-varying covariates, and operating characteristics.
+4. **[LongBet: Ordinal Outcomes and Customer Experience](longbet_ordinal.qmd)**: Ordered ratings, heterogeneous probability effects, and posterior probabilities for rollout decisions.
 :::
 ## Introduction to LongBet
 

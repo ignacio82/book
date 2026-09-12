@@ -59,6 +59,7 @@ book:
         - longbet.qmd
         - longbet_decisions.qmd
         - longbet_extensions.qmd
+        - longbet_ordinal.qmd
     - references.qmd
   sidebar: 
     logo: hex.png
@@ -102,4 +103,3 @@ resources:
   - llms.txt
 execute:
   freeze: auto
-

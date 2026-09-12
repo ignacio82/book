@@ -59,7 +59,16 @@ To avoid installing R and all its dependencies directly on your host machine, yo
    make preview
    ```
 
-*Note: When rendering locally, Quarto saves execution outputs to `_freeze/`. Committing `_freeze/` allows GitHub Actions to publish in 1–2 minutes without re-running long MCMC computations in CI. After modifying shared LongBet R files, explicitly render all three LongBet chapters (`./render.sh longbet.qmd`, `./render.sh longbet_decisions.qmd`, `./render.sh longbet_extensions.qmd`) to refresh their frozen outputs.*
+*Note: When rendering locally, Quarto saves execution outputs to `_freeze/`. Committing `_freeze/` allows GitHub Actions to publish in 1–2 minutes without re-running long MCMC computations in CI. After modifying shared LongBet R files, explicitly render the three chapters that use those helpers (`./render.sh longbet.qmd`, `./render.sh longbet_decisions.qmd`, `./render.sh longbet_extensions.qmd`) to refresh their frozen outputs.*
+
+The independent ordinal chapter renders with `./render.sh longbet_ordinal.qmd`.
+It rebuilds its tables, figures, and decision probabilities from the checked
+simulation extracts in `data/longbet-ordinal/`, without refitting the full
+benchmark. That directory documents the data and reproduction procedure.
+The fitting recipe requires the ordinal R API. The Dockerfile pins both
+package interfaces to revision `769d02a2e2e3281315ad4d43cb6d24d6a84c3ae2`
+and checks the ordinal exports; rebuild older images with `make build` before
+using the recipe. Saved chapter extracts render without loading the sampler.
 
 ## 📄 License
 

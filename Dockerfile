@@ -33,7 +33,7 @@ RUN R -q -e "shinylive::assets_ensure()"
 # (ignacio82/longbet, <= v0.7.2) is deliberately not installed -- it shares the
 # R package name, so installing both would silently decide which engine the
 # chapter runs on. Pin LONGBET_REF to a commit for a reproducible build.
-ARG LONGBET_REF=main
+ARG LONGBET_REF=769d02a2e2e3281315ad4d43cb6d24d6a84c3ae2
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 python3-venv python3-dev git \
     && rm -rf /var/lib/apt/lists/* \
@@ -67,6 +67,9 @@ RUN R -q -e "stopifnot( \
     is.function(longbet::longbet_multi), \
     is.function(longbet::joint_prob), \
     is.function(longbet::outcome_correlation), \
+    is.function(longbet::predict_probabilities), \
+    is.function(longbet::att_probabilities), \
+    is.function(longbet::att_expected_score), \
     is.function(getS3method('predict', 'longbet', envir = asNamespace('longbet'))), \
     is.function(getS3method('predict', 'longbet_multi', envir = asNamespace('longbet'))), \
     'cache_forest_evaluations' %in% names(formals(getS3method('predict', 'longbet', envir = asNamespace('longbet')))) \
@@ -74,7 +77,10 @@ RUN R -q -e "stopifnot( \
     py <- reticulate::import('longbet'); \
     stopifnot(reticulate::py_has_attr(py, 'LongBet'), \
               reticulate::py_has_attr(py, 'LongBetMulti'), \
+              reticulate::py_has_attr(py, 'LongBetConfig'), \
               reticulate::py_has_attr(py, 'att_stability')); \
+    ordinal_config <- py\$LongBetConfig(outcome = 'ordinal', num_categories = 5L); \
+    stopifnot(identical(ordinal_config\$outcome, 'ordinal')); \
     cat('longbet R', as.character(packageVersion('longbet')), \
         '/ python', py[['__version__']], 'ok\n')"
 

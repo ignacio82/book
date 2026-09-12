@@ -99,6 +99,9 @@ to granular, decision-focused panel modeling:
    Advanced extensions of the core rollout, covering Gaussian process forecasting beyond the
    trial window, observational panel identification, unit-level random intercepts, serial
    correlation checks, time-varying moderators, and operating characteristics.
+6. **[LongBet: Ordinal Outcomes and Customer Experience](longbet_ordinal.qmd):**
+   Dynamic effects on ordered ratings, comparisons for rare top ratings, and
+   posterior probabilities for customer-experience rollout criteria.
 
 ### Neighboring Methods and Scope
 
