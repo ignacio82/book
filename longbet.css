@@ -23,3 +23,19 @@ main :not(pre) > code {
     height: auto;
   }
 }
+
+/* Work in Progress notice for LongBet chapters */
+#title-block-header::after {
+  content: "⚠️  Work in Progress\A This chapter is currently a draft under active development and may contain errors, incomplete sections, or evolving code. Feedback and corrections are welcome!";
+  white-space: pre-line;
+  display: block;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.85rem 1.25rem;
+  background-color: #fff3cd;
+  color: #664d03;
+  border-left: 5px solid #ffc107;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
