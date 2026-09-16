@@ -877,7 +877,7 @@ Figure&nbsp;27.1: Event-study estimates on the additive panel. All five estimato
 </section>
 <section id="where-the-cell-estimators-cannot-go" class="level2" data-number="27.3">
 <h2 data-number="27.3" class="anchored" data-anchor-id="where-the-cell-estimators-cannot-go"><span class="header-section-number">27.3</span> Where the Cell Estimators Cannot Go</h2>
-<p>Now change one thing. Keep the design, keep the shape of the trajectory, and let the <strong>size</strong> of the effect vary smoothly with a covariate:</p>
+<p>Now a second panel with the same staggered design: 400 units, a trajectory that is concave rather than linear, and a <strong>size</strong> of the effect that varies smoothly with a covariate:</p>
 <p><span class="math display">\[
 \tau(x, S) = (1.5 + 0.9\,x_1)\,\log(1 + S).
 \]</span></p>
@@ -1049,10 +1049,10 @@ Figure&nbsp;27.1: Event-study estimates on the additive panel. All five estimato
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> which) <span class="sc">+</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"True effect of the unit-period"</span>, <span class="at">y =</span> <span class="st">"Estimate"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="fig-did-cate" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto three horizontal bands.">
+<div id="fig-did-cate" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto six horizontal bands, one per exposure.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-did-cate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="longbet_did_files/figure-html/fig-did-cate-1.png" class="img-fluid figure-img" alt="Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto three horizontal bands." width="816">
+<img src="longbet_did_files/figure-html/fig-did-cate-1.png" class="img-fluid figure-img" alt="Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto six horizontal bands, one per exposure." width="816">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-did-cate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;27.2: True against estimated effect for every treated unit-period: LongBet’s posterior means, and the Callaway-Sant’Anna event-time average assigned to every unit at that exposure.
@@ -1129,7 +1129,7 @@ Figure&nbsp;27.2: True against estimated effect for every treated unit-period: L
 <ul>
 <li><strong>Use the econometric estimators</strong> when the question is the average effect of a staggered rollout, when the panel is large and the model should be as transparent as possible, or when a reviewer needs an estimator with published guarantees and pre-trend diagnostics. They are fast, they are well understood, and on their home turf nothing beats them.</li>
 <li><strong>Use LongBet as well</strong> when the decision needs a number per unit rather than per period, when you want the trajectory projected past the end of the study, when several outcomes must be screened together, or when the deliverable is a probability that a specific unit clears a specific bar.</li>
-<li><strong>Run both.</strong> They estimate the same average from the same data, so agreement is a real check on the model and a disagreement is worth understanding before either result ships. Every LongBet chapter in this part keeps a design-based estimate alongside the model for exactly this reason.</li>
+<li><strong>Run both.</strong> They estimate the same average from the same data, so agreement is a real check on the model and a disagreement is worth understanding before either result ships. The LongBet chapters keep a design-based estimate alongside the model wherever the design provides one, for exactly this reason.</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1813,7 +1813,7 @@ Sun, Liyang, and Sarah Abraham. 2021. <span>“Estimating Dynamic Treatment Effe
 <span id="cb12-172"><a href="#cb12-172" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-173"><a href="#cb12-173" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where the Cell Estimators Cannot Go</span></span>
 <span id="cb12-174"><a href="#cb12-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-175"><a href="#cb12-175" aria-hidden="true" tabindex="-1"></a>Now change one thing. Keep the design, keep the shape of the trajectory, and let the **size** of the effect vary smoothly with a covariate:</span>
+<span id="cb12-175"><a href="#cb12-175" aria-hidden="true" tabindex="-1"></a>Now a second panel with the same staggered design: 400 units, a trajectory that is concave rather than linear, and a **size** of the effect that varies smoothly with a covariate:</span>
 <span id="cb12-176"><a href="#cb12-176" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-177"><a href="#cb12-177" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb12-178"><a href="#cb12-178" aria-hidden="true" tabindex="-1"></a>\tau(x, S) = (1.5 + 0.9\,x_1)\,\log(1 + S).</span>
@@ -1874,7 +1874,7 @@ Sun, Liyang, and Sarah Abraham. 2021. <span>“Estimating Dynamic Treatment Effe
 <span id="cb12-233"><a href="#cb12-233" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-234"><a href="#cb12-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-did-cate}</span></span>
 <span id="cb12-235"><a href="#cb12-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "True against estimated effect for every treated unit-period: LongBet's posterior means, and the Callaway-Sant'Anna event-time average assigned to every unit at that exposure."</span></span>
-<span id="cb12-236"><a href="#cb12-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto three horizontal bands."</span></span>
+<span id="cb12-236"><a href="#cb12-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto six horizontal bands, one per exposure."</span></span>
 <span id="cb12-237"><a href="#cb12-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8.5</span></span>
 <span id="cb12-238"><a href="#cb12-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span>
 <span id="cb12-239"><a href="#cb12-239" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="fu">tibble</span>(<span class="at">truth =</span> hd_cell_truth, <span class="at">estimate =</span> hd_cell_est, <span class="at">which =</span> <span class="st">"LongBet posterior mean"</span>),</span>
@@ -1911,7 +1911,7 @@ Sun, Liyang, and Sarah Abraham. 2021. <span>“Estimating Dynamic Treatment Effe
 <span id="cb12-270"><a href="#cb12-270" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-271"><a href="#cb12-271" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Use the econometric estimators** when the question is the average effect of a staggered rollout, when the panel is large and the model should be as transparent as possible, or when a reviewer needs an estimator with published guarantees and pre-trend diagnostics. They are fast, they are well understood, and on their home turf nothing beats them.</span>
 <span id="cb12-272"><a href="#cb12-272" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Use LongBet as well** when the decision needs a number per unit rather than per period, when you want the trajectory projected past the end of the study, when several outcomes must be screened together, or when the deliverable is a probability that a specific unit clears a specific bar.</span>
-<span id="cb12-273"><a href="#cb12-273" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Run both.** They estimate the same average from the same data, so agreement is a real check on the model and a disagreement is worth understanding before either result ships. Every LongBet chapter in this part keeps a design-based estimate alongside the model for exactly this reason.</span>
+<span id="cb12-273"><a href="#cb12-273" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Run both.** They estimate the same average from the same data, so agreement is a real check on the model and a disagreement is worth understanding before either result ships. The LongBet chapters keep a design-based estimate alongside the model wherever the design provides one, for exactly this reason.</span>
 <span id="cb12-274"><a href="#cb12-274" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-275"><a href="#cb12-275" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
 <span id="cb12-276"><a href="#cb12-276" aria-hidden="true" tabindex="-1"></a><span class="fu">## Learn more</span></span>

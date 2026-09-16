@@ -167,13 +167,13 @@ window.Quarto = {
 <meta property="og:description" content="When you cannot switch a feature on for a customer, only invite them to adopt it, the decision is whom to invite. The adoption-clock model composes an outcome equation on the adoption clock with an adoption hazard on the offer clock, and returns the effect of the offer account by account and week by week.">
 <meta property="og:image" content="https://book.martinez.fyi/longbet_encouragement_files/figure-html/fig-adoption-1.png">
 <meta property="og:site_name" content="Business Data Science">
-<meta property="og:image:alt" content="Two rising curves over eight weeks with a shaded gap between them that widens at week four and then narrows.">
+<meta property="og:image:alt" content="Two rising curves over eight weeks with a shaded gap between them that opens at week four and then holds roughly constant.">
 <meta property="og:image:height" content="768">
 <meta property="og:image:width" content="1536">
 <meta name="twitter:title" content="30&nbsp; LongBet: Randomized Encouragement and Adoption Timing – Business Data Science">
 <meta name="twitter:description" content="When you cannot switch a feature on for a customer, only invite them to adopt it, the decision is whom to invite. The adoption-clock model composes an outcome equation on the adoption clock with an adoption hazard on the offer clock, and returns the effect of the offer account by account and week by week.">
 <meta name="twitter:image" content="https://book.martinez.fyi/longbet_encouragement_files/figure-html/fig-adoption-1.png">
-<meta name="twitter:image:alt" content="Two rising curves over eight weeks with a shaded gap between them that widens at week four and then narrows.">
+<meta name="twitter:image:alt" content="Two rising curves over eight weeks with a shaded gap between them that opens at week four and then holds roughly constant.">
 <meta name="twitter:image-height" content="768">
 <meta name="twitter:image-width" content="1536">
 <meta name="twitter:card" content="summary_large_image">
@@ -742,17 +742,17 @@ Y_{it} = \mu_Y(X_i, t) + \beta^{Y}_{S^D_{it}}\, \nu_Y(X_i, t)\, \mathbf{1}\{S^D_
 </table>
 </div>
 </div>
-<p>Only the ready-and-scaled segment is worth encouraging at this cost, and the ready-but-small segment complies almost as eagerly. With 127 profitable accounts and capacity for 80, the constraint binds.</p>
+<p>Only the ready-and-scaled segment is worth encouraging at this cost, and the ready-but-small segment complies just as eagerly. With 127 profitable accounts and capacity for 80, the constraint binds.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_encouragement</span>(train_data<span class="sc">$</span>z, train_data<span class="sc">$</span>d, t_grid) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="cn">NULL</span>, <span class="at">x =</span> <span class="st">"Week"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="fig-adoption" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two rising curves over eight weeks with a shaded gap between them that widens at week four and then narrows.">
+<div id="fig-adoption" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two rising curves over eight weeks with a shaded gap between them that opens at week four and then holds roughly constant.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-adoption-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="longbet_encouragement_files/figure-html/fig-adoption-1.png" class="img-fluid figure-img" alt="Two rising curves over eight weeks with a shaded gap between them that widens at week four and then narrows." width="768">
+<img src="longbet_encouragement_files/figure-html/fig-adoption-1.png" class="img-fluid figure-img" alt="Two rising curves over eight weeks with a shaded gap between them that opens at week four and then holds roughly constant." width="768">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-adoption-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;30.1: Adoption by assigned arm in the pilot. The offered arm jumps at week 4; the control arm catches up organically, so the adoption gap narrows even while exposure keeps accumulating.
+Figure&nbsp;30.1: Adoption by assigned arm in the pilot. The offered arm jumps at week 4; the control arm keeps adopting organically, so the gap stops growing after week 5 while exposure keeps accumulating.
 </figcaption>
 </figure>
 </div>
@@ -1076,7 +1076,7 @@ Figure&nbsp;30.1: Adoption by assigned arm in the pilot. The offered arm jumps a
 </section>
 <section id="principal-strata-over-time" class="level2" data-number="30.6">
 <h2 data-number="30.6" class="anchored" data-anchor-id="principal-strata-over-time"><span class="header-section-number">30.6</span> Principal Strata Over Time</h2>
-<p>In a cross-section the compliance types are fixed. In a panel they drift: every week some control accounts adopt organically, so the always-taker share grows while the complier and never-taker shares shrink.</p>
+<p>In a cross-section the compliance types are fixed. In a panel they drift: every week some control accounts adopt organically, so the always-taker share grows and the never-taker share shrinks, while the complier share rises as offered accounts activate and then erodes.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>truth_strata <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">period =</span> <span class="fu">rep</span>(post_weeks, <span class="at">each =</span> <span class="dv">3</span>),</span>
@@ -1359,7 +1359,7 @@ Figure&nbsp;30.2: Principal strata over the post-encouragement weeks: posterior 
 </div>
 <p>Three patterns matter more than the ranking.</p>
 <p><strong>Linear models cannot represent this target.</strong> The true surface is a step in two covariates, so a plane through it overstates the ready-but-small segment and understates the ready-and-scaled one, which is precisely where the money is.</p>
-<p><strong>Modelling the adoption jump is what the panel structure buys.</strong> The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account’s outcome jumped when it activated and has been compounding since. That is why its trajectories are smoother, which the roughness column measures: a forest fitted week by week has to rediscover the shape from noise at every horizon.</p>
+<p><strong>Modelling the adoption jump is what the panel structure buys.</strong> The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account’s outcome jumped when it activated and has been compounding since. That is why it is the only estimator that follows the compounding trajectory in the ready-and-scaled segment. The roughness column shows the other half of the story: anything fitted week by week has to rediscover the shape from noise at every horizon, while the pooled forests are smooth only because they barely move across weeks at all.</p>
 <p><strong>The ratio route pays for a noisy denominator.</strong> The instrumental forest’s complier effect times its first stage lands close to the direct route, but dividing by a small adoption contrast is what makes a ratio heavy-tailed, which is the statistical version of the argument at the top of this chapter.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>traj_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
@@ -1381,10 +1381,10 @@ Figure&nbsp;30.2: Principal strata over the post-encouragement weeks: posterior 
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Mean effect of the offer"</span>, <span class="at">x =</span> <span class="st">"Week"</span>) <span class="sc">+</span></span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span> <span class="fu">guides</span>(<span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">nrow =</span> <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="fig-trajectories" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and the flexible estimators follow; the linear estimators sit below. In the other panels the truth is near zero and the linear estimators drift upward.">
+<div id="fig-trajectories" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and only the adoption-clock model follows it; every other estimator flattens out well below. In the other two panels the truth stays near zero, the adoption-clock model tracks it, and the rest sit above it.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trajectories-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="longbet_encouragement_files/figure-html/fig-trajectories-1.png" class="img-fluid figure-img" alt="Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and the flexible estimators follow; the linear estimators sit below. In the other panels the truth is near zero and the linear estimators drift upward." width="1056">
+<img src="longbet_encouragement_files/figure-html/fig-trajectories-1.png" class="img-fluid figure-img" alt="Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and only the adoption-clock model follows it; every other estimator flattens out well below. In the other two panels the truth stays near zero, the adoption-clock model tracks it, and the rest sit above it." width="1056">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trajectories-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.3: Average predicted effect of the offer by week and true segment. Only the ready-and-scaled segment has a large compounding effect; the ready-but-small segment complies eagerly and gains little.
@@ -1835,7 +1835,7 @@ Figure&nbsp;30.6: Left: expected effect of the nudge by week for compliers who b
 <ul>
 <li><strong>Snapshots fail in opposite directions.</strong> The early window sees nothing, because the effect has not started, and would have shelved the feature. The end-line snapshot sees the largest gap and, extrapolated over the horizon, overstates it. The trajectory is the object to model.</li>
 <li><strong>Compliance is not benefit.</strong> Ranking on the first stage, or on a constant complier effect times the first stage, sends nudges to the most compliant users, many of whom are harmed. The effect of the offer on the outcome is what protects them.</li>
-<li><strong>A posterior can price harm.</strong> The regret filter is one line on the draws. It costs almost nothing when the model is confident about the sign, and it binds exactly when it should: on cohorts the model is unsure about.</li>
+<li><strong>A posterior can price harm.</strong> The regret filter is one line on the draws. Here it changes nothing, because the model is confident about the sign for every user it would select; it binds on cohorts the model is unsure about, which is where a point estimate would have sent the nudge anyway.</li>
 </ul>
 </section>
 <section id="a-practitioners-checklist" class="level2" data-number="30.11">
@@ -2446,11 +2446,11 @@ Athey, Susan, Julie Tibshirani, and Stefan Wager. 2019. <span>“Generalized Ran
 <span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a>        <span class="at">caption =</span> <span class="st">"The future cohort. Compliance is the expected adoption contrast at week 8; an account is worth encouraging when its expected cumulative lift over weeks 4 to 8 exceeds the $20 cost."</span>)</span>
 <span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a>Only the ready-and-scaled segment is worth encouraging at this cost, and the ready-but-small segment complies almost as eagerly. With <span class="in">`r sum(true_cum_test &gt; cost)`</span> profitable accounts and capacity for <span class="in">`r capacity`</span>, the constraint binds.</span>
+<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a>Only the ready-and-scaled segment is worth encouraging at this cost, and the ready-but-small segment complies just as eagerly. With <span class="in">`r sum(true_cum_test &gt; cost)`</span> profitable accounts and capacity for <span class="in">`r capacity`</span>, the constraint binds.</span>
 <span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-120"><a href="#cb20-120" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-adoption}</span></span>
-<span id="cb20-121"><a href="#cb20-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Adoption by assigned arm in the pilot. The offered arm jumps at week 4; the control arm catches up organically, so the adoption gap narrows even while exposure keeps accumulating."</span></span>
-<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Two rising curves over eight weeks with a shaded gap between them that widens at week four and then narrows."</span></span>
+<span id="cb20-121"><a href="#cb20-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Adoption by assigned arm in the pilot. The offered arm jumps at week 4; the control arm keeps adopting organically, so the gap stops growing after week 5 while exposure keeps accumulating."</span></span>
+<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Two rising curves over eight weeks with a shaded gap between them that opens at week four and then holds roughly constant."</span></span>
 <span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 8</span></span>
 <span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span>
 <span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_encouragement</span>(train_data<span class="sc">$</span>z, train_data<span class="sc">$</span>d, t_grid) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="cn">NULL</span>, <span class="at">x =</span> <span class="st">"Week"</span>)</span>
@@ -2539,7 +2539,7 @@ Athey, Susan, Julie Tibshirani, and Stefan Wager. 2019. <span>“Generalized Ran
 <span id="cb20-208"><a href="#cb20-208" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-209"><a href="#cb20-209" aria-hidden="true" tabindex="-1"></a><span class="fu">## Principal Strata Over Time</span></span>
 <span id="cb20-210"><a href="#cb20-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-211"><a href="#cb20-211" aria-hidden="true" tabindex="-1"></a>In a cross-section the compliance types are fixed. In a panel they drift: every week some control accounts adopt organically, so the always-taker share grows while the complier and never-taker shares shrink.</span>
+<span id="cb20-211"><a href="#cb20-211" aria-hidden="true" tabindex="-1"></a>In a cross-section the compliance types are fixed. In a panel they drift: every week some control accounts adopt organically, so the always-taker share grows and the never-taker share shrinks, while the complier share rises as offered accounts activate and then erodes.</span>
 <span id="cb20-212"><a href="#cb20-212" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-213"><a href="#cb20-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-strata}</span></span>
 <span id="cb20-214"><a href="#cb20-214" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Principal strata over the post-encouragement weeks: posterior means with 95% intervals against the pilot's realized counts."</span></span>
@@ -2686,13 +2686,13 @@ Athey, Susan, Julie Tibshirani, and Stefan Wager. 2019. <span>“Generalized Ran
 <span id="cb20-355"><a href="#cb20-355" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-356"><a href="#cb20-356" aria-hidden="true" tabindex="-1"></a>**Linear models cannot represent this target.** The true surface is a step in two covariates, so a plane through it overstates the ready-but-small segment and understates the ready-and-scaled one, which is precisely where the money is.</span>
 <span id="cb20-357"><a href="#cb20-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-358"><a href="#cb20-358" aria-hidden="true" tabindex="-1"></a>**Modelling the adoption jump is what the panel structure buys.** The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account's outcome jumped when it activated and has been compounding since. That is why its trajectories are smoother, which the roughness column measures: a forest fitted week by week has to rediscover the shape from noise at every horizon.</span>
+<span id="cb20-358"><a href="#cb20-358" aria-hidden="true" tabindex="-1"></a>**Modelling the adoption jump is what the panel structure buys.** The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account's outcome jumped when it activated and has been compounding since. That is why it is the only estimator that follows the compounding trajectory in the ready-and-scaled segment. The roughness column shows the other half of the story: anything fitted week by week has to rediscover the shape from noise at every horizon, while the pooled forests are smooth only because they barely move across weeks at all.</span>
 <span id="cb20-359"><a href="#cb20-359" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-360"><a href="#cb20-360" aria-hidden="true" tabindex="-1"></a>**The ratio route pays for a noisy denominator.** The instrumental forest's complier effect times its first stage lands close to the direct route, but dividing by a small adoption contrast is what makes a ratio heavy-tailed, which is the statistical version of the argument at the top of this chapter.</span>
 <span id="cb20-361"><a href="#cb20-361" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-362"><a href="#cb20-362" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-trajectories}</span></span>
 <span id="cb20-363"><a href="#cb20-363" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Average predicted effect of the offer by week and true segment. Only the ready-and-scaled segment has a large compounding effect; the ready-but-small segment complies eagerly and gains little."</span></span>
-<span id="cb20-364"><a href="#cb20-364" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and the flexible estimators follow; the linear estimators sit below. In the other panels the truth is near zero and the linear estimators drift upward."</span></span>
+<span id="cb20-364"><a href="#cb20-364" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and only the adoption-clock model follows it; every other estimator flattens out well below. In the other two panels the truth stays near zero, the adoption-clock model tracks it, and the rest sit above it."</span></span>
 <span id="cb20-365"><a href="#cb20-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 11</span></span>
 <span id="cb20-366"><a href="#cb20-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4.2</span></span>
 <span id="cb20-367"><a href="#cb20-367" aria-hidden="true" tabindex="-1"></a>traj_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
@@ -2928,7 +2928,7 @@ Athey, Susan, Julie Tibshirani, and Stefan Wager. 2019. <span>“Generalized Ran
 <span id="cb20-597"><a href="#cb20-597" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-598"><a href="#cb20-598" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Snapshots fail in opposite directions.** The early window sees nothing, because the effect has not started, and would have shelved the feature. The end-line snapshot sees the largest gap and, extrapolated over the horizon, overstates it. The trajectory is the object to model.</span>
 <span id="cb20-599"><a href="#cb20-599" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Compliance is not benefit.** Ranking on the first stage, or on a constant complier effect times the first stage, sends nudges to the most compliant users, many of whom are harmed. The effect of the offer on the outcome is what protects them.</span>
-<span id="cb20-600"><a href="#cb20-600" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A posterior can price harm.** The regret filter is one line on the draws. It costs almost nothing when the model is confident about the sign, and it binds exactly when it should: on cohorts the model is unsure about.</span>
+<span id="cb20-600"><a href="#cb20-600" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A posterior can price harm.** The regret filter is one line on the draws. Here it changes nothing, because the model is confident about the sign for every user it would select; it binds on cohorts the model is unsure about, which is where a point estimate would have sent the nudge anyway.</span>
 <span id="cb20-601"><a href="#cb20-601" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-602"><a href="#cb20-602" aria-hidden="true" tabindex="-1"></a><span class="fu">## A Practitioner's Checklist</span></span>
 <span id="cb20-603"><a href="#cb20-603" aria-hidden="true" tabindex="-1"></a></span>
