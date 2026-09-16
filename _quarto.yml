@@ -57,13 +57,17 @@ book:
         - causalimpact.qmd
         - bsynth.qmd
         - href: longbet.qmd
-          text: "LongBet: Dynamic Treatment Effects in Staggered Rollouts 🚧"
+          text: "LongBet: Dynamic Treatment Effects in Staggered Rollouts"
         - href: longbet_decisions.qmd
-          text: "LongBet: Decisions and Multiple Outcomes 🚧"
+          text: "LongBet: From Effects to Decisions"
+        - href: longbet_did.qmd
+          text: "LongBet and Modern Difference-in-Differences"
         - href: longbet_extensions.qmd
-          text: "LongBet: Forecasting, Observational Panels, and Diagnostics 🚧"
+          text: "LongBet: Forecasting and Observational Panels"
         - href: longbet_ordinal.qmd
-          text: "LongBet: Ordinal Outcomes and Customer Experience 🚧"
+          text: "LongBet: Ordinal Outcomes and Customer Experience"
+        - href: longbet_encouragement.qmd
+          text: "LongBet: Randomized Encouragement and Adoption Timing"
     - references.qmd
   sidebar: 
     logo: hex.png

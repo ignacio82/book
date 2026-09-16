@@ -1,6 +1,6 @@
 # Data for the ordinal LongBet chapter
 
-These compact extracts come from the completed 2026-09-12 ordinal comparison.
+These compact extracts come from the ordinal comparison rerun in September 2026 with the current engine.
 All 20 prescribed seeds, 91000–91019, are retained in each of the two advanced
 scenarios. The chapter's two-profile illustration is calculated directly from
 the probit model; it is not an additional fitted-model benchmark.
@@ -10,11 +10,12 @@ the probit model; it is not an additional fitted-model benchmark.
 - `panel-results.csv`: 180 method-by-panel rows from 40 independent panels.
   Probability losses use the probability scale; multiply RMSE by 100 for
   percentage points. Blank metrics are inapplicable, not zero.
-- `decision-draws.csv.gz`: 20,000 paired draws for exposure 4 of the first
+- `decision-draws.csv.gz`: paired draws for exposure 4 of the first
   prespecified rare-rating panel, seed 91000. `top_att` concerns category code
   4 (five stars); `lowest_att` concerns code 0 (one star). Four chains each
-  contribute 5,000 draws, stored in chain-major order. Both columns average
-  effects over the same 180 held-out treated account-week cells at exposure 4.
+  contribute the same number of retained draws (`provenance.json` records it),
+  stored in chain-major order. Both columns average effects over the same
+  held-out treated account-week cells at exposure 4.
 - `provenance.json`: experiment settings, library versions, source hashes,
   the original primary comparison, and the decision example definition.
 - `checksums.csv`: SHA256 hashes checked when the chapter executes.
@@ -61,42 +62,44 @@ against the known probability effect, not a simulated individual effect.
 
 ## Methods and computation
 
-Ordinal LongBet uses four chains, 20 trees in each forest, maximum depth 5,
-fixed prognostic/treatment coding, no random intercept, and CPU execution.
-`split_time_trt=False` removes exposure-index splits; calendar time remains
-available in the treatment forest. The fixed-coding contrast is therefore
-(beta_s - beta_0) * nu(X,t). The historical experiment described this setting
-as covariate-only; that terminology was corrected without changing the fits.
-Binary LongBet uses the same settings on the highest-category indicator.
+Ordinal LongBet uses the September 2026 engine (`longbet-jax`): four chains
+started from the prior, the package's forest defaults (20 prognostic and 60
+treatment trees of depth at most 8), fixed treatment-only coding, no exposure
+splits in the treatment forest (the trajectory carries the exposure profile),
+no random intercept, and CPU execution. Binary LongBet uses the same settings
+on the highest-category indicator.
 
-Each chain discards 10,000 iterations, runs 20,000 further iterations, and saves
-every fourth draw. R-hat > 1.01 or bulk/tail ESS < 400 triggers one extension:
-20,000 burn-in plus 40,000 sampling iterations, again saving every fourth draw.
-The 30 category ATTs and three free cutpoints are monitored for ordinal fits;
-six highest-category ATTs are monitored for binary fits. All rare-rating fits
-pass after one ordinal extension. Four of 20 dispersion ordinal fits still
-fail after the prescribed extensions; their results remain in the table.
+Each chain discards 2,000 burn-in sweeps, runs 4,000 further sweeps and keeps
+every fourth draw. R-hat > 1.01 or bulk/tail ESS < 400 on any monitored
+quantity triggers one diagnostic-only extension: 8,000 burn-in sweeps plus
+16,000 sampling sweeps, again keeping every fourth draw. The 30 category ATTs
+and three free cutpoints are monitored for ordinal fits; six highest-category
+ATTs are monitored for binary fits. `panel-results.csv` records, per fit, the
+number of attempts and the diagnostic failures before and after the extension;
+`provenance.json` counts the rare-rating fits that still fail after it.
 Diagnostics do not certify every conditional account-level effect.
 
 The maximum-likelihood probit ordinal regression uses three-df natural splines
 for each covariate, week and exposure factors, and treatment interactions with
 all covariate splines (`ordinal::clm`). A second fit adds exposure-specific
-log residual scales. All 80 ordinal regression fits converged without warnings.
+log residual scales.
 
 The histogram boosted classifier is a multiclass S-learner on covariates,
 calendar week, exposure, and treatment. Training-account-grouped three-fold
 CV selects log-loss performance across 7/15/31 leaves and L2 penalties 1/10;
 250 iterations, learning rate .05, minimum leaf size 15, no early stopping.
-Fit times include tuning and diagnostic extensions. The concurrent CPU
-timings are descriptive, not a controlled speed benchmark.
+Fit times include tuning and diagnostic extensions. The timings come from
+shared machines running other work concurrently and are descriptive, not a
+controlled speed benchmark.
 
 The primary rare-rating contrast was set before confirmatory fitting. Its
 97.5% paired bootstrap interval uses 50,000 resamples of the 20 panel losses,
 seed 77331. The conservative level originally allowed for two questions;
-the planned nonlinear comparison failed pilot diagnostics and was deferred
-before confirmatory accuracy results were examined. That allocation was not
-reassigned. Twenty panels provide approximate bootstrap tails and limited
-coverage evidence. Other comparisons are descriptive.
+the planned nonlinear comparison failed pilot diagnostics under an earlier
+engine revision and was deferred before confirmatory accuracy results were
+examined. That allocation was not reassigned. Twenty panels provide
+approximate bootstrap tails and limited coverage evidence. Other comparisons
+are descriptive.
 
 ## Reproduction
 
@@ -119,9 +122,9 @@ python tools/import-longbet-ordinal.py /path/to/ordinal-comparison
 ```
 
 The author's experiment directory is
-`/home/ignacio/vignettes/ordinal-comparison`. Its `README.md`, `protocol.md`,
+`/home/ignacio/vignettes/ordinal-comparison-v2`. Its `README.md`, `protocol.md`,
 `protocol-correction.md`, `benchmark.py`, `baselines.R`, and `run.py` document
-and regenerate the full fits. The import script checks all 736 hashes in
+and regenerate the full fits. The import script checks every hash in
 that experiment's manifest before exporting any book data. The source
 manifest and selected draw-file hashes are recorded in `provenance.json`.
 Re-exporting deliberately preserves every confirmatory panel and uses the

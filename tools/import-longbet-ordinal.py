@@ -34,19 +34,22 @@ panels = list(csv.DictReader((source / "panel-results.csv").open()))
 assert len(panels) == 180
 rare_longbet = [r for r in panels if r["scenario"] == "rare_top" and "longbet" in r["method"]]
 assert len(rare_longbet) == 40
-assert all(int(r["diagnostic_failures"]) == 0 for r in rare_longbet)
+rare_failures = {m: sum(int(r["diagnostic_failures"]) > 0 for r in rare_longbet if r["method"] == m)
+                 for m in ("ordinal_longbet", "binary_longbet")}
 shutil.copyfile(source / "panel-results.csv", target / "panel-results.csv")
 
 # Use the first prespecified seed, exposure 4, preserving chain-major order.
 draw_file = source / "results" / "rare_top_91000" / "ordinal_longbet.npz"
 draws = np.load(draw_file)["att_draws"]
-assert draws.shape == (6, 5, 20000)
+n_draws = draws.shape[-1]
+assert draws.shape[:2] == (6, 5) and n_draws % 4 == 0
+per_chain = n_draws // 4
 assert np.max(np.abs(draws.sum(axis=1))) < 1e-10
 stream = io.StringIO()
 writer = csv.writer(stream, lineterminator="\n")
 writer.writerow(["chain", "iteration", "top_att", "lowest_att"])
-for d in range(20000):
-    writer.writerow([d // 5000 + 1, d % 5000 + 1,
+for d in range(n_draws):
+    writer.writerow([d // per_chain + 1, d % per_chain + 1,
                      format(draws[3, 4, d], ".17g"), format(draws[3, 0, d], ".17g")])
 with (target / "decision-draws.csv.gz").open("wb") as f:
     with gzip.GzipFile(filename="", mode="wb", fileobj=f, mtime=0) as g:
@@ -57,7 +60,7 @@ for seed in summary["seeds"]:
     counts = json.loads((source / "results" / f"rare_top_{seed}" / "metadata.json").read_text())["category_counts"]
     shares.append(counts[-1] / sum(counts))
 provenance = {
-    "experiment_date": "2026-09-12",
+    "experiment_date": summary.get("experiment_date", "2026-09-14"),
     "source_manifest_sha256": sha(source / "manifest.json"),
     "python_source_sha256": summary["source_sha256"],
     "source_panel_results_sha256": sha(source / "panel-results.csv"),
@@ -66,7 +69,8 @@ provenance = {
     "settings": json.loads((source / "run-settings.json").read_text()),
     "primary": summary["primary"][0],
     "mean_training_top_share": float(np.mean(shares)),
-    "decision_example": {"seed": 91000, "exposure": 4, "chains": 4, "retained_per_chain": 5000,
+    "rare_top_failed_fits": rare_failures,
+    "decision_example": {"seed": 91000, "exposure": 4, "chains": 4, "retained_per_chain": per_chain,
                          "top_gain": 0.03, "lowest_reduction": 0.20,
                          "thresholds_are_illustrative": True},
 }
@@ -76,4 +80,4 @@ with (target / "checksums.csv").open("w") as f:
     writer = csv.writer(f, lineterminator="\n")
     writer.writerow(["file", "sha256"])
     writer.writerows((name, sha(target / name)) for name in files)
-print(f"Verified {len(manifest)} source hashes; exported 40 panels and 20,000 paired decision draws.")
+print(f"Verified {len(manifest)} source hashes; exported 40 panels and {n_draws:,} paired decision draws.")

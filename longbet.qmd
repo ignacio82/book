@@ -1,6 +1,6 @@
 ---
 title: "LongBet: Dynamic Treatment Effects in Staggered Rollouts"
-description: "LongBet extends Bayesian causal forests to panel data. This chapter studies a randomized staggered rollout, checks its estimates, and examines the assumptions behind heterogeneous effects."
+description: "LongBet extends Bayesian causal forests to panel data, so the effect of a rollout becomes a trajectory over time since launch that can differ from one unit to the next. This chapter fits one on a randomized marketplace rollout and reads the answer three ways: the average, the segments, and every seller."
 format:
   html:
     css: longbet.css
@@ -16,264 +16,75 @@ share:
 ---
 
 ::: {.callout-note title="LongBet chapter sequence"}
-This is the first of four chapters exploring LongBet:
+This is the first of six chapters on LongBet:
 
-1. **LongBet: Dynamic Treatment Effects in Staggered Rollouts** (this chapter): Model structure, randomized rollout simulation, model fit, sampler checks, ATT benchmarks, and heterogeneous effects.
-2. **[LongBet: Decisions and Multiple Outcomes](longbet_decisions.qmd)**: Translating dynamic effects into annual business valuations, capacity-constrained targeting, and joint multi-outcome modeling.
-3. **[LongBet: Forecasting, Observational Panels, and Diagnostics](longbet_extensions.qmd)**: Gaussian process forecasting, observational panel identification, unit-level baselines, time-varying covariates, and operating characteristics.
-4. **[LongBet: Ordinal Outcomes and Customer Experience](longbet_ordinal.qmd)**: Ordered ratings, heterogeneous probability effects, and posterior probabilities for rollout decisions.
+1. **LongBet: Dynamic Treatment Effects in Staggered Rollouts** (this chapter): the model, a randomized rollout, the fit and its checks, the average effect against a design-based benchmark, and heterogeneity down to the individual seller.
+2. **[LongBet: From Effects to Decisions](longbet_decisions.qmd)**: dollar valuations, a ranked rollout under a capacity constraint, and a joint screen over three outcomes at once.
+3. **[LongBet and Modern Difference-in-Differences](longbet_did.qmd)**: the comparison a reviewer will ask for, against two-way fixed effects, Callaway and Sant'Anna, Sun and Abraham, and Borusyak-Jaravel-Spiess.
+4. **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd)**: projecting past the study window, adoption that was not randomized, where a unit's level comes from, and covariates that move over time.
+5. **[LongBet: Ordinal Outcomes and Customer Experience](longbet_ordinal.qmd)**: ordered ratings and the probability of hitting a customer-experience target.
+6. **[LongBet: Randomized Encouragement and Adoption Timing](longbet_encouragement.qmd)**: when you can only invite people to adopt, and the decision is whom to invite.
 :::
-## Introduction to LongBet
+
+## Why a Trajectory, Not a Number
 
 <img src="img/longbet.jpeg" align="right" height="280" alt="Two treatment-effect trajectories separating over time above a row of trees of decreasing size: one climbs and keeps climbing, the other flattens, and past a dotted line both continue as dashed projections inside widening bands" />
 
-The models in the previous two chapters answer a question with no time
-dimension: what is the effect of the treatment on the outcome? In a business,
-that is rarely the whole question. A feature that lifts revenue by 10% in its
-first week and fades to nothing by its tenth averages about the same over a
-ten-week experiment as one that lifts revenue by 5% and holds there. They
-report the same "average treatment effect." They are worth completely different
-amounts a year later, and they lead to opposite decisions.
+The models in the previous two chapters answer a question with no time dimension: what is the effect of the treatment on the outcome? In a business, that is rarely the whole question. A feature that lifts revenue by 10% in its first week and fades to nothing by its tenth averages about the same over a ten-week experiment as one that lifts revenue by 5% and holds there. They report the same average treatment effect. They are worth completely different amounts a year later, and they lead to opposite decisions.
 
-LongBet, introduced by @wang2024longbet, extends the Bayesian Causal Forest
-family --- including BCF [@hahn2020bayesian] and XBCF --- to panel data so that the treatment effect
-becomes a function of two things at once: **who** the unit is, and **how long
-it has been treated**. It was designed for short panels with large
-cross-sections and observed confounders --- the shape of data that
-e-commerce, subscription, and marketplace businesses generate by default.
+They also rarely land on everyone equally. The same feature can be worth a quarter of a seller's revenue to one account and nothing to another, and the difference is usually predictable from things you already know about them.
 
-LongBet models the data generating process as follows:
+LongBet, introduced by @wang2024longbet, extends the Bayesian Causal Forest family, including BCF [@hahn2020bayesian] and XBCF, to panel data, so the treatment effect becomes a function of two things at once: **who** the unit is, and **how long it has been treated**. It was designed for short panels with large cross-sections, the shape of data that e-commerce, subscription, and marketplace businesses generate by default.
+
+## The Model
+
+For unit $i$ in period $t$:
 
 $$
-Y_{it} = \alpha\,\mu(X_i, t, X^{\text{tv}}_{it})
-       + b_{Z_{it}}\,\beta_{S_{it}}\,\nu(X_i, S_{it}, t, X^{\text{trt,tv}}_{it})
-       + \gamma_i + \epsilon_{it}
+Y_{it} = \mu(X_i, t) + \beta_{S_{it}}\,\nu(X_i, t)\,\mathbf{1}\{S_{it} \ge 1\} + \gamma_i + \epsilon_{it},
+\qquad \epsilon_{it} \sim \mathcal{N}(0, \sigma^2)
 $$
 
-where:
+where
 
-  - $Y_{it}$ is the outcome for unit $i$ at time $t$
-  - $X_i$ are time-invariant, pre-treatment covariates
-  - $t$ is calendar time, shared by every unit
-  - $X^{\text{tv}}_{it}$ and $X^{\text{trt,tv}}_{it}$ are time-varying covariates
-    for the prognostic and treatment forests respectively
-  - $S_{it}$ is unit $i$'s **exposure index**, zero before adoption. On this
-    chapter's consecutive weekly grid, $S_{it}=\sum_{s\le t}Z_{is}$, with 1
-    in the first treated week. The implementation uses elapsed calendar
-    units since the last untreated observation, so a cumulative count is
-    not the general rule for irregular time grids
-  - $\mu(\cdot)$ is the prognostic component. The full untreated prediction
-    also includes $b_0\beta_0\nu(X_i,0,t)$ and the unit intercept
-  - $\alpha$ is a single scalar that lets the sampler rescale the whole
-    prognostic forest. In `longbet-jax` it is fixed at 1 by default;
-    `a_scaling = TRUE` gives it an $N(0,1)$ prior and samples it each sweep.
-    This optional parameter expansion is inherited from XBCF
-    [@krantsevich23a]. It carries no causal interpretation and does not
-    guarantee better mixing
-  - $b_{Z_{it}}$ is a treatment scaling multiplier ($b_0$ for untreated cells
-    $Z_{it} = 0$, $b_1$ for treated cells $Z_{it} = 1$). With adaptive coding,
-    each has an $N(0,1/2)$ prior and a conjugate update. With
-    `b_scaling = FALSE`, both are fixed at 1
-  - $\beta_S$ is a Gaussian process over time-since-adoption, capturing the
-    trend in treatment effect shared by all units. Unit $i$ at time $t$ is
-    multiplied by the value at its own exposure, $\beta_{S_{it}}$
-  - $\nu(\cdot)$ is the treatment effect function
-  - $\gamma_i \sim \mathcal{N}(0, \sigma_\gamma^2)$ is a unit-level random intercept,
-    capturing unit $i$'s persistent baseline level
-  - $\epsilon_{it} \sim \mathcal{N}(0, \sigma^2)$ is an independent Gaussian error term
+  - $Y_{it}$ is the outcome and $X_i$ are pre-treatment covariates;
+  - $S_{it}$ is unit $i$'s **exposure**, the number of periods since it was treated, and zero before that. Treatment is absorbing: once a unit is treated it stays treated;
+  - $\mu(\cdot)$ is the **prognostic** forest, a sum of trees that predicts the untreated outcome;
+  - $\beta_S$ is **one** Gaussian process over exposure, shared by every unit. It is where the model pools information about the *shape* of the response;
+  - $\nu(\cdot)$ is the **treatment** forest, a second sum of trees that scales that shape up or down for each kind of unit, which is where heterogeneity in the *size* of the effect lives;
+  - $\gamma_i \sim \mathcal{N}(0, \sigma^2_\gamma)$ is a unit intercept, so each unit's own level is carried by a parameter rather than reconstructed from covariates;
+  - the indicator switches the treatment term on in treated cells only, so an untreated cell has no treatment contribution at all.
+
+The effect of $S$ periods of exposure for a unit with covariates $X_i$ is the contrast against never being treated,
+
+$$
+\tau_t(X_i, S) = \beta_S\,\nu(X_i, t).
+$$
+
+One curve, many sizes. That factorisation is what lets a short panel say something about a trajectory: every treated unit-period in the data, whenever it adopted, contributes to the same $\beta_S$, while the forest sorts out who responds strongly.
 
 ::: {.callout-note title="Implementation"}
-LongBet is implemented in `longbet-jax`: a vectorized Metropolis-Hastings
-sampler written in JAX on top of `bartz`, with multiple chains, R-hat, and
-optional GPU execution. It is reached from R via `library(longbet)` and from
-Python via `from longbet import LongBet`. For multivariate panel settings with
-multiple continuous or binary outcomes, `longbet_multi` (in R) and
-`LongBetMulti` (in Python) couple the equations via a triangular SUR
-likelihood (@sec-longbet-multi).
-
-Use a revision containing the dynamic leaf-precision cache repair. Earlier
-fits used stale likelihood weights in some tree updates and must be refitted;
-reloading old draws cannot repair their uncertainty. The chapter's numerical
-results require fresh execution and
-diagnostic review with that revision.
+LongBet is implemented in `longbet-jax`: a vectorised Metropolis-Hastings sampler written in JAX on top of `bartz`, with multiple chains, $\hat R$, and optional GPU execution. It is reached from R with `library(longbet)` and from Python with `from longbet import LongBet`. Every sweep updates both forests with GROW, PRUNE, CHANGE and REGROW proposals, then the trajectory, the unit intercepts and the variances, plus a Metropolis move along the exact scale ridge between $\beta$ and the treatment leaves. Chains start from the prior, so $\hat R$ compares chains that could have found different regions.
 :::
 
-Both $\mu(\cdot)$ and $\nu(\cdot)$ are Bayesian causal tree ensembles that are
-allowed to split on the time dimensions as well as on $X$. The treatment effect
-estimator is the contrast against never being treated:
+## What This Buys in a Randomized Rollout {#sec-longbet-why}
 
-$$
-\tau_t(X_i, S) = b_1\,\beta_S\,\nu(X_i, S, t) \;-\; b_0\,\beta_0\,\nu(X_i, 0, t),
-$$
+This chapter applies LongBet to a **randomized** experiment, so it is worth being precise about the division of labour. Random assignment is what identifies the effect. A simple comparison against a holdout is already unbiased. What the model adds is everything else:
 
-For a treated cell, the realized contrast against never-treatment is
-$\tau_{it} = \tau_t(X_i, S_{it})$; it is zero in untreated cells. Under control
-the exposure index is $0$, not
-$S$: **both** the multiplier and the forest's input change between the factual
-and counterfactual arms. It is *not* $(b_1 - b_0)\,\beta_S\,\nu$. Every
-prediction evaluates the treatment forest twice: once on the factual exposure
-and once on a copy of the design with $S \equiv 0$. The coefficients $b_0$ and
-$b_1$ are sampled parameters (`b_scaling = TRUE` by default in `longbet-jax`).
-They are distinct from the sampler's joint rescaling move along the
-$\beta$--$\nu$ ridge. Adaptive coding is a modeling choice, not a promise of
-faster convergence; fixing both coefficients at 1 changes the prior on the
-treatment response and must be assessed with the same diagnostic checks.
+  - **Precision.** Weekly revenue per seller varies by orders of magnitude across sellers. A model of $\mu(X_i, t)$ and $\gamma_i$ explains that variation away before the effect is read off. This is the non-parametric cousin of ANCOVA and of CUPED [@deng2013cuped], and it is the difference between an experiment that answers your question and one that runs for another quarter.
+  - **Resolution.** The holdout comparison gives one number per period since launch. LongBet gives a posterior for every seller at every exposure, learned in one model rather than in subgroups you had to name in advance.
+  - **Reach.** Experiments end; business cases run for a year. The Gaussian process on $\beta_S$ extrapolates the trajectory past the last period you observed (@sec-longbet-forecast in the third chapter).
+  - **Decisions.** Posterior draws convert directly into the quantity a business argues about: the probability that a seller is worth the cost (the [second chapter](longbet_decisions.qmd)).
 
-Two pieces of that expression do different jobs, and it is worth separating
-them. $\beta_S$ is **one** curve over time-since-adoption, shared by the whole
-population: it is where the model pools information about the average shape of
-the response. $\nu(X_i, S_{it}, t)$ is a forest, so it can make that shape
-differ across units --- and because it splits on $S$ too, different kinds of
-units can have genuinely different *shapes*, not just different magnitudes of
-the same shape. The shared $\beta_S$ is also what makes forecasting possible:
-because it is a Gaussian process over $S$, it can be extrapolated past the
-largest $S$ in the data.
+## The Business Problem
 
-## Key Features of LongBet
+You are the data scientist at an online marketplace. The product team has built an **AI listing optimizer**: it rewrites seller titles and descriptions, suggests attributes, and re-crops photos. Leadership wants to know whether to make it permanent, and finance wants a number for next year's plan.
 
-1.  **Time-varying effects.** The effect is estimated as a trajectory over
-    time-since-adoption, not a single number.
-2.  **Heterogeneity in the trajectory.** Because $\nu$ splits on $X$ and $S$
-    jointly, LongBet can find subpopulations whose effects decay while others'
-    compound.
-3.  **Staggered adoption.** Units can be treated at different times; once
-    treated they stay treated. Effects are aligned on $S$, not on calendar
-    time.
-4.  **Separate regularization.** As in BCF, prognostic and treatment surfaces
-    get separate forests and separate priors, so the model can be flexible
-    about the baseline while staying conservative about the effect.
-5.  **No parallel trends assumption.** LongBet does not identify effects by
-    assuming treated and untreated units would have moved in parallel. That
-    buys less than it sounds like: in an observational panel it swaps parallel
-    trends for selection on observables --- conditional on what is in the
-    model, treatment timing has to be unconfounded, with positivity --- which
-    is a different assumption, not the absence of one. In the experiment
-    below, neither is doing the work: randomization is.
-6.  **Forecasting.** The Gaussian process on $\beta_S$ projects the effect
-    beyond the end of the observation window.
-7.  **Bayesian uncertainty.** Every quantity above comes with a posterior,
-    down to the effect at a single unit's covariate profile at a single time.
-    Read that last one carefully: it is a posterior for the *conditional*
-    effect $\tau(x_i, S, t)$ evaluated at seller $i$'s covariates, not for
-    seller $i$'s own unobservable causal effect. Two sellers with identical
-    covariates get identical posteriors, however differently the treatment
-    would actually have landed on them. The chapter says "seller-level
-    effect" throughout for brevity; it always means the conditional one.
-8.  **Multiple outcomes.** When a rollout impacts multiple trade-offs
-    simultaneously (e.g. revenue, workload, and adverse events), LongBet couples
-    the outcomes through a shared residual covariance, enabling joint decision
-    probabilities over combinations of effects (@sec-longbet-multi).
+There are 400 sellers in the pilot and the optimizer cannot simply be switched on for all of them: each seller needs a supervised catalog migration, and the onboarding team can absorb about 80 sellers a week. The rollout is phased whether you like it or not.
 
-## What a Panel Model Buys You in a Randomized Experiment {#sec-longbet-why}
+That constraint is an opportunity. The field team's instinct is to start with the sellers most likely to benefit, which would make the rollout order a function of expected outcomes. Instead you randomize it: sellers are assigned at random, within strata defined by vertical, catalog size and fulfillment status, to one of three weekly launch waves or to a **holdout** that keeps the old experience for the study. The result is a **randomized staggered rollout**.
 
-LongBet's headline claim in @wang2024longbet is about observational panels: it
-does not need the parallel trends assumption that difference-in-differences
-rests on [@callaway2021did; @roth2023trending]. This chapter deliberately
-applies it somewhere else --- to data from a **randomized experiment** --- and
-it is worth being precise about why, because the argument changes.
-
-In a randomized rollout you already have identification. Random assignment
-makes treated and untreated units exchangeable, so parallel trends holds in
-expectation and a simple difference-in-differences against a holdout is
-unbiased across repetitions of that assignment when the holdout comparison
-matches the randomization strata. You do not need a forest model for that
-identification argument.
-
-What you do not get for free is everything else:
-
-  - **Precision.** A marketplace's weekly revenue per seller varies by orders
-    of magnitude across sellers and swings seasonally within them. A model of
-    $\mu(X_i, t)$ explains that variation away before the effect is read off.
-    This is the non-parametric cousin of ANCOVA and of CUPED
-    [@deng2013cuped], and it is the difference between an experiment that
-    answers your question and one that runs for another quarter.
-  - **Resolution.** The pooled holdout comparison below gives one number per
-    event time. Modern staggered-adoption methods can also estimate group-time
-    effects and conditional effects. LongBet learns covariate interactions in
-    a single forest model; its seller-level summaries still need their own
-    sampling and model checks.
-  - **Reach.** Experiments end; business cases run for a year. The Gaussian
-    process on $\beta_S$ extrapolates the trajectory past the last week you
-    observed, with uncertainty governed by the projection prior and the fitted draws.
-
-Keep the division of labor clear. **Randomization is what makes the estimate
-credible; the model is what makes it useful.** If LongBet's average effect and
-a simple difference-in-differences against the holdout disagree materially, the
-design-based estimator is the primary causal benchmark for the average, and the
-disagreement is a signal to go debug the model before trusting its extra
-detail. That is a statement about the point estimate, which randomization
-protects; it does not make the benchmark's *interval* assumption-free, since
-the standard error computed below still treats sellers as independent draws. What the simple estimator *cannot* do is tell you
-which sellers to ship to.
-
-::: {.callout-note title="Assumptions still required"}
-Randomization buys unconfoundedness and overlap. It does not buy SUTVA, and in
-a marketplace that omission is not academic: search results are a ranked list,
-so a treated seller who climbs it does so at the expense of somebody below.
-What the rollout measures is then the *relative* advantage of being treated,
-which is not the same quantity as the effect of treating everyone --- and the
-gap between them is the whole business case. We come back to it once there are
-dollar figures on the table (@sec-longbet-limits), because it is the assumption
-most likely to make those figures wrong.
-:::
-
-## The Business Problem: A Capacity-Constrained Rollout
-
-You are the data scientist at an online marketplace. The product team has
-built an **AI listing optimizer**: it rewrites seller titles and descriptions,
-suggests attributes, and re-crops photos. Early qualitative feedback is
-enthusiastic. Leadership wants to know whether to make it permanent, and
-finance wants a number to put in next year's plan.
-
-There are 3,000 sellers in the pilot population and the optimizer cannot simply
-be switched on for all of them: each seller needs a supervised migration of
-their catalog, and the onboarding team can absorb about 450 sellers a week.
-The rollout is going to be phased whether you like it or not.
-
-That constraint is an opportunity. The field team's instinct is to start with
-the sellers most likely to benefit. Doing so would make the rollout order a
-function of expected outcomes --- exactly the targeted selection that makes
-observational panel data hard to analyze. Instead, you randomize the order:
-sellers are assigned at random (stratified on vertical, catalog size, and
-fulfillment status) to one of four weekly launch waves or to a **holdout** that
-stays on the old experience for the duration of the study. The result is a
-**randomized staggered rollout** --- a single experiment with four randomized
-launch cohorts and one common holdout. Not four independent replications: the
-cohorts share the holdout, the population, the calendar, and whatever
-interference runs between them.
-
-Three questions have to be answered before the decision can be made:
-
-1.  **Does the lift last?** A rewritten catalog could produce a one-off
-    ranking bump that fades, or a compounding advantage as better listings earn
-    better placement.
-2.  **Who does it help?** If the effect is concentrated, the right decision is
-    to ship to a segment, not to everyone.
-3.  **What is it worth over a year?** The study runs 14 weeks after the first
-    launch. The business case runs for 52.
-
-The economics are simple enough to state up front. The marketplace keeps a
-**12% take rate** on gross merchandise value (GMV), and running the optimizer
-costs about **\$500 per seller per year** in inference, image processing, and
-support. A seller only earns their keep if the lift in their GMV, valued at the
-take rate, clears that cost --- and because the cost is flat per seller while
-the benefit scales with the seller's GMV, the bar is much easier for a large
-seller to clear than for a small one. Hold on to that asymmetry; it turns out
-to matter more than the treatment effect itself.
-
-## Simulating the Rollout
-
-As elsewhere in this book we simulate the data so the truth is known and every
-claim can be checked against it. The outcome is **log weekly GMV**, which
-keeps a heavy-tailed dollar quantity roughly Gaussian and makes the treatment
-effect read as an approximate percentage lift.
-
-The seller population carries five pre-treatment characteristics: the vertical
-they sell in, whether they use marketplace fulfillment, how many active
-listings they carry, and two summaries of their own recent history. The
-untreated trajectory is deliberately **non-parallel**: apparel sellers swing
-seasonally, electronics sellers ramp into the holidays, and larger sellers
-drift upward faster.
+Three questions have to be answered before the decision can be made. Does the lift last? Who does it help? What is it worth over a year? The economics are simple: the marketplace keeps a **12% take rate** on gross merchandise value (GMV), and running the optimizer costs about **\$500 per seller per year**. A seller earns their keep only if the lift in their GMV, valued at the take rate, clears that cost.
 
 ```{r setup}
 #| message: false
@@ -287,272 +98,90 @@ library(purrr)
 library(knitr)
 
 source("R/longbet-common.R")
-source("R/longbet-rollout.R")
+source("R/longbet-sim.R")
 source("R/longbet-artifacts.R")
 verify_longbet_environment()
-
-lb_engine_fingerprint <- get_longbet_engine_fingerprint()
-lb_chapter_fingerprint <- digest::digest(file = knitr::current_input(), algo = "sha256")
-lb_dependencies <- get_longbet_dependencies()
-knitr::opts_chunk$set(cache.extra = list(lb_engine_fingerprint, lb_chapter_fingerprint,
-                                       lb_dependencies))
-
-set.seed(1982)
+theme_set(theme_minimal(base_size = 12))
 ```
 
-The calendar has three parts. Weeks 1--6 are a **lookback window** used only
-to build covariates. Weeks 7--24 are the **study panel** handed to the model:
-everyone is untreated through week 10, and the four waves launch in weeks
-11--14. Weeks 25--30 are simulated but **withheld**, and exist only so we can
-score the forecast later.
+## Simulating the Rollout
 
-```{r calendar}
-n           <- 3000
-week_base   <- 1:6      # lookback: builds covariates, never modeled
-week_study  <- 7:24     # the panel LongBet sees
-week_future <- 25:30    # withheld; used only to score the forecast
-weeks_all   <- c(week_base, week_study, week_future)
+As elsewhere in this book the data are simulated, so every claim can be checked against a known truth. The outcome is **log weekly GMV**, which keeps a heavy-tailed dollar quantity roughly Gaussian and makes the effect read as an approximate percentage lift.
 
-LAUNCH <- c(W1 = 11, W2 = 12, W3 = 13, W4 = 14, Holdout = Inf)
-```
+The calendar has three parts: weeks 1--4 are a **lookback window** used only to build covariates, weeks 5--20 are the **study panel** the model sees, with everyone untreated through week 8 and the three waves launching in weeks 9, 10 and 11, and weeks 21--24 are simulated but **withheld** so the third chapter can score a forecast.
 
-### Sellers and the randomized rollout
+Sellers differ enormously in level: catalog size, fulfillment status, vertical, and a seller-specific component the covariates never record. The treatment response compounds toward a plateau with the **same shape for everyone**, and its **size** is a smooth function of catalog breadth,
 
-```{r sellers}
-rollout <- simulate_longbet_rollout(seed = 1982, n = n,
-                                    week_base = week_base,
-                                    week_study = week_study,
-                                    week_future = week_future,
-                                    LAUNCH = LAUNCH)
-unpack_rollout(rollout)
+$$
+\tau_i(S) = a(L_i)\,\big(1 - e^{-S/4}\big),
+\qquad
+a(L) = 0.30\,\mathrm{logit}^{-1}\!\left(\frac{\log L - \log 40}{0.8}\right).
+$$
 
+A seller with ten listings gains almost nothing; a seller with two hundred gains about a quarter of a log point, a lift of roughly 28% in dollars. Nothing in the model is told where that curve bends, or that catalog size matters at all.
+
+```{r rollout}
+ro <- simulate_rollout()
+list2env(ro[c("n", "week_base", "week_study", "week_future", "weeks_all", "LAUNCH", "Tn",
+              "vertical", "fulfilled", "listings", "strata", "wave", "launch", "level_i",
+              "a_i", "S", "Z", "mu0_true", "y0", "tau_true", "y", "x", "base_level",
+              "sd_eps", "y_train", "z_train", "z_ext", "broad", "is_hold")],
+         environment())
+S_observed <- max(rowSums(z_train))
+truth_att  <- event_time_truth(tau_true[, match(week_study, weeks_all)], z_train)
 table(wave)
 ```
 
-### The untreated trajectory
+`x` carries four time-invariant columns: log catalog size, fulfillment status, and the vertical one-hot encoded. The engine treats every column as ordered numeric, so a three-level factor coded 1, 2, 3 would impose a false ordering; one-hot encoding avoids it. The vertical does nothing in this simulation. It is there because a real panel always has covariates that turn out not to matter, and the forest has to discover that.
 
-```{r potential-outcomes}
-# Seller level: size, catalog breadth, fulfillment, plus idiosyncratic scale.
-level_i <- 6.4 + 0.55 * seller_sd + 0.45 * log(listings / 35) +
-           0.25 * fulfilled + rnorm(n, 0, 0.35)
+Effects are on the log scale, so a coefficient $\tau$ is a proportional lift of $e^{\tau} - 1$. Every dollar figure in the next chapter goes through that conversion inside each posterior draw.
 
-# Trends differ by vertical and by size: parallel trends is false unit by unit.
-drift_i <- 0.004 * seller_sd +
-           c(Apparel = 0.000, Home = 0.002, Electronics = 0.008)[vertical]
-
-season <- function(v, t) {
-  ifelse(v == "Apparel",     0.22 * sin(2 * pi * (t - 3) / 26),
-  ifelse(v == "Home",        0.12 * cos(2 * pi * (t - 1) / 26),
-                             0.35 * (t / 26)^2 - 0.05))
-}
-
-Tn   <- length(weeks_all)
-tmat <- matrix(rep(weeks_all, each = n), n, Tn)
-mu0_true <- matrix(level_i, n, Tn) +
-        outer(drift_i, weeks_all, "*") +
-        season(matrix(vertical, n, Tn), tmat)
-y0 <- mu0_true + matrix(rnorm(n * Tn, 0, 0.28), n, Tn)
-```
-
-### The treatment effect
-
-This is the heart of the simulation. Each seller's effect is a blend of two
-shapes, and the weight on each is a smooth function of catalog breadth:
-
-$$
-\tau_i(S) = w_i\underbrace{\left[0.30\left(1 - e^{-S/6}\right)\right]}_{\text{compounding}}
-          + (1 - w_i)\underbrace{\left[0.20\,\tfrac{S}{1.5}e^{1 - S/1.5}\right]}_{\text{novelty}},
-\qquad
-w_i = \text{logit}^{-1}\!\left(\frac{\log L_i - \log 50}{0.35}\right)
-$$
-
-A seller with a **broad catalog** ($L_i$ well above 50 listings) has a lot of
-inventory for the optimizer to keep improving: their effect climbs toward an
-asymptote of 0.30 and stays. A seller with a **narrow catalog** optimizes their
-handful of listings once, peaks at 0.20, and reverts. Nothing in the model will
-be told about the threshold at 50 listings; it has to find it.
-
-**Those are effects on log GMV, and they are not 30% and 20% lifts.** The
-outcome is $\log$ weekly GMV, so a coefficient $\tau$ multiplies GMV by
-$e^{\tau}$: the compounding asymptote is a
-`r scales::percent(exp(0.30) - 1, 0.1)` lift in dollars, and the novelty peak is
-`r scales::percent(exp(0.20) - 1, 0.1)`. The gap is small here and grows fast
---- a log effect of 0.7 is a doubling. Every dollar figure later in the chapter
-goes through `exp(tau) - 1` for exactly this reason, and it is the single most
-common way a log-scale model gets misreported to a business audience.
-
-One more piece of honesty about the simulation. The paragraph above tells a
-story about placement and feedback --- better listings earn better placement,
-which earns more sales, which earns better placement. None of that is
-*simulated*. There is no ranking, no competition, no buyer traffic, no
-feedback loop; $\tau_i(S)$ is written down directly, and the story is a reason
-for choosing that shape rather than something the code derives. This matters
-later: because the mechanism is asserted rather than modeled, the simulation
-cannot speak to what happens when treated sellers take placement *from*
-untreated ones, which is precisely the threat @sec-longbet-limits raises
-against every dollar figure in the chapter.
-
-Note what this $\tau_i(S)$ does *not* contain: calendar time. LongBet is willing
-to let the effect depend on $T = t$ as well as on $S$ --- a feature launched in
-December might land differently from the same feature launched in March --- but
-here it does not, by construction. That keeps the evaluation clean: when we ask
-the model for the effect at 14 weeks of exposure, there is a single right answer
-to compare it against, rather than one per launch cohort.
-
-```{r treatment-effect}
-S <- tmat - matrix(launch, n, Tn) + 1
-S[!is.finite(S) | S < 0] <- 0
-S <- matrix(as.numeric(S), n, Tn)          # weeks since launch (0 = untreated)
-Z <- matrix(as.integer(S > 0), n, Tn)      # treatment indicator panel
-
-w_i    <- plogis((log(listings) - log(50)) / 0.35)
-h_grow <- function(s) 0.30 * (1 - exp(-s / 6))
-h_fade <- function(s) 0.20 * (s / 1.5) * exp(1 - s / 1.5)
-
-tau_true <- ifelse(S > 0, w_i * h_grow(S) + (1 - w_i) * h_fade(S), 0)
-y        <- y0 + tau_true                  # observed log weekly GMV
-
-broad <- listings >= 50
-cat("Share of sellers with a broad catalog (>= 50 listings):",
-    scales::percent(mean(broad), 0.1), "\n")
-```
-
-### Covariates handed to the model
-
-Covariates passed as `x` are **time-invariant**: one row per seller, held fixed
-across the panel. (The engine also accepts genuinely time-varying covariates
-through separate arguments `x_tv` and `x_trt_tv` --- see @sec-longbet-timevarying ---
-but nothing in this rollout needs one.)
-
-The engine has no notion of an unordered categorical --- every column is
-treated as ordered numeric. `vertical` has three levels, so an integer factor
-coding would impose a false ordering (Apparel < Home < Electronics). We
-therefore one-hot encode it, dropping one reference level. `fulfilled` is
-binary, so it needs no encoding: a split on a two-level column is the same
-either way. Trees can still recover interactions between the one-hot columns,
-but each split now isolates one level rather than partitioning an arbitrary
-ordering.
-
-Two of our columns are summaries of the seller's own lookback window ---
-their average level and their trend --- and they matter more than they look.
-This is discussed in @sec-longbet-baseline.
-
-```{r covariates}
-wb         <- week_base - mean(week_base)
-base_level <- rowMeans(y[, week_base])
-base_slope <- as.vector((y[, week_base] %*% wb) / sum(wb^2))
-
-vert <- factor(vertical)
-x <- cbind(
-  base_level, base_slope, log(listings),      # continuous
-  fulfilled,                                  # binary: ordered == unordered
-  model.matrix(~ vert - 1)[, -1]              # one-hot, drop one level
-)
-colnames(x) <- c("base_level", "base_slope", "log_listings",
-                 "fulfilled", paste0("vertical_", levels(vert)[-1]))
-
-y_train <- y[, week_study]
-z_train <- Z[, week_study]
-z_ext   <- Z[, c(week_study, week_future)]   # extended horizon for forecasting
-```
-
-## Looking at the Data Before Modeling It
-
-Two pictures are worth drawing before any model is fit. The first, @fig-rollout,
-is the design itself: who is treated when. We use `plot_rollout()` to draw it
-directly from the treatment matrix. This ensures the cohorts are **derived from
-`z`** rather than restated from `LAUNCH`, so the figure cannot drift from the
-data it describes; and `rollout_summary()` carries the same `exposure` column
-the sampler uses, guaranteeing that the rollout figure and the event-time axis of
-the ATT agree.
-
-```{r}
-#| label: fig-rollout
-#| fig-cap: >-
-#|   The randomized staggered rollout. Each row is a launch wave, each column a
-#|   week. Wave membership was assigned at random within strata, so the four
-#|   waves and the holdout are exchangeable by construction.
+```{r fig-rollout}
+#| fig-cap: "The design, drawn from the treatment matrix itself: three randomized launch waves and a holdout over the sixteen study weeks."
+#| fig-alt: "A tile chart with one row per wave. The holdout row is grey across all sixteen weeks. Wave rows turn blue at weeks nine, ten and eleven respectively and stay blue."
 #| fig-width: 8
-#| fig-height: 2.6
-#| message: false
-
-plot_rollout(
-  z = Z[, week_study], t = week_study,
-  labels = c(`11` = "W1", `12` = "W2", `13` = "W3", `14` = "W4"),
-  never_treated_label = "Holdout",
-  colors = c(`Not yet treated` = "grey85",
-             Treated = PAL[["LongBet"]],
-             `Never treated` = "grey62"),
-  title = "Four randomized launch waves and a holdout"
-) +
+#| fig-height: 2.4
+plot_rollout(z = z_train, t = week_study, labels = c(`9` = "W1", `10` = "W2", `11` = "W3"),
+             never_treated_label = "Holdout",
+             colors = c(`Not yet treated` = "grey85", Treated = PAL[["LongBet"]],
+                        `Never treated` = "grey62"),
+             title = NULL) +
   theme(legend.position = "bottom", panel.grid = element_blank())
 ```
 
-The second, @fig-trends, is the thing that would sink a naive analysis: the
-untreated trajectories are not parallel. Restricting attention to the holdout --- whose
-outcomes are never touched by the treatment --- apparel, home, and electronics
-sellers move in visibly different directions over the study window.
-
-```{r}
-#| label: fig-trends
-#| fig-cap: >-
-#|   Mean log weekly GMV among holdout sellers only. The three verticals do not
-#|   move in parallel, and the gaps between them change sign inside the study
-#|   window. Nothing here is caused by the treatment.
+```{r fig-raw}
+#| fig-cap: "Mean log weekly GMV by wave. Each wave steps up at its own launch and keeps climbing; the holdout is flat. Sellers differ from one another far more than any of them moves over time, which is the variation the model has to explain away."
+#| fig-alt: "Four lines over twenty-four weeks. The holdout line is flat. The three wave lines are flat until weeks nine, ten and eleven, then rise and level off."
 #| fig-width: 8
-#| fig-height: 4
-#| message: false
-
-tibble(
-  vertical = rep(vertical, times = Tn),
-  week     = rep(weeks_all, each = n),
-  gmv_log  = as.vector(y),
-  wave     = rep(wave, times = Tn)
-) %>%
-  filter(wave == "Holdout") %>%
-  group_by(vertical, week) %>%
-  summarise(gmv_log = mean(gmv_log), .groups = "drop") %>%
-  ggplot(aes(week, gmv_log, colour = vertical)) +
+#| fig-height: 3.6
+tibble(wave = rep(wave, times = Tn), week = rep(weeks_all, each = n), y = as.vector(y)) %>%
+  group_by(wave, week) %>% summarise(y = mean(y), .groups = "drop") %>%
+  ggplot(aes(week, y, colour = wave)) +
   geom_line(linewidth = 0.9) +
   annotate("rect", xmin = min(week_study) - 0.5, xmax = max(week_study) + 0.5,
            ymin = -Inf, ymax = Inf, alpha = 0.06) +
-  geom_vline(xintercept = c(10.5, 24.5), linetype = "dashed",
-             colour = "grey40", linewidth = 0.3) +
-  scale_colour_manual(values = c(Apparel = "#0072B2", Home = "#E69F00",
-                                 Electronics = "#009E73")) +
+  geom_vline(xintercept = c(8.5, 20.5), linetype = "dashed", colour = "grey40", linewidth = 0.3) +
+  scale_colour_manual(values = c(W1 = "#0072B2", W2 = "#56B4E9", W3 = "#009E73", Holdout = "grey45")) +
   labs(x = "Week", y = "Mean log weekly GMV", colour = NULL,
-       title = "Untreated trajectories are not parallel",
-       subtitle = "Shaded region: study panel. Dashed lines: first launch and end of study.") +
-  theme_minimal() +
+       subtitle = sprintf("Shaded: the study panel. Seller levels have SD %.2f; weekly noise has SD %.2f.",
+                          sd(level_i), sd_eps)) +
   theme(legend.position = "bottom")
 ```
 
-Because the rollout was randomized, this non-parallelism is not a threat to
-identification --- it is a threat to *precision*, and a large one. Any
-estimator that does not explain it has to carry it as noise.
+## Fitting the Model {#sec-longbet-fitting}
 
-## Fitting LongBet {#sec-longbet-fitting}
+::: {.callout-note title="Sampler settings"}
+Four chains start from the prior, each discarding 2,000 burn-in sweeps and then running 8,000 sweeps of which every eighth is retained, giving 1,000 draws per chain. The forests are the package defaults: 20 prognostic and 60 treatment trees of depth at most 8. A unit intercept is on. Neither forest splits on calendar time here, because this panel's untreated path has no calendar structure to find; the third chapter shows the switch that turns calendar splits back on when the business has seasonality.
 
-::: {.callout-note title="LongBet configuration and sampler defaults"}
-The implementation provides the following starting configuration. These
-settings do not, by themselves, establish convergence:
-
-  - **Multiple chains** (`num_chains = 4`), with overdispersed parameter starts to support $\hat{R}$ diagnostics.
-  - **Sampling budget** (`num_burnin = 2000, num_sweeps = 250, n_skip = 2`): 2,500 iterations per chain, retaining 250. Discarding burn-in does not guarantee that the retained draws are stationary.
-  - **Unit-level random intercepts** (`random_intercept = TRUE`), providing an exact conjugate Gibbs update for unit baselines $\gamma_i$.
-  - **An uncertain constant mean for the $\beta_S$ process** (`gp_constant_mean = TRUE`), marginalized into its covariance. This supplies a shared level for distant factor projections; it does not identify an economic steady state.
-  - **Adaptive coding** (`b_scaling = TRUE`), sampling $b_0$ and $b_1$. This is distinct from the joint $\beta$--$\nu$ rescaling proposal.
+None of these settings establishes convergence. The diagnostics after the fit do that.
 :::
 
 ::: {.panel-tabset}
 ## R
 
-```{r fit}
-#| cache: true
+```{r fit-core}
 #| message: false
-#| output: false
-
-lb_fit <- get_or_create_core_fit(rollout)
+lb_fit <- lb_core_fit(ro)
 ```
 
 ## Python
@@ -562,703 +191,266 @@ import jax
 from longbet import LongBet, LongBetConfig
 
 config = LongBetConfig(
-    num_burnin=2000,
-    num_sweeps=250,
-    n_skip=2,
-    num_chains=4,
-    num_trees_pr=60,
-    num_trees_trt=60,
-    sig_knl=1.0,
-    lambda_knl=2.0,
-    sigma_prior_a=2.0,
-    sigma_prior_b=1.0,
-    random_intercept=True,
+    num_chains=4, num_burnin=2000, num_sweeps=1000, n_skip=8,
+    sig_knl=1.0, lambda_knl=2.0,
+    random_intercept=True, split_time_ps=False, split_calendar_trt=False,
 )
 model = LongBet(config)
-model.fit(
-    y=y_train, x=x, z=z_train, t=week_study,
-    key=jax.random.key(42),
-)
+model.fit(y=y_train, x=x, z=z_train, t=week_study, key=jax.random.key(42))
 ```
 :::
 
-A few arguments deserve comment:
+`lb_core_fit()` is a thin wrapper that fits the model once and caches it, keyed on the engine source, the sampler settings and a digest of the data, so the next two chapters reuse this fit instead of repeating it. A few arguments deserve comment:
 
-  - `x` is the covariate matrix. Omitting `x_trt` allows both the prognostic
-    and treatment forests to share a single column block rather than allocating
-    a duplicate set.
-  - `t` is the calendar time index of the panel columns. LongBet infers each
-    unit's time-since-adoption $S_{it}$ from `z` and `t`; you never construct
-    it yourself.
-  - `num_burnin = 2000, num_sweeps = 250, n_skip = 2, num_chains = 4` are the
-    sampler settings, and they are the package defaults. Four chains run in
-    parallel; 2,000 burn-in iterations are discarded, and 250 draws per chain
-    thinned by 2 retain 1,000 in total. Warmup and retained sampling serve
-    different purposes: allow enough warmup to reach the posterior, then
-    retain enough effective draws to estimate the quantities used in the
-    decision. Check $\hat{R}$, ESS, and Monte Carlo error rather than treating
-    these counts as a convergence guarantee. Dispersed starts help reveal
-    chain disagreement but do not, by themselves, validate inference.
-  - `sigma_prior_a = 2, sigma_prior_b = 1` gives the standardized residual
-    variance a proper inverse-gamma prior, with density proportional to
-    $v^{-3}\exp(-1/v)$. The remaining priors are proper too. This avoids
-    relying on an improper scale prior; it does not establish adequate mixing
-    or protect against model misspecification.
-  - `sig_knl` and `lambda_knl` are the standard deviation and lengthscale of the squared
-    exponential kernel on $\beta_S$. A longer lengthscale favors a smoother
-    shared factor under its prior; exposure splits can still make the full
-    treatment-effect surface less smooth.
+  - `x` is the covariate matrix. Omitting `x_trt` lets both forests share one block of columns instead of allocating a duplicate set.
+  - `t` is the calendar index of the panel columns. LongBet infers each unit's exposure $S_{it}$ from `z` and `t`; you never construct it.
+  - The residual variance has a proper inverse-gamma prior, and so does the unit-intercept variance.
+  - `sig_knl` and `lambda_knl` are the standard deviation and lengthscale of the kernel on $\beta_S$. A longer lengthscale favours a smoother trajectory.
 
-Prediction takes the fitted object, the covariates, and a treatment panel.
-The first prediction uses only the study weeks, so the model and the
-difference-in-differences benchmark average exactly the same treated cells.
-We predict the withheld weeks separately in @sec-longbet-forecast.
+Prediction takes the fitted object, the covariates and a treatment panel. Passing the study weeks means the model and the benchmark below average exactly the same treated cells.
 
-::: {.panel-tabset}
-## R
-
-```{r predict}
-#| cache: true
+```{r predict-core}
 #| message: false
-#| output: false
-
-lb_pred <- predict(
-  lb_fit, x = x, z = z_train,
-  t = week_study,
-  random_seed = 42
-)
-lb_att <- get_att(lb_pred, alpha = 0.05)
+lb_pred <- predict(lb_fit, x = x, z = z_train, t = week_study, random_seed = 1)
+lb_att  <- get_att(lb_pred, alpha = 0.05)
+n_chains <- lb_fit$model_params$num_chains; n_sweeps <- lb_fit$model_params$num_sweeps
 ```
-
-## Python
-
-```python
-pred = model.predict(
-    x=x, z=z_train,
-    t=week_study,
-    key=jax.random.key(42),
-)
-att = pred.att(alpha=0.05)
-```
-:::
-
-Passing `summary_only = TRUE` to `predict()` bounds memory usage: the panel is
-reduced in blocks of cells without materializing the full $[N \times T \times \text{draws}]$
-array, while quantiles remain exact. When downstream steps require the full
-draw array (such as subset evaluations), omitting `summary_only` retains all
-draws.
 
 ### Checking the sampler {#sec-longbet-sampler}
 
-LongBet runs independent Metropolis-Hastings chains with different initial
-parameter draws. Independent starts help expose disagreement; they do not
-establish stationarity. We inspect the reported ATT, subgroup and decision
-quantities, along with parameter traces that can reveal slow exploration.
+The checks are part of the analysis, and they are run on the quantities the chapter actually reports: the average effect at every exposure, both segment curves, and later every seller's own effect. The package's thresholds are a rank-normalized $\hat R$ of at most 1.01 with bulk and tail effective sample sizes of at least 400.
 
-```{r}
-#| label: fig-sweeps
-#| fig-cap: >-
-#|   Residual scale, a shared time factor, and the observed-panel ATT at
-#|   exposure 8 across four chains. Trace agreement is a diagnostic to inspect,
-#|   not a proof of convergence; the table reports numerical checks.
+```{r fig-traces}
+#| fig-cap: "Four chains for the residual scale and for the average effect at eight weeks of exposure. Chains that overlap and wander freely are what a well-explored posterior looks like; the table reports the numbers."
+#| fig-alt: "Two trace panels, each with four coloured chains that overlap and fluctuate around a common level with no drift."
 #| fig-width: 9
-#| fig-height: 3.2
-#| message: false
-
-n_draws  <- ncol(lb_fit$beta_values)
-n_chains <- lb_fit$model_params$num_chains
-n_sweeps <- lb_fit$model_params$num_sweeps
-S_show   <- 8                        # weeks since launch
-
-chain_id <- factor(rep(seq_len(n_chains), each = n_sweeps))
-sweep_id <- rep(seq_len(n_sweeps), times = n_chains)
-
-df_sweeps <- bind_rows(
-  tibble(sweep = sweep_id, chain = chain_id,
-         value = as.vector(lb_fit$sigma0_draws) * lb_fit$sdy,
-         series = "Residual SD"),
-  tibble(sweep = sweep_id, chain = chain_id,
-         value = lb_fit$beta_values[S_show + 1, ],
-         series = "beta at S = 8"),
-  tibble(sweep = sweep_id, chain = chain_id,
-         value = lb_att$att_full[S_show, ],
-         series = "ATT at S = 8")
+#| fig-height: 3
+S_show <- 8
+bind_rows(
+  tibble(sweep = rep(seq_len(n_sweeps), times = n_chains),
+         chain = factor(rep(seq_len(n_chains), each = n_sweeps)),
+         value = as.vector(lb_fit$sigma0_draws) * lb_fit$sdy, series = "Residual SD"),
+  tibble(sweep = rep(seq_len(n_sweeps), times = n_chains),
+         chain = factor(rep(seq_len(n_chains), each = n_sweeps)),
+         value = lb_att$att_full[S_show, ], series = "Average effect at S = 8")
 ) %>%
-  mutate(series = factor(series, levels = c(
-    "Residual SD", "beta at S = 8",
-    "ATT at S = 8"
-  )))
-
-ggplot(df_sweeps, aes(sweep, value, colour = chain)) +
-  geom_line(linewidth = 0.35, alpha = 0.8) +
-  facet_wrap(~series, scales = "free_y") +
+  ggplot(aes(sweep, value, colour = chain)) +
+  geom_line(linewidth = 0.3, alpha = 0.8) +
+  facet_wrap(~ series, scales = "free_y") +
   scale_colour_brewer(palette = "Set1") +
-  labs(x = "Retained sweep (within chain)", y = NULL, colour = "Chain",
-       title = "Check both the effect and the parameter traces",
-       subtitle = paste0("Four independent chains (", n_sweeps, " retained sweeps each)")) +
-  theme_minimal() +
+  labs(x = "Retained draw (within chain)", y = NULL, colour = "Chain") +
   theme(legend.position = "bottom")
 ```
 
-The likelihood depends on a product: multiplying all $\beta_S$ by a
-nonzero constant and dividing the treatment-forest leaves by the same constant
-leaves that product unchanged. In general, the priors are not invariant to rescaling.
-They define a posterior over the separate coordinates, so persistent drift in
-$\beta$ is a warning to investigate, not behavior to dismiss as harmless.
-The engine includes a joint rescaling proposal, but that does not guarantee
-adequate exploration.
-
-With exposure splits, flexible forests can also trade exposure shape against
-$\beta_S$. An arbitrary functional rescaling need not remain representable by
-the same finite tree ensemble. This is a source of dependence and prior
-sensitivity, not a theorem that every such transformation is a sampler symmetry.
-Forecasts especially depend on how the fitted components allocate that shape.
-
-```{r sweep-ess}
-stab <- att_stability(lb_pred, warn = FALSE)
-main_diagnostics <- diagnose_draws(lb_att$att_full, lb_fit, "Observed-panel ATT")
-parameter_diagnostics <- diagnose_draws(
-  rbind(lb_fit$beta_values,
-        residual_sd = as.vector(lb_fit$sigma0_draws) * lb_fit$sdy,
-        unit_sd = sqrt(lb_fit$sigma_gamma_draws) * lb_fit$sdy,
-        b0 = lb_fit$b0_draws, b1 = lb_fit$b1_draws),
-  lb_fit, "Time factors, coding, residual and unit SDs")
-bind_rows(main_diagnostics$summary, parameter_diagnostics$summary) %>%
-  kable(digits = 3, caption = paste(
-    "Worst diagnostic across every target in each row.",
-    "Checks require rank-normalized R-hat <= 1.01 and bulk/tail ESS >= 400.",
-    "Passing is a screening rule, not proof of stationarity or coverage."
-  ))
-stab$by_exposure %>%
-  mutate(ess_tail = main_diagnostics$bytarget$ess_tail) %>%
-  select(exposure, n_treated, ess_bulk, ess_tail, rhat, mcse) %>%
-  kable(digits = 3, caption = "Observed-panel ATT diagnostics and treated-cell support by exposure.")
+```{r core-diagnostics}
+core_diag <- bind_rows(
+  diagnose_draws(lb_att$att_full, lb_fit, "Average effect, every exposure")$summary,
+  diagnose_draws(event_time_draws(lb_pred$tauhats, z_train, broad), lb_fit,
+                 "Broad-catalog effect (>= 50 listings)")$summary,
+  diagnose_draws(event_time_draws(lb_pred$tauhats, z_train, !broad), lb_fit,
+                 "Narrow-catalog effect (< 50 listings)")$summary,
+  diagnose_draws(rbind(as.vector(lb_fit$sigma0_draws) * lb_fit$sdy), lb_fit, "Residual SD")$summary)
+kable(core_diag %>% select(-ok), digits = 3,
+      caption = sprintf("Sampling checks on the reported quantities. The gates are a rank-normalized R-hat of at most %.2f and bulk and tail effective sample sizes of at least %d at every target.", GATE_RHAT, GATE_ESS))
+chain_tbl <- map_dfr(c(2, S_show), function(s_at) {
+  m <- matrix(lb_att$att_full[s_at, ], nrow = n_chains, byrow = TRUE)
+  tibble(Quantity = paste0("Average effect at S = ", s_at), Chain = seq_len(n_chains),
+         `Chain mean` = rowMeans(m), `Within-chain SD` = apply(m, 1, sd),
+         `Lag-1 autocorrelation` = apply(m, 1, function(v) cor(v[-1], v[-length(v)])))
+})
+kable(chain_tbl, digits = c(0, 0, 4, 4, 2),
+      caption = "Chain by chain. Chains whose means differ by a within-chain standard deviation or more are exploring different regions; here they agree.")
 ```
 
-The observed-panel ATT screening result is
-**`r if (main_diagnostics$summary$diagnostic_ok) "passed" else "not passed"`**.
-When a check fails, the following estimates are exploratory computation results;
-their intervals and decisions are not validated posterior summaries. More
-warmup or retained draws may help, but model specification and sampler behavior
-also require investigation. We use the same rules for auxiliary fits and
-subgroup and policy summaries; success for the average does not validate them.
+`r if (all(core_diag$ok)) sprintf("Every reported quantity passes: the largest R-hat is %.3f and the smallest bulk effective sample size is %.0f. The intervals below can be read as summaries of this model's posterior.", max(core_diag[["R-hat (max)"]]), min(core_diag[["Bulk ESS (min)"]])) else "Not every reported quantity passes; read the intervals below as provisional."`
 
-::: {.callout-note title="Parameter symmetries do not excuse failed effect diagnostics"}
-The simultaneous sign change $(\beta, \nu) \leftrightarrow (-\beta, -\nu)$
-leaves the likelihood and the centered, symmetric priors unchanged. Chains
-that explore different sign modes can therefore disagree about these raw
-coordinates while agreeing about their product. Continuous rescaling is
-different: the proper priors constrain the separate parameter scales, even
-when the likelihood is unchanged.
+Two parameters are deliberately absent from that table. The raw $\beta_S$ draws are not a reported quantity: the likelihood depends on the product $\beta_S\nu$, so flipping the sign of both leaves it unchanged and chains routinely disagree about the sign of $\beta$ while agreeing about every effect. The unit-intercept variance is a nuisance parameter that no reported number depends on. Diagnose what you report.
 
-Neither observation explains away a failed diagnostic for the ATT itself,
-which is invariant to both transformations. Its worst $\hat R$ here is
-`r sprintf("%.3f", main_diagnostics$summary$rhat_max)`, its minimum bulk ESS is
-`r sprintf("%.1f", main_diagnostics$summary$ess_min)`, and its largest estimated
-Monte Carlo standard error is
-`r sprintf("%.4f", max(main_diagnostics$bytarget$mcse))` log-GMV units.
-These checks must be assessed directly; parameter symmetries do not establish
-that the retained effect draws are representative. The number of trees and
-retained sweeps also impose no universal bound below the ESS threshold.
-:::
+## The Average Effect, Against a Design-Based Benchmark {#sec-longbet-att}
 
-`att_stability()` reports rank-normalized bulk and tail ESS, split $\hat R$,
-and Monte Carlo standard error for the ATT mean. These diagnostics assume the
-chains are sampling the intended posterior. They cannot prove that assumption,
-and they do not measure repeated-sampling interval coverage. The package's
-`is_reliable` field is therefore always `NA`.
-
-Treated-cell support decreases at long exposures because fewer waves have
-reached them by the end of the study. This changes the estimand and precision.
-It does not justify lowering the diagnostic thresholds or interpreting a bad
-$\hat R$ as a design effect rather than a sampling problem.
-
-## What the Average Effect Says {#sec-longbet-scorecard}
-
-The natural summary of a staggered rollout is the average effect on the treated
-as a function of **time since launch**, with every wave aligned on its own
-launch week. `get_att()` does that alignment; the helper below does the same
-thing for arbitrary subsets and for the known truth, so that everything we plot
-is aligned identically.
-
-```{r alignment-helpers}
-# Align an [n x T x draws] array of unit-level effects on time-since-adoption
-# and average over a subset of units, returning a [S x draws] matrix.
-event_time_draws <- function(tauhat, z, keep = rep(TRUE, nrow(z))) {
-  P    <- max(rowSums(z))
-  D    <- dim(tauhat)[3]
-  num  <- matrix(0, P, D)
-  den  <- numeric(P)
-  patt <- apply(z, 1, paste0, collapse = "")   # one pattern per launch wave
-  for (p in unique(patt[keep & rowSums(z) > 0])) {
-    ii   <- which(patt == p & keep)
-    cols <- which(z[ii[1], ] == 1)
-    k    <- length(cols)
-    num[1:k, ] <- num[1:k, ] + apply(tauhat[ii, cols, , drop = FALSE], c(2, 3), sum)
-    den[1:k]   <- den[1:k] + length(ii)
-  }
-  out <- num / den
-  out[is.nan(out)] <- NA_real_   # event times no kept unit ever reached
-  out
-}
-
-# Same alignment for a known [n x T] matrix of true effects.
-event_time_truth <- function(m, z, keep = rep(TRUE, nrow(z))) {
-  as.vector(event_time_draws(array(m, c(dim(m), 1)), z, keep))
-}
-
-tau_future  <- tau_true[, c(week_study, week_future)]
-truth_att   <- event_time_truth(tau_true[, week_study], z_train)
-truth_att_ext <- event_time_truth(tau_future, z_ext)
-S_observed  <- max(rowSums(z_train))   # longest time-since-launch in the study
-S_max       <- max(rowSums(z_ext))    # longest available for forecasting
-```
-
-Before either estimator, the estimand. "The ATT" in this chapter always means
-the **event-time ATT**,
+"The average effect" here means the **event-time average on the treated**,
 
 $$
 \mathrm{ATT}(S) = \mathbb{E}\!\left[\tau_i(S) \mid i \text{ has reached exposure } S\right],
 $$
 
-averaged over treated sellers with sample-size weights across the waves that
-have reached exposure $S$ inside the study window. The conditioning set changes
-with $S$: all four waves contribute at $S = 1$, and only W1 by $S = 14$. So the
-curve is not one fixed population followed through time, and the thinning at
-its right-hand end is a change in *who* is being averaged as well as a loss of
-precision. Both estimators below target this same quantity with the same
-weights, which is what makes them comparable.
+averaged over treated sellers with sample-size weights across the waves that have reached exposure $S$ inside the study. The conditioning set changes with $S$: all three waves contribute at $S = 1$, only the first wave by $S = 12$.
 
-The benchmark is the estimator a careful analyst would reach for first:
-for each wave and each week since its launch, take the change in log GMV
-relative to the common pre-launch window (weeks 7--10) and subtract the same
-change among holdout sellers with the same stratum weights, then pool the waves.
-This matches the blocked randomization. The within-seller differencing removes each seller's level entirely,
-which is a stronger adjustment than any covariate.
-
-Note what that is *not*. The reflex for panel data is a two-way fixed effects
-regression with event-time dummies, and under staggered adoption it is the
-wrong reflex: TWFE identifies the effect partly by using already-treated units
-as controls for later-treated ones, which assigns some comparisons negative
-weight and can return an average effect outside the range of every individual
-effect [@callaway2021did; @roth2023trending]. The estimator above sidesteps
-that by construction --- every wave is compared only against the never-treated
-holdout, and the waves are pooled afterwards rather than inside a regression.
-That is the same structure as the group-time approach of @callaway2021did,
-simplified because randomization means no covariate adjustment is needed for
-identification. If your rollout has no holdout, you need that literature's
-machinery; here the design supplies it.
+The benchmark is what a careful analyst reaches for first. For each wave and each period since its launch, take the change in log GMV from the common pre-launch window and subtract the same change among holdout sellers, reweighted to that wave's randomization strata, then pool the waves by sample size. This is the group-time estimator of @callaway2021did specialised to a balanced panel with never-treated controls, which is exactly the design here. Every wave is compared only against the never-treated holdout, so the negative-weighting problem that afflicts two-way fixed effects under staggered adoption [@bacon2021difference; @roth2023trending] never arises. A second version adds a covariate regression fitted on the holdout, the linear cousin of the prognostic forest.
 
 ```{r benchmark}
-pre_weeks <- 7:10                # common pre-launch window for every wave
-is_hold   <- wave == "Holdout"
-y_pre     <- rowMeans(y[, pre_weeks])
-dY        <- y - y_pre           # change from each seller's own baseline
-colnames(dY) <- weeks_all        # index by calendar week, not column position
-
-# `keep` restricts the whole comparison -- treated waves and holdout alike --
-# to a subpopulation, which is how the same estimator is run on a subgroup
-# later in the chapter.
-did_event_study <- function(keep = rep(TRUE, n), D = dY, adjusted = FALSE) {
-  hold <- is_hold & keep
-  map_dfr(1:S_observed, function(s) {
-    # Waves that have reached event time s before the study window closes
-    ws <- c("W1", "W2", "W3", "W4")
-    ws <- ws[LAUNCH[ws] + s - 1 <= max(week_study)]
-    nt <- vapply(ws, function(w) sum(wave == w & keep), integer(1))
-    ws <- ws[nt > 1]; nt <- nt[nt > 1]          # a wave needs 2+ kept sellers
-    a  <- nt / sum(nt)                          # sample-size weights
-
-    col <- match(as.integer(LAUNCH[ws] + s - 1), weeks_all)
-    treated_mean     <- vapply(seq_along(ws), function(j)
-      mean(D[wave == ws[j] & keep, col[j]]), numeric(1))
-    # Pooled within-wave variance remains estimable when a subgroup has only
-    # one seller in a stratum-arm cell. Under an independent-seller
-    # approximation, differences in stratum means make this conservative.
-    # This is not an exact finite-population randomization interval.
-    var_treated_mean <- vapply(seq_along(ws), function(j)
-      var(D[wave == ws[j] & keep, col[j]]) / nt[j], numeric(1))
-
-    # Every wave is compared against the *same* holdout sellers, so the holdout
-    # contributes one weighted combination per seller. Treating the waves'
-    # holdout means as independent would understate the variance.
-    # Rounding the arm counts makes allocation fractions slightly different
-    # across strata. Match each wave's stratum weights exactly in the holdout.
-    control_weights <- vapply(ws, function(w) {
-      nt_str <- table(factor(strata[wave == w & keep], levels = levels(strata)))
-      nh_str <- table(factor(strata[hold], levels = levels(strata)))
-      st <- as.character(strata[hold])
-      as.numeric(nt_str[st] / sum(nt_str) / nh_str[st])
-    }, numeric(sum(hold)))
-    h_combo <- as.vector((D[hold, col, drop = FALSE] * control_weights) %*% a)
-
-    est <- sum(a * treated_mean) - sum(h_combo)
-    control_variance <- length(h_combo) * var(h_combo)
-    if (adjusted) {
-      # The adjustment is estimated on the same holdout. Include its
-      # first-order estimation uncertainty, retaining covariance across weeks.
-      stopifnot(all(keep))
-      influence <- numeric(sum(hold))
-      for (j in seq_along(ws)) {
-        target_x <- colMeans(adjust_design[wave == ws[j], , drop = FALSE])
-        contrast_x <- target_x - as.vector(crossprod(
-          adjust_design[hold, , drop = FALSE], control_weights[, j]))
-        weights <- control_weights[, j] + as.vector(
-          adjust_design[hold, , drop = FALSE] %*% adjust_inv_cross %*% contrast_x)
-        influence <- influence + a[j] * weights * D[hold, col[j]] /
-          sqrt(1 - adjust_leverage)
-      }
-      control_variance <- sum(influence^2)
-    }
-    se  <- sqrt(sum(a^2 * var_treated_mean) + control_variance)
-    tibble(s = s, estimate = est, lower = est - 1.96 * se, upper = est + 1.96 * se)
-  })
-}
-
-did_holdout <- did_event_study()
-
-# A fairer comparator. The estimator above already removes each seller's level
-# by differencing; what it does not do is adjust for the covariates that
-# predict how a seller *moves*. That is what the prognostic forest is for, and
-# a careful analyst does not need a forest to try it: regress the differenced
-# outcome on the baseline covariates, then estimate the effect on the residual.
-# This is a regression adjustment related to ANCOVA and CUPED.
-#
-# The adjustment is fitted on holdout sellers only. That keeps it independent
-# of the treated outcomes. Estimated adjustment is not exactly unbiased in
-# finite samples; its standard error must include fitting uncertainty.
-xdf <- as.data.frame(x)
-xdf$fulfilled <- factor(xdf$fulfilled)
-adjust_design <- model.matrix(~ ., data = xdf)
-adjust_inv_cross <- solve(crossprod(adjust_design[is_hold, , drop = FALSE]))
-adjust_leverage <- rowSums((adjust_design[is_hold, , drop = FALSE] %*%
-                            adjust_inv_cross) * adjust_design[is_hold, , drop = FALSE])
-
-dY_adj <- dY
-for (cc in seq_len(ncol(dY))) {
-  ctrl_fit    <- lm(dY[is_hold, cc] ~ ., data = xdf[is_hold, , drop = FALSE])
-  dY_adj[, cc] <- dY[, cc] - predict(ctrl_fit, newdata = xdf)
-}
-did_ancova <- did_event_study(D = dY_adj, adjusted = TRUE)
+pre_weeks <- 5:8
+y_study <- y[, match(week_study, weeks_all)]
+gt_plain <- group_time_did(y_study, launch, week_study, pre_weeks, strata = strata)
+adj <- did_covariate_adjustment(y_study, launch, week_study, pre_weeks,
+                                cbind(base_level = base_level, x))
+gt_adj <- group_time_did(y_study, launch, week_study, pre_weeks, strata = strata, adjust = adj)
 ```
 
-These normal-approximation intervals treat sellers as independent sampling
-units. The plain comparison pools variances within each wave and among the
-weighted holdout contributions. Differences in their stratum means make that
-variance estimate conservative under this sampling approximation, and pooling
-avoids undefined variances in singleton subgroup cells. The adjusted comparison
-uses an HC2 correction for the estimated holdout regressions and preserves
-their covariance across weeks. These are approximate intervals, not exact
-finite-population randomization guarantees.
-
-```{r}
-#| label: fig-att
-#| fig-cap: >-
-#|   Observed-panel event-time effects on log GMV. The model, holdout comparison
-#|   and known truth use identical calendar cells and cohort weights.
-#|   Bands are pointwise 95% intervals; assess them with the diagnostics.
+```{r fig-att}
+#| fig-cap: "Event-time effects on log GMV: LongBet's posterior mean and 95% interval, the group-time benchmark with its 95% confidence interval, and the known truth, on identical cells and cohort weights."
+#| fig-alt: "A rising curve from about 0.03 at one week since launch to about 0.13 at twelve weeks. The model's band is narrow and tracks the black truth line; the benchmark's point ranges are centred on the same path but roughly twice as wide."
 #| fig-width: 8.5
-#| fig-height: 4.6
-#| message: false
-
-att_df <- tibble(
-  s        = seq_len(S_observed),
-  estimate = lb_att$att,
-  lower    = lb_att$intervals[1, ],
-  upper    = lb_att$intervals[2, ],
-  truth    = truth_att
-) %>% filter(s <= S_observed)
-
+#| fig-height: 4.2
+att_df <- tibble(s = seq_len(S_observed), estimate = lb_att$att,
+                 lower = lb_att$intervals[1, ], upper = lb_att$intervals[2, ], truth = truth_att)
 ggplot(att_df, aes(s)) +
   geom_ribbon(aes(ymin = lower, ymax = upper, fill = "LongBet"), alpha = 0.22) +
   geom_line(aes(y = estimate, colour = "LongBet"), linewidth = 0.9) +
   geom_line(aes(y = truth, colour = "Truth"), linewidth = 0.9) +
-  geom_pointrange(
-    data = did_holdout,
-    aes(x = s, y = estimate, ymin = lower, ymax = upper,
-        colour = "DiD vs holdout"),
-    size = 0.28, position = position_nudge(x = 0.14)
-  ) +
+  geom_pointrange(data = gt_plain,
+                  aes(x = s, y = estimate, ymin = lower, ymax = upper, colour = "Group-time DiD"),
+                  size = 0.28, position = position_nudge(x = 0.14)) +
   geom_hline(yintercept = 0, linetype = "dashed", colour = "grey60") +
-  scale_colour_manual(values = PAL) +
-  scale_fill_manual(values = PAL, guide = "none") +
-  scale_x_continuous(breaks = 1:S_observed) +
-  labs(
-    x = "Weeks since launch", y = "Effect on log weekly GMV", colour = NULL,
-    title = "The average lift fades over the first three months",
-    subtitle = "Effect on the treated, aligned on each wave's own launch week"
-  ) +
-  theme_minimal() +
+  scale_colour_manual(values = PAL) + scale_fill_manual(values = PAL, guide = "none") +
+  scale_x_continuous(breaks = seq_len(S_observed)) +
+  labs(x = "Weeks since launch", y = "Effect on log weekly GMV", colour = NULL,
+       subtitle = "Effect on the treated, aligned on each wave's own launch week") +
   theme(legend.position = "bottom")
 ```
 
 ```{r att-scorecard}
-ins_ <- seq_len(S_observed)
-
-score <- function(est, lo, hi, truth) {
-  tibble(
-    RMSE          = sqrt(mean((est - truth)^2)),
-    `Mean error`  = mean(est - truth),
-    `Interval width` = mean(hi - lo),
-    `Contained truth` = sprintf("%d of %d", sum(truth >= lo & truth <= hi), length(truth))
-  )
-}
-
 bind_rows(
-  score(att_df$estimate, att_df$lower, att_df$upper, att_df$truth) %>%
+  score_curve(att_df$estimate, att_df$lower, att_df$upper, att_df$truth) %>%
     mutate(Estimator = "LongBet", .before = 1),
-  score(did_holdout$estimate, did_holdout$lower, did_holdout$upper,
-        truth_att[ins_]) %>%
-    mutate(Estimator = "DiD vs holdout", .before = 1),
-  score(did_ancova$estimate, did_ancova$lower, did_ancova$upper,
-        truth_att[ins_]) %>%
-    mutate(Estimator = "DiD + covariate adjustment", .before = 1)
-) %>%
-  kable(digits = 4, caption = paste(
-    "Accuracy and precision of three estimators across the",
-    S_observed, "observed event times. All three are aimed at the same",
-    "estimand. The plain comparison uses randomization; the adjusted comparison also",
-    "estimates nuisance regressions. Bayesian regularization can introduce bias."
-  ))
+  score_curve(gt_plain$estimate, gt_plain$lower, gt_plain$upper, truth_att) %>%
+    mutate(Estimator = "Group-time DiD vs holdout", .before = 1),
+  score_curve(gt_adj$estimate, gt_adj$lower, gt_adj$upper, truth_att) %>%
+    mutate(Estimator = "Group-time DiD + covariate adjustment", .before = 1)
+) %>% kable(digits = 4, caption = sprintf("Three estimators of the same quantity over the %d observed event times, on one dataset.", S_observed))
+width_ratio <- mean(gt_plain$upper - gt_plain$lower) / mean(att_df$upper - att_df$lower)
 ```
 
-The table compares both estimation error and interval width. Width alone is
-not evidence of precision: an interval can be narrow because it understates
-uncertainty or because the chain has not explored its posterior.
+The three agree, which is the first thing to check and the reason to keep a design-based estimator in the report: randomization is what makes the estimate credible, and a material disagreement would be a reason to debug the model rather than to trust it. What differs is precision. The benchmark's intervals are about `r sprintf("%.1f", width_ratio)` times wider than the model's, because differencing removes each seller's level but leaves the week-to-week noise, while the model also pools the shape of the response across all three waves through $\beta_S$.
 
-The unadjusted holdout comparison already removes each seller's level by
-differencing. The third row additionally regresses that change on the same
-baseline covariates used by LongBet. Each calendar week has its own regression,
-so the linear comparator can accommodate different seasonal shifts by vertical;
-it need not force a single trend across weeks. The forest can additionally
-adapt to nonlinear covariate relationships and interactions.
+## What the Average Hides {#sec-longbet-heterogeneity}
 
-The unadjusted and adjusted interval widths divided by the LongBet width are
-`r sprintf("%.2f", mean(did_holdout$upper - did_holdout$lower) / mean(lb_att$intervals[2, ins_] - lb_att$intervals[1, ins_]))`
-and
-`r sprintf("%.2f", mean(did_ancova$upper - did_ancova$lower) / mean(lb_att$intervals[2, ins_] - lb_att$intervals[1, ins_]))`,
-respectively. Values above one mean wider comparator intervals. These are
-comparisons within this dataset, subject to each method's assumptions.
+The pooled curve averages sellers whose responses differ by an order of magnitude. Because the model returns a posterior for every seller at every event time, the same fit gives subgroup curves without refitting and without having pre-registered the subgroup.
 
-::: {.callout-important title="One realization is not a coverage study"}
-The "contained truth" column above is *not* an estimate of coverage. The
-14 event times share the same treated sellers and the same holdout, so their
-errors are strongly correlated: a single unlucky draw can push the whole curve
-off at once. The table describes width in this run; it does not establish
-coverage. Coverage needs repeated sampling, so @sec-longbet-operating
-illustrates that calculation with a small number of independent redraws.
-That small exercise cannot establish calibration. And keep in mind that LongBet's intervals rest on
-assumptions the difference-in-differences intervals do not need --- that the
-covariates capture what distinguishes one seller from another, and that the
-errors are independent across weeks. @sec-longbet-limits is about what happens
-when they do not.
-
-The same scoping applies to the whole chapter. This simulation is built to
-teach a business decision --- one population, one realization, one set of
-effect shapes chosen because they make the targeting question interesting. It
-is not a validation study, and nothing here establishes that LongBet is more
-accurate than its alternatives in general. @wang2024longbet is where to look
-for that: 100 Monte Carlo replications across parallel and non-parallel
-prognostic trends, homogeneous and heterogeneous effects, scored on RMSE and
-coverage against DiD, non-linear DiD and DiD imputation.
-:::
-
-Read literally, @fig-att is discouraging. The lift peaks at about
-`r sprintf("%.3f", max(truth_att[ins_]))` log points two weeks after launch, slides
-for the next month and a half, and has a log-scale effect of
-`r sprintf("%.3f", truth_att[S_observed])` at week `r S_observed` --- about
-a third of the peak surrendered. That is the signature of a novelty effect, and
-the standard conclusion is that the optimizer buys a temporary bump not worth a
-permanent cost. The pooled curve alone does not settle the targeting decision.
-
-## What the Average Hides
-
-The pooled curve in @fig-att is an average over two populations that are doing
-opposite things. LongBet gives us the posterior for every seller at every
-event time, so we can compute subgroup summaries from the same fit. Those summaries
-need their own diagnostics and have less support.
-
-```{r}
-#| label: fig-catt-segments
-#| fig-cap: >-
-#|   Observed-panel effects split by catalog breadth. Solid lines and bands
-#|   show LongBet, dashed lines the known subgroup truth, and point ranges
-#|   the holdout comparison with the same subgroup and calendar weights.
+```{r fig-segments}
+#| fig-cap: "Effects by catalog breadth. Solid lines and bands: LongBet. Dashed: the known subgroup truth. Point ranges: the same group-time benchmark run inside each segment."
+#| fig-alt: "Two pairs of curves. The broad-catalog curve rises to about 0.21 by twelve weeks; the narrow-catalog curve levels off near 0.10. Both model curves track their dashed truths, with bands roughly half the width of the benchmark's point ranges."
 #| fig-width: 8.5
-#| fig-height: 4.6
-#| message: false
-
-segment_att <- function(keep, label) {
-  d <- event_time_draws(lb_pred$tauhats, z_train, keep)
-  tibble(
-    s        = seq_len(nrow(d)),
-    estimate = rowMeans(d),
-    lower    = apply(d, 1, quantile, 0.025),
-    upper    = apply(d, 1, quantile, 0.975),
-    truth    = event_time_truth(tau_true[, week_study], z_train, keep),
-    segment  = label
-  )
-}
-
+#| fig-height: 4.2
 segments_df <- bind_rows(
-  segment_att(broad,  "Broad catalog"),
-  segment_att(!broad, "Narrow catalog")
-) %>% filter(s <= S_observed)
-
-# The same difference-in-differences as before, but run inside each segment:
-# treated sellers of that type against holdout sellers of that type.
-segments_did <- bind_rows(
-  did_event_study(broad)  %>% mutate(segment = "Broad catalog"),
-  did_event_study(!broad) %>% mutate(segment = "Narrow catalog")
-)
-
+  curve_summary(event_time_draws(lb_pred$tauhats, z_train, broad),
+                event_time_truth(tau_true[, match(week_study, weeks_all)], z_train, broad), "Broad catalog"),
+  curve_summary(event_time_draws(lb_pred$tauhats, z_train, !broad),
+                event_time_truth(tau_true[, match(week_study, weeks_all)], z_train, !broad), "Narrow catalog"))
+segments_gt <- bind_rows(
+  group_time_did(y_study, launch, week_study, pre_weeks, keep = broad, strata = strata) %>%
+    mutate(segment = "Broad catalog"),
+  group_time_did(y_study, launch, week_study, pre_weeks, keep = !broad, strata = strata) %>%
+    mutate(segment = "Narrow catalog"))
 ggplot(segments_df, aes(s, colour = segment, fill = segment)) +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.18, colour = NA) +
-  geom_pointrange(data = segments_did,
-                  aes(y = estimate, ymin = lower, ymax = upper),
+  geom_pointrange(data = segments_gt, aes(y = estimate, ymin = lower, ymax = upper),
                   size = 0.18, alpha = 0.55, linewidth = 0.4,
                   position = position_dodge(0.45), show.legend = FALSE) +
   geom_line(aes(y = estimate), linewidth = 0.9) +
   geom_line(aes(y = truth), linewidth = 0.7, linetype = "22") +
   geom_hline(yintercept = 0, linetype = "dashed", colour = "grey60") +
-  scale_colour_manual(values = PAL) +
-  scale_fill_manual(values = PAL, guide = "none") +
-  scale_x_continuous(breaks = 1:S_observed) +
-  labs(
-    x = "Weeks since launch", y = "Effect on log weekly GMV", colour = NULL,
-    title = "Two opposite trajectories inside one average",
-    subtitle = paste("Solid line and band: LongBet posterior. Dashed: truth.",
-                     "Point ranges: the same difference-in-differences,\nrun",
-                     "separately inside each segment.")
-  ) +
-  theme_minimal() +
+  scale_colour_manual(values = PAL) + scale_fill_manual(values = PAL, guide = "none") +
+  scale_x_continuous(breaks = seq_len(S_observed)) +
+  labs(x = "Weeks since launch", y = "Effect on log weekly GMV", colour = NULL) +
   theme(legend.position = "bottom")
 ```
 
 ```{r segment-precision}
-inner_join(
-  segments_df %>% group_by(segment) %>%
-    summarise(LongBet = mean(upper - lower), .groups = "drop"),
-  segments_did %>% group_by(segment) %>%
-    summarise(`Subgroup DiD` = mean(upper - lower), .groups = "drop"),
-  by = "segment"
-) %>%
-  mutate(Ratio = `Subgroup DiD` / LongBet) %>%
-  rename(Segment = segment) %>%
-  kable(digits = c(0, 4, 4, 1), caption = paste(
-    "Mean interval width by segment over the", S_observed,
-    "observed event times."
-  ))
+inner_join(segments_df %>% group_by(segment) %>% summarise(LongBet = mean(upper - lower), .groups = "drop"),
+           segments_gt %>% group_by(segment) %>% summarise(`Group-time DiD` = mean(upper - lower), .groups = "drop"),
+           by = "segment") %>%
+  mutate(Ratio = `Group-time DiD` / LongBet) %>% rename(Segment = segment) %>%
+  kable(digits = c(0, 4, 4, 1),
+        caption = "Mean interval width by segment. The benchmark has to be told where to split; the forest learns the dependence on catalog size while fitting.")
 ```
 
-The table reports the subgroup interval widths. The comparison needs the
-catalog split specified explicitly; the forest learns covariate interactions
-while fitting. That flexibility is useful, but selecting subgroups after seeing
-a plot is still a selection step and does not make their intervals simultaneous.
+Next, the effect of twelve weeks of exposure for **every** seller, holdout included, from a counterfactual panel in which everyone launches in week 9. Only the first wave actually reached that exposure, so the answer for the rest uses the model's pooling across covariates. This is the resolution a design-based estimator cannot produce without being told in advance where to look.
 
-```{r subgroup-diagnostics}
-segment_diagnostics <- bind_rows(
-  diagnose_draws(event_time_draws(lb_pred$tauhats, z_train, broad),
-                 lb_fit, "Broad catalog ATT")$summary,
-  diagnose_draws(event_time_draws(lb_pred$tauhats, z_train, !broad),
-                 lb_fit, "Narrow catalog ATT")$summary)
-segment_diagnostics %>% kable(digits = 3, caption = "Diagnostics for each subgroup trajectory.")
-```
-
-Next we ask for the effect of 14 weeks of exposure for every seller, including
-holdouts, by constructing a panel where everyone launches in week 11. Only the
-earliest actual wave reached that exposure in the observed study. Generalizing
-to other sellers therefore uses the model's covariate pooling and assumptions.
-
-```{r counterfactual}
-#| cache: true
+```{r common-launch}
 #| message: false
-#| output: false
-
-# Counterfactual panel: every seller launches in week 11.
-rm(lb_pred)  # The observed-panel summaries above retain what later sections need.
-invisible(gc(verbose = FALSE))
-cl <- get_or_create_common_launch(lb_fit, rollout)
-S_target      <- cl$S_target
-tau_hat_draws <- cl$tau_hat_draws
-tau_hat       <- cl$tau_hat
-tau_truth_S   <- cl$tau_truth_S
-z_all         <- cl$z_all
+z_all <- matrix(as.integer(week_study >= 9), n, length(week_study), byrow = TRUE)
+S_target <- sum(week_study >= 9)
+pred_all <- predict(lb_fit, x = x, z = z_all, t = week_study, random_seed = 1)
+tau_hat_draws <- pred_all$tauhats[, ncol(z_all), ]
+tau_hat   <- rowMeans(tau_hat_draws)
+tau_truth <- a_i * h_shape(S_target)
+seller_diag <- diagnose_draws(tau_hat_draws, lb_fit,
+                              sprintf("Effect at S = %d for each of %d sellers", S_target, n))
 ```
 
-```{r}
-#| label: fig-catt-listings
-#| fig-cap: >-
-#|   Estimated and known conditional effects after 14 weeks of exposure for
-#|   all sellers. The simulation truth varies smoothly with catalog breadth;
-#|   the estimates use the same counterfactual calendar for everyone.
+```{r fig-sellers}
+#| fig-cap: "Estimated and known effects after twelve weeks of exposure for all 400 sellers, against catalog breadth."
+#| fig-alt: "A scatter of posterior means rising with catalog size along a smooth black truth curve, from near zero below ten listings to about 0.25 above two hundred."
 #| fig-width: 8.5
-#| fig-height: 4.4
-#| message: false
-
-tibble(listings = listings, estimate = tau_hat, truth = tau_truth_S) %>%
+#| fig-height: 4
+tibble(listings = listings, estimate = tau_hat, truth = tau_truth) %>%
   ggplot(aes(listings)) +
-  geom_point(aes(y = estimate, colour = "LongBet"), alpha = 0.16, size = 0.8) +
+  geom_point(aes(y = estimate, colour = "LongBet"), alpha = 0.35, size = 1) +
   geom_line(aes(y = truth, colour = "Truth"), linewidth = 1) +
-  geom_vline(xintercept = 50, linetype = "dashed", colour = "grey50") +
-  annotate("text", x = 52, y = 0.02, label = "50 listings",
-           hjust = 0, size = 3.2, colour = "grey35") +
   scale_x_log10(breaks = c(5, 10, 25, 50, 100, 250, 500)) +
   scale_colour_manual(values = PAL) +
-  labs(
-    x = "Active listings (log scale)", y = "Effect on log weekly GMV",
-    colour = NULL,
-    title = "Effect after 14 weeks of exposure, seller by seller"
-  ) +
-  theme_minimal() +
+  labs(x = "Active listings (log scale)", y = sprintf("Effect on log weekly GMV at S = %d", S_target),
+       colour = NULL) +
   theme(legend.position = "bottom")
 ```
 
-```{r catt-quality}
-individual_diagnostics <- diagnose_draws(tau_hat_draws, lb_fit, "Seller effects at week 14")
-individual_diagnostics$summary %>%
-  kable(digits = 3, caption = "Worst diagnostic across all seller effect summaries.")
-tibble(
-  Quantity = c("Correlation with truth", "RMSE", "Mean absolute error"),
-  Value = c(cor(tau_hat, tau_truth_S),
-            sqrt(mean((tau_hat - tau_truth_S)^2)),
-            mean(abs(tau_hat - tau_truth_S)))
-) %>%
-  kable(digits = 3, caption = paste(
-    "Quality of the seller-level effect estimates after", S_target,
-    "weeks of exposure."
-  ))
+```{r seller-quality}
+kable(seller_diag$summary %>% select(-ok), digits = 3,
+      caption = "Sampling checks across all 400 seller-level effects.")
+tibble(Quantity = c("Correlation with truth", "RMSE", "Mean absolute error"),
+       Value = c(cor(tau_hat, tau_truth), sqrt(mean((tau_hat - tau_truth)^2)),
+                 mean(abs(tau_hat - tau_truth)))) %>%
+  kable(digits = 3, caption = sprintf("Quality of the seller-level effect estimates after %d weeks of exposure.", S_target))
 ```
 
-This is resolution a conventional difference-in-differences does not produce
-on its own: a posterior for every seller, obtained without pre-registering a
-single subgroup. A DiD analysis can reach the same place, but only by being
-told where to look --- interact the treatment with catalog breadth, or fit the
-estimator separately within bins you chose in advance.
+Read the last figure carefully: it is a posterior for the *conditional* effect at a seller's covariates, not for that seller's own unobservable effect. Two sellers with identical covariates get identical posteriors, however differently the treatment would actually have landed on them. That is the right object for a targeting decision, which is where the [next chapter](longbet_decisions.qmd) goes.
 
+## It Does Not Distort a Simple Panel {#sec-longbet-additive}
 
-::: {.callout-note title="Assumptions reminder: observed effects vs. general policy"}
-The results in this chapter demonstrate that LongBet's prognostic forest explains
-substantial baseline variation, improving precision over standard difference-in-differences,
-while its treatment forest discovers heterogeneous trajectories across catalog sizes.
-However, keep the causal boundaries in view:
+A flexible model is worth having only if it behaves when flexibility is not needed. Here is the same machinery on a panel built for the classical estimator: 300 units, eight periods, additive unit effects, staggered adoption in periods 3, 5 and 7 or never, and an effect that grows linearly with exposure and is **identical for every unit**. Nothing here needs a forest.
 
-- **Randomization** identifies the average effect for those waves that reached each exposure.
-- **Model-based subgroup contrasts** pool information across covariates under the tree priors.
-- Projecting these findings into full operational deployments requires additional economic
-  assumptions about baseline revenues, costs, capacity constraints, and persistence.
-:::
+```{r additive}
+#| message: false
+ad <- simulate_additive()
+ad_max_s <- max(ad$s[ad$z == 1])
+ad_truth <- vapply(seq_len(ad_max_s), function(ss) mean(ad$tau[ad$s == ss]), numeric(1))
+ad_adopt <- ifelse(is.finite(ad$adopt), ad$adopt, Inf)
+ad_fit <- lb_artifact("additive_fit",
+                      lb_key("additive", lb_budget(4), LB_MODEL, digest::digest(ad[c("y", "x", "z")])),
+                      export = "ad",
+                      builder = function() {
+                        f <- do.call(longbet::longbet,
+                                     c(list(y = ad$y, x = ad$x, z = ad$z, t = ad$tg, random_seed = 101L),
+                                       LB_MODEL, lb_budget(4)))
+                        p <- predict(f, x = ad$x, z = ad$z, t = ad$tg, summary_only = TRUE, random_seed = 1)
+                        list(att = get_att(p, alpha = 0.05),
+                             layout = chain_layout(f$model_params$num_chains, f$model_params$num_sweeps))
+                      })
+ad_gt <- group_time_did(ad$y, ad_adopt, ad$tg, pre_periods = 1:2)
+kable(diagnose_draws(ad_fit$att$att_full, ad_fit$layout, "Average effect, every exposure")$summary %>% select(-ok),
+      digits = 3, caption = "Sampling checks for the fit on the additive panel.")
+bind_rows(
+  score_curve(ad_fit$att$att[seq_len(ad_max_s)], ad_fit$att$intervals[1, seq_len(ad_max_s)],
+              ad_fit$att$intervals[2, seq_len(ad_max_s)], ad_truth) %>% mutate(Estimator = "LongBet", .before = 1),
+  score_curve(ad_gt$estimate, ad_gt$lower, ad_gt$upper, ad_truth) %>%
+    mutate(Estimator = "Group-time DiD", .before = 1)
+) %>% kable(digits = 3, caption = "On a purely additive panel the two estimators agree, and the model's regularisation costs nothing measurable here.")
+```
+
+The model was not told that the world was additive, that the effect was homogeneous, or that the trajectory was linear. It recovers the same curve as the estimator built for exactly this case, with intervals no wider. That is the reassurance worth having before using it where the classical estimator cannot go.
 
 ## Conclusion
 
-A randomized staggered rollout provides design-based identification for average
-treatment effects across exposure times. LongBet enriches that design by modeling
-non-parallel prognostic baselines and uncovering heterogeneous trajectories across
-seller attributes, such as catalog breadth. However, point estimates of heterogeneous
-effects alone do not tell a business whether to ship a product or to whom.
+A randomized staggered rollout identifies the average effect at every exposure, and a design-based comparison estimates it without any model at all. What the panel model adds is precision, and resolution: the same fit that reproduces the benchmark's average also delivers a trajectory per segment and a posterior per seller, without pre-registering a single subgroup.
 
-In the next chapter, **[LongBet: Decisions and Multiple Outcomes](longbet_decisions.qmd)**,
-we translate these dynamic effects into 52-week dollar valuations, examine capacity-constrained
-targeting rules, and extend the model to evaluate multi-outcome trade-offs simultaneously.
-Methodological extensions, including long-run forecasting and observational panel
-identification, follow in **[LongBet: Forecasting, Observational Panels, and Diagnostics](longbet_extensions.qmd)**.
+None of that is a decision yet. In **[LongBet: From Effects to Decisions](longbet_decisions.qmd)** these trajectories become dollars, a ranked list of sellers under a capacity constraint, and a joint screen across three outcomes at once.
+
+::: {.callout-tip}
+## Learn more
+  - @wang2024longbet LongBet: heterogeneous treatment effect estimation in panel data.
+  - @longbetpkg The `longbet` package.
+  - @hahn2020bayesian Bayesian regression tree models for causal inference, the cross-sectional model LongBet extends.
+  - @callaway2021did and @bacon2021difference for the staggered-adoption literature the benchmark comes from.
+  - @deng2013cuped for the variance-reduction idea that $\mu(X_i, t)$ generalises.
+:::
