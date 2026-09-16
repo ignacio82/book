@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Dynamic effects on ordered ratings: heterogeneous category probabilities, rare-rating comparisons, and Bayesian rollout decisions.">
+<meta name="description" content="When the outcome is a one-to-five star rating, the whole ordered distribution matters. Ordinal LongBet models it, so a team can ask how many one-star weeks a rollout removes and how many five-star weeks it creates.">
 
-<title>28&nbsp; LongBet: Ordinal Outcomes and Customer Experience – Business Data Science</title>
+<title>29&nbsp; LongBet: Ordinal Outcomes and Customer Experience – Business Data Science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -59,26 +59,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -88,7 +69,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./references.html" rel="next">
+<link href="./longbet_encouragement.html" rel="next">
 <link href="./longbet_extensions.html" rel="prev">
 <link href="./hex.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
@@ -163,21 +144,21 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="longbet.css">
-<meta property="og:title" content="28&nbsp; LongBet: Ordinal Outcomes and Customer Experience – Business Data Science">
-<meta property="og:description" content="Dynamic effects on ordered ratings: heterogeneous category probabilities, rare-rating comparisons, and Bayesian rollout decisions.">
+<meta property="og:title" content="29&nbsp; LongBet: Ordinal Outcomes and Customer Experience – Business Data Science">
+<meta property="og:description" content="When the outcome is a one-to-five star rating, the whole ordered distribution matters. Ordinal LongBet models it, so a team can ask how many one-star weeks a rollout removes and how many five-star weeks it creates.">
 <meta property="og:image" content="https://book.martinez.fyi/longbet_ordinal_files/figure-html/fig-ordinal-profiles-1.png">
 <meta property="og:site_name" content="Business Data Science">
-<meta property="og:image:alt" content="For an equal latent improvement, the low-satisfaction profile gains more in avoiding one-star ratings; the high-satisfaction profile gains more in five-star ratings.">
-<meta property="og:image:height" content="691">
-<meta property="og:image:width" content="1152">
-<meta name="twitter:title" content="28&nbsp; LongBet: Ordinal Outcomes and Customer Experience – Business Data Science">
-<meta name="twitter:description" content="Dynamic effects on ordered ratings: heterogeneous category probabilities, rare-rating comparisons, and Bayesian rollout decisions.">
+<meta property="og:image:alt" content="Two small bar panels. In the panel for avoiding one-star ratings the lower-satisfaction profile has the taller bar; in the panel for creating five-star ratings the higher-satisfaction profile does.">
+<meta property="og:image:height" content="652">
+<meta property="og:image:width" content="1248">
+<meta name="twitter:title" content="29&nbsp; LongBet: Ordinal Outcomes and Customer Experience – Business Data Science">
+<meta name="twitter:description" content="When the outcome is a one-to-five star rating, the whole ordered distribution matters. Ordinal LongBet models it, so a team can ask how many one-star weeks a rollout removes and how many five-star weeks it creates.">
 <meta name="twitter:image" content="https://book.martinez.fyi/longbet_ordinal_files/figure-html/fig-ordinal-profiles-1.png">
-<meta name="twitter:image:alt" content="For an equal latent improvement, the low-satisfaction profile gains more in avoiding one-star ratings; the high-satisfaction profile gains more in five-star ratings.">
-<meta name="twitter:image-height" content="691">
-<meta name="twitter:image-width" content="1152">
+<meta name="twitter:image:alt" content="Two small bar panels. In the panel for avoiding one-star ratings the lower-satisfaction profile has the taller bar; in the panel for creating five-star ratings the higher-satisfaction profile does.">
+<meta name="twitter:image-height" content="652">
+<meta name="twitter:image-width" content="1248">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="citation_title" content="[28]{.chapter-number}&nbsp; [LongBet: Ordinal Outcomes and Customer Experience]{.chapter-title}">
+<meta name="citation_title" content="[29]{.chapter-number}&nbsp; [LongBet: Ordinal Outcomes and Customer Experience]{.chapter-title}">
 <meta name="citation_fulltext_html_url" content="https://book.martinez.fyi">
 <meta name="citation_language" content="en">
 <meta name="citation_book_title" content="Business Data Science: A guide for data-driven decisions">
@@ -266,6 +247,10 @@ window.Quarto = {
 <meta name="citation_reference" content="citation_title=What’s trending in difference-in-differences? A synthesis of the recent econometrics literature;,citation_author=Jonathan Roth;,citation_author=Pedro H. C. Sant’Anna;,citation_author=Alyssa Bilinski;,citation_author=John Poe;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_issue=2;,citation_doi=10.1016/j.jeconom.2023.03.008;,citation_volume=235;,citation_journal_title=Journal of Econometrics;">
 <meta name="citation_reference" content="citation_title=Inference in Bayesian additive vector autoregressive tree models;,citation_author=Florian Huber;,citation_author=Luca Rossini;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_issue=1;,citation_doi=10.1214/21-AOAS1488;,citation_volume=16;,citation_journal_title=The Annals of Applied Statistics;">
 <meta name="citation_reference" content="citation_title=Using big data to emulate a target trial when a randomized trial is not available;,citation_author=Miguel A. Hernán;,citation_author=James M. Robins;,citation_publication_date=2016;,citation_cover_date=2016;,citation_year=2016;,citation_issue=8;,citation_doi=10.1093/aje/kwv254;,citation_volume=183;,citation_journal_title=American Journal of Epidemiology;">
+<meta name="citation_reference" content="citation_title=Difference-in-differences with variation in treatment timing;,citation_author=Andrew Goodman-Bacon;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_issue=2;,citation_doi=10.1016/j.jeconom.2021.03.014;,citation_volume=225;,citation_journal_title=Journal of Econometrics;">
+<meta name="citation_reference" content="citation_title=Estimating dynamic treatment effects in event studies with heterogeneous treatment effects;,citation_author=Liyang Sun;,citation_author=Sarah Abraham;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_issue=2;,citation_doi=10.1016/j.jeconom.2020.09.006;,citation_volume=225;,citation_journal_title=Journal of Econometrics;">
+<meta name="citation_reference" content="citation_title=Revisiting event-study designs: Robust and efficient estimation;,citation_author=Kirill Borusyak;,citation_author=Xavier Jaravel;,citation_author=Jann Spiess;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_issue=6;,citation_doi=10.1093/restud/rdae007;,citation_volume=91;,citation_journal_title=The Review of Economic Studies;">
+<meta name="citation_reference" content="citation_title=Generalized random forests;,citation_author=Susan Athey;,citation_author=Julie Tibshirani;,citation_author=Stefan Wager;,citation_publication_date=2019;,citation_cover_date=2019;,citation_year=2019;,citation_issue=2;,citation_doi=10.1214/18-AOS1709;,citation_volume=47;,citation_journal_title=The Annals of Statistics;">
 </head>
 
 <body class="nav-sidebar floating quarto-light">
@@ -277,7 +262,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./longitudinal.html">Longitudinal and Panel Causal Inference</a></li><li class="breadcrumb-item"><a href="./longbet_ordinal.html"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience 🚧</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./longitudinal.html">Longitudinal and Panel Causal Inference</a></li><li class="breadcrumb-item"><a href="./longbet_ordinal.html"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -509,25 +494,37 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">LongBet: Dynamic Treatment Effects in Staggered Rollouts 🚧</span></span></a>
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">LongBet: Dynamic Treatment Effects in Staggered Rollouts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet_decisions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">LongBet: Decisions and Multiple Outcomes 🚧</span></span></a>
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">LongBet: From Effects to Decisions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./longbet_did.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">LongBet and Modern Difference-in-Differences</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet_extensions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">LongBet: Forecasting, Observational Panels, and Diagnostics 🚧</span></span></a>
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">LongBet: Forecasting and Observational Panels</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./longbet_ordinal.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience 🚧</span></span></a>
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./longbet_encouragement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">LongBet: Randomized Encouragement and Adoption Timing</span></span></a>
   </div>
 </li>
       </ul>
@@ -535,7 +532,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">References</span></span></a>
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">References</span></span></a>
   </div>
 </li>
     </ul>
@@ -548,27 +545,27 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#a-rollout-can-improve-more-than-the-average-rating" id="toc-a-rollout-can-improve-more-than-the-average-rating" class="nav-link active" data-scroll-target="#a-rollout-can-improve-more-than-the-average-rating"><span class="header-section-number">28.1</span> A rollout can improve more than the average rating</a></li>
-  <li><a href="#the-model-a-latent-response-observed-through-ordered-thresholds" id="toc-the-model-a-latent-response-observed-through-ordered-thresholds" class="nav-link" data-scroll-target="#the-model-a-latent-response-observed-through-ordered-thresholds"><span class="header-section-number">28.2</span> The model: a latent response, observed through ordered thresholds</a>
+  <li><a href="#a-rollout-can-improve-more-than-the-average-rating" id="toc-a-rollout-can-improve-more-than-the-average-rating" class="nav-link active" data-scroll-target="#a-rollout-can-improve-more-than-the-average-rating"><span class="header-section-number">29.1</span> A Rollout Can Improve More Than the Average Rating</a></li>
+  <li><a href="#the-model-a-latent-response-seen-through-ordered-thresholds" id="toc-the-model-a-latent-response-seen-through-ordered-thresholds" class="nav-link" data-scroll-target="#the-model-a-latent-response-seen-through-ordered-thresholds"><span class="header-section-number">29.2</span> The Model: a Latent Response Seen Through Ordered Thresholds</a>
   <ul class="collapse">
-  <li><a href="#convert-each-posterior-draw-into-probabilities" id="toc-convert-each-posterior-draw-into-probabilities" class="nav-link" data-scroll-target="#convert-each-posterior-draw-into-probabilities">Convert each posterior draw into probabilities</a></li>
+  <li><a href="#every-draw-becomes-a-set-of-probabilities" id="toc-every-draw-becomes-a-set-of-probabilities" class="nav-link" data-scroll-target="#every-draw-becomes-a-set-of-probabilities">Every draw becomes a set of probabilities</a></li>
   </ul></li>
-  <li><a href="#heterogeneity-changes-which-customer-outcome-to-target" id="toc-heterogeneity-changes-which-customer-outcome-to-target" class="nav-link" data-scroll-target="#heterogeneity-changes-which-customer-outcome-to-target"><span class="header-section-number">28.3</span> Heterogeneity changes which customer outcome to target</a></li>
-  <li><a href="#when-keeping-the-lower-ratings-improves-estimation" id="toc-when-keeping-the-lower-ratings-improves-estimation" class="nav-link" data-scroll-target="#when-keeping-the-lower-ratings-improves-estimation"><span class="header-section-number">28.4</span> When keeping the lower ratings improves estimation</a></li>
-  <li><a href="#from-rating-effects-to-a-rollout-probability" id="toc-from-rating-effects-to-a-rollout-probability" class="nav-link" data-scroll-target="#from-rating-effects-to-a-rollout-probability"><span class="header-section-number">28.5</span> From rating effects to a rollout probability</a>
+  <li><a href="#the-same-latent-shift-means-different-things-at-different-starting-points" id="toc-the-same-latent-shift-means-different-things-at-different-starting-points" class="nav-link" data-scroll-target="#the-same-latent-shift-means-different-things-at-different-starting-points"><span class="header-section-number">29.3</span> The Same Latent Shift Means Different Things at Different Starting Points</a></li>
+  <li><a href="#the-rollout" id="toc-the-rollout" class="nav-link" data-scroll-target="#the-rollout"><span class="header-section-number">29.4</span> The Rollout</a></li>
+  <li><a href="#from-category-effects-to-a-rollout-decision" id="toc-from-category-effects-to-a-rollout-decision" class="nav-link" data-scroll-target="#from-category-effects-to-a-rollout-decision"><span class="header-section-number">29.5</span> From Category Effects to a Rollout Decision</a>
   <ul class="collapse">
-  <li><a href="#a-minimal-fitting-workflow" id="toc-a-minimal-fitting-workflow" class="nav-link" data-scroll-target="#a-minimal-fitting-workflow">A minimal fitting workflow</a></li>
+  <li><a href="#a-minimal-recipe" id="toc-a-minimal-recipe" class="nav-link" data-scroll-target="#a-minimal-recipe">A minimal recipe</a></li>
   </ul></li>
-  <li><a href="#when-to-use-a-different-model" id="toc-when-to-use-a-different-model" class="nav-link" data-scroll-target="#when-to-use-a-different-model"><span class="header-section-number">28.6</span> When to use a different model</a></li>
+  <li><a href="#when-to-reach-for-the-ordinal-model" id="toc-when-to-reach-for-the-ordinal-model" class="nav-link" data-scroll-target="#when-to-reach-for-the-ordinal-model"><span class="header-section-number">29.6</span> When to Reach for the Ordinal Model</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ignacio82/book/edit/master/longbet_ordinal.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./longitudinal.html">Longitudinal and Panel Causal Inference</a></li><li class="breadcrumb-item"><a href="./longbet_ordinal.html"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience 🚧</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./longitudinal.html">Longitudinal and Panel Causal Inference</a></li><li class="breadcrumb-item"><a href="./longbet_ordinal.html"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">LongBet: Ordinal Outcomes and Customer Experience</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -585,202 +582,278 @@ window.Quarto = {
 </header>
 
 
-<section id="a-rollout-can-improve-more-than-the-average-rating" class="level2" data-number="28.1">
-<h2 data-number="28.1" class="anchored" data-anchor-id="a-rollout-can-improve-more-than-the-average-rating"><span class="header-section-number">28.1</span> A rollout can improve more than the average rating</h2>
-<p>A SaaS company rolls out a new support workflow across customer accounts. Each account reports a weekly satisfaction rating from one to five stars. The product team wants to know whether the workflow creates more enthusiastic customers, reduces very poor experiences, and helps different kinds of accounts at different stages of adoption.</p>
-<p>An average rating compresses those questions into one score. A five-star indicator answers the enthusiasm question, but treats one and four stars alike. <strong>Ordinal LongBet models the whole ordered distribution</strong>, then lets the team choose the category effects that matter for its decision.</p>
-<p>This chapter builds on <a href="./longbet.html">LongBet’s panel model</a>. The <a href="./phobart.html">earlier ordinal BART chapter</a> introduces ordered outcomes in a cross-sectional setting; here, calendar time and time since adoption are separate inputs. The ordered-probit extension is implemented in <code>longbet-jax</code> <span class="citation" data-cites="longbetpkg">(<a href="references.html#ref-longbetpkg" role="doc-biblioref">Wang et al. 2026</a>)</span>, building on the original LongBet framework <span class="citation" data-cites="wang2024longbet">(<a href="references.html#ref-wang2024longbet" role="doc-biblioref">Wang et al. 2024</a>)</span>.</p>
-</section>
-<section id="the-model-a-latent-response-observed-through-ordered-thresholds" class="level2" data-number="28.2">
-<h2 data-number="28.2" class="anchored" data-anchor-id="the-model-a-latent-response-observed-through-ordered-thresholds"><span class="header-section-number">28.2</span> The model: a latent response, observed through ordered thresholds</h2>
-<p>Code the five ratings as <span class="math inline">\(Y_{it}\in\{0,1,2,3,4\}\)</span>, with 0 representing one star and 4 representing five stars. For account <span class="math inline">\(i\)</span> in week <span class="math inline">\(t\)</span>, write</p>
-<p><span class="math display">\[
-\begin{aligned}
-Y^*_{it} &amp;= \eta_{it}+\epsilon_{it},
-&amp;\epsilon_{it}&amp;\sim N(0,1),\\
-\eta_{it} &amp;= \mu(X_i,t)
-+b_{Z_{it}}\beta_{S_{it}}\nu(X_i,S_{it},t)+\gamma_i,\\
-Y_{it}=k &amp;\quad\Longleftrightarrow\quad
-\theta_k&lt;Y^*_{it}\leq\theta_{k+1}.
-\end{aligned}
-\]</span></p>
-<p>Here <span class="math inline">\(X_i\)</span> contains account characteristics measured before treatment, <span class="math inline">\(Z_{it}\)</span> records adoption, and <span class="math inline">\(S_{it}\)</span> counts exposure weeks, starting at 1 after adoption and remaining 0 before it. Treatment stays on once adopted. The prognostic forest <span class="math inline">\(\mu\)</span> learns baseline patterns; the treatment forest <span class="math inline">\(\nu\)</span> learns how responses vary with account characteristics and time. The Gaussian process <span class="math inline">\(\beta_S\)</span> pools information across exposure lengths. An optional <span class="math inline">\(\gamma_i\sim N(0,\sigma_\gamma^2)\)</span> captures persistent account differences. The prognostic scaling parameter is fixed at 1 here.</p>
-<p>The latent scale is a modeling device, not a satisfaction score with business units. To identify it, the package fixes the residual variance to 1 and the first finite threshold to 0:</p>
-<p><span class="math display">\[
-\theta_0=-\infty,\qquad
-\theta_1=0&lt;\theta_2&lt;\cdots&lt;\theta_{K-1},\qquad
-\theta_K=\infty.
-\]</span></p>
-<p>Tree priors shrink the fitted surfaces, the GP prior regularizes the exposure factor, and the remaining thresholds have a proper ordered-normal prior (default scale 5). Thresholds and residual scale are shared across accounts, weeks, and treatment. This avoids assigning equal distances to rating labels, while imposing a common latent location-shift structure.</p>
-<section id="convert-each-posterior-draw-into-probabilities" class="level3">
-<h3 class="anchored" data-anchor-id="convert-each-posterior-draw-into-probabilities">Convert each posterior draw into probabilities</h3>
-<p>Compare adoption with never adopting at the <strong>same account profile and calendar week</strong>. For a treated cell, the two latent locations are</p>
-<p><span class="math display">\[
-\begin{aligned}
-\eta^1_{it}&amp;=\mu(X_i,t)+b_1\beta_{S_{it}}\nu(X_i,S_{it},t)+\gamma_i,\\
-\eta^0_{it}&amp;=\mu(X_i,t)+b_0\beta_0\nu(X_i,0,t)+\gamma_i.
-\end{aligned}
-\]</span></p>
-<p>The untreated contribution uses exposure zero in both the GP and the forest. For posterior draw <span class="math inline">\(d\)</span>, the category probabilities and their effects are</p>
-<p><span class="math display">\[
-\begin{aligned}
-p^{a,(d)}_{itk}
-&amp;=\Phi\!\left(\theta^{(d)}_{k+1}-\eta^{a,(d)}_{it}\right)
--\Phi\!\left(\theta^{(d)}_k-\eta^{a,(d)}_{it}\right),\\
-\Delta^{(d)}_{itk}&amp;=p^{1,(d)}_{itk}-p^{0,(d)}_{itk},
-\qquad a\in\{0,1\}.
-\end{aligned}
-\]</span></p>
-<p><span class="math inline">\(\Phi\)</span> is the standard normal CDF. The five category effects sum to zero: gains in some ratings must come from losses elsewhere. Calculate the CDF and the contrast <strong>inside each draw</strong>, then summarize. Transforming an average latent effect gives a different answer.</p>
-<p>For exposure <span class="math inline">\(s\)</span>, average these contrasts over the treated cells that reached that exposure, denoted <span class="math inline">\(\mathcal I_s\)</span>:</p>
-<p><span class="math display">\[
-\operatorname{ATT}^{(d)}_k(s)=
-\frac{1}{|\mathcal I_s|}\sum_{(i,t)\in\mathcal I_s}\Delta^{(d)}_{itk}.
-\]</span></p>
-<p>The resulting draws describe uncertainty about the average probability effect. Different exposure groups may contain different accounts. In these examples, randomized adoption supplies identification; an observational application still needs credible adjustment, overlap, and a defensible treatment-timing assumption.</p>
-</section>
-</section>
-<section id="heterogeneity-changes-which-customer-outcome-to-target" class="level2" data-number="28.3">
-<h2 data-number="28.3" class="anchored" data-anchor-id="heterogeneity-changes-which-customer-outcome-to-target"><span class="header-section-number">28.3</span> Heterogeneity changes which customer outcome to target</h2>
-<p>There are two sources of heterogeneity. The treatment forest can learn different latent responses for different account profiles. <strong>Even the same latent response produces different probability effects at different starting levels of satisfaction.</strong> Moving an account away from a one-star experience is different from moving an already satisfied account into five stars.</p>
-<p>For a numerical illustration, use thresholds 0, 0.7, 1.4, and 2.0. Compare two profiles with untreated latent locations <span class="math inline">\(-0.6\)</span> and <span class="math inline">\(0.5\)</span>, giving both the same <span class="math inline">\(+0.6\)</span> latent treatment shift. These are specified model values, not fitted estimates or evidence about comparative accuracy.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Part of the LongBet sequence">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Part of the LongBet sequence
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This chapter is self-contained, but it assumes the panel model of <strong><a href="./longbet.html">LongBet: Dynamic Treatment Effects in Staggered Rollouts</a></strong>. The <a href="./phobart.html">ordinal BART chapter</a> introduces ordered outcomes in a cross-section; here calendar time and time since adoption are separate inputs.</p>
+</div>
+</div>
+<section id="a-rollout-can-improve-more-than-the-average-rating" class="level2" data-number="29.1">
+<h2 data-number="29.1" class="anchored" data-anchor-id="a-rollout-can-improve-more-than-the-average-rating"><span class="header-section-number">29.1</span> A Rollout Can Improve More Than the Average Rating</h2>
+<p>A software company rolls out a new support workflow across customer accounts. Each account reports a weekly satisfaction rating from one to five stars. The product team wants to know three things: does the workflow create more enthusiastic customers, does it remove very poor experiences, and does the answer depend on how long the account has been on it.</p>
+<p>An average rating compresses all three questions into one score. A five-star indicator answers the first and treats one and four stars alike. <strong>Ordinal LongBet models the whole ordered distribution</strong>, and then lets the team read off the category effects its decision actually turns on.</p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(longbet)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/longbet-common.R"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/longbet-sim.R"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/longbet-artifacts.R"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">verify_longbet_environment</span>()</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-model-a-latent-response-seen-through-ordered-thresholds" class="level2" data-number="29.2">
+<h2 data-number="29.2" class="anchored" data-anchor-id="the-model-a-latent-response-seen-through-ordered-thresholds"><span class="header-section-number">29.2</span> The Model: a Latent Response Seen Through Ordered Thresholds</h2>
+<p>Code the five ratings as <span class="math inline">\(Y_{it}\in\{0,\dots,4\}\)</span>, with 0 for one star. For account <span class="math inline">\(i\)</span> in week <span class="math inline">\(t\)</span>,</p>
+<p><span class="math display">\[
+\begin{aligned}
+Y^*_{it} &amp;= \eta_{it}+\epsilon_{it}, &amp;\epsilon_{it}&amp;\sim \mathcal N(0,1),\\
+\eta_{it} &amp;= \mu(X_i,t)+\beta_{S_{it}}\nu(X_i,t)\,\mathbf{1}\{S_{it}\ge 1\},\\
+Y_{it}=k &amp;\quad\Longleftrightarrow\quad \theta_k&lt;Y^*_{it}\leq\theta_{k+1}.
+\end{aligned}
+\]</span></p>
+<p>Everything from the first chapter carries over: <span class="math inline">\(\mu\)</span> is the prognostic forest, <span class="math inline">\(\beta_S\)</span> the shared trajectory over exposure, <span class="math inline">\(\nu\)</span> the treatment forest that scales it by account. What is new is the observation model. The latent scale is a modelling device, not a satisfaction score, so the package fixes the residual variance at one and the first finite threshold at zero,</p>
+<p><span class="math display">\[
+\theta_0=-\infty,\qquad \theta_1=0&lt;\theta_2&lt;\cdots&lt;\theta_{K-1},\qquad \theta_K=\infty,
+\]</span></p>
+<p>and gives the remaining thresholds a proper ordered-normal prior. Thresholds and scale are shared across accounts, weeks and treatment status, which is what makes the category effects comparable.</p>
+<section id="every-draw-becomes-a-set-of-probabilities" class="level3">
+<h3 class="anchored" data-anchor-id="every-draw-becomes-a-set-of-probabilities">Every draw becomes a set of probabilities</h3>
+<p>Compare adoption with never adopting at the <strong>same account profile and week</strong>. For draw <span class="math inline">\(d\)</span>, the two latent locations differ only by the treatment term, and the category probabilities and their effects are</p>
+<p><span class="math display">\[
+p^{a,(d)}_{itk}=\Phi\!\left(\theta^{(d)}_{k+1}-\eta^{a,(d)}_{it}\right)-\Phi\!\left(\theta^{(d)}_k-\eta^{a,(d)}_{it}\right),
+\qquad
+\Delta^{(d)}_{itk}=p^{1,(d)}_{itk}-p^{0,(d)}_{itk}.
+\]</span></p>
+<p>The five category effects sum to zero: gains in some ratings must come from losses elsewhere. Do this arithmetic <strong>inside</strong> each draw and then summarise; transforming an averaged latent effect gives a different and wrong answer.</p>
+</section>
+</section>
+<section id="the-same-latent-shift-means-different-things-at-different-starting-points" class="level2" data-number="29.3">
+<h2 data-number="29.3" class="anchored" data-anchor-id="the-same-latent-shift-means-different-things-at-different-starting-points"><span class="header-section-number">29.3</span> The Same Latent Shift Means Different Things at Different Starting Points</h2>
+<p>Before fitting anything, one property of the model is worth seeing on its own, because it changes which accounts a team should prioritise. Take the thresholds used below and two accounts with untreated latent locations of <span class="math inline">\(-0.6\)</span> and <span class="math inline">\(0.5\)</span>, and give both the same <span class="math inline">\(+0.6\)</span> latent improvement.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">profile =</span> <span class="fu">c</span>(<span class="st">"Lower starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>, <span class="st">"Higher starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>),</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">eta0 =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">6</span>, .<span class="dv">5</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">eta1 =</span> eta0 <span class="sc">+</span> .<span class="dv">6</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Fewer one-star ratings</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pnorm</span>(<span class="sc">-</span>eta0) <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>eta1),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">More five-star ratings</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pnorm</span>(eta1 <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">-</span> <span class="fu">pnorm</span>(eta0 <span class="sc">-</span> <span class="dv">2</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">profile =</span> <span class="fu">factor</span>(profile, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Lower starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>, <span class="st">"Higher starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">Fewer one-star ratings</span><span class="st">`</span>, <span class="st">`</span><span class="at">More five-star ratings</span><span class="st">`</span>), <span class="at">names_to =</span> <span class="st">"goal"</span>, <span class="at">values_to =</span> <span class="st">"gain"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(profile, <span class="dv">100</span> <span class="sc">*</span> gain, <span class="at">fill =</span> profile)) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> .<span class="dv">6</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f pp"</span>, <span class="dv">100</span> <span class="sc">*</span> gain)), <span class="at">vjust =</span> <span class="sc">-</span>.<span class="dv">4</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> goal) <span class="sc">+</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#0072B2"</span>, <span class="st">"#D55E00"</span>)) <span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">26</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">02</span>))) <span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Probability improvement (pp)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="fig-ordinal-profiles" class="quarto-float quarto-figure quarto-figure-center anchored" alt="For an equal latent improvement, the low-satisfaction profile gains more in avoiding one-star ratings; the high-satisfaction profile gains more in five-star ratings.">
+<div id="fig-ordinal-profiles" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Two small bar panels. In the panel for avoiding one-star ratings the lower-satisfaction profile has the taller bar; in the panel for creating five-star ratings the higher-satisfaction profile does.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ordinal-profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="longbet_ordinal_files/figure-html/fig-ordinal-profiles-1.png" class="img-fluid figure-img" alt="For an equal latent improvement, the low-satisfaction profile gains more in avoiding one-star ratings; the high-satisfaction profile gains more in five-star ratings." width="576">
+<img src="longbet_ordinal_files/figure-html/fig-ordinal-profiles-1.png" class="img-fluid figure-img" alt="Two small bar panels. In the panel for avoiding one-star ratings the lower-satisfaction profile has the taller bar; in the panel for creating five-star ratings the higher-satisfaction profile does." width="624">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ordinal-profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;28.1: The same latent improvement can imply different customer-experience priorities. Values are calculated directly from the ordered-probit model.
+Figure&nbsp;29.1: The same latent improvement, at two different starting levels of satisfaction. These are values calculated directly from the model, not estimates.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>A customer-success team trying to prevent poor experiences and a growth team trying to create advocates could prioritize different profiles. A latent-effect ranking alone misses that distinction. LongBet supplies conditional effects at account profiles; it does not identify whether a particular person’s unobserved individual rating would improve.</p>
+<p>A customer-success team trying to prevent bad experiences and a growth team trying to create advocates would rank these two accounts in opposite orders, from the same latent effect. A model that reports only a mean shift cannot make that distinction; one that reports category probabilities can.</p>
 </section>
-<section id="when-keeping-the-lower-ratings-improves-estimation" class="level2" data-number="28.4">
-<h2 data-number="28.4" class="anchored" data-anchor-id="when-keeping-the-lower-ratings-improves-estimation"><span class="header-section-number">28.4</span> When keeping the lower ratings improves estimation</h2>
-<p>Consider a support workflow where five-star ratings are uncommon. We compare methods on <strong>20 independently simulated rollouts</strong>, each with 240 training accounts, eight weeks, and five rating levels. Adoption is randomized across weeks 3, 4, 5, and never. Predictions are evaluated on another 240 independent accounts within the observed calendar and exposure range. The highest rating appears in only <strong>2.7%</strong> of training observations on average.</p>
-<p>The generating model has a smooth baseline, a saturating exposure response, a covariate-dependent treatment effect, and a shared residual scale. There are no persistent account random effects in this comparison. Every method uses the same inputs; held-out accounts and known simulation effects never enter fitting or tuning.</p>
-<p>The main question is whether modeling all five ratings improves the estimate of the <strong>five-star probability ATT</strong>, relative to binary LongBet fitted only to the five-star indicator. The table also reports error in the conditional effects for all categories, to check the richer output used for heterogeneous customer-experience analysis.</p>
+<section id="the-rollout" class="level2" data-number="29.4">
+<h2 data-number="29.4" class="anchored" data-anchor-id="the-rollout"><span class="header-section-number">29.4</span> The Rollout</h2>
+<p>Two hundred and forty accounts report weekly ratings for eight weeks. Adoption is randomized across weeks 3, 4 and 5, with a quarter of accounts never adopting. The workflow raises the latent response with a shape that saturates over exposure, and its size varies with one account characteristic. Five-star weeks are uncommon to begin with, which is the case where modelling the whole distribution earns its keep: a binary five-star indicator throws away everything the lower ratings say about the same latent shift.</p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>od <span class="ot">&lt;-</span> <span class="fu">simulate_ordinal</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(od<span class="sc">$</span>y)), <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    0     1     2     3     4 
+0.631 0.197 0.111 0.040 0.022 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ord_run <span class="ot">&lt;-</span> <span class="fu">lb_artifact</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ordinal_fit"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lb_key</span>(<span class="st">"ordinal"</span>, <span class="fu">lb_budget</span>(<span class="dv">4</span>), digest<span class="sc">::</span><span class="fu">digest</span>(od[<span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"x"</span>, <span class="st">"z"</span>)])),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">export =</span> <span class="st">"od"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">builder =</span> <span class="cf">function</span>() {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    f <span class="ot">&lt;-</span> <span class="fu">do.call</span>(longbet<span class="sc">::</span>longbet,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">c</span>(<span class="fu">list</span>(<span class="at">y =</span> od<span class="sc">$</span>y, <span class="at">x =</span> od<span class="sc">$</span>x, <span class="at">z =</span> od<span class="sc">$</span>z, <span class="at">t =</span> <span class="fu">seq_len</span>(od<span class="sc">$</span>tt), <span class="at">outcome =</span> <span class="st">"ordinal"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">num_categories =</span> <span class="dv">5</span>L, <span class="at">sig_knl =</span> <span class="dv">1</span>, <span class="at">lambda_knl =</span> <span class="dv">2</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">random_intercept =</span> <span class="cn">FALSE</span>, <span class="at">random_seed =</span> <span class="dv">391000</span>L), <span class="fu">lb_budget</span>(<span class="dv">4</span>)))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">predict</span>(f, <span class="at">x =</span> od<span class="sc">$</span>x, <span class="at">z =</span> od<span class="sc">$</span>z, <span class="at">t =</span> <span class="fu">seq_len</span>(od<span class="sc">$</span>tt), <span class="at">summary_only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">cat_att =</span> <span class="fu">att_probabilities</span>(p), <span class="at">cutpoints =</span> p<span class="sc">$</span>cutpoints_samples,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">layout =</span> <span class="fu">chain_layout</span>(f<span class="sc">$</span>model_params<span class="sc">$</span>num_chains, f<span class="sc">$</span>model_params<span class="sc">$</span>num_sweeps))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>cat_att <span class="ot">&lt;-</span> ord_run<span class="sc">$</span>cat_att</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ord_layout <span class="ot">&lt;-</span> ord_run<span class="sc">$</span>layout</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>outcome = "ordinal"</code> and <code>num_categories = 5L</code> are the only changes from a continuous fit. The ratings must arrive as integer codes <span class="math inline">\(0,\dots,K-1\)</span>; the package refuses factors, because the codes carry the order. This panel has no persistent account effect by construction, so the unit intercept is off here; a real rating panel usually wants it on.</p>
+<p><code>att_probabilities()</code> returns, for each exposure and category, the average probability effect over the treated cells at that exposure, as draws.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Sn <span class="ot">&lt;-</span> <span class="fu">dim</span>(cat_att<span class="sc">$</span>att_full)[<span class="dv">1</span>]; K <span class="ot">&lt;-</span> <span class="fu">dim</span>(cat_att<span class="sc">$</span>att_full)[<span class="dv">2</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cat_flat <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">aperm</span>(cat_att<span class="sc">$</span>att_full, <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)), <span class="at">ncol =</span> Sn <span class="sc">*</span> K))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>p_cat <span class="ot">&lt;-</span> <span class="cf">function</span>(eta) <span class="fu">sapply</span>(<span class="fu">seq_len</span>(K), <span class="cf">function</span>(k) <span class="fu">pnorm</span>(od<span class="sc">$</span>cuts[k <span class="sc">+</span> <span class="dv">1</span>] <span class="sc">-</span> eta) <span class="sc">-</span> <span class="fu">pnorm</span>(od<span class="sc">$</span>cuts[k] <span class="sc">-</span> eta))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>cat_truth <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="fu">seq_len</span>(Sn), <span class="cf">function</span>(s) {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> od<span class="sc">$</span>S <span class="sc">==</span> s</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colMeans</span>(<span class="fu">p_cat</span>(od<span class="sc">$</span>eta0[m] <span class="sc">+</span> od<span class="sc">$</span>tau[m]) <span class="sc">-</span> <span class="fu">p_cat</span>(od<span class="sc">$</span>eta0[m]))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ord_diag <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diagnose_draws</span>(cat_flat, ord_layout,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">sprintf</span>(<span class="st">"%d category effects (%d exposures x %d categories)"</span>, Sn <span class="sc">*</span> K, Sn, K))<span class="sc">$</span>summary,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diagnose_draws</span>(<span class="fu">t</span>(ord_run<span class="sc">$</span>cutpoints), ord_layout, <span class="st">"Free thresholds"</span>)<span class="sc">$</span>summary)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(ord_diag <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>ok), <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Sampling checks on every category-probability effect and on the thresholds."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<caption>Error against known probability effects; lower is better. Each panel has equal weight. Binary LongBet estimates only the five-star effect.</caption>
+<caption>Sampling checks on every category-probability effect and on the thresholds.</caption>
 <colgroup>
-<col style="width: 34%">
-<col style="width: 31%">
-<col style="width: 34%">
+<col style="width: 49%">
+<col style="width: 12%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 9%">
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Model</th>
-<th style="text-align: left;">Five-star ATT RMSE (pp)</th>
-<th style="text-align: left;">Category effect RMSE (pp)</th>
+<th style="text-align: left;">Quantity</th>
+<th style="text-align: right;">R-hat (max)</th>
+<th style="text-align: right;">Bulk ESS (min)</th>
+<th style="text-align: right;">Tail ESS (min)</th>
+<th style="text-align: left;">Passed</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Ordinal LongBet</td>
-<td style="text-align: left;">1.10</td>
-<td style="text-align: left;">2.91</td>
+<td style="text-align: left;">30 category effects (6 exposures x 5 categories)</td>
+<td style="text-align: right;">1.004</td>
+<td style="text-align: right;">1094.077</td>
+<td style="text-align: right;">1892.260</td>
+<td style="text-align: left;">30 of 30</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Binary LongBet</td>
-<td style="text-align: left;">2.09</td>
-<td style="text-align: left;">—</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Ordinal spline regression</td>
-<td style="text-align: left;">1.24</td>
-<td style="text-align: left;">4.55</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Tuned boosted trees</td>
-<td style="text-align: left;">1.85</td>
-<td style="text-align: left;">6.49</td>
+<td style="text-align: left;">Free thresholds</td>
+<td style="text-align: right;">1.003</td>
+<td style="text-align: right;">833.622</td>
+<td style="text-align: right;">1809.966</td>
+<td style="text-align: left;">3 of 3</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p>Ordinal LongBet had <strong>72.4% lower mean squared error</strong> than binary LongBet for the five-star ATT and won on <strong>17 of 20 panels</strong>. Lower ratings contain information about the shared latent response that dichotomization discards. This is a useful advantage even when the final business metric is binary.</p>
-<p>The prespecified paired comparison’s 97.5% interval for binary minus ordinal MSE was <strong>[1.82, 4.61]</strong> squared percentage points, favoring ordinal LongBet. It uses resampling of the 20 panels; its tails are approximate. All 40 ordinal/binary fits pass the monitored ATT and threshold diagnostics after the specified extensions.</p>
-<p>The other comparisons are descriptive. The spline baseline includes nonlinear covariate terms, week and exposure effects, and treatment interactions; the boosted classifier is tuned by cross-validation grouped by training account. Ordinal LongBet also had lower conditional category-effect error here, but <strong>this does not establish a general nonlinear modeling advantage</strong>. A harder nonlinear pilot did not mix adequately and provides no such evidence.</p>
-<p>Simple ordinal regression is a strong practical alternative: its five-star error was close, and its fit and prediction took under a second per panel, versus about six minutes for ordinal LongBet on this CPU run. The information gain from using all categories is available to both. The trade-off is LongBet’s flexible panel structure and posterior decision analysis against additional computation and sampling checks.</p>
-</section>
-<section id="from-rating-effects-to-a-rollout-probability" class="level2" data-number="28.5">
-<h2 data-number="28.5" class="anchored" data-anchor-id="from-rating-effects-to-a-rollout-probability"><span class="header-section-number">28.5</span> From rating effects to a rollout probability</h2>
-<p>There are two distinct probabilities in the analysis:</p>
-<ul>
-<li><strong>Outcome probability:</strong> how likely is a five-star rating under a given treatment history and account profile?</li>
-<li><strong>Posterior decision probability:</strong> given the data and model, how probable is it that the treatment effect meets the team’s target?</li>
-</ul>
-<p>Frequentist ordinal regression and flexible classifiers can estimate outcome probabilities and heterogeneous effects too. The Bayesian advantage here is a posterior over those effects: the same paired draws support intervals, business thresholds, and joint criteria while preserving their dependence. A confidence level from a frequentist interval is not that posterior probability. <a href="https://cran.r-project.org/web/packages/ordinal/vignettes/clm_article.pdf">Ordinal regression</a> remains a useful baseline rather than a method that cannot handle probabilities.</p>
-<p>For a worked decision, take the <strong>first prespecified panel</strong>, seed 91000, at exposure week 4. Suppose the team requires at least a 3-percentage-point increase in five-star probability and a 20-point reduction in one-star probability. These thresholds are illustrative business choices, not targets selected or validated by the simulation. The question is</p>
-<p><span class="math display">\[
-\Pr\!\left\{
-\operatorname{ATT}_4(4)\geq0.03\ \text{and}\
-\operatorname{ATT}_0(4)\leq-0.20
-\mid\mathcal D
-\right\}.
-\]</span></p>
-<p>Here the subscript indexes the rating code; the argument is the exposure week. The calculation is short:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># These columns contain paired category ATT draws for exposure 4.</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>passes <span class="ot">&lt;-</span> <span class="fu">with</span>(decision_draws, top_att <span class="sc">&gt;=</span> <span class="fl">0.03</span> <span class="sc">&amp;</span> lowest_att <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">0.20</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>probability_meets_targets <span class="ot">&lt;-</span> <span class="fu">mean</span>(passes)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>probability_meets_targets</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9392</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dfr</span>(<span class="fu">seq_len</span>(K), <span class="cf">function</span>(k) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">exposure =</span> <span class="fu">seq_len</span>(Sn), <span class="at">category =</span> <span class="fu">paste</span>(k, <span class="st">"star"</span>), <span class="at">estimate =</span> cat_att<span class="sc">$</span>att[, k],</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">lower =</span> cat_att<span class="sc">$</span>intervals[<span class="dv">1</span>, , k], <span class="at">upper =</span> cat_att<span class="sc">$</span>intervals[<span class="dv">2</span>, , k], <span class="at">truth =</span> cat_truth[, k])</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(exposure)) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> <span class="dv">100</span> <span class="sc">*</span> lower, <span class="at">ymax =</span> <span class="dv">100</span> <span class="sc">*</span> upper), <span class="at">fill =</span> PAL[[<span class="st">"LongBet"</span>]], <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="dv">100</span> <span class="sc">*</span> estimate), <span class="at">colour =</span> PAL[[<span class="st">"LongBet"</span>]], <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="dv">100</span> <span class="sc">*</span> truth), <span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>, <span class="at">linetype =</span> <span class="st">"22"</span>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"grey60"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> category, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Weeks since adoption"</span>, <span class="at">y =</span> <span class="st">"Probability effect (pp)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-ordinal" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Five panels, one per rating. The one-star panel falls to about minus eighteen percentage points; the middle and upper panels rise by a few points each. Model curves track the dashed truth in every panel.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ordinal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="longbet_ordinal_files/figure-html/fig-ordinal-1.png" class="img-fluid figure-img" alt="Five panels, one per rating. The one-star panel falls to about minus eighteen percentage points; the middle and upper panels rise by a few points each. Model curves track the dashed truth in every panel." width="864">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ordinal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;29.2: Effect on the probability of each rating, by week since adoption: posterior means and 95% intervals against the known probability effects.
+</figcaption>
+</figure>
 </div>
 </div>
-<p>The posterior probability of meeting <strong>both</strong> targets is <strong>93.9%</strong>. This concerns the average probability effects for the specified account population and exposure, not the chance that every customer improves. Check both conditions inside the same draw; multiplying their marginal probabilities would assume away their posterior dependence. The event itself passes the sampling checks (<span class="math inline">\(\widehat R=\)</span> 1.000, effective sample size 14,151); its Monte Carlo standard error is about 0.2 percentage points.</p>
-<p>For a customer segment, average its account-level probability contrasts within each draw first, then apply the same business rule. Segment definitions, exposure support, rollout costs, and the consequences of a wrong decision still matter. A high posterior probability under the fitted model does not by itself make deployment worthwhile.</p>
-<section id="a-minimal-fitting-workflow" class="level3">
-<h3 class="anchored" data-anchor-id="a-minimal-fitting-workflow">A minimal fitting workflow</h3>
-<p>Use a revision of <code>longbet-jax</code> that includes the ordinal R API. In R, <code>y</code> is an account-by-week matrix coded 0–4, <code>z</code> is the matching adoption matrix, and <code>x</code> contains baseline account features. This recipe uses the comparison’s settings; the chapter’s numerical results above come from the saved, checked experiments.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(longbet)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">longbet</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> y, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">t =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(y)),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">"ordinal"</span>, <span class="at">num_categories =</span> <span class="dv">5</span>L,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_chains =</span> <span class="dv">4</span>L, <span class="at">num_burnin =</span> <span class="dv">10000</span>L,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_sweeps =</span> <span class="dv">5000</span>L, <span class="at">n_skip =</span> <span class="dv">4</span>L,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_trees_pr =</span> <span class="dv">20</span>L, <span class="at">num_trees_trt =</span> <span class="dv">20</span>L,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_depth_pr =</span> <span class="dv">5</span>L, <span class="at">max_depth_trt =</span> <span class="dv">5</span>L,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">b_scaling =</span> <span class="cn">FALSE</span>, <span class="at">split_time_trt =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">random_intercept =</span> <span class="cn">FALSE</span>, <span class="at">device =</span> <span class="st">"cpu"</span>, <span class="at">random_seed =</span> <span class="dv">391000</span>L)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">summary_only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>category_att <span class="ot">&lt;-</span> <span class="fu">att_probabilities</span>(pred)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># [exposure, category, draw]; category position 5 is the five-star rating.</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>top_att_draws <span class="ot">&lt;-</span> category_att<span class="sc">$</span>att_full[, <span class="dv">5</span>, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Each chain retains 5,000 draws after 20,000 sampling iterations, following 10,000 burn-in iterations. Longer sampling may be needed: diagnose the effects and business events you report. Fixed coding sets <span class="math inline">\(b_0=b_1=1\)</span>; <code>split_time_trt = FALSE</code> removes exposure splits while retaining calendar time in the treatment forest. These choices change the prior. The comparison disables account intercepts because its simulated errors have no persistent account component; that choice needs reconsideration for real panels.</p>
+</div>
+<p>The workflow moves accounts off one star and spreads them upward, and the movement grows with exposure before levelling off. A mean-rating model would have compressed that picture into a single number per week; a five-star indicator would have reported the smallest of these five panels and discarded the largest.</p>
+</section>
+<section id="from-category-effects-to-a-rollout-decision" class="level2" data-number="29.5">
+<h2 data-number="29.5" class="anchored" data-anchor-id="from-category-effects-to-a-rollout-decision"><span class="header-section-number">29.5</span> From Category Effects to a Rollout Decision</h2>
+<p>There are two probabilities in this analysis and they should never be confused. The <strong>outcome probability</strong> is how likely a five-star rating is under a given history. The <strong>posterior decision probability</strong> is how probable it is, given the data and the model, that the effect meets the team’s target. Frequentist ordinal regression estimates the first perfectly well. The second is what a posterior gives you.</p>
+<p>Suppose the team requires at least a 2-point increase in five-star probability <strong>and</strong> at least a 15-point reduction in one-star probability at four weeks of exposure. Both conditions are checked inside the same draw; multiplying two marginal probabilities would assume away their dependence, and these two are strongly dependent because the five category effects sum to zero.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>top_draws <span class="ot">&lt;-</span> cat_att<span class="sc">$</span>att_full[<span class="dv">4</span>, <span class="dv">5</span>, ]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>low_draws <span class="ot">&lt;-</span> cat_att<span class="sc">$</span>att_full[<span class="dv">4</span>, <span class="dv">1</span>, ]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>passes <span class="ot">&lt;-</span> top_draws <span class="sc">&gt;=</span> <span class="fl">0.02</span> <span class="sc">&amp;</span> low_draws <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">0.15</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>probability_meets_targets <span class="ot">&lt;-</span> <span class="fu">mean</span>(passes)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>event_diag <span class="ot">&lt;-</span> <span class="fu">diagnose_draws</span>(<span class="fu">rbind</span>(top_draws, low_draws, <span class="fl">1.0</span> <span class="sc">*</span> passes), ord_layout,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"Five-star effect, one-star effect, and the joint event at S = 4"</span>)<span class="sc">$</span>summary</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(event_diag <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>ok), <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Checks on the two category effects and on the decision event itself."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Checks on the two category effects and on the decision event itself.</caption>
+<colgroup>
+<col style="width: 56%">
+<col style="width: 10%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Quantity</th>
+<th style="text-align: right;">R-hat (max)</th>
+<th style="text-align: right;">Bulk ESS (min)</th>
+<th style="text-align: right;">Tail ESS (min)</th>
+<th style="text-align: left;">Passed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Five-star effect, one-star effect, and the joint event at S = 4</td>
+<td style="text-align: right;">1.003</td>
+<td style="text-align: right;">1374.838</td>
+<td style="text-align: right;">2269.033</td>
+<td style="text-align: left;">3 of 3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The posterior probability of meeting both targets is <strong>86.3%</strong>, against true effects at four weeks of +2.5 points on five stars and -17.3 points on one star. That single number is the deliverable: it is what a launch review can act on, it carries the dependence between the two conditions, and it is available for any subgroup or any pair of thresholds without refitting.</p>
+<p>For a segment, average each account’s probability contrasts within a draw first, then apply the same rule. The order matters: averaging probabilities across accounts and then thresholding answers a different question from thresholding within a draw and then averaging.</p>
+<section id="a-minimal-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="a-minimal-recipe">A minimal recipe</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(longbet)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">longbet</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> ratings, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">t =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(ratings)),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">"ordinal"</span>, <span class="at">num_categories =</span> <span class="dv">5</span>L,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_chains =</span> <span class="dv">4</span>L, <span class="at">num_burnin =</span> <span class="dv">2000</span>L, <span class="at">num_sweeps =</span> <span class="dv">1000</span>L, <span class="at">n_skip =</span> <span class="dv">4</span>L,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">random_intercept =</span> <span class="cn">TRUE</span>, <span class="at">random_seed =</span> <span class="dv">391000</span>L)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">t =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(ratings)), <span class="at">summary_only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>cat_att <span class="ot">&lt;-</span> <span class="fu">att_probabilities</span>(pred)        <span class="co"># [exposure, category, draw]</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>five_star <span class="ot">&lt;-</span> cat_att<span class="sc">$</span>att_full[, <span class="dv">5</span>, ]      <span class="co"># draws of the five-star effect by exposure</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(five_star[<span class="dv">4</span>, ] <span class="sc">&gt;=</span> <span class="fl">0.02</span>)              <span class="co"># posterior probability of hitting a target</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>att_expected_score()</code> is the companion when the business reports a weighted score rather than category probabilities: it forms the weighted category effects inside each draw, so the uncertainty is right even though the weights are a reporting convention.</p>
 </section>
 </section>
-<section id="when-to-use-a-different-model" class="level2" data-number="28.6">
-<h2 data-number="28.6" class="anchored" data-anchor-id="when-to-use-a-different-model"><span class="header-section-number">28.6</span> When to use a different model</h2>
-<p>An ordinal location shift cannot describe every change in customer experience. If treatment makes both one-star and five-star ratings more likely <strong>within the same account profile</strong>, a shared-scale shift is inadequate. In a separate 20-panel dispersion simulation, five-star ATT RMSE was <strong>20.35 points</strong> for ordinal LongBet, <strong>4.39</strong> for ordinal regression with an exposure-dependent scale, and <strong>3.95</strong> for boosted trees. 4 LongBet fits retained sampling failures; these results are a warning about both model fit and computation.</p>
-<p>Use ordinal LongBet when the whole rating distribution matters, shared thresholds and scale are credible, and the panel’s heterogeneous trajectories justify a flexible model. Include ordinal regression as a fast baseline. If the goal is explicitly the mean of a chosen numeric score, continuous regression can be appropriate. If only a common binary threshold matters, a binary model can also be sufficient. The rare-rating comparison establishes a specific gain from retaining information, not a universal ranking of methods.</p>
-<details>
-<summary>
-Data and computation
-</summary>
-<p>The chapter rebuilds its numerical summaries from <a href="data/longbet-ordinal/panel-results.csv">panel-level comparison results</a> and <a href="data/longbet-ordinal/decision-draws.csv.gz">paired decision draws</a>, checking their recorded hashes. The <a href="data/longbet-ordinal/README.md">method notes</a> give the generating mechanisms, model settings, diagnostic rules, and reproduction instructions; <a href="data/longbet-ordinal/provenance.json">provenance</a> records the source and software versions. These are simulated business examples, not results from a production rollout.</p>
-</details>
+<section id="when-to-reach-for-the-ordinal-model" class="level2" data-number="29.6">
+<h2 data-number="29.6" class="anchored" data-anchor-id="when-to-reach-for-the-ordinal-model"><span class="header-section-number">29.6</span> When to Reach for the Ordinal Model</h2>
+<p>Use it when the outcome is an ordered rating and the decision distinguishes between the levels: removing one-star weeks, creating five-star weeks, or moving a net-promoter bucket. It keeps the information in the middle categories, which a binary indicator throws away, and it returns the whole distribution so that different teams can read the effect their own decision needs from a single fit.</p>
+<p>The <a href="./longbet_encouragement.html">next chapter</a> turns to a different complication: rollouts where you cannot switch the treatment on at all, only invite people to adopt it.</p>
 
 
 <!-- -->
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
-<div id="ref-longbetpkg" class="csl-entry" role="listitem">
-Wang, Meijia, P. Richard Hahn, and Ignacio Martinez. 2026. <em>Longbet: Bayesian Ensemble Trees for Causal Inference on Longitudinal Data</em>. <a href="https://github.com/ignacio82/longbet-jax">https://github.com/ignacio82/longbet-jax</a>.
-</div>
-<div id="ref-wang2024longbet" class="csl-entry" role="listitem">
-Wang, Meijia, Ignacio Martinez, and P Richard Hahn. 2024. <em>LongBet: Heterogeneous Treatment Effect Estimation in Panel Data</em>. arXiv. <a href="https://doi.org/10.48550/arXiv.2406.02530">https://doi.org/10.48550/arXiv.2406.02530</a>.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -1239,408 +1312,229 @@ Wang, Meijia, Ignacio Martinez, and P Richard Hahn. 2024. <em>LongBet: Heterogen
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./longbet_extensions.html" class="pagination-link" aria-label="LongBet: Forecasting, Observational Panels, and Diagnostics 🚧">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">LongBet: Forecasting, Observational Panels, and Diagnostics 🚧</span></span>
+      <a href="./longbet_extensions.html" class="pagination-link" aria-label="LongBet: Forecasting and Observational Panels">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">LongBet: Forecasting and Observational Panels</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./references.html" class="pagination-link" aria-label="References">
-        <span class="nav-page-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">References</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./longbet_encouragement.html" class="pagination-link" aria-label="LongBet: Randomized Encouragement and Adoption Timing">
+        <span class="nav-page-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">LongBet: Randomized Encouragement and Adoption Timing</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "LongBet: Ordinal Outcomes and Customer Experience"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Dynamic effects on ordered ratings: heterogeneous category probabilities, rare-rating comparisons, and Bayesian rollout decisions."</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">    css: longbet.css</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">  error: false</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: true</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: false</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/longbet_ordinal.html"</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "Ordinal LongBet for customer-experience decisions"</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-setup}</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>({</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(dplyr)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(tidyr)</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(ggplot2)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(knitr)</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/longbet-ordinal.R"</span>)</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>ordinal_example <span class="ot">&lt;-</span> <span class="fu">read_ordinal_example</span>()</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>panels <span class="ot">&lt;-</span> ordinal_example<span class="sc">$</span>panels</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>decision_draws <span class="ot">&lt;-</span> ordinal_example<span class="sc">$</span>draws</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>provenance <span class="ot">&lt;-</span> ordinal_example<span class="sc">$</span>provenance</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>))</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## A rollout can improve more than the average rating</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>A SaaS company rolls out a new support workflow across customer accounts.</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>Each account reports a weekly satisfaction rating from one to five stars.</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>The product team wants to know whether the workflow creates more enthusiastic</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>customers, reduces very poor experiences, and helps different kinds of</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>accounts at different stages of adoption.</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>An average rating compresses those questions into one score. A five-star</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>indicator answers the enthusiasm question, but treats one and four stars</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>alike. **Ordinal LongBet models the whole ordered distribution**, then lets</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>the team choose the category effects that matter for its decision.</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>This chapter builds on <span class="co">[</span><span class="ot">LongBet's panel model</span><span class="co">](longbet.qmd)</span>. The</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">earlier ordinal BART chapter</span><span class="co">](phobart.qmd)</span> introduces ordered outcomes in a</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>cross-sectional setting; here, calendar time and time since adoption are</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>separate inputs. The ordered-probit extension is implemented in</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="in">`longbet-jax`</span> <span class="co">[</span><span class="ot">@longbetpkg</span><span class="co">]</span>, building on the original LongBet framework</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@wang2024longbet</span><span class="co">]</span>.</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="fu">## The model: a latent response, observed through ordered thresholds</span></span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>Code the five ratings as $Y_{it}\in<span class="sc">\{</span>0,1,2,3,4<span class="sc">\}</span>$, with 0 representing one</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>star and 4 representing five stars. For account $i$ in week $t$, write</span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>Y^*_{it} &amp;= \eta_{it}+\epsilon_{it},</span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>&amp;\epsilon_{it}&amp;\sim N(0,1),<span class="sc">\\</span></span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>\eta_{it} &amp;= \mu(X_i,t)</span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a> +b_{Z_{it}}\beta_{S_{it}}\nu(X_i,S_{it},t)+\gamma_i,<span class="sc">\\</span></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>Y_{it}=k &amp;\quad\Longleftrightarrow\quad</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>\theta_k&lt;Y^*_{it}\leq\theta_{k+1}.</span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>Here $X_i$ contains account characteristics measured before treatment, $Z_{it}$</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>records adoption, and $S_{it}$ counts exposure weeks, starting at 1 after</span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>adoption and remaining 0 before it. Treatment stays on once adopted.</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>The prognostic forest $\mu$ learns baseline patterns; the treatment forest</span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>$\nu$ learns how responses vary with account characteristics and time.</span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>The Gaussian process $\beta_S$ pools information across exposure lengths.</span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>An optional $\gamma_i\sim N(0,\sigma_\gamma^2)$ captures persistent account</span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>differences. The prognostic scaling parameter is fixed at 1 here.</span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>The latent scale is a modeling device, not a satisfaction score with business</span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>units. To identify it, the package fixes the residual variance to 1 and the</span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>first finite threshold to 0:</span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>\theta_0=-\infty,\qquad</span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>\theta_1=0&lt;\theta_2&lt;\cdots&lt;\theta_{K-1},\qquad</span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>\theta_K=\infty.</span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>Tree priors shrink the fitted surfaces, the GP prior regularizes the exposure</span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>factor, and the remaining thresholds have a proper ordered-normal prior</span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>(default scale 5). Thresholds and residual scale are shared across accounts,</span>
-<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>weeks, and treatment. This avoids assigning equal distances to rating labels,</span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>while imposing a common latent location-shift structure.</span>
-<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### Convert each posterior draw into probabilities</span></span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>Compare adoption with never adopting at the **same account profile and calendar</span>
-<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>week**. For a treated cell, the two latent locations are</span>
-<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>\eta^1_{it}&amp;=\mu(X_i,t)+b_1\beta_{S_{it}}\nu(X_i,S_{it},t)+\gamma_i,<span class="sc">\\</span></span>
-<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>\eta^0_{it}&amp;=\mu(X_i,t)+b_0\beta_0\nu(X_i,0,t)+\gamma_i.</span>
-<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>The untreated contribution uses exposure zero in both the GP and the forest.</span>
-<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>For posterior draw $d$, the category probabilities and their effects are</span>
-<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>p^{a,(d)}_{itk}</span>
-<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>&amp;=\Phi<span class="sc">\!</span>\left(\theta^{(d)}_{k+1}-\eta^{a,(d)}_{it}\right)</span>
-<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a> -\Phi<span class="sc">\!</span>\left(\theta^{(d)}_k-\eta^{a,(d)}_{it}\right),<span class="sc">\\</span></span>
-<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>\Delta^{(d)}_{itk}&amp;=p^{1,(d)}_{itk}-p^{0,(d)}_{itk},</span>
-<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>\qquad a\in<span class="sc">\{</span>0,1<span class="sc">\}</span>.</span>
-<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>$\Phi$ is the standard normal CDF. The five category effects sum to zero:</span>
-<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>gains in some ratings must come from losses elsewhere. Calculate the CDF and</span>
-<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>the contrast **inside each draw**, then summarize. Transforming an average</span>
-<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>latent effect gives a different answer.</span>
-<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>For exposure $s$, average these contrasts over the treated cells that reached</span>
-<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>that exposure, denoted $\mathcal I_s$:</span>
-<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>\operatorname{ATT}^{(d)}_k(s)=</span>
-<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>\frac{1}{|\mathcal I_s|}\sum_{(i,t)\in\mathcal I_s}\Delta^{(d)}_{itk}.</span>
-<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>The resulting draws describe uncertainty about the average probability effect.</span>
-<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>Different exposure groups may contain different accounts. In these examples,</span>
-<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>randomized adoption supplies identification; an observational application</span>
-<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>still needs credible adjustment, overlap, and a defensible treatment-timing</span>
-<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>assumption.</span>
-<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a><span class="fu">## Heterogeneity changes which customer outcome to target</span></span>
-<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>There are two sources of heterogeneity. The treatment forest can learn</span>
-<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>different latent responses for different account profiles. **Even the same</span>
-<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>latent response produces different probability effects at different starting</span>
-<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>levels of satisfaction.** Moving an account away from a one-star experience</span>
-<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>is different from moving an already satisfied account into five stars.</span>
-<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>For a numerical illustration, use thresholds 0, 0.7, 1.4, and 2.0. Compare</span>
-<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>two profiles with untreated latent locations $-0.6$ and $0.5$, giving both</span>
-<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>the same $+0.6$ latent treatment shift. These are specified model values,</span>
-<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>not fitted estimates or evidence about comparative accuracy.</span>
-<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-ordinal-profiles</span></span>
-<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 6</span></span>
-<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 3.6</span></span>
-<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "For an equal latent improvement, the low-satisfaction profile gains more in avoiding one-star ratings; the high-satisfaction profile gains more in five-star ratings."</span></span>
-<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The same latent improvement can imply different customer-experience priorities. Values are calculated directly from the ordered-probit model."</span></span>
-<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>profiles <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">profile =</span> <span class="fu">c</span>(<span class="st">"Lower starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>, <span class="st">"Higher starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>),</span>
-<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>  <span class="at">eta0 =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">6</span>, .<span class="dv">5</span>), <span class="at">eta1 =</span> eta0 <span class="sc">+</span> .<span class="dv">6</span>,</span>
-<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Fewer one-star ratings</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pnorm</span>(<span class="sc">-</span>eta0) <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>eta1),</span>
-<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">More five-star ratings</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pnorm</span>(eta1 <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">-</span> <span class="fu">pnorm</span>(eta0 <span class="sc">-</span> <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">Fewer one-star ratings</span><span class="st">`</span>, <span class="st">`</span><span class="at">More five-star ratings</span><span class="st">`</span>),</span>
-<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"goal"</span>, <span class="at">values_to =</span> <span class="st">"gain"</span>)</span>
-<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>profiles<span class="sc">$</span>profile <span class="ot">&lt;-</span> <span class="fu">factor</span>(profiles<span class="sc">$</span>profile,</span>
-<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Lower starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>, <span class="st">"Higher starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>))</span>
-<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(profiles, <span class="fu">aes</span>(profile, <span class="dv">100</span><span class="sc">*</span>gain, <span class="at">fill =</span> profile)) <span class="sc">+</span></span>
-<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> .<span class="dv">6</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f pp"</span>, <span class="dv">100</span><span class="sc">*</span>gain)), <span class="at">vjust =</span> <span class="sc">-</span>.<span class="dv">4</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
-<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>goal) <span class="sc">+</span> <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#0072B2"</span>, <span class="st">"#D55E00"</span>)) <span class="sc">+</span></span>
-<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">26</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">02</span>))) <span class="sc">+</span></span>
-<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Probability improvement (pp)"</span>)</span>
-<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>A customer-success team trying to prevent poor experiences and a growth team</span>
-<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a>trying to create advocates could prioritize different profiles. A latent-effect</span>
-<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a>ranking alone misses that distinction. LongBet supplies conditional effects</span>
-<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a>at account profiles; it does not identify whether a particular person's</span>
-<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>unobserved individual rating would improve.</span>
-<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="fu">## When keeping the lower ratings improves estimation</span></span>
-<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>Consider a support workflow where five-star ratings are uncommon. We compare</span>
-<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a>methods on **20 independently simulated rollouts**, each with 240 training</span>
-<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>accounts, eight weeks, and five rating levels. Adoption is randomized across</span>
-<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>weeks 3, 4, 5, and never. Predictions are evaluated on another 240 independent</span>
-<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>accounts within the observed calendar and exposure range. The highest rating</span>
-<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a>appears in only **`r sprintf("%.1f%%", 100*provenance$mean_training_top_share)`**</span>
-<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>of training observations on average.</span>
-<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a>The generating model has a smooth baseline, a saturating exposure response,</span>
-<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>a covariate-dependent treatment effect, and a shared residual scale. There</span>
-<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a>are no persistent account random effects in this comparison. Every method</span>
-<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a>uses the same inputs; held-out accounts and known simulation effects never</span>
-<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a>enter fitting or tuning.</span>
-<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a>The main question is whether modeling all five ratings improves the estimate</span>
-<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a>of the **five-star probability ATT**, relative to binary LongBet fitted only</span>
-<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a>to the five-star indicator. The table also reports error in the conditional</span>
-<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a>effects for all categories, to check the richer output used for heterogeneous</span>
-<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a>customer-experience analysis.</span>
-<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-comparison}</span></span>
-<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a>method_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">ordinal_longbet =</span> <span class="st">"Ordinal LongBet"</span>,</span>
-<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a>                  <span class="at">binary_longbet =</span> <span class="st">"Binary LongBet"</span>,</span>
-<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ordinal_spline =</span> <span class="st">"Ordinal spline regression"</span>,</span>
-<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a>                  <span class="at">boosted_tree =</span> <span class="st">"Tuned boosted trees"</span>)</span>
-<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> panels <span class="sc">%&gt;%</span></span>
-<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(scenario <span class="sc">==</span> <span class="st">"rare_top"</span>, method <span class="sc">%in%</span> <span class="fu">names</span>(method_names)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(method) <span class="sc">%&gt;%</span></span>
-<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">top_rmse =</span> <span class="dv">100</span><span class="sc">*</span><span class="fu">sqrt</span>(<span class="fu">mean</span>(top_att_mse)),</span>
-<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a>            <span class="at">category_rmse =</span> <span class="dv">100</span><span class="sc">*</span><span class="fu">sqrt</span>(<span class="fu">mean</span>(category_cate_mse)),</span>
-<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a>            <span class="at">seconds =</span> <span class="fu">mean</span>(fit_seconds <span class="sc">+</span> prediction_seconds), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">match</span>(method, <span class="fu">names</span>(method_names)))</span>
-<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(comparison <span class="sc">%&gt;%</span> <span class="fu">transmute</span>(</span>
-<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a>  <span class="at">Model =</span> <span class="fu">unname</span>(method_names[method]),</span>
-<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Five-star ATT RMSE (pp)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, top_rmse),</span>
-<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Category effect RMSE (pp)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(category_rmse), <span class="st">"—"</span>, <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, category_rmse))),</span>
-<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Error against known probability effects; lower is better. Each panel has equal weight. Binary LongBet estimates only the five-star effect."</span>)</span>
-<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>dispersion_rmse <span class="ot">&lt;-</span> panels <span class="sc">%&gt;%</span> <span class="fu">filter</span>(scenario <span class="sc">==</span> <span class="st">"dispersion"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(method) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">rmse =</span> <span class="dv">100</span><span class="sc">*</span><span class="fu">sqrt</span>(<span class="fu">mean</span>(top_att_mse)), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
-<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>dispersion_error <span class="ot">&lt;-</span> <span class="fu">setNames</span>(dispersion_rmse<span class="sc">$</span>rmse, dispersion_rmse<span class="sc">$</span>method)</span>
-<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>dispersion_failures <span class="ot">&lt;-</span> <span class="fu">sum</span>(panels<span class="sc">$</span>scenario <span class="sc">==</span> <span class="st">"dispersion"</span> <span class="sc">&amp;</span></span>
-<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a>  panels<span class="sc">$</span>method <span class="sc">==</span> <span class="st">"ordinal_longbet"</span> <span class="sc">&amp;</span> panels<span class="sc">$</span>diagnostic_failures <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>Ordinal LongBet had **`r sprintf("%.1f%%", 100*provenance$primary$reduction)`</span>
-<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>lower mean squared error** than binary LongBet for the five-star ATT and won</span>
-<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>on **`r provenance$primary$wins` of 20 panels**. Lower ratings contain</span>
-<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>information about the shared latent response that dichotomization discards.</span>
-<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>This is a useful advantage even when the final business metric is binary.</span>
-<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>The prespecified paired comparison's 97.5% interval for binary minus ordinal</span>
-<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>MSE was **`r sprintf("[%.2f, %.2f]", 10000*provenance$primary$interval[1], 10000*provenance$primary$interval[2])`**</span>
-<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a>squared percentage points, favoring ordinal LongBet. It uses resampling of</span>
-<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>the 20 panels; its tails are approximate. All 40 ordinal/binary fits pass</span>
-<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>the monitored ATT and threshold diagnostics after the specified extensions.</span>
-<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>The other comparisons are descriptive. The spline baseline includes nonlinear</span>
-<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>covariate terms, week and exposure effects, and treatment interactions;</span>
-<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>the boosted classifier is tuned by cross-validation grouped by training</span>
-<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>account. Ordinal LongBet also had lower conditional category-effect error</span>
-<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a>here, but **this does not establish a general nonlinear modeling advantage**.</span>
-<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>A harder nonlinear pilot did not mix adequately and provides no such evidence.</span>
-<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>Simple ordinal regression is a strong practical alternative: its five-star</span>
-<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>error was close, and its fit and prediction took under a second per panel,</span>
-<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>versus about six minutes for ordinal LongBet on this CPU run. The information</span>
-<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>gain from using all categories is available to both. The trade-off is</span>
-<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a>LongBet's flexible panel structure and posterior decision analysis against</span>
-<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a>additional computation and sampling checks.</span>
-<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a><span class="fu">## From rating effects to a rollout probability</span></span>
-<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a>There are two distinct probabilities in the analysis:</span>
-<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Outcome probability:** how likely is a five-star rating under a given</span>
-<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a>  treatment history and account profile?</span>
-<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posterior decision probability:** given the data and model, how probable</span>
-<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a>  is it that the treatment effect meets the team's target?</span>
-<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a>Frequentist ordinal regression and flexible classifiers can estimate outcome</span>
-<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a>probabilities and heterogeneous effects too. The Bayesian advantage here is</span>
-<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a>a posterior over those effects: the same paired draws support intervals,</span>
-<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a>business thresholds, and joint criteria while preserving their dependence.</span>
-<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a>A confidence level from a frequentist interval is not that posterior</span>
-<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>probability. <span class="co">[</span><span class="ot">Ordinal regression</span><span class="co">](https://cran.r-project.org/web/packages/ordinal/vignettes/clm_article.pdf)</span></span>
-<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a>remains a useful baseline rather than a method that cannot handle probabilities.</span>
-<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a>For a worked decision, take the **first prespecified panel**, seed 91000,</span>
-<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a>at exposure week 4. Suppose the team requires at least a 3-percentage-point</span>
-<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a>increase in five-star probability and a 20-point reduction in one-star</span>
-<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a>probability. These thresholds are illustrative business choices, not targets</span>
-<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a>selected or validated by the simulation. The question is</span>
-<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>\Pr<span class="sc">\!</span>\left<span class="sc">\{</span></span>
-<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>\operatorname{ATT}_4(4)\geq0.03\ \text{and}\</span>
-<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>\operatorname{ATT}_0(4)\leq-0.20</span>
-<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a>\mid\mathcal D</span>
-<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a>\right<span class="sc">\}</span>.</span>
-<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a>Here the subscript indexes the rating code; the argument is the exposure week.</span>
-<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a>The calculation is short:</span>
-<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-decision}</span></span>
-<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a><span class="co"># These columns contain paired category ATT draws for exposure 4.</span></span>
-<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a>passes <span class="ot">&lt;-</span> <span class="fu">with</span>(decision_draws, top_att <span class="sc">&gt;=</span> <span class="fl">0.03</span> <span class="sc">&amp;</span> lowest_att <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">0.20</span>)</span>
-<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a>probability_meets_targets <span class="ot">&lt;-</span> <span class="fu">mean</span>(passes)</span>
-<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a>probability_meets_targets</span>
-<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-decision-check}</span></span>
-<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a>event_chains <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">as.numeric</span>(passes), <span class="at">nrow =</span> <span class="dv">5000</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span>
-<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a>event_rhat <span class="ot">&lt;-</span> posterior<span class="sc">::</span><span class="fu">rhat</span>(event_chains)</span>
-<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnose the indicator's mean, the posterior probability being reported.</span></span>
-<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a><span class="co"># Quantile-tail ESS is undefined when a Bernoulli tail threshold is constant.</span></span>
-<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a>event_ess <span class="ot">&lt;-</span> posterior<span class="sc">::</span><span class="fu">ess_basic</span>(event_chains)</span>
-<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a>event_mcse <span class="ot">&lt;-</span> posterior<span class="sc">::</span><span class="fu">mcse_mean</span>(event_chains)</span>
-<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">is.finite</span>(event_rhat), event_rhat <span class="sc">&lt;=</span> <span class="fl">1.01</span>,</span>
-<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a>          <span class="fu">is.finite</span>(event_ess), event_ess <span class="sc">&gt;=</span> <span class="dv">400</span>,</span>
-<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a>          <span class="fu">all</span>(<span class="fu">apply</span>(event_chains, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x))) <span class="sc">==</span> <span class="dv">2</span>))</span>
-<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a>The posterior probability of meeting **both** targets is</span>
-<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a>**`r sprintf("%.1f%%", 100*probability_meets_targets)`**. This concerns the</span>
-<span id="cb4-314"><a href="#cb4-314" aria-hidden="true" tabindex="-1"></a>average probability effects for the specified account population and exposure,</span>
-<span id="cb4-315"><a href="#cb4-315" aria-hidden="true" tabindex="-1"></a>not the chance that every customer improves. Check both conditions inside</span>
-<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a>the same draw; multiplying their marginal probabilities would assume away</span>
-<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a>their posterior dependence. The event itself passes the sampling checks</span>
-<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a>($\widehat R=$ <span class="in">`r sprintf("%.3f", event_rhat)`</span>, effective sample size</span>
-<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a><span class="in">`r format(round(event_ess), big.mark = ",")`</span>); its Monte Carlo standard error</span>
-<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a>is about <span class="in">`r sprintf("%.1f", 100*event_mcse)`</span> percentage points.</span>
-<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a>For a customer segment, average its account-level probability contrasts</span>
-<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>within each draw first, then apply the same business rule. Segment definitions,</span>
-<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>exposure support, rollout costs, and the consequences of a wrong decision</span>
-<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a>still matter. A high posterior probability under the fitted model does not</span>
-<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a>by itself make deployment worthwhile.</span>
-<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a><span class="fu">### A minimal fitting workflow</span></span>
-<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a>Use a revision of <span class="in">`longbet-jax`</span> that includes the ordinal R API. In R, <span class="in">`y`</span></span>
-<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a>is an account-by-week matrix coded 0–4, <span class="in">`z`</span> is the matching adoption</span>
-<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a>matrix, and <span class="in">`x`</span> contains baseline account features. This recipe uses the</span>
-<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a>comparison's settings; the chapter's numerical results above come from the</span>
-<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a>saved, checked experiments.</span>
-<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb4-337"><a href="#cb4-337" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(longbet)</span>
-<span id="cb4-338"><a href="#cb4-338" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">longbet</span>(</span>
-<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> y, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">t =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(y)),</span>
-<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">"ordinal"</span>, <span class="at">num_categories =</span> <span class="dv">5</span>L,</span>
-<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_chains =</span> <span class="dv">4</span>L, <span class="at">num_burnin =</span> <span class="dv">10000</span>L,</span>
-<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_sweeps =</span> <span class="dv">5000</span>L, <span class="at">n_skip =</span> <span class="dv">4</span>L,</span>
-<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_trees_pr =</span> <span class="dv">20</span>L, <span class="at">num_trees_trt =</span> <span class="dv">20</span>L,</span>
-<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_depth_pr =</span> <span class="dv">5</span>L, <span class="at">max_depth_trt =</span> <span class="dv">5</span>L,</span>
-<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">b_scaling =</span> <span class="cn">FALSE</span>, <span class="at">split_time_trt =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">random_intercept =</span> <span class="cn">FALSE</span>, <span class="at">device =</span> <span class="st">"cpu"</span>, <span class="at">random_seed =</span> <span class="dv">391000</span>L)</span>
-<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">summary_only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a>category_att <span class="ot">&lt;-</span> <span class="fu">att_probabilities</span>(pred)</span>
-<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a><span class="co"># [exposure, category, draw]; category position 5 is the five-star rating.</span></span>
-<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a>top_att_draws <span class="ot">&lt;-</span> category_att<span class="sc">$</span>att_full[, <span class="dv">5</span>, ]</span>
-<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a>Each chain retains 5,000 draws after 20,000 sampling iterations, following</span>
-<span id="cb4-354"><a href="#cb4-354" aria-hidden="true" tabindex="-1"></a>10,000 burn-in iterations. Longer sampling may be needed: diagnose the</span>
-<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a>effects and business events you report. Fixed coding sets $b_0=b_1=1$;</span>
-<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a><span class="in">`split_time_trt = FALSE`</span> removes exposure splits while retaining calendar</span>
-<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a>time in the treatment forest. These choices change the prior. The comparison</span>
-<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a>disables account intercepts because its simulated errors have no persistent</span>
-<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a>account component; that choice needs reconsideration for real panels.</span>
-<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a><span class="fu">## When to use a different model</span></span>
-<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a>An ordinal location shift cannot describe every change in customer experience.</span>
-<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a>If treatment makes both one-star and five-star ratings more likely **within</span>
-<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a>the same account profile**, a shared-scale shift is inadequate. In a separate</span>
-<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a>20-panel dispersion simulation, five-star ATT RMSE was</span>
-<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a>**`r sprintf("%.2f", dispersion_error[["ordinal_longbet"]])` points** for</span>
-<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a>ordinal LongBet, **`r sprintf("%.2f", dispersion_error[["ordinal_scale"]])`**</span>
-<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a>for ordinal regression with an exposure-dependent scale, and</span>
-<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a>**`r sprintf("%.2f", dispersion_error[["boosted_tree"]])`** for boosted trees.</span>
-<span id="cb4-371"><a href="#cb4-371" aria-hidden="true" tabindex="-1"></a><span class="in">`r dispersion_failures`</span> LongBet fits retained sampling</span>
-<span id="cb4-372"><a href="#cb4-372" aria-hidden="true" tabindex="-1"></a>failures; these results are a warning about both model fit and computation.</span>
-<span id="cb4-373"><a href="#cb4-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-374"><a href="#cb4-374" aria-hidden="true" tabindex="-1"></a>Use ordinal LongBet when the whole rating distribution matters, shared</span>
-<span id="cb4-375"><a href="#cb4-375" aria-hidden="true" tabindex="-1"></a>thresholds and scale are credible, and the panel's heterogeneous trajectories</span>
-<span id="cb4-376"><a href="#cb4-376" aria-hidden="true" tabindex="-1"></a>justify a flexible model. Include ordinal regression as a fast baseline.</span>
-<span id="cb4-377"><a href="#cb4-377" aria-hidden="true" tabindex="-1"></a>If the goal is explicitly the mean of a chosen numeric score, continuous</span>
-<span id="cb4-378"><a href="#cb4-378" aria-hidden="true" tabindex="-1"></a>regression can be appropriate. If only a common binary threshold matters,</span>
-<span id="cb4-379"><a href="#cb4-379" aria-hidden="true" tabindex="-1"></a>a binary model can also be sufficient. The rare-rating comparison establishes</span>
-<span id="cb4-380"><a href="#cb4-380" aria-hidden="true" tabindex="-1"></a>a specific gain from retaining information, not a universal ranking of methods.</span>
-<span id="cb4-381"><a href="#cb4-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-382"><a href="#cb4-382" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;&lt;</span><span class="kw">summary</span><span class="dt">&gt;</span>Data and computation<span class="dt">&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
-<span id="cb4-383"><a href="#cb4-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-384"><a href="#cb4-384" aria-hidden="true" tabindex="-1"></a>The chapter rebuilds its numerical summaries from</span>
-<span id="cb4-385"><a href="#cb4-385" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">panel-level comparison results</span><span class="co">](data/longbet-ordinal/panel-results.csv)</span> and</span>
-<span id="cb4-386"><a href="#cb4-386" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">paired decision draws</span><span class="co">](data/longbet-ordinal/decision-draws.csv.gz)</span>, checking</span>
-<span id="cb4-387"><a href="#cb4-387" aria-hidden="true" tabindex="-1"></a>their recorded hashes. The <span class="co">[</span><span class="ot">method notes</span><span class="co">](data/longbet-ordinal/README.md)</span></span>
-<span id="cb4-388"><a href="#cb4-388" aria-hidden="true" tabindex="-1"></a>give the generating mechanisms, model settings, diagnostic rules, and</span>
-<span id="cb4-389"><a href="#cb4-389" aria-hidden="true" tabindex="-1"></a>reproduction instructions; <span class="co">[</span><span class="ot">provenance</span><span class="co">](data/longbet-ordinal/provenance.json)</span></span>
-<span id="cb4-390"><a href="#cb4-390" aria-hidden="true" tabindex="-1"></a>records the source and software versions. These are simulated business</span>
-<span id="cb4-391"><a href="#cb4-391" aria-hidden="true" tabindex="-1"></a>examples, not results from a production rollout.</span>
-<span id="cb4-392"><a href="#cb4-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-393"><a href="#cb4-393" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
-</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "LongBet: Ordinal Outcomes and Customer Experience"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "When the outcome is a one-to-five star rating, the whole ordered distribution matters. Ordinal LongBet models it, so a team can ask how many one-star weeks a rollout removes and how many five-star weeks it creates."</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">    css: longbet.css</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="an">share:</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">  permalink: "https://book.martinez.fyi/longbet_ordinal.html"</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">  description: "Ordinal LongBet for customer-experience decisions"</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">  linkedin: true</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">  email: true</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">  mastodon: true</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Part of the LongBet sequence"}</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>This chapter is self-contained, but it assumes the panel model of **[LongBet: Dynamic Treatment Effects in Staggered Rollouts](longbet.qmd)**. The <span class="co">[</span><span class="ot">ordinal BART chapter</span><span class="co">](phobart.qmd)</span> introduces ordered outcomes in a cross-section; here calendar time and time since adoption are separate inputs.</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## A Rollout Can Improve More Than the Average Rating</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>A software company rolls out a new support workflow across customer accounts. Each account reports a weekly satisfaction rating from one to five stars. The product team wants to know three things: does the workflow create more enthusiastic customers, does it remove very poor experiences, and does the answer depend on how long the account has been on it.</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>An average rating compresses all three questions into one score. A five-star indicator answers the first and treats one and four stars alike. **Ordinal LongBet models the whole ordered distribution**, and then lets the team read off the category effects its decision actually turns on.</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup}</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(longbet)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/longbet-common.R"</span>)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/longbet-sim.R"</span>)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/longbet-artifacts.R"</span>)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="fu">verify_longbet_environment</span>()</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>))</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Model: a Latent Response Seen Through Ordered Thresholds</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>Code the five ratings as $Y_{it}\in<span class="sc">\{</span>0,\dots,4<span class="sc">\}</span>$, with 0 for one star. For account $i$ in week $t$,</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>Y^*_{it} &amp;= \eta_{it}+\epsilon_{it}, &amp;\epsilon_{it}&amp;\sim \mathcal N(0,1),<span class="sc">\\</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>\eta_{it} &amp;= \mu(X_i,t)+\beta_{S_{it}}\nu(X_i,t)\,\mathbf{1}<span class="sc">\{</span>S_{it}\ge 1<span class="sc">\}</span>,<span class="sc">\\</span></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>Y_{it}=k &amp;\quad\Longleftrightarrow\quad \theta_k&lt;Y^*_{it}\leq\theta_{k+1}.</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>Everything from the first chapter carries over: $\mu$ is the prognostic forest, $\beta_S$ the shared trajectory over exposure, $\nu$ the treatment forest that scales it by account. What is new is the observation model. The latent scale is a modelling device, not a satisfaction score, so the package fixes the residual variance at one and the first finite threshold at zero,</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>\theta_0=-\infty,\qquad \theta_1=0&lt;\theta_2&lt;\cdots&lt;\theta_{K-1},\qquad \theta_K=\infty,</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>and gives the remaining thresholds a proper ordered-normal prior. Thresholds and scale are shared across accounts, weeks and treatment status, which is what makes the category effects comparable.</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="fu">### Every draw becomes a set of probabilities</span></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>Compare adoption with never adopting at the **same account profile and week**. For draw $d$, the two latent locations differ only by the treatment term, and the category probabilities and their effects are</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>p^{a,(d)}_{itk}=\Phi\!\left(\theta^{(d)}_{k+1}-\eta^{a,(d)}_{it}\right)-\Phi\!\left(\theta^{(d)}_k-\eta^{a,(d)}_{it}\right),</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>\Delta^{(d)}_{itk}=p^{1,(d)}_{itk}-p^{0,(d)}_{itk}.</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>The five category effects sum to zero: gains in some ratings must come from losses elsewhere. Do this arithmetic **inside** each draw and then summarise; transforming an averaged latent effect gives a different and wrong answer.</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Same Latent Shift Means Different Things at Different Starting Points</span></span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>Before fitting anything, one property of the model is worth seeing on its own, because it changes which accounts a team should prioritise. Take the thresholds used below and two accounts with untreated latent locations of $-0.6$ and $0.5$, and give both the same $+0.6$ latent improvement.</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-ordinal-profiles}</span></span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The same latent improvement, at two different starting levels of satisfaction. These are values calculated directly from the model, not estimates."</span></span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Two small bar panels. In the panel for avoiding one-star ratings the lower-satisfaction profile has the taller bar; in the panel for creating five-star ratings the higher-satisfaction profile does."</span></span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 6.5</span></span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 3.4</span></span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">profile =</span> <span class="fu">c</span>(<span class="st">"Lower starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>, <span class="st">"Higher starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>),</span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>       <span class="at">eta0 =</span> <span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">6</span>, .<span class="dv">5</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">eta1 =</span> eta0 <span class="sc">+</span> .<span class="dv">6</span>,</span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Fewer one-star ratings</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pnorm</span>(<span class="sc">-</span>eta0) <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="sc">-</span>eta1),</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">More five-star ratings</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pnorm</span>(eta1 <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">-</span> <span class="fu">pnorm</span>(eta0 <span class="sc">-</span> <span class="dv">2</span>),</span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>         <span class="at">profile =</span> <span class="fu">factor</span>(profile, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Lower starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>, <span class="st">"Higher starting</span><span class="sc">\n</span><span class="st">satisfaction"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">Fewer one-star ratings</span><span class="st">`</span>, <span class="st">`</span><span class="at">More five-star ratings</span><span class="st">`</span>), <span class="at">names_to =</span> <span class="st">"goal"</span>, <span class="at">values_to =</span> <span class="st">"gain"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(profile, <span class="dv">100</span> <span class="sc">*</span> gain, <span class="at">fill =</span> profile)) <span class="sc">+</span></span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> .<span class="dv">6</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f pp"</span>, <span class="dv">100</span> <span class="sc">*</span> gain)), <span class="at">vjust =</span> <span class="sc">-</span>.<span class="dv">4</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> goal) <span class="sc">+</span></span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#0072B2"</span>, <span class="st">"#D55E00"</span>)) <span class="sc">+</span></span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">26</span>), <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">02</span>))) <span class="sc">+</span></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Probability improvement (pp)"</span>)</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>A customer-success team trying to prevent bad experiences and a growth team trying to create advocates would rank these two accounts in opposite orders, from the same latent effect. A model that reports only a mean shift cannot make that distinction; one that reports category probabilities can.</span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Rollout</span></span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a>Two hundred and forty accounts report weekly ratings for eight weeks. Adoption is randomized across weeks 3, 4 and 5, with a quarter of accounts never adopting. The workflow raises the latent response with a shape that saturates over exposure, and its size varies with one account characteristic. Five-star weeks are uncommon to begin with, which is the case where modelling the whole distribution earns its keep: a binary five-star indicator throws away everything the lower ratings say about the same latent shift.</span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-data}</span></span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>od <span class="ot">&lt;-</span> <span class="fu">simulate_ordinal</span>()</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(od<span class="sc">$</span>y)), <span class="dv">3</span>)</span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-fit}</span></span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>ord_run <span class="ot">&lt;-</span> <span class="fu">lb_artifact</span>(</span>
+<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ordinal_fit"</span>,</span>
+<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lb_key</span>(<span class="st">"ordinal"</span>, <span class="fu">lb_budget</span>(<span class="dv">4</span>), digest<span class="sc">::</span><span class="fu">digest</span>(od[<span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"x"</span>, <span class="st">"z"</span>)])),</span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">export =</span> <span class="st">"od"</span>,</span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">builder =</span> <span class="cf">function</span>() {</span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a>    f <span class="ot">&lt;-</span> <span class="fu">do.call</span>(longbet<span class="sc">::</span>longbet,</span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">c</span>(<span class="fu">list</span>(<span class="at">y =</span> od<span class="sc">$</span>y, <span class="at">x =</span> od<span class="sc">$</span>x, <span class="at">z =</span> od<span class="sc">$</span>z, <span class="at">t =</span> <span class="fu">seq_len</span>(od<span class="sc">$</span>tt), <span class="at">outcome =</span> <span class="st">"ordinal"</span>,</span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>                        <span class="at">num_categories =</span> <span class="dv">5</span>L, <span class="at">sig_knl =</span> <span class="dv">1</span>, <span class="at">lambda_knl =</span> <span class="dv">2</span>,</span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>                        <span class="at">random_intercept =</span> <span class="cn">FALSE</span>, <span class="at">random_seed =</span> <span class="dv">391000</span>L), <span class="fu">lb_budget</span>(<span class="dv">4</span>)))</span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">predict</span>(f, <span class="at">x =</span> od<span class="sc">$</span>x, <span class="at">z =</span> od<span class="sc">$</span>z, <span class="at">t =</span> <span class="fu">seq_len</span>(od<span class="sc">$</span>tt), <span class="at">summary_only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">cat_att =</span> <span class="fu">att_probabilities</span>(p), <span class="at">cutpoints =</span> p<span class="sc">$</span>cutpoints_samples,</span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a>         <span class="at">layout =</span> <span class="fu">chain_layout</span>(f<span class="sc">$</span>model_params<span class="sc">$</span>num_chains, f<span class="sc">$</span>model_params<span class="sc">$</span>num_sweeps))</span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a>cat_att <span class="ot">&lt;-</span> ord_run<span class="sc">$</span>cat_att</span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>ord_layout <span class="ot">&lt;-</span> ord_run<span class="sc">$</span>layout</span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a><span class="in">`outcome = "ordinal"`</span> and <span class="in">`num_categories = 5L`</span> are the only changes from a continuous fit. The ratings must arrive as integer codes $0,\dots,K-1$; the package refuses factors, because the codes carry the order. This panel has no persistent account effect by construction, so the unit intercept is off here; a real rating panel usually wants it on.</span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a><span class="in">`att_probabilities()`</span> returns, for each exposure and category, the average probability effect over the treated cells at that exposure, as draws.</span>
+<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-effects}</span></span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>Sn <span class="ot">&lt;-</span> <span class="fu">dim</span>(cat_att<span class="sc">$</span>att_full)[<span class="dv">1</span>]; K <span class="ot">&lt;-</span> <span class="fu">dim</span>(cat_att<span class="sc">$</span>att_full)[<span class="dv">2</span>]</span>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>cat_flat <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">aperm</span>(cat_att<span class="sc">$</span>att_full, <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)), <span class="at">ncol =</span> Sn <span class="sc">*</span> K))</span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>p_cat <span class="ot">&lt;-</span> <span class="cf">function</span>(eta) <span class="fu">sapply</span>(<span class="fu">seq_len</span>(K), <span class="cf">function</span>(k) <span class="fu">pnorm</span>(od<span class="sc">$</span>cuts[k <span class="sc">+</span> <span class="dv">1</span>] <span class="sc">-</span> eta) <span class="sc">-</span> <span class="fu">pnorm</span>(od<span class="sc">$</span>cuts[k] <span class="sc">-</span> eta))</span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>cat_truth <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="fu">seq_len</span>(Sn), <span class="cf">function</span>(s) {</span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> od<span class="sc">$</span>S <span class="sc">==</span> s</span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colMeans</span>(<span class="fu">p_cat</span>(od<span class="sc">$</span>eta0[m] <span class="sc">+</span> od<span class="sc">$</span>tau[m]) <span class="sc">-</span> <span class="fu">p_cat</span>(od<span class="sc">$</span>eta0[m]))</span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>ord_diag <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diagnose_draws</span>(cat_flat, ord_layout,</span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">sprintf</span>(<span class="st">"%d category effects (%d exposures x %d categories)"</span>, Sn <span class="sc">*</span> K, Sn, K))<span class="sc">$</span>summary,</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diagnose_draws</span>(<span class="fu">t</span>(ord_run<span class="sc">$</span>cutpoints), ord_layout, <span class="st">"Free thresholds"</span>)<span class="sc">$</span>summary)</span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(ord_diag <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>ok), <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Sampling checks on every category-probability effect and on the thresholds."</span>)</span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r fig-ordinal}</span></span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Effect on the probability of each rating, by week since adoption: posterior means and 95% intervals against the known probability effects."</span></span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Five panels, one per rating. The one-star panel falls to about minus eighteen percentage points; the middle and upper panels rise by a few points each. Model curves track the dashed truth in every panel."</span></span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 9</span></span>
+<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 3.2</span></span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dfr</span>(<span class="fu">seq_len</span>(K), <span class="cf">function</span>(k) {</span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">exposure =</span> <span class="fu">seq_len</span>(Sn), <span class="at">category =</span> <span class="fu">paste</span>(k, <span class="st">"star"</span>), <span class="at">estimate =</span> cat_att<span class="sc">$</span>att[, k],</span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>         <span class="at">lower =</span> cat_att<span class="sc">$</span>intervals[<span class="dv">1</span>, , k], <span class="at">upper =</span> cat_att<span class="sc">$</span>intervals[<span class="dv">2</span>, , k], <span class="at">truth =</span> cat_truth[, k])</span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">%&gt;%</span></span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(exposure)) <span class="sc">+</span></span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> <span class="dv">100</span> <span class="sc">*</span> lower, <span class="at">ymax =</span> <span class="dv">100</span> <span class="sc">*</span> upper), <span class="at">fill =</span> PAL[[<span class="st">"LongBet"</span>]], <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="dv">100</span> <span class="sc">*</span> estimate), <span class="at">colour =</span> PAL[[<span class="st">"LongBet"</span>]], <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="dv">100</span> <span class="sc">*</span> truth), <span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>, <span class="at">linetype =</span> <span class="st">"22"</span>) <span class="sc">+</span></span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"grey60"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> category, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Weeks since adoption"</span>, <span class="at">y =</span> <span class="st">"Probability effect (pp)"</span>)</span>
+<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a>The workflow moves accounts off one star and spreads them upward, and the movement grows with exposure before levelling off. A mean-rating model would have compressed that picture into a single number per week; a five-star indicator would have reported the smallest of these five panels and discarded the largest.</span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a><span class="fu">## From Category Effects to a Rollout Decision</span></span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>There are two probabilities in this analysis and they should never be confused. The **outcome probability** is how likely a five-star rating is under a given history. The **posterior decision probability** is how probable it is, given the data and the model, that the effect meets the team's target. Frequentist ordinal regression estimates the first perfectly well. The second is what a posterior gives you.</span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>Suppose the team requires at least a 2-point increase in five-star probability **and** at least a 15-point reduction in one-star probability at four weeks of exposure. Both conditions are checked inside the same draw; multiplying two marginal probabilities would assume away their dependence, and these two are strongly dependent because the five category effects sum to zero.</span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ordinal-decision}</span></span>
+<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a>top_draws <span class="ot">&lt;-</span> cat_att<span class="sc">$</span>att_full[<span class="dv">4</span>, <span class="dv">5</span>, ]</span>
+<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a>low_draws <span class="ot">&lt;-</span> cat_att<span class="sc">$</span>att_full[<span class="dv">4</span>, <span class="dv">1</span>, ]</span>
+<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a>passes <span class="ot">&lt;-</span> top_draws <span class="sc">&gt;=</span> <span class="fl">0.02</span> <span class="sc">&amp;</span> low_draws <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">0.15</span></span>
+<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a>probability_meets_targets <span class="ot">&lt;-</span> <span class="fu">mean</span>(passes)</span>
+<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a>event_diag <span class="ot">&lt;-</span> <span class="fu">diagnose_draws</span>(<span class="fu">rbind</span>(top_draws, low_draws, <span class="fl">1.0</span> <span class="sc">*</span> passes), ord_layout,</span>
+<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a>                             <span class="st">"Five-star effect, one-star effect, and the joint event at S = 4"</span>)<span class="sc">$</span>summary</span>
+<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(event_diag <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>ok), <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Checks on the two category effects and on the decision event itself."</span>)</span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-187"><a href="#cb10-187" aria-hidden="true" tabindex="-1"></a>The posterior probability of meeting both targets is **`r sprintf("%.1f%%", 100 * probability_meets_targets)`**, against true effects at four weeks of <span class="in">`r sprintf("%+.1f", 100 * cat_truth[4, 5])`</span> points on five stars and <span class="in">`r sprintf("%+.1f", 100 * cat_truth[4, 1])`</span> points on one star. That single number is the deliverable: it is what a launch review can act on, it carries the dependence between the two conditions, and it is available for any subgroup or any pair of thresholds without refitting.</span>
+<span id="cb10-188"><a href="#cb10-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a>For a segment, average each account's probability contrasts within a draw first, then apply the same rule. The order matters: averaging probabilities across accounts and then thresholding answers a different question from thresholding within a draw and then averaging.</span>
+<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a><span class="fu">### A minimal recipe</span></span>
+<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(longbet)</span>
+<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">longbet</span>(</span>
+<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> ratings, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">t =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(ratings)),</span>
+<span id="cb10-197"><a href="#cb10-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">outcome =</span> <span class="st">"ordinal"</span>, <span class="at">num_categories =</span> <span class="dv">5</span>L,</span>
+<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">num_chains =</span> <span class="dv">4</span>L, <span class="at">num_burnin =</span> <span class="dv">2000</span>L, <span class="at">num_sweeps =</span> <span class="dv">1000</span>L, <span class="at">n_skip =</span> <span class="dv">4</span>L,</span>
+<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">random_intercept =</span> <span class="cn">TRUE</span>, <span class="at">random_seed =</span> <span class="dv">391000</span>L)</span>
+<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">x =</span> x, <span class="at">z =</span> z, <span class="at">t =</span> <span class="fu">seq_len</span>(<span class="fu">ncol</span>(ratings)), <span class="at">summary_only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a>cat_att <span class="ot">&lt;-</span> <span class="fu">att_probabilities</span>(pred)        <span class="co"># [exposure, category, draw]</span></span>
+<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a>five_star <span class="ot">&lt;-</span> cat_att<span class="sc">$</span>att_full[, <span class="dv">5</span>, ]      <span class="co"># draws of the five-star effect by exposure</span></span>
+<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(five_star[<span class="dv">4</span>, ] <span class="sc">&gt;=</span> <span class="fl">0.02</span>)              <span class="co"># posterior probability of hitting a target</span></span>
+<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a><span class="in">`att_expected_score()`</span> is the companion when the business reports a weighted score rather than category probabilities: it forms the weighted category effects inside each draw, so the uncertainty is right even though the weights are a reporting convention.</span>
+<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a><span class="fu">## When to Reach for the Ordinal Model</span></span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a>Use it when the outcome is an ordered rating and the decision distinguishes between the levels: removing one-star weeks, creating five-star weeks, or moving a net-promoter bucket. It keeps the information in the middle categories, which a binary indicator throws away, and it returns the whole distribution so that different teams can read the effect their own decision needs from a single fit.</span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">next chapter</span><span class="co">](longbet_encouragement.qmd)</span> turns to a different complication: rollouts where you cannot switch the treatment on at all, only invite people to adopt it.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ignacio82/book/edit/master/longbet_ordinal.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><div class="page-columns page-rows-contents page-layout-article"><div class="social-share"><a href="https://www.linkedin.com/shareArticle?url=https://book.martinez.fyi/longbet_ordinal.html&amp;title=Ordinal LongBet for customer-experience decisions" target="_blank" class="linkedin"><i class="fa-brands fa-linkedin-in fa-fw fa-lg"></i></a>  <a href="mailto:?subject=Ordinal LongBet for customer-experience decisions&amp;body=Check out this link:https://book.martinez.fyi/longbet_ordinal.html" target="_blank" class="email"><i class="fa-solid fa-envelope fa-fw fa-lg"></i></a><a href="javascript:void(0);" onclick="var mastodon_instance=prompt('Mastodon Instance / Server Name?'); if(typeof mastodon_instance==='string' &amp;&amp; mastodon_instance.length){this.href='https://'+mastodon_instance+'/share?text=Ordinal LongBet for customer-experience decisions https://book.martinez.fyi/longbet_ordinal.html'}else{return false;}" target="_blank" class="mastodon"><i class="fa-brands fa-mastodon fa-fw fa-lg"></i></a></div></div>
