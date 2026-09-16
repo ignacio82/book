@@ -30,11 +30,11 @@ This is the first of six chapters on LongBet:
 
 <img src="img/longbet.jpeg" align="right" height="280" alt="Two treatment-effect trajectories separating over time above a row of trees of decreasing size: one climbs and keeps climbing, the other flattens, and past a dotted line both continue as dashed projections inside widening bands" />
 
-The models in the previous two chapters answer a question with no time dimension: what is the effect of the treatment on the outcome? In a business, that is rarely the whole question. A feature that lifts revenue by 10% in its first week and fades to nothing by its tenth averages about the same over a ten-week experiment as one that lifts revenue by 5% and holds there. They report the same average treatment effect. They are worth completely different amounts a year later, and they lead to opposite decisions.
+The tree models of the previous part, BART and BCF, answer a question with no time dimension: what is the effect of the treatment on the outcome? In a business, that is rarely the whole question. A feature that lifts revenue by 10% in its first week and fades to nothing by its tenth averages about the same over a ten-week experiment as one that lifts revenue by 5% and holds there. They report the same average treatment effect. They are worth completely different amounts a year later, and they lead to opposite decisions.
 
 They also rarely land on everyone equally. The same feature can be worth a quarter of a seller's revenue to one account and nothing to another, and the difference is usually predictable from things you already know about them.
 
-LongBet, introduced by @wang2024longbet, extends the Bayesian Causal Forest family, including BCF [@hahn2020bayesian] and XBCF, to panel data, so the treatment effect becomes a function of two things at once: **who** the unit is, and **how long it has been treated**. It was designed for short panels with large cross-sections, the shape of data that e-commerce, subscription, and marketplace businesses generate by default.
+LongBet, introduced by @wang2024longbet, extends the Bayesian Causal Forest family, including BCF [@hahn2020bayesian] and XBCF [@krantsevich23a], to panel data, so the treatment effect becomes a function of two things at once: **who** the unit is, and **how long it has been treated**. It was designed for short panels with large cross-sections, the shape of data that e-commerce, subscription, and marketplace businesses generate by default.
 
 ## The Model
 
@@ -73,7 +73,7 @@ This chapter applies LongBet to a **randomized** experiment, so it is worth bein
 
   - **Precision.** Weekly revenue per seller varies by orders of magnitude across sellers. A model of $\mu(X_i, t)$ and $\gamma_i$ explains that variation away before the effect is read off. This is the non-parametric cousin of ANCOVA and of CUPED [@deng2013cuped], and it is the difference between an experiment that answers your question and one that runs for another quarter.
   - **Resolution.** The holdout comparison gives one number per period since launch. LongBet gives a posterior for every seller at every exposure, learned in one model rather than in subgroups you had to name in advance.
-  - **Reach.** Experiments end; business cases run for a year. The Gaussian process on $\beta_S$ extrapolates the trajectory past the last period you observed (@sec-longbet-forecast in the third chapter).
+  - **Reach.** Experiments end; business cases run for a year. The Gaussian process on $\beta_S$ extrapolates the trajectory past the last period you observed (@sec-longbet-forecast in the fourth chapter).
   - **Decisions.** Posterior draws convert directly into the quantity a business argues about: the probability that a seller is worth the cost (the [second chapter](longbet_decisions.qmd)).
 
 ## The Business Problem
@@ -108,9 +108,9 @@ theme_set(theme_minimal(base_size = 12))
 
 As elsewhere in this book the data are simulated, so every claim can be checked against a known truth. The outcome is **log weekly GMV**, which keeps a heavy-tailed dollar quantity roughly Gaussian and makes the effect read as an approximate percentage lift.
 
-The calendar has three parts: weeks 1--4 are a **lookback window** used only to build covariates, weeks 5--20 are the **study panel** the model sees, with everyone untreated through week 8 and the three waves launching in weeks 9, 10 and 11, and weeks 21--24 are simulated but **withheld** so the third chapter can score a forecast.
+The calendar has three parts: weeks 1--4 are a **lookback window** the model never sees, used only to build a baseline covariate for the adjusted benchmark below and for the fourth chapter, weeks 5--20 are the **study panel** the model sees, with everyone untreated through week 8 and the three waves launching in weeks 9, 10 and 11, and weeks 21--24 are simulated but **withheld** so the fourth chapter can score a forecast.
 
-Sellers differ enormously in level: catalog size, fulfillment status, vertical, and a seller-specific component the covariates never record. The treatment response compounds toward a plateau with the **same shape for everyone**, and its **size** is a smooth function of catalog breadth,
+Sellers differ enormously in level: catalog size, fulfillment status, and a seller-specific component the covariates never record. The treatment response compounds toward a plateau with the **same shape for everyone**, and its **size** is a smooth function of catalog breadth,
 
 $$
 \tau_i(S) = a(L_i)\,\big(1 - e^{-S/4}\big),
@@ -118,7 +118,7 @@ $$
 a(L) = 0.30\,\mathrm{logit}^{-1}\!\left(\frac{\log L - \log 40}{0.8}\right).
 $$
 
-A seller with ten listings gains almost nothing; a seller with two hundred gains about a quarter of a log point, a lift of roughly 28% in dollars. Nothing in the model is told where that curve bends, or that catalog size matters at all.
+A seller with ten listings gains a few percent; a seller with two hundred gains about a quarter of a log point, a lift of roughly 28% in dollars. Nothing in the model is told where that curve bends, or that catalog size matters at all.
 
 ```{r rollout}
 ro <- simulate_rollout()
@@ -132,7 +132,7 @@ truth_att  <- event_time_truth(tau_true[, match(week_study, weeks_all)], z_train
 table(wave)
 ```
 
-`x` carries four time-invariant columns: log catalog size, fulfillment status, and the vertical one-hot encoded. The engine treats every column as ordered numeric, so a three-level factor coded 1, 2, 3 would impose a false ordering; one-hot encoding avoids it. The vertical does nothing in this simulation. It is there because a real panel always has covariates that turn out not to matter, and the forest has to discover that.
+`x` carries four time-invariant columns: log catalog size, fulfillment status, and two dummies for the vertical, with Apparel as the reference level. The engine treats every column as ordered numeric, so a three-level factor coded 1, 2, 3 would impose a false ordering; dummy coding avoids it. The vertical does nothing in this simulation. It is there because a real panel always has covariates that turn out not to matter, and the forest has to discover that.
 
 Effects are on the log scale, so a coefficient $\tau$ is a proportional lift of $e^{\tau} - 1$. Every dollar figure in the next chapter goes through that conversion inside each posterior draw.
 
@@ -171,7 +171,7 @@ tibble(wave = rep(wave, times = Tn), week = rep(weeks_all, each = n), y = as.vec
 ## Fitting the Model {#sec-longbet-fitting}
 
 ::: {.callout-note title="Sampler settings"}
-Four chains start from the prior, each discarding 2,000 burn-in sweeps and then running 8,000 sweeps of which every eighth is retained, giving 1,000 draws per chain. The forests are the package defaults: 20 prognostic and 60 treatment trees of depth at most 8. A unit intercept is on. Neither forest splits on calendar time here, because this panel's untreated path has no calendar structure to find; the third chapter shows the switch that turns calendar splits back on when the business has seasonality.
+Four chains start from the prior, each discarding 2,000 burn-in sweeps and then running 8,000 sweeps of which every eighth is retained, giving 1,000 draws per chain. The forests are the package defaults: 20 prognostic and 60 treatment trees of depth at most 8. A unit intercept is on. Neither forest splits on calendar time here, because this panel's untreated path has no calendar structure to find; the fourth chapter shows the switch that turns calendar splits back on when the business has seasonality.
 
 None of these settings establishes convergence. The diagnostics after the fit do that.
 :::
@@ -200,7 +200,7 @@ model.fit(y=y_train, x=x, z=z_train, t=week_study, key=jax.random.key(42))
 ```
 :::
 
-`lb_core_fit()` is a thin wrapper that fits the model once and caches it, keyed on the engine source, the sampler settings and a digest of the data, so the next two chapters reuse this fit instead of repeating it. A few arguments deserve comment:
+`lb_core_fit()` is a thin wrapper that fits the model once and caches it, keyed on the engine source, the sampler settings and a digest of the data, so the decisions and forecasting chapters reuse this fit instead of repeating it. A few arguments deserve comment:
 
   - `x` is the covariate matrix. Omitting `x_trt` lets both forests share one block of columns instead of allocating a duplicate set.
   - `t` is the calendar index of the panel columns. LongBet infers each unit's exposure $S_{it}$ from `z` and `t`; you never construct it.
@@ -276,7 +276,7 @@ $$
 
 averaged over treated sellers with sample-size weights across the waves that have reached exposure $S$ inside the study. The conditioning set changes with $S$: all three waves contribute at $S = 1$, only the first wave by $S = 12$.
 
-The benchmark is what a careful analyst reaches for first. For each wave and each period since its launch, take the change in log GMV from the common pre-launch window and subtract the same change among holdout sellers, reweighted to that wave's randomization strata, then pool the waves by sample size. This is the group-time estimator of @callaway2021did specialised to a balanced panel with never-treated controls, which is exactly the design here. Every wave is compared only against the never-treated holdout, so the negative-weighting problem that afflicts two-way fixed effects under staggered adoption [@bacon2021difference; @roth2023trending] never arises. A second version adds a covariate regression fitted on the holdout, the linear cousin of the prognostic forest.
+The benchmark is what a careful analyst reaches for first. For each wave and each period since its launch, take the change in log GMV from the common pre-launch window and subtract the same change among holdout sellers, reweighted to that wave's randomization strata, then pool the waves by sample size. This is a variant of the group-time estimator of @callaway2021did for a balanced panel with never-treated controls, differencing from a common pre-launch window rather than from the period just before each launch; the third chapter runs their estimator itself. Every wave is compared only against the never-treated holdout, so the negative-weighting problem that afflicts two-way fixed effects under staggered adoption [@bacon2021difference; @roth2023trending] never arises. A second version adds a covariate regression fitted on the holdout, the linear cousin of the prognostic forest.
 
 ```{r benchmark}
 pre_weeks <- 5:8
@@ -408,7 +408,7 @@ Read the last figure carefully: it is a posterior for the *conditional* effect a
 
 ## It Does Not Distort a Simple Panel {#sec-longbet-additive}
 
-A flexible model is worth having only if it behaves when flexibility is not needed. Here is the same machinery on a panel built for the classical estimator: 300 units, eight periods, additive unit effects, staggered adoption in periods 3, 5 and 7 or never, and an effect that grows linearly with exposure and is **identical for every unit**. Nothing here needs a forest.
+A flexible model is worth having only if it behaves when flexibility is not needed. Here is the same machinery on a panel built for the classical estimator: 300 units, eight periods, additive unit effects, staggered adoption in periods 3, 5 and 7 or never, and an effect that grows linearly with exposure and is **identical for every unit**. Nothing here needs a forest. The third chapter races the modern difference-in-differences estimators on this same panel; this is the short version.
 
 ```{r additive}
 #| message: false
@@ -438,7 +438,7 @@ bind_rows(
 ) %>% kable(digits = 3, caption = "On a purely additive panel the two estimators agree, and the model's regularisation costs nothing measurable here.")
 ```
 
-The model was not told that the world was additive, that the effect was homogeneous, or that the trajectory was linear. It recovers the same curve as the estimator built for exactly this case, with intervals no wider. That is the reassurance worth having before using it where the classical estimator cannot go.
+The model was not told that the world was additive, that the effect was homogeneous, or that the trajectory was linear. It recovers the same curve as the estimator built for exactly this case, and its intervals are narrower rather than wider. That is the reassurance worth having before using it where the classical estimator cannot go.
 
 ## Conclusion
 

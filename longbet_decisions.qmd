@@ -163,7 +163,7 @@ imap_dfr(lift_scenarios, function(lift, label) map_dfr(c(0.8, 1.0, 1.2), functio
               caption = sprintf("The same %d sellers chosen by the capacity rule, under nine valuation assumptions.", sum(chosen)))
 ```
 
-The study observes twelve weeks of exposure and the business case runs for fifty-two, so the tail is an assumption in every row. The point of varying it alongside the baseline is to find out whether the decision is robust to the assumptions or driven by them. Here the chosen sellers are worth positive money under every scenario except the most pessimistic pair, which is a decision you can defend. The [next chapter](longbet_extensions.qmd) shows what the model can and cannot say about that tail from the data itself.
+The study observes twelve weeks of exposure and the business case runs for fifty-two, so the tail is an assumption in every row. The point of varying it alongside the baseline is to find out whether the decision is robust to the assumptions or driven by them. Here the chosen sellers are worth positive money under every scenario except the most pessimistic pair, which is a decision you can defend. The [forecasting chapter](longbet_extensions.qmd) shows what the model can and cannot say about that tail from the data itself.
 
 ## Which Sellers, Not Just How Many
 
@@ -273,7 +273,7 @@ kable(multi_diag %>% select(-ok), digits = 3,
 ```
 
 ```{r fig-multi-recovery}
-#| fig-cap: "Known against estimated effect at eight weeks of exposure, by outcome. Colour marks two groups defined from covariates the model was never told about. Beneficial is up for GMV and down for the other two."
+#| fig-cap: "Known against estimated effect at eight weeks of exposure, by outcome. Colour marks two groups defined from the covariates; the model was never told the grouping. Beneficial is up for GMV and down for the other two."
 #| fig-alt: "Three scatter panels along dashed diagonals. Green points sit in the beneficial quadrant of each panel and pink points in the opposite one, with the model's means tracking the truth in both."
 #| fig-width: 9
 #| fig-height: 3.4

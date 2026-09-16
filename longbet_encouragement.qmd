@@ -115,11 +115,11 @@ tibble(Segment = test_segment, lift = true_cum_test,
         caption = "The future cohort. Compliance is the expected adoption contrast at week 8; an account is worth encouraging when its expected cumulative lift over weeks 4 to 8 exceeds the $20 cost.")
 ```
 
-Only the ready-and-scaled segment is worth encouraging at this cost, and the ready-but-small segment complies almost as eagerly. With `r sum(true_cum_test > cost)` profitable accounts and capacity for `r capacity`, the constraint binds.
+Only the ready-and-scaled segment is worth encouraging at this cost, and the ready-but-small segment complies just as eagerly. With `r sum(true_cum_test > cost)` profitable accounts and capacity for `r capacity`, the constraint binds.
 
 ```{r fig-adoption}
-#| fig-cap: "Adoption by assigned arm in the pilot. The offered arm jumps at week 4; the control arm catches up organically, so the adoption gap narrows even while exposure keeps accumulating."
-#| fig-alt: "Two rising curves over eight weeks with a shaded gap between them that widens at week four and then narrows."
+#| fig-cap: "Adoption by assigned arm in the pilot. The offered arm jumps at week 4; the control arm keeps adopting organically, so the gap stops growing after week 5 while exposure keeps accumulating."
+#| fig-alt: "Two rising curves over eight weeks with a shaded gap between them that opens at week four and then holds roughly constant."
 #| fig-width: 8
 #| fig-height: 4
 plot_encouragement(train_data$z, train_data$d, t_grid) + labs(title = NULL, x = "Week")
@@ -208,7 +208,7 @@ The posterior means track the reference, as they should, since both target the s
 
 ## Principal Strata Over Time
 
-In a cross-section the compliance types are fixed. In a panel they drift: every week some control accounts adopt organically, so the always-taker share grows while the complier and never-taker shares shrink.
+In a cross-section the compliance types are fixed. In a panel they drift: every week some control accounts adopt organically, so the always-taker share grows and the never-taker share shrinks, while the complier share rises as offered accounts activate and then erodes.
 
 ```{r fig-strata}
 #| fig-cap: "Principal strata over the post-encouragement weeks: posterior means with 95% intervals against the pilot's realized counts."
@@ -355,13 +355,13 @@ Three patterns matter more than the ranking.
 
 **Linear models cannot represent this target.** The true surface is a step in two covariates, so a plane through it overstates the ready-but-small segment and understates the ready-and-scaled one, which is precisely where the money is.
 
-**Modelling the adoption jump is what the panel structure buys.** The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account's outcome jumped when it activated and has been compounding since. That is why its trajectories are smoother, which the roughness column measures: a forest fitted week by week has to rediscover the shape from noise at every horizon.
+**Modelling the adoption jump is what the panel structure buys.** The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account's outcome jumped when it activated and has been compounding since. That is why it is the only estimator that follows the compounding trajectory in the ready-and-scaled segment. The roughness column shows the other half of the story: anything fitted week by week has to rediscover the shape from noise at every horizon, while the pooled forests are smooth only because they barely move across weeks at all.
 
 **The ratio route pays for a noisy denominator.** The instrumental forest's complier effect times its first stage lands close to the direct route, but dividing by a small adoption contrast is what makes a ratio heavy-tailed, which is the statistical version of the argument at the top of this chapter.
 
 ```{r fig-trajectories}
 #| fig-cap: "Average predicted effect of the offer by week and true segment. Only the ready-and-scaled segment has a large compounding effect; the ready-but-small segment complies eagerly and gains little."
-#| fig-alt: "Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and the flexible estimators follow; the linear estimators sit below. In the other panels the truth is near zero and the linear estimators drift upward."
+#| fig-alt: "Three panels, one per segment. In the ready-and-scaled panel the truth rises steeply and only the adoption-clock model follows it; every other estimator flattens out well below. In the other two panels the truth stays near zero, the adoption-clock model tracks it, and the rest sit above it."
 #| fig-width: 11
 #| fig-height: 4.2
 traj_df <- bind_rows(
@@ -597,7 +597,7 @@ Three lessons come out of this example, and they generalise well beyond the simu
 
 - **Snapshots fail in opposite directions.** The early window sees nothing, because the effect has not started, and would have shelved the feature. The end-line snapshot sees the largest gap and, extrapolated over the horizon, overstates it. The trajectory is the object to model.
 - **Compliance is not benefit.** Ranking on the first stage, or on a constant complier effect times the first stage, sends nudges to the most compliant users, many of whom are harmed. The effect of the offer on the outcome is what protects them.
-- **A posterior can price harm.** The regret filter is one line on the draws. It costs almost nothing when the model is confident about the sign, and it binds exactly when it should: on cohorts the model is unsure about.
+- **A posterior can price harm.** The regret filter is one line on the draws. Here it changes nothing, because the model is confident about the sign for every user it would select; it binds on cohorts the model is unsure about, which is where a point estimate would have sent the nudge anyway.
 
 ## A Practitioner's Checklist
 

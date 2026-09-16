@@ -83,7 +83,7 @@ The extended average mixes cells the model saw with cells it did not, so the fut
 
 ```{r fig-forecast}
 #| fig-cap: "Effects in the four withheld weeks, averaged within exposure time, under three projection lengthscales at kernel SD 1. Black is the matching simulated truth; the dotted line marks the last exposure seen in training."
-#| fig-alt: "Three panels. In each, a blue curve with a band tracks a black truth curve across exposures twelve to sixteen, with the band widening past the dotted line."
+#| fig-alt: "Three panels. In each, a blue curve with a band tracks a black truth curve across exposures eleven to sixteen, with the band widening past the dotted line."
 #| fig-width: 8.5
 #| fig-height: 4
 gp_runs %>% filter(sigma == 1) %>%
@@ -107,7 +107,7 @@ gp_runs %>% group_by(sigma, lambda) %>%
   kable(digits = 4, caption = "Withheld-week effects by exposure. The fitted lengthscale is 2; the smoother settings are sensitivity analyses of the projection assumption.")
 ```
 
-The projection is accurate here and its band widens with the horizon, which is the behaviour to want. Two practical notes. A narrower band is a stronger assumption, not better evidence, so report the sweep rather than the single setting that looks tightest. And four withheld weeks validate the mechanics, not a forty-week tail: when a decision rests on a long horizon, hold out a long window from an earlier launch and score the projection there before trusting it.
+The projection contains the truth at every setting, its band widens with the horizon, and the fitted lengthscale is the least certain of the three, which is the behaviour to want. Two practical notes. A narrower band is a stronger assumption, not better evidence, so report the sweep rather than the single setting that looks tightest. And four withheld weeks validate the mechanics, not a forty-week tail: when a decision rests on a long horizon, hold out a long window from an earlier launch and score the projection there before trusting it.
 
 ## When Adoption Was Not Randomized {#sec-longbet-observational}
 
@@ -203,7 +203,7 @@ map_dfr(variants, function(v) tibble(
   Covariates = v$label, `Residual SD` = v$resid_sd, `Intercept SD (posterior mean)` = v$unit_sd,
   `Effect RMSE` = sqrt(mean((v$att$att[seq_len(S_observed)] - truth_att)^2)),
   `Interval width` = mean(v$att$intervals[2, seq_len(S_observed)] - v$att$intervals[1, seq_len(S_observed)]))) %>%
-  kable(digits = 4, caption = sprintf("The true residual SD is %.2f and the seller-specific component the covariates never record has SD 0.35.", sd_eps))
+  kable(digits = 4, caption = sprintf("The true residual SD is %.2f and the seller-specific component the covariates never record has SD 0.65.", sd_eps))
 ```
 
 Both recover the effect. What differs is the division of labour: with the lookback level in `x`, the forest explains part of each seller's level and the intercept shrinks to match. The recommendation for a panel like this one is to keep the intercept, which is a parameter per unit with a conjugate update, and to add a lookback summary only when it carries something the intercept cannot, such as a pre-period **trend**.
@@ -271,7 +271,7 @@ kable(bind_rows(promo_blind$diagnostics, promo_aware$diagnostics) %>% select(-ok
 
 ```{r fig-promo}
 #| fig-cap: "Effect on the treated against the promotional intensity of the same week, as means within ten intensity bins."
-#| fig-alt: "Three lines rising with promotional intensity. The truth and the model given the covariate rise together; the model without it is nearly flat."
+#| fig-alt: "Three lines rising with promotional intensity. The truth and the model given the covariate rise together; the model without it sits above both and rises more steeply."
 #| fig-width: 8.5
 #| fig-height: 4
 tibble(promo = rep(pm$promo[pm$treated], 3), bin = rep(pm$bins, 3),
@@ -295,7 +295,7 @@ tibble(Model = c("Without the covariate", "With the covariate", "Truth"),
   kable(digits = 3, caption = "A continuous covariate that varies within a seller over time, given to both forests or to neither.")
 ```
 
-Given the covariate, the model recovers both channels: the residual scale drops to its true value because promotions no longer look like noise, and the effect's dependence on promotional intensity comes out close to the truth. Without it, the week-to-week moderation is invisible and the residual absorbs it.
+Given the covariate, the model recovers both channels: the residual scale drops to its true value because promotions no longer look like noise, and the effect's dependence on promotional intensity comes out close to the truth. Without it, the residual absorbs the seller-week part of the promotion, and the calendar part goes somewhere worse. In a three-wave rollout, exposure and calendar time are nearly the same clock, so a promotional week that lifts every seller is read by the exposure trajectory as part of the treatment effect: the blind curve sits above the truth, and its slope in promotional intensity is nearly twice the true one, which is not moderation but the promotion calendar itself. A calendar split in the prognostic forest could absorb that common part, but not the moderation; the covariate handles both.
 
 Three practical points. Give the covariate to whichever forest needs it, prognostic for a cleaner baseline, treatment for moderation, both when both. It must be observed in every cell, including cells where the outcome is missing, because it is an input rather than an outcome. And it must be passed to `predict()` as well, since the fitted trees record which axis each split used.
 

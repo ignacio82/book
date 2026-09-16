@@ -172,7 +172,7 @@ The "later versus earlier treated" row is the forbidden comparison: it uses unit
 
 ## Where the Cell Estimators Cannot Go
 
-Now change one thing. Keep the design, keep the shape of the trajectory, and let the **size** of the effect vary smoothly with a covariate:
+Now a second panel with the same staggered design: 400 units, a trajectory that is concave rather than linear, and a **size** of the effect that varies smoothly with a covariate:
 
 $$
 \tau(x, S) = (1.5 + 0.9\,x_1)\,\log(1 + S).
@@ -233,7 +233,7 @@ tibble(`Unit-period predictor` = c("LongBet posterior mean, per unit-period",
 
 ```{r fig-did-cate}
 #| fig-cap: "True against estimated effect for every treated unit-period: LongBet's posterior means, and the Callaway-Sant'Anna event-time average assigned to every unit at that exposure."
-#| fig-alt: "Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto three horizontal bands."
+#| fig-alt: "Two scatter panels against a dashed diagonal. The LongBet panel hugs the diagonal; the aggregate panel collapses onto six horizontal bands, one per exposure."
 #| fig-width: 8.5
 #| fig-height: 4
 bind_rows(tibble(truth = hd_cell_truth, estimate = hd_cell_est, which = "LongBet posterior mean"),
@@ -270,7 +270,7 @@ An estimator that ranks exposures must treat every unit at an exposure or none o
 
 - **Use the econometric estimators** when the question is the average effect of a staggered rollout, when the panel is large and the model should be as transparent as possible, or when a reviewer needs an estimator with published guarantees and pre-trend diagnostics. They are fast, they are well understood, and on their home turf nothing beats them.
 - **Use LongBet as well** when the decision needs a number per unit rather than per period, when you want the trajectory projected past the end of the study, when several outcomes must be screened together, or when the deliverable is a probability that a specific unit clears a specific bar.
-- **Run both.** They estimate the same average from the same data, so agreement is a real check on the model and a disagreement is worth understanding before either result ships. Every LongBet chapter in this part keeps a design-based estimate alongside the model for exactly this reason.
+- **Run both.** They estimate the same average from the same data, so agreement is a real check on the model and a disagreement is worth understanding before either result ships. The LongBet chapters keep a design-based estimate alongside the model wherever the design provides one, for exactly this reason.
 
 ::: {.callout-tip}
 ## Learn more
