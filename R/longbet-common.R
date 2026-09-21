@@ -7,7 +7,11 @@ verify_longbet_environment <- function() {
   stopifnot(
     requireNamespace("longbet", quietly = TRUE),
     packageVersion("longbet") >= "1.0.0",
-    !("longbet_cpp" %in% ls(asNamespace("longbet")))
+    !("longbet_cpp" %in% ls(asNamespace("longbet"))),
+    # The chapters are written against the engine with the conjugate calendar-time block:
+    # neither forest splits on calendar time and the old switches are gone from the API.
+    "trend_num_features" %in% names(formals(longbet::longbet)),
+    !("split_time_ps" %in% names(formals(longbet::longbet)))
   )
   lb_engine <- reticulate::import("longbet", convert = FALSE)
   stopifnot(
@@ -16,6 +20,9 @@ verify_longbet_environment <- function() {
     reticulate::py_has_attr(lb_engine, "LongBetMulti"),
     is.function(longbet::longbet_multi)
   )
+  cfg <- reticulate::py_to_r(lb_engine$LongBetConfig())
+  stopifnot(isTRUE(cfg$use_trend_block), isTRUE(cfg$trend_horseshoe),
+            isFALSE(cfg$split_calendar_mu), isFALSE(cfg$split_calendar_trt))
   invisible(TRUE)
 }
 
@@ -50,20 +57,30 @@ get_longbet_dependencies <- function() {
 # artifacts to a separate cache, so a quick render never overwrites the published one.
 longbet_quick <- function() nzchar(Sys.getenv("LONGBET_QUICK"))
 
-# Four chains started from the prior and 2,000 burn-in sweeps everywhere. `n_skip` sets how
-# long the chains run after burn-in: n_skip x 1,000 sweeps, of which every n_skip-th is kept.
-lb_budget <- function(n_skip = 8) {
+# Four chains started overdispersed from the prior and 2,000 burn-in sweeps everywhere, which
+# are the package defaults. `n_skip` sets how long the chains run after burn-in: n_skip x 1,000
+# sweeps, of which every n_skip-th is kept, so every fit retains 1,000 draws per chain. The
+# package default is n_skip = 1; the chapters thin where the quantities they report (every
+# seller, every treated cell) mix more slowly than the average effect.
+lb_budget <- function(n_skip = 2, num_chains = LB_CHAINS) {
   if (longbet_quick()) {
     return(list(num_chains = 4L, num_burnin = 30L, num_sweeps = 30L, n_skip = 1L))
   }
-  list(num_chains = 4L, num_burnin = 2000L, num_sweeps = 1000L, n_skip = as.integer(n_skip))
+  list(num_chains = as.integer(num_chains), num_burnin = 2000L, num_sweeps = 1000L,
+       n_skip = as.integer(n_skip))
 }
 
-# Model settings shared by every fit in these chapters. The simulated panels have no calendar
-# structure in the untreated outcome, and both forests are told so; the seller intercept
-# carries each unit's level.
-LB_MODEL <- list(sig_knl = 1, lambda_knl = 2, random_intercept = TRUE,
-                 split_time_ps = FALSE, split_calendar_trt = FALSE)
+# Chains per fit. The sampler runs its chains as one batched computation, so on a machine with
+# spare cores extra chains cost little wall time and multiply the effective sample size of the
+# slow-mixing unit-level quantities; the package default is four.
+LB_CHAINS <- 8L
+
+# Model settings shared by every fit in these chapters. Everything structural is the package
+# default: the calendar-time block carries common shocks and covariate-dependent trends, neither
+# forest splits on calendar time, and a seller intercept carries each unit's level. The only
+# departure is the lengthscale of the exposure kernel: two weeks rather than the default one,
+# a smoother prior on a weekly clock with twelve observed exposures.
+LB_MODEL <- list(sig_knl = 1, lambda_knl = 2, random_intercept = TRUE)
 
 GATE_ESS  <- 400
 GATE_RHAT <- 1.01
@@ -101,6 +118,28 @@ diagnose_draws <- function(draws, fit, label) {
                                 Passed = sprintf("%d of %d", sum(pass), length(pass)),
                                 ok = all(pass)),
        bytarget = bytarget)
+}
+
+# Calendar support behind each exposure, as the engine reports it: the treated cells that the
+# average at that exposure rests on, and the untreated units observed in the same calendar
+# periods. These counts describe the calendar, not overlap at a covariate profile.
+att_support <- function(pred) {
+  res <- reticulate::py_to_r(pred$py_pred$att(alpha = 0.05))
+  tibble::tibble(Exposure = as.integer(res$exposure),
+                 `Treated cells` = as.integer(pred$att_counts),
+                 `Concurrent untreated units (mean)` = as.numeric(res$mean_concurrent_controls),
+                 `Share of cells with no concurrent control` = as.numeric(res$pct_zero_control_cells))
+}
+
+# The share of a unit's persistent level that shrinkage toward the exchangeable prior leaves in
+# place when the intercept is learned from n_pre untreated cells: sigma^2 / (n_pre sigma_gamma^2
+# + sigma^2), at the posterior means of the two variances (both on the standardized scale, so
+# the ratio is scale-free). This is the simplified calculation of Wang, Hahn and Martinez; the
+# sampler draws the intercepts jointly with everything else, so it gives the order of magnitude.
+level_shrinkage <- function(fit, n_pre) {
+  sigma2 <- mean(as.numeric(fit$sigma0_draws)^2)
+  sigma_gamma2 <- mean(as.numeric(fit$sigma_gamma_draws))
+  sigma2 / (n_pre * sigma_gamma2 + sigma2)
 }
 
 # Align an [n x T x draws] array of unit-level effects on time since adoption and average over

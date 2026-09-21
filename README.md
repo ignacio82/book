@@ -59,16 +59,15 @@ To avoid installing R and all its dependencies directly on your host machine, yo
    make preview
    ```
 
-*Note: When rendering locally, Quarto saves execution outputs to `_freeze/`. Committing `_freeze/` allows GitHub Actions to publish in 1–2 minutes without re-running long MCMC computations in CI. After modifying shared LongBet R files, explicitly render the three chapters that use those helpers (`./render.sh longbet.qmd`, `./render.sh longbet_decisions.qmd`, `./render.sh longbet_extensions.qmd`) to refresh their frozen outputs.*
+*Note: When rendering locally, Quarto saves execution outputs to `_freeze/`. Committing `_freeze/` allows GitHub Actions to publish in 1–2 minutes without re-running long MCMC computations in CI. After modifying shared LongBet R files (`R/longbet-*.R`), render every chapter that sources them (`longbet.qmd`, `longbet_decisions.qmd`, `longbet_did.qmd`, `longbet_extensions.qmd`, `longbet_ordinal.qmd`, `longbet_encouragement.qmd`) to refresh their frozen outputs. The fitted models are cached under `cache/longbet/`, keyed on the engine source, so a re-render after a prose edit reuses them.*
 
-The independent ordinal chapter renders with `./render.sh longbet_ordinal.qmd`.
-It rebuilds its tables, figures, and decision probabilities from the checked
-simulation extracts in `data/longbet-ordinal/`, without refitting the full
-benchmark. That directory documents the data and reproduction procedure.
-The fitting recipe requires the ordinal R API. The Dockerfile pins both
-package interfaces to revision `769d02a2e2e3281315ad4d43cb6d24d6a84c3ae2`
-and checks the ordinal exports; rebuild older images with `make build` before
-using the recipe. Saved chapter extracts render without loading the sampler.
+The LongBet chapters run against the `longbet` JAX engine pinned in the `Dockerfile` (`LONGBET_REF`),
+and the image pins Quarto to the version the publish workflow installs. Changing the engine revision
+invalidates every cached fit, so rebuild the image with `make build` and expect the first render of
+`longbet.qmd` to refit the marketplace rollout. `./render.sh` accepts `LONGBET_REPO=/path/to/checkout`
+to render against an unpublished engine revision without rebuilding. When many fits have to be rebuilt,
+`tools/prebuild-longbet-cache.sh <chapters...>` fills `cache/longbet/` by rendering throwaway copies of the
+book concurrently, after which `./render.sh` on each chapter is a matter of minutes.
 
 ## 📄 License
 

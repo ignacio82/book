@@ -175,7 +175,7 @@ Launch reviews rarely stay tidy. The optimizer rewrites listings, so the questio
 
 The tempting move is to fit three models and multiply three probabilities. If each condition holds with probability 0.8, multiplying gives $0.8^3 = 0.512$, but the marginals alone pin the joint probability only to the interval $[0.4, 0.8]$: those are the Fréchet bounds, and 0.512 is simply what independence would give. What closes the gap is a joint posterior in which each seller's three effects are drawn together.
 
-`longbet_multi()` gives every outcome its own forests, trajectory and intercepts, and couples them through the residual: after each outcome's own mean is subtracted, what remains in a seller-week is allowed to be correlated across outcomes, through a triangular seemingly-unrelated-regressions likelihood [@huber2022bavart]. A binary outcome enters as a latent probit.
+`longbet_multi()` gives every outcome its own forests, calendar-time block, trajectory and intercepts, and couples them through the residual: after each outcome's own mean is subtracted, what remains in a seller-week is allowed to be correlated across outcomes, through a triangular seemingly-unrelated-regressions likelihood [@huber2022bavart]. A binary outcome enters as a latent probit, so its effects come out on the probability scale only after the latent draws are pushed through the normal distribution function, draw by draw.
 
 ```{r multi-data}
 md <- simulate_multi()
@@ -198,7 +198,8 @@ The effects are signed and opposing by construction: broad fulfilled sellers gai
 
 ```{r multi-fit}
 #| message: false
-multi_key <- function(tag) lb_key(tag, lb_budget(8), LB_MODEL, digest::digest(md[c("y", "x", "z")]))
+multi_budget <- list(joint = lb_budget(4), separate = lb_budget(2))
+multi_key <- function(tag, budget) lb_key(tag, budget, LB_MODEL, digest::digest(md[c("y", "x", "z")]))
 multi_conditions <- list(gmv = function(a) a >= log1p(MULTI_GMV_MIN),
                          seller_hours = function(a) a <= log1p(MULTI_HOURS_MAX),
                          complaint = function(a) a <= MULTI_COMPLAINT_MAX)
@@ -206,11 +207,11 @@ multi_cells <- matrix(FALSE, md$n, md$tt); multi_cells[, multi_col] <- TRUE
 multi_export <- c("md", "multi_types", "multi_z_eval", "multi_col", "multi_conditions", "multi_cells",
                   "MULTI_GMV_MIN", "MULTI_HOURS_MAX", "MULTI_COMPLAINT_MAX")
 
-multi_joint <- lb_artifact("multi_joint", multi_key("multi_joint"), export = multi_export,
+multi_joint <- lb_artifact("multi_joint", multi_key("multi_joint", multi_budget$joint), export = c(multi_export, "multi_budget"),
   builder = function() {
     f <- do.call(longbet::longbet_multi,
                  c(list(y = md$y, x = md$x, z = md$z, t = seq_len(md$tt), outcome = multi_types,
-                        sur = TRUE, sur_prior_var = 1, random_seed = 314159L), LB_MODEL, lb_budget(8)))
+                        sur = TRUE, sur_prior_var = 1, random_seed = 314159L), LB_MODEL, multi_budget$joint))
     p <- predict(f, x = md$x, z = multi_z_eval, t = seq_len(md$tt), summary_only = FALSE, random_seed = 271829L)
     obs <- predict(f, x = md$x, z = md$z, t = seq_len(md$tt), summary_only = TRUE, random_seed = 3L)
     list(draws = lapply(setNames(nm = names(multi_types)),
@@ -220,12 +221,12 @@ multi_joint <- lb_artifact("multi_joint", multi_key("multi_joint"), export = mul
          correlation = outcome_correlation(f))
   })
 multi_sep_draws <- lapply(setNames(nm = names(multi_types)), function(nm)
-  lb_artifact(paste0("multi_", nm), multi_key(paste0("multi_", nm)), export = multi_export,
+  lb_artifact(paste0("multi_", nm), multi_key(paste0("multi_", nm), multi_budget$separate), export = c(multi_export, "multi_budget"),
     builder = function() {
       f <- do.call(longbet::longbet,
                    c(list(y = md$y[[nm]], x = md$x, z = md$z, t = seq_len(md$tt),
                           outcome = unname(multi_types[[nm]]),
-                          random_seed = 314160L + match(nm, names(multi_types))), LB_MODEL, lb_budget(8)))
+                          random_seed = 314160L + match(nm, names(multi_types))), LB_MODEL, multi_budget$separate))
       p <- predict(f, x = md$x, z = multi_z_eval, t = seq_len(md$tt), summary_only = FALSE, random_seed = 271830L)
       matrix(effect_draws(p)[, multi_col, ], nrow = md$n)
     }))
@@ -233,7 +234,7 @@ multi_sep_draws <- lapply(setNames(nm = names(multi_types)), function(nm)
 
 ```{r multi-screen}
 multi_draws <- multi_joint$draws
-multi_layout <- chain_layout(lb_budget(8)$num_chains, lb_budget(8)$num_sweeps)
+multi_layout <- chain_layout(multi_budget$joint$num_chains, multi_budget$joint$num_sweeps)
 B <- list(multi_draws$gmv >= log1p(MULTI_GMV_MIN),
           multi_draws$seller_hours <= log1p(MULTI_HOURS_MAX),
           multi_draws$complaint <= MULTI_COMPLAINT_MAX)

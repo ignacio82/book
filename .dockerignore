@@ -9,3 +9,7 @@ docs/
 _book/
 .Rproj.user/
 .Rhistory
+
+# Fitted-model caches and knitr caches are mounted at render time, never baked in.
+cache/
+*_cache/

@@ -46,31 +46,33 @@ Code the five ratings as $Y_{it}\in\{0,\dots,4\}$, with 0 for one star. For acco
 
 $$
 \begin{aligned}
-Y^*_{it} &= \eta_{it}+\epsilon_{it}, &\epsilon_{it}&\sim \mathcal N(0,1),\\
-\eta_{it} &= \mu(X_i,t)+\beta_{S_{it}}\nu(X_i,t)\,\mathbf{1}\{S_{it}\ge 1\},\\
+Y^*_{it} &= \lambda_{it}+\epsilon_{it}, &\epsilon_{it}&\sim \mathcal N(0,1),\\
+\lambda_{it} &= \mu(X_i)+\eta_{it}+\gamma_i+\beta_{S_{it}}\nu(X_i)\,\mathbf{1}\{S_{it}\ge 1\},\\
 Y_{it}=k &\quad\Longleftrightarrow\quad \theta_k<Y^*_{it}\leq\theta_{k+1}.
 \end{aligned}
 $$
 
-Everything from the first chapter carries over: $\mu$ is the prognostic forest, $\beta_S$ the shared trajectory over exposure, $\nu$ the treatment forest that scales it by account. What is new is the observation model. The latent scale is a modelling device, not a satisfaction score, so the package fixes the residual variance at one and the first finite threshold at zero,
+Everything from the first chapter carries over: $\mu$ is the prognostic forest, $\eta_{it}$ the calendar-time block, $\gamma_i$ the account intercept, $\beta_S$ the shared trajectory over exposure, $\nu$ the treatment forest that scales it by account. What is new is the observation model. The latent scale is a modelling device, not a satisfaction score, so the package fixes the residual variance at one and the first finite threshold at zero,
 
 $$
 \theta_0=-\infty,\qquad \theta_1=0<\theta_2<\cdots<\theta_{K-1},\qquad \theta_K=\infty,
 $$
 
-and gives the remaining thresholds a proper ordered-normal prior. Thresholds and scale are shared across accounts, weeks and treatment status, which is what makes the category effects comparable.
+and gives the remaining thresholds a proper ordered-normal prior. Thresholds and scale are shared across accounts, weeks and treatment status, which is what makes the category effects comparable. The sampler updates the gaps between thresholds by a Metropolis step against the observed ratings with the latent response integrated out, then redraws the latents given the thresholds; updating the two in turn, the textbook scheme, mixes slowly in a large panel because each threshold is pinned between the latents on either side of it.
 
 ### Every draw becomes a set of probabilities
 
 Compare adoption with never adopting at the **same account profile and week**. For draw $d$, the two latent locations differ only by the treatment term, and the category probabilities and their effects are
 
 $$
-p^{a,(d)}_{itk}=\Phi\!\left(\theta^{(d)}_{k+1}-\eta^{a,(d)}_{it}\right)-\Phi\!\left(\theta^{(d)}_k-\eta^{a,(d)}_{it}\right),
+p^{a,(d)}_{itk}=\Phi\!\left(\theta^{(d)}_{k+1}-\lambda^{a,(d)}_{it}\right)-\Phi\!\left(\theta^{(d)}_k-\lambda^{a,(d)}_{it}\right),
 \qquad
 \Delta^{(d)}_{itk}=p^{1,(d)}_{itk}-p^{0,(d)}_{itk}.
 $$
 
 The five category effects sum to zero: gains in some ratings must come from losses elsewhere. Do this arithmetic **inside** each draw and then summarise; transforming an averaged latent effect gives a different and wrong answer.
+
+One consequence of the link deserves stating, because it separates this chapter from the continuous case. The model's additivity, and with it the parallel-trends reasoning of the [fourth chapter](longbet_extensions.qmd), lives on the latent scale. A probability effect depends on where the account starts, $\lambda^{0}_{it}$, including its own intercept and the calendar-time block, so the same latent shift does not produce the same probability shift for every account or every week, and parallel trends on the latent scale do not imply parallel trends in the share of five-star weeks. That is not a defect. It is the reason the next section exists.
 
 ## The Same Latent Shift Means Different Things at Different Starting Points
 
@@ -112,13 +114,13 @@ round(prop.table(table(od$y)), 3)
 #| message: false
 ord_run <- lb_artifact(
   "ordinal_fit",
-  lb_key("ordinal", lb_budget(4), digest::digest(od[c("y", "x", "z")])),
+  lb_key("ordinal", lb_budget(6), digest::digest(od[c("y", "x", "z")])),
   export = "od",
   builder = function() {
     f <- do.call(longbet::longbet,
                  c(list(y = od$y, x = od$x, z = od$z, t = seq_len(od$tt), outcome = "ordinal",
                         num_categories = 5L, sig_knl = 1, lambda_knl = 2,
-                        random_intercept = FALSE, random_seed = 391000L), lb_budget(4)))
+                        random_intercept = FALSE, random_seed = 391000L), lb_budget(6)))
     p <- predict(f, x = od$x, z = od$z, t = seq_len(od$tt), summary_only = TRUE)
     list(cat_att = att_probabilities(p), cutpoints = p$cutpoints_samples,
          layout = chain_layout(f$model_params$num_chains, f$model_params$num_sweeps))
@@ -127,7 +129,7 @@ cat_att <- ord_run$cat_att
 ord_layout <- ord_run$layout
 ```
 
-`outcome = "ordinal"` and `num_categories = 5L` are the only changes from a continuous fit. The ratings must arrive as integer codes $0,\dots,K-1$; the package refuses factors, because the codes carry the order. This panel has no persistent account effect by construction, so the unit intercept is off here; a real rating panel usually wants it on.
+`outcome = "ordinal"` and `num_categories = 5L` are the only changes from a continuous fit. The ratings must arrive as integer codes $0,\dots,K-1$; the package refuses factors, because the codes carry the order. Ratings are never standardized, so the kernel scale is on the latent probit scale. This panel has no persistent account effect by construction, so the unit intercept is off here; a real rating panel usually wants it on. The untreated latent path in this simulation drifts upward week by week, a common trend that the calendar-time block carries exactly, which is why nothing about calendar time needs to be specified.
 
 `att_probabilities()` returns, for each exposure and category, the average probability effect over the treated cells at that exposure, as draws.
 
@@ -195,7 +197,7 @@ library(longbet)
 fit <- longbet(
   y = ratings, x = x, z = z, t = seq_len(ncol(ratings)),
   outcome = "ordinal", num_categories = 5L,
-  num_chains = 4L, num_burnin = 2000L, num_sweeps = 1000L, n_skip = 4L,
+  num_chains = 8L, num_burnin = 2000L, num_sweeps = 1000L, n_skip = 6L,
   random_intercept = TRUE, random_seed = 391000L)
 
 pred <- predict(fit, x = x, z = z, t = seq_len(ncol(ratings)), summary_only = TRUE)
@@ -204,7 +206,7 @@ five_star <- cat_att$att_full[, 5, ]      # draws of the five-star effect by exp
 mean(five_star[4, ] >= 0.02)              # posterior probability of hitting a target
 ```
 
-`att_expected_score()` is the companion when the business reports a weighted score rather than category probabilities: it forms the weighted category effects inside each draw, so the uncertainty is right even though the weights are a reporting convention.
+`att_expected_score()` is the companion when the business reports a weighted score rather than category probabilities: it forms the weighted category effects inside each draw, so the uncertainty is right even though the weights are a reporting convention. A yes-or-no outcome fitted with `outcome = "binary"` is reported on the latent scale only; to get the effect on the probability of the event, fit it as an ordinal outcome with two categories, which uses the same likelihood and returns these probability summaries.
 
 ## When to Reach for the Ordinal Model
 

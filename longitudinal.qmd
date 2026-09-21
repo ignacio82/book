@@ -46,7 +46,7 @@ source of empirical leverage.
 | **Aggregate intervention on a single treated time series** (e.g., nationwide campaign) with contemporaneous control series. | **[CausalImpact / BSTS](causalimpact.qmd)** | **Predictive stability of unaffected controls.** Identification assumes that control series are strictly untreated (no spillover/contamination) and that the pre-intervention predictive relationship between controls and the target series remains stable post-intervention. |
 | **Intervention on one or a few aggregate units** with a donor pool of untreated comparative units over time. | **[Synthetic Control](bsynth.qmd)** | **Pre-treatment convex fit & donor suitability.** Identification rests on constructing a convex combination of untreated donors that closely tracks the treated unit's pre-treatment trajectory. Assumes no anticipation, no donor contamination, and that unobserved time-varying confounders are bounded by good pre-intervention fit. |
 | **Randomized staggered rollout across large micro panels** (e.g., sellers, users, accounts). | **[LongBet](longbet.qmd)** | **Randomized launch timing.** Identification comes directly from randomized assignment to launch cohorts or holdout status. The panel model provides precision and dynamic effect resolution across exposure times, not identification itself. |
-| **Observational staggered rollout / panel data** with self-selected or targeted adoption timing. | **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd)** | **Conditional exchangeability of adoption timing.** Swaps parallel trends for selection on observables: assumes treatment timing is unconfounded given observed pre-treatment covariates and baseline history. |
+| **Observational staggered rollout / panel data** with self-selected or targeted adoption timing. | **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd)** | **Parallel trends conditional on covariates.** Adoption timing is assumed ignorable given recorded covariates and a time-invariant unit level that enters the outcome additively; that implies parallel trends conditional on the covariates, the same family of assumptions as covariate-adjusted difference-in-differences, with the conditional trend fitted flexibly rather than linearly. An unrecorded trait that both sets the launch date and bends the untreated path is outside its reach. |
 | **Randomized encouragement**: you can invite units to adopt but not switch the treatment on, and adoption happens at different times. | **[LongBet: Randomized Encouragement](longbet_encouragement.qmd)** | **Randomized offer plus exclusion.** The offer is randomized, so its effect on outcomes and on adoption are both identified; reading their ratio as a complier effect additionally assumes the offer works only through adoption and never delays it. |
 : Method selection across longitudinal and panel causal designs {#tbl-longitudinal-methods}
 
@@ -96,11 +96,13 @@ to granular, decision-focused panel modeling:
    joint screen over three outcomes at once through triangular SUR coupling.
 5. **[LongBet and Modern Difference-in-Differences](longbet_did.qmd):** The comparison a reviewer
    will ask for: two-way fixed effects and its Goodman-Bacon decomposition, Callaway and Sant'Anna,
-   Sun and Abraham, and Borusyak-Jaravel-Spiess, run on the same panels as LongBet. Where they agree,
-   where a cohort-by-period average cannot go, and what the difference is worth in a targeting decision.
+   Sun and Abraham, Borusyak-Jaravel-Spiess and interactive fixed effects, run on the same panels as
+   LongBet. Where they agree, where a cohort-by-period average cannot go, what happens when untreated
+   trends diverge with the covariates, and what the difference is worth in a targeting decision.
 6. **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd):** Projecting the
-   trajectory past the study window, adoption that was chosen rather than randomized, where a
-   unit's own level comes from, and covariates that move within a unit over time.
+   trajectory past the study window, what the model assumes when adoption was chosen rather than
+   randomized and how much a unit's level costs to estimate, and covariates that move within a unit
+   over time.
 7. **[LongBet: Ordinal Outcomes and Customer Experience](longbet_ordinal.qmd):**
    Dynamic effects on ordered ratings, category-probability effects, and the posterior
    probability of hitting a customer-experience target.
@@ -119,10 +121,11 @@ earlier chapter's panel reuses its fit rather than repeating it:
 LONGBET_QUICK=1 ./render.sh             # smoke test, tiny sampling budgets
 ```
 
-The engine comes from the image, pinned in the `Dockerfile` to the `longbet-jax` commit these chapters
-were written against. To render against a different revision without rebuilding, point `LONGBET_REPO` at a
-checkout and the render installs that tree instead. `LONGBET_WORKERS` controls how many fits run at once;
-the default of one keeps memory flat on a laptop.
+The engine comes from the image, pinned in the `Dockerfile` to the `longbet` commit these chapters were
+written against: the revision with the conjugate calendar-time block, collapsed unit intercepts and the
+half-space sign convention described in @wang2024longbet. To render against a different revision without
+rebuilding, point `LONGBET_REPO` at a checkout and the render installs that tree instead. `LONGBET_WORKERS`
+controls how many fits run at once; the default of one keeps memory flat on a laptop.
 
 ### Neighboring Methods and Scope
 

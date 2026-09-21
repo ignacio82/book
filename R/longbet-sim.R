@@ -61,9 +61,12 @@ simulate_rollout <- function(seed = 7, n = 400, week_base = 1:4, week_study = 5:
 }
 
 # Adoption chosen by the marketplace instead of by lottery. "observed" ranks on catalog size
-# and the seller's own level, both of which the model sees; "hidden" ranks on a trait the
+# and the seller's own level, both of which the model sees; "diverging" uses the same rule on
+# a panel whose untreated path also drifts with catalog size, so the sellers launched first are
+# the ones whose baseline was already climbing fastest; "hidden" ranks on a trait the
 # covariates never record, which also lifts the untreated path from the first launch on.
-simulate_observational <- function(ro, scenario = c("observed", "hidden"), seed = 8123) {
+simulate_observational <- function(ro, scenario = c("observed", "diverging", "hidden"),
+                                   seed = 8123, drift_per_week = 0.012) {
   scenario <- match.arg(scenario)
   set.seed(seed)
   n <- ro$n; Tn <- ro$Tn
@@ -72,7 +75,12 @@ simulate_observational <- function(ro, scenario = c("observed", "hidden"), seed 
   if (scenario == "hidden") {
     y0s <- y0s + 0.15 * u_i * matrix(rep(ro$weeks_all >= min(ro$LAUNCH), each = n), n, Tn)
   }
-  score <- if (scenario == "observed")
+  if (scenario == "diverging") {
+    # A linear drift whose slope is a function of a recorded covariate: conditional on
+    # catalog size the trends are parallel, unconditionally they are not.
+    y0s <- y0s + outer(drift_per_week * scale(log(ro$listings))[, 1], ro$weeks_all - min(ro$week_study))
+  }
+  score <- if (scenario %in% c("observed", "diverging"))
     1.0 * scale(log(ro$listings))[, 1] + 0.8 * scale(ro$level_i)[, 1] + stats::rnorm(n, 0, .8)
   else 1.5 * u_i + stats::rnorm(n, 0, .5)
   q <- stats::quantile(score, c(.40, .60, .80))
@@ -182,6 +190,55 @@ simulate_heterogeneous <- function(seed = 303, n = 400, tt = 8, p = 4) {
   tau <- ifelse(z == 1, amp * log(1 + s), 0)
   y <- outer(alpha + 0.5 * x[, 1], rep(0, tt), "+") + matrix(stats::rnorm(n * tt, 0, 0.5), n, tt) + tau
   list(n = n, tt = tt, tg = tg, x = x, z = z, s = s, tau = tau, y = y, adopt = adopt, amp = amp)
+}
+
+# ---------------------------------------------------------------------------------------
+# The simulation design of the LongBet paper (Wang, Hahn and Martinez), so that the chapter's
+# comparison can be read against the paper's tables. Adoption timing is confounded with a
+# nonlinear prognostic loading; under "parallel" the untreated cohorts move together, under
+# "diverging" each unit also trends in proportion to that loading, so unconditional parallel
+# trends fails while parallel trends conditional on the covariates still holds. Every random
+# quantity is drawn before the trend factor is applied, so the two panels of one seed share
+# their covariates, adoption dates, unit levels and noise and differ only in the drift.
+# ---------------------------------------------------------------------------------------
+simulate_paper_design <- function(seed = 4, n = 500, tt = 12, t_start = 7,
+                                  trend = c("parallel", "diverging"),
+                                  effect = c("heterogeneous", "homogeneous"),
+                                  sigma = 0.5, sigma_unit = 0.5, trend_slope = 1.5) {
+  trend <- match.arg(trend); effect <- match.arg(effect)
+  set.seed(seed)
+  x1 <- stats::rnorm(n); x2 <- stats::rnorm(n); x3 <- stats::rnorm(n)
+  x4 <- stats::rbinom(n, 1, 0.5); x5 <- sample(0:2, n, replace = TRUE)
+  loading <- ifelse(x4 == 1, -1, 2) + x1 * abs(x3 - 1)
+  # A common calendar factor: ARMA(1, 1) with ar = 0.7 and ma = -0.4, centred at one.
+  eps <- stats::rnorm(tt + 1); f <- numeric(tt); prev <- 0
+  for (k in seq_len(tt)) { prev <- 0.7 * prev + eps[k + 1] - 0.4 * eps[k]; f[k] <- prev }
+  f <- f + 1
+  alpha <- stats::rnorm(n, 0, sigma_unit)
+  # Adoption hazard among the not-yet-treated: units with a high loading adopt sooner.
+  pi <- 0.2 * stats::pnorm(0.5 * loading - 0.5 * x1)^2 + stats::runif(n) / 10
+  adopt_draws <- matrix(stats::runif(n * tt), n, tt)
+  noise <- matrix(stats::rnorm(n * tt, 0, sigma), n, tt)
+  tg <- seq_len(tt)
+  event <- rep(Inf, n)
+  for (k in tg) {
+    if (k < t_start) next
+    adopt <- !is.finite(event) & adopt_draws[, k] < pi
+    event[adopt] <- k
+  }
+  z <- outer(event, tg, function(a, t) as.numeric(t >= a))
+  s <- outer(event, tg, function(a, t) pmax(0, t - a + 1)); s[!is.finite(s)] <- 0
+  y0 <- alpha + matrix(f, n, tt, byrow = TRUE) + loading
+  if (trend == "diverging") y0 <- y0 + outer(trend_slope * loading, (tg - 1) / (tt - 1))
+  nu <- if (effect == "heterogeneous") 1 + 0.5 * x2 * (x5 - 1) else rep(1, n)
+  tau <- ifelse(s >= 1, nu * (1 - exp(-s / 2)), 0)
+  y <- y0 + tau + noise
+  x <- cbind(x1 = x1, x2 = x2, x3 = x3, x4 = x4,
+             x5_0 = as.numeric(x5 == 0), x5_1 = as.numeric(x5 == 1), x5_2 = as.numeric(x5 == 2))
+  list(n = n, tt = tt, tg = tg, x = x, x_did = data.frame(x1 = x1, x2 = x2, x3 = x3, x4 = x4,
+                                                            x5 = factor(x5)),
+       z = z, s = s, tau = tau, y = y, y0 = y0, adopt = event, loading = loading, nu = nu,
+       trend = trend, effect = effect)
 }
 
 # ---------------------------------------------------------------------------------------

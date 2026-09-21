@@ -1,6 +1,6 @@
 ---
 title: "LongBet: Forecasting and Observational Panels"
-description: "Four practical extensions: projecting the trajectory past the end of the study, panels where adoption was chosen rather than randomized, where a unit's own level comes from, and covariates that move within a unit over time."
+description: "Four practical extensions: projecting the trajectory past the end of the study, what the model assumes when adoption was chosen rather than randomized and how much estimating a unit's level costs, where that level comes from, and covariates that move within a unit over time."
 format:
   html:
     css: longbet.css
@@ -13,7 +13,7 @@ share:
 ---
 
 ::: {.callout-note title="Continues the marketplace rollout"}
-This chapter reuses the sellers, calendar and fitted model of **[LongBet: Dynamic Treatment Effects in Staggered Rollouts](longbet.qmd)** and the valuation of **[LongBet: From Effects to Decisions](longbet_decisions.qmd)**. The estimator comparison sits in **[LongBet and Modern Difference-in-Differences](longbet_did.qmd)**.
+This chapter reuses the sellers, calendar and fitted model of **[LongBet: Dynamic Treatment Effects in Staggered Rollouts](longbet.qmd)** and the valuation of **[LongBet: From Effects to Decisions](longbet_decisions.qmd)**. The estimator comparison, including the case where untreated trends diverge, sits in **[LongBet and Modern Difference-in-Differences](longbet_did.qmd)**.
 :::
 
 ```{r setup}
@@ -48,7 +48,11 @@ truth_att_ext <- event_time_truth(tau_true[, match(c(week_study, week_future), w
 
 The business case runs for a year and the study ran for sixteen weeks. Weeks 21 to 24 were simulated but never shown to the model, which makes them a fair test of what it can say about periods it has not seen.
 
-The Gaussian process on $\beta_S$ is what makes the projection possible. Because the trajectory is a smooth function of exposure rather than a set of unrelated period effects, it can be extended past the largest exposure in the data, with uncertainty governed by the kernel. The forests do not extrapolate: they evaluate the partitions they already have. Passing `sig_knl` and `lambda_knl` to `predict()` changes **only** the projection, holding the fitted in-window draws fixed, so a sweep over them is a sensitivity analysis of the extrapolation assumption rather than a refit.
+The Gaussian process on $\beta_S$ is what makes the projection possible. A tree fitted on exposures one through twelve is a step function on that range: asked about week fifteen it returns the value of its last step. A smoothness prior instead supplies a conditional distribution for what comes next, and that is the whole content of the projection: a statement that the intervention keeps behaving as it has been behaving, expressed as smoothness. Two details of the prior decide what the projection looks like far out. The process has a free constant mean rather than a mean of zero, so a long projection flattens toward a level estimated from the whole fitted curve, not toward "no effect", which would be a strong substantive claim smuggled in as a default. And the kernel's lengthscale and standard deviation govern how much of the local slope is carried forward and how fast the band widens. The forests do not extrapolate: they evaluate the partitions they already have.
+
+The calendar-time block is projected the same way, and asymmetrically on purpose. Its smooth covariate-by-time profiles continue, so a seller whose baseline was trending keeps trending; its free period effects do not, because a period effect for a week nobody observed is identified by nothing, and those are set to their prior mean of zero. That shows up in projected *levels* and cancels from the *effect*, which is the difference between the treated and untreated paths of the same seller-week.
+
+Passing `sig_knl` and `lambda_knl` to `predict()` changes **only** the projection, holding the fitted in-window draws fixed, so a sweep over them is a sensitivity analysis of the extrapolation assumption rather than a refit. @wang2024longbet recommend a small grid around the fitted values, halving and doubling the lengthscale and halving the kernel scale, and reporting the grid rather than any one cell of it.
 
 ```{r forecast}
 #| message: false
@@ -60,7 +64,7 @@ obs_draws <- matrix(0, S_max, ncol(lb_att$att_full)); obs_draws[seq_len(S_observ
 truth_obs <- numeric(S_max); truth_obs[seq_len(S_observed)] <- truth_att
 forecast_truth <- ((truth_att_ext * n_ext - truth_obs * n_obs) / pmax(n_future, 1))[keep_s]
 
-gp_grid <- expand_grid(sigma = c(0.3, 1.0), lambda = c(2, 12, 20))
+gp_grid <- expand_grid(sigma = c(0.5, 1.0), lambda = c(1, 2, 4))
 gp_future <- vector("list", nrow(gp_grid))
 gp_runs <- map_dfr(seq_len(nrow(gp_grid)), function(j) {
   pr <- predict(lb_fit, x = x, z = z_ext, t = c(week_study, week_future),
@@ -71,7 +75,8 @@ gp_runs <- map_dfr(seq_len(nrow(gp_grid)), function(j) {
   gp_future[[j]] <<- fut
   tibble(sigma = gp_grid$sigma[j], lambda = gp_grid$lambda[j], s = keep_s,
          estimate = rowMeans(fut), lower = apply(fut, 1, quantile, .025),
-         upper = apply(fut, 1, quantile, .975), truth = forecast_truth)
+         upper = apply(fut, 1, quantile, .975), truth = forecast_truth,
+         p_positive = rowMeans(fut > 0))
 })
 forecast_diag <- bind_rows(lapply(seq_len(nrow(gp_grid)), function(j)
   diagnose_draws(gp_future[[j]], lb_fit,
@@ -82,42 +87,50 @@ forecast_diag <- bind_rows(lapply(seq_len(nrow(gp_grid)), function(j)
 The extended average mixes cells the model saw with cells it did not, so the future-only average is recovered by subtracting the observed part draw by draw. Without that step a forecast score is flattered by the in-sample cells inside it.
 
 ```{r fig-forecast}
-#| fig-cap: "Effects in the four withheld weeks, averaged within exposure time, under three projection lengthscales at kernel SD 1. Black is the matching simulated truth; the dotted line marks the last exposure seen in training."
-#| fig-alt: "Three panels. In each, a blue curve with a band tracks a black truth curve across exposures eleven to sixteen, with the band widening past the dotted line."
+#| fig-cap: "Effects in the four withheld weeks, averaged within exposure time, under three projection lengthscales at kernel SD 1. Black is the matching simulated truth; the dotted line marks the last exposure seen in training. Note the vertical scales: the longest lengthscale is on its own."
+#| fig-alt: "Three panels with their own vertical scales. At lengthscales one and two a blue curve with a band tracks a black truth curve across exposures thirteen to sixteen, the band widening past the dotted line. At lengthscale four the band is several times wider and the curve drifts away from the truth."
 #| fig-width: 8.5
 #| fig-height: 4
 gp_runs %>% filter(sigma == 1) %>%
-  mutate(setting = factor(paste0("lengthscale = ", lambda), levels = paste0("lengthscale = ", c(2, 12, 20)))) %>%
+  mutate(setting = factor(paste0("lengthscale = ", lambda), levels = paste0("lengthscale = ", c(1, 2, 4)))) %>%
   ggplot(aes(s)) +
   geom_ribbon(aes(ymin = lower, ymax = upper), fill = PAL[["LongBet"]], alpha = .18) +
   geom_line(aes(y = estimate), colour = PAL[["LongBet"]], linewidth = .9) +
   geom_line(aes(y = truth), colour = PAL[["Truth"]], linewidth = .8) +
   geom_vline(xintercept = S_observed + 0.5, linetype = "dotted", colour = "grey40") +
-  facet_wrap(~ setting) +
+  facet_wrap(~ setting, scales = "free_y") +
   labs(x = "Exposure time among withheld-week cells", y = "Effect on log weekly GMV")
 ```
 
 ```{r forecast-scores}
 kable(forecast_diag %>% select(-ok), digits = 3,
       caption = "Sampling checks on every reported future-cell summary. Fresh projection noise can make forecast draws look better mixed than the fit behind them, so these are read alongside the training checks.")
-gp_runs %>% group_by(sigma, lambda) %>%
+gp_runs %>% group_by(`Kernel SD` = sigma, Lengthscale = lambda) %>%
   summarise(RMSE = sqrt(mean((estimate - truth)^2)), `Mean width` = mean(upper - lower),
             `Contained truth` = sprintf("%d of %d", sum(truth >= lower & truth <= upper), n()),
+            `P(effect > 0) at the last exposure` = p_positive[which.max(s)],
             .groups = "drop") %>%
-  kable(digits = 4, caption = "Withheld-week effects by exposure. The fitted lengthscale is 2; the smoother settings are sensitivity analyses of the projection assumption.")
+  kable(digits = 3, caption = "Withheld-week effects by exposure under the sensitivity grid. The fitted kernel has SD 1 and lengthscale 2; the other five cells change only the conditional extension of the fitted curve.")
 ```
 
-The projection contains the truth at every setting, its band widens with the horizon, and the fitted lengthscale is the least certain of the three, which is the behaviour to want. Two practical notes. A narrower band is a stronger assumption, not better evidence, so report the sweep rather than the single setting that looks tightest. And four withheld weeks validate the mechanics, not a forty-week tail: when a decision rests on a long horizon, hold out a long window from an earlier launch and score the projection there before trusting it.
+The grid says three different things, and all three are worth knowing. At the fitted lengthscale the projection tracks the truth closely with a band that widens with the horizon. At half the lengthscale the process forgets the recent slope faster and reverts toward the estimated common level, so the band is wider and the mean a little further off: a more cautious extrapolation, still containing the truth. At twice the lengthscale the picture breaks: the band is several times wider and the mean wanders, because a long, very smooth kernel carries the fitted curve's local slope and curvature forward almost as a polynomial would, and small wobbles in the fitted trajectory are amplified into large swings four weeks out. That is the situation the paper warns about: an extreme projection kernel is a different extrapolation model rather than a mild sensitivity, and its intervals are wide because the assumption is fragile, not because the data are uninformative. The fitted kernel is not privileged by the data beyond the window either; what the window pins down is the level and the local smoothness, and the kernel decides what to do with them.
+
+Three practical notes follow. A narrower band is a stronger assumption, not better evidence, so report the sweep rather than the single setting that looks tightest, and drop from the grid any kernel whose extension you would not defend on substantive grounds. A decision about the future should state the posterior probability it needs and read that probability across the grid: the last column is one number per kernel, and a conclusion that holds in every cell you keep is one you can defend, while a conclusion that holds in only some of them is a statement about the extrapolation prior. And four withheld weeks validate the mechanics, not a forty-week tail: when a decision rests on a long horizon, hold out a long window from an earlier launch and score the projection there before trusting it.
 
 ## When Adoption Was Not Randomized {#sec-longbet-observational}
 
-LongBet was built for observational panels, where the argument is that conditioning on covariates and a unit intercept can stand in for a lottery. Here are two panels with the same sellers and the same effect curve, and no lottery at all.
+LongBet was built for observational panels, and its identifying assumption is worth stating exactly, because it is easy to overstate. The model assumes that once a unit's covariates $X_i$ and its persistent level $\gamma_i$ are known, the period in which it adopted carries no further information about its untreated path, and that the level enters the untreated outcome additively. Put together, those two statements imply **parallel trends conditional on the covariates**: the untreated path of an early adopter and a late adopter with the same covariates differ by a level, and nothing else. That is the same family of assumptions the covariate-adjusted difference-in-differences estimators use; it does not assume less. What it changes is the shape the conditional trend is allowed to take, which the [previous chapter](longbet_did.qmd) shows, and what happens to the level, which this section quantifies.
 
-In the first, the marketplace rolls out to its **largest, best-performing sellers first**. The rule uses catalog size, which the model sees, and the seller's own level, which the intercept carries. In the second, the field team picks on something the data never record, and that same trait also lifts the untreated path from the first launch onward.
+Three panels make the assumption concrete. All three use the same sellers and the same effect curve as the randomized rollout, with the lottery removed.
+
+1. **Observed.** The marketplace rolls out to its largest, best-performing sellers first. The rule uses catalog size, which the model sees, and the seller's own level, which the intercept carries. Untreated paths are flat.
+2. **Diverging.** The same rule, on a panel whose untreated path drifts with catalog size: broad catalogs were growing before anyone launched, and they are also the sellers launched first. Conditional on catalog size the trends are parallel; unconditionally the early cohorts were already pulling away.
+3. **Hidden.** The field team picks on something the data never record, and that same trait also lifts the untreated path from the first launch onward.
 
 ```{r obs-fit}
 #| message: false
 obs_data <- list(observed = simulate_observational(ro, "observed"),
+                 diverging = simulate_observational(ro, "diverging"),
                  hidden = simulate_observational(ro, "hidden"))
 obs_truth <- function(d) vapply(seq_len(S_observed), function(s) {
   m <- d$S[, match(week_study, weeks_all)] == s
@@ -126,18 +139,20 @@ obs_truth <- function(d) vapply(seq_len(S_observed), function(s) {
 obs_results <- lapply(setNames(nm = names(obs_data)), function(sc) {
   d <- obs_data[[sc]]
   lb_artifact(paste0("obs_", sc),
-              lb_key("obs", sc, lb_budget(4), LB_MODEL, digest::digest(d[c("y", "z", "x")])),
+              lb_key("obs", sc, lb_budget(1), LB_MODEL, digest::digest(d[c("y", "z", "x")])),
               export = c("week_study", "weeks_all", "S_observed"),
               builder = function() {
                 f <- do.call(longbet::longbet,
                              c(list(y = d$y[, match(week_study, weeks_all)], x = d$x,
                                     z = d$z[, match(week_study, weeks_all)], t = week_study,
-                                    random_seed = 1L), LB_MODEL, lb_budget(4)))
+                                    random_seed = 1L), LB_MODEL, lb_budget(1)))
                 a <- get_att(predict(f, x = d$x, z = d$z[, match(week_study, weeks_all)],
                                      t = week_study, summary_only = TRUE, random_seed = 1))
                 list(att = a$att[seq_len(S_observed)],
                      layout = chain_layout(f$model_params$num_chains, f$model_params$num_sweeps),
-                     att_full = a$att_full)
+                     att_full = a$att_full,
+                     sigma2 = mean(as.numeric(f$sigma0_draws)^2),
+                     sigma_gamma2 = mean(as.numeric(f$sigma_gamma_draws)))
               })
 })
 kable(bind_rows(lapply(names(obs_results), function(sc)
@@ -147,41 +162,64 @@ kable(bind_rows(lapply(names(obs_results), function(sc)
 ```
 
 ```{r obs-table}
+obs_labels <- c(observed = "Largest, best-performing sellers first; flat untreated paths",
+                diverging = "Same rule; untreated paths drift with catalog size",
+                hidden = "Chosen on something x never records, which also moves the path")
 imap_dfr(obs_data, function(d, sc) {
   tr <- obs_truth(d)
   gt <- group_time_did(d$y[, match(week_study, weeks_all)], d$launch, week_study, pre_periods = 5:8)
   e_gt <- gt$estimate - tr; e_lb <- obs_results[[sc]]$att - tr
-  tibble(`How launch dates were set` = c(observed = "Largest, best-performing sellers first (visible in x)",
-                                         hidden = "Chosen on something x never records")[[sc]],
+  tibble(`How launch dates were set` = obs_labels[[sc]],
          `Group-time mean error` = mean(e_gt), `Group-time RMSE` = sqrt(mean(e_gt^2)),
          `LongBet mean error` = mean(e_lb), `LongBet RMSE` = sqrt(mean(e_lb^2)),
          `True effect` = mean(tr))
 }) %>% kable(digits = 4,
-             caption = "The same sellers and effects with the lottery removed, scored against the effect experienced by the sellers who actually adopted.")
+             caption = "The same sellers and effects with the lottery removed, scored against the effect experienced by the sellers who actually adopted. The group-time estimator differences each seller from the four pre-launch weeks and compares against the never-treated sellers without covariates.")
 ```
 
-The first row is the case the model is built for: adoption is driven by things it can condition on, and it recovers the effect. The second row is the boundary of what any covariate-based method can do. A flexible regression cannot condition on a variable it never sees, and neither can a differencing estimator when the unrecorded trait moves the untreated path after the pre-window. Both estimators are off, and no amount of model flexibility fixes it.
+The first row is the case both methods are built for: adoption is driven by a recorded covariate and by the level, differencing removes the level, the intercept estimates it, and both recover the effect. The second row separates them. The differencing estimator attributes the broad catalogs' faster growth to the optimizer, because it conditions on nothing; the trends are parallel only given catalog size, and the calendar-time block's covariate-by-time term is what carries that. Nothing was switched on to get this: the block is on by default, and on the first panel its horseshoe prior had simply shrunk that term to nothing. The third row is the boundary of what any covariate-based method can do. A flexible regression cannot condition on a variable it never sees, and neither can a differencing estimator when the unrecorded trait moves the untreated path after the pre-window. Both are off, and no amount of model flexibility fixes it. A time-invariant omitted trait that only shifts a seller's *level* would have been absorbed by the intercept; one that bends the *path* is fatal, and the model reports intervals that do not know it.
 
 That is the practical rule for an observational panel. Write down what drove adoption, ask whether it is in the data, and if it is not, ask whether it moved the untreated trajectory. Randomizing the launch order, when you can, removes the question entirely, which is why the [first chapter](longbet.qmd) recommends it.
 
+### What estimating the level costs {#sec-longbet-shrinkage}
+
+Differencing removes a seller's level for free. LongBet estimates it, and estimation shrinks: an intercept learned from $n_0$ untreated weeks is pulled toward the population mean by a factor that depends on how noisy those weeks are relative to how much sellers differ. In the simplified calculation of @wang2024longbet, a fraction
+
+$$
+w_0 = \frac{\sigma^2}{n_0\,\sigma_\gamma^2 + \sigma^2}
+$$
+
+of the level is left unremoved. When adoption depends on the level directly, as it does in the first two panels above, the same fraction of the gap between an early cohort's average level and a late cohort's can leak into the estimated effect. The two variances are estimated in every fit, so the fraction is a number you can compute rather than a worry you have to carry.
+
+```{r shrinkage}
+obs_fit <- obs_results$observed
+w_of <- function(n0) obs_fit$sigma2 / (n0 * obs_fit$sigma_gamma2 + obs_fit$sigma2)
+tibble(`Pre-launch weeks` = c(1, 2, 4, 8, 16),
+       `Share of the level left unremoved` = scales::percent(w_of(c(1, 2, 4, 8, 16)), 0.1)) %>%
+  kable(caption = sprintf("At the variances fitted on the first observational panel (residual SD %.2f, seller-level SD %.2f on the standardized scale), the share of a seller's level that survives shrinkage as a function of how many untreated weeks the intercept is learned from. The first wave in these panels has four.",
+                          sqrt(obs_fit$sigma2), sqrt(obs_fit$sigma_gamma2)))
+```
+
+With four pre-launch weeks and sellers that differ far more than any of them moves week to week, the leak is a few percent of a level gap that is itself small relative to the effect, which is why the first row of the table above is clean. With a single pre-launch week the share is the first row of this table, and in the paper's benchmark case of equal variances it would be one half: a rollout in which the first wave launched one week into the panel and was chosen on its level would carry a visible fraction of that selection into the estimate. In that situation the estimator that differences pays no such cost, and reporting it alongside the model is the right thing to do. Turning the intercept off (`random_intercept = FALSE`) so that the covariates carry all of the level is a sensitivity analysis worth reporting, not a remedy: it assumes there is no persistent seller level beyond what the covariates explain, which is a stronger assumption, not a weaker one.
+
 ::: {.callout-note title="Panels with calendar structure"}
-This panel's untreated path is flat over the calendar, so both forests are told not to split on calendar time. When the business has seasonality, holidays or a secular trend, turn those splits back on with `split_time_ps = TRUE` and `split_calendar_trt = TRUE`, give the chains room, and check the reported effects as usual.
+This marketplace's untreated path is flat over the calendar, and the second panel above is the only one where it moves with a covariate. In a real business the untreated path has seasonality, holidays, a secular trend, and often trends that differ by segment. None of that needs a switch. The calendar-time block carries a free effect for every week, which represents any common shock exactly, and smooth covariate-by-time profiles under a prior that turns them on only where the data ask for them. What the block cannot do is carry a trend that depends on something not in `x`, which is the third row of the table, and it does not split the treatment forest on the calendar either: the treatment effect is a function of exposure and covariates, and a common shock in a treated week is charged to the calendar, not to the treatment.
 :::
 
 ## Where a Unit's Own Level Comes From {#sec-longbet-baseline}
 
-Everything the model knows about a seller arrives through $X_i$ and through the unit intercept $\gamma_i$. A within-unit difference removes each seller's level for free; LongBet reconstructs it. There are two ways to help it, and they are not equivalent.
+Everything the model knows about a seller arrives through $X_i$, through the calendar-time block's dictionary of those same covariates, and through the unit intercept $\gamma_i$. A within-unit difference removes each seller's level for free; LongBet reconstructs it. The sampler makes the reconstruction cheap: during every tree update the intercepts are integrated out analytically, so a proposed split is judged against each seller's marginal precision rather than pinned to last sweep's intercept values, and the intercepts are then redrawn jointly with the calendar-time coefficients and the trajectory in one Gaussian step. There are two ways to help it, and they are not equivalent.
 
 ```{r fit-variants}
 #| message: false
 x_lookback <- cbind(base_level = base_level, x)
 v_lookback <- lb_artifact(
   "lookback_fit",
-  lb_key("lookback", lb_budget(8), LB_MODEL, digest::digest(list(y_train, x_lookback, z_train))),
+  lb_key("lookback", lb_budget(6), LB_MODEL, digest::digest(list(y_train, x_lookback, z_train))),
   export = c("y_train", "x_lookback", "z_train", "week_study"),
   builder = function() {
     f <- do.call(longbet::longbet, c(list(y = y_train, x = x_lookback, z = z_train, t = week_study,
-                                          random_seed = 42L), LB_MODEL, lb_budget(8)))
+                                          random_seed = 42L), LB_MODEL, lb_budget(6)))
     p <- predict(f, x = x_lookback, z = z_train, t = week_study, summary_only = TRUE, random_seed = 1)
     list(att = get_att(p, alpha = 0.05), resid_sd = mean(f$sigma0_draws) * f$sdy,
          unit_sd = mean(sqrt(f$sigma_gamma_draws)) * f$sdy,
@@ -212,7 +250,7 @@ One rule is not optional: a lookback summary must be built from periods that are
 
 ### The error term is independent by assumption {#sec-longbet-serial}
 
-$\epsilon_{it}$ is independent across units and periods. The cheapest check is on holdout sellers, whose outcomes the treatment never touched: take the prognostic surface without the intercept and ask whether the residuals still carry unit structure.
+$\epsilon_{it}$ is independent across units and periods. The intercept absorbs persistent level differences and the calendar-time block absorbs whatever the calendar and the covariates can explain, but genuine serial correlation in what is left, and shocks shared by the sellers of one region or one category, are not modelled, and positive residual correlation typically makes the intervals too narrow. The cheapest check is on holdout sellers, whose outcomes the treatment never touched: take the fitted untreated surface without the intercept and ask whether the residuals still carry unit structure.
 
 ```{r residual-acf}
 gamma_hat <- rowMeans(lb_fit$gamma_draws) * lb_fit$sdy
@@ -225,7 +263,7 @@ cat("Mean lag-1 correlation of forest-only residuals among holdout sellers:", ro
     "Design effect for a grand mean (block versus independent):", round((se_block / se_iid)^2, 2), "\n")
 ```
 
-The generated innovations are independent, so what this measures is the seller-level component the covariates do not explain, which is exactly what the intercept absorbs. Run it on your own panel with the intercept off: a large number says the panel needs the intercept, which the main fit has.
+The generated innovations are independent, so what this measures is the seller-level component the covariates do not explain, which is exactly what the intercept absorbs. Run it on your own panel with the intercept off: a large number says the panel needs the intercept, which the main fit has. When treatment is assigned to groups of sellers rather than to sellers, a region or a category at a time, the intervals should account for that dependence before anyone acts on them; a random intercept per seller does not do it.
 
 ## Covariates That Change Over the Panel {#sec-longbet-timevarying}
 
@@ -233,7 +271,7 @@ Everything in `x` is one number per seller. `x_tv` and `x_trt_tv` take `[N, T, P
 
 The mechanics are easy and the causal question is not. Before a moving variable goes into the treatment forest, ask when it was determined relative to the exposure being scored, and whether the treatment could have changed it. A variable the treatment moves is a consequence, and conditioning on it can block part of the effect you are trying to measure. The covariate here is a **promotional calendar set by the marketplace**: it is not something the optimizer can influence, which is what makes it a legitimate moderator.
 
-Promotions lift GMV on their own and make the optimizer worth more in the same week, so the covariate belongs in both forests.
+Promotions lift GMV on their own and make the optimizer worth more in the same week, so the covariate belongs in both forests. One consequence for the sampler is worth knowing: once a forest reads a time-varying covariate, a seller can sit in different leaves in different weeks, so the sampler stops integrating that seller's intercept out during that forest's update and conditions on it instead. It detects this on its own at initialization, and the fit is still exact, just a little slower to mix.
 
 ```{r promo-fit}
 #| message: false
@@ -271,7 +309,7 @@ kable(bind_rows(promo_blind$diagnostics, promo_aware$diagnostics) %>% select(-ok
 
 ```{r fig-promo}
 #| fig-cap: "Effect on the treated against the promotional intensity of the same week, as means within ten intensity bins."
-#| fig-alt: "Three lines rising with promotional intensity. The truth and the model given the covariate rise together; the model without it sits above both and rises more steeply."
+#| fig-alt: "Three lines against promotional intensity. The truth and the model given the covariate rise together; the model without it stays nearly flat."
 #| fig-width: 8.5
 #| fig-height: 4
 tibble(promo = rep(pm$promo[pm$treated], 3), bin = rep(pm$bins, 3),
@@ -295,12 +333,12 @@ tibble(Model = c("Without the covariate", "With the covariate", "Truth"),
   kable(digits = 3, caption = "A continuous covariate that varies within a seller over time, given to both forests or to neither.")
 ```
 
-Given the covariate, the model recovers both channels: the residual scale drops to its true value because promotions no longer look like noise, and the effect's dependence on promotional intensity comes out close to the truth. Without it, the residual absorbs the seller-week part of the promotion, and the calendar part goes somewhere worse. In a three-wave rollout, exposure and calendar time are nearly the same clock, so a promotional week that lifts every seller is read by the exposure trajectory as part of the treatment effect: the blind curve sits above the truth, and its slope in promotional intensity is nearly twice the true one, which is not moderation but the promotion calendar itself. A calendar split in the prognostic forest could absorb that common part, but not the moderation; the covariate handles both.
+Given the covariate, the model recovers both channels: the residual scale drops to its true value because promotions no longer look like noise, and the effect's dependence on promotional intensity comes out close to the truth. Without it, the residual absorbs the seller-week part of the promotion, and the calendar part goes to the calendar-time block's common period effects, which is where a week that lifts every seller belongs. That is why the blind fit's average effect is not biased the way it would be if the forests were left to split on calendar time, with a promotional week read as a treatment week. What the blind fit cannot recover is the moderation: a promotion's extra value to an optimized listing is a seller-week interaction that no common period effect can carry, so its curve is flat in promotional intensity. The covariate handles both.
 
-Three practical points. Give the covariate to whichever forest needs it, prognostic for a cleaner baseline, treatment for moderation, both when both. It must be observed in every cell, including cells where the outcome is missing, because it is an input rather than an outcome. And it must be passed to `predict()` as well, since the fitted trees record which axis each split used.
+Three practical points. Give the covariate to whichever forest needs it, prognostic for a cleaner baseline, treatment for moderation, both when both. It must be observed in every cell, including cells where the outcome is missing, because it is an input rather than an outcome. And it must be passed to `predict()` as well, since the fitted trees record which axis each split used; when a projection runs past the panel, the last observed value is carried forward.
 
 ## Conclusion
 
-The trajectory extends past the study window because it is a smooth function of exposure rather than a set of unrelated period effects. Adoption that was chosen rather than randomized is fine when the drivers are recorded, and beyond any method's reach when they are not. A unit intercept is the cheapest way to give the model each unit's level, and time-varying covariates open the door to within-unit moderation as long as the treatment cannot move them.
+The trajectory extends past the study window because it is a smooth function of exposure rather than a set of unrelated period effects, and it reverts toward a level estimated from the whole curve rather than to zero. Adoption that was chosen rather than randomized is fine when the drivers are recorded, including when they also drive the untreated trend, and beyond any method's reach when they are not. A unit intercept is the cheapest way to give the model each unit's level, and its cost, a shrinkage fraction you can compute from the fit, is what separates the model from a differencing estimator when a cohort has only a week or two of untreated history. Time-varying covariates open the door to within-unit moderation as long as the treatment cannot move them.
 
 The **[next chapter](longbet_ordinal.qmd)** changes the outcome from a continuous measure to an ordered rating; the **[last one](longbet_encouragement.qmd)** changes the design to one where adoption can only be encouraged.

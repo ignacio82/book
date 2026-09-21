@@ -52,7 +52,7 @@ verify_longbet_environment()
 theme_set(theme_minimal(base_size = 12))
 
 cost <- 20; capacity <- 80; budget <- 1600
-enc_budget <- c(lb_budget(12), list(random_seed = 123L))
+enc_budget <- c(lb_budget(2), list(random_seed = 123L))
 ```
 
 ## How the Model Works
@@ -62,18 +62,18 @@ enc_budget <- c(lb_budget(12), list(random_seed = 123L))
 **The outcome, on the adoption clock.** With $S^D_{it}$ the weeks since account $i$ activated,
 
 $$
-Y_{it} = \mu_Y(X_i, t) + \beta^{Y}_{S^D_{it}}\, \nu_Y(X_i, t)\, \mathbf{1}\{S^D_{it} \ge 1\} + \gamma^{Y}_i + \epsilon^{Y}_{it}.
+Y_{it} = \mu_Y(X_i) + \eta^{Y}_{it} + \beta^{Y}_{S^D_{it}}\, \nu_Y(X_i)\, \mathbf{1}\{S^D_{it} \ge 1\} + \gamma^{Y}_i + \epsilon^{Y}_{it}.
 $$
 
-This is the model of the first chapter with **adoption** as the treatment, so the equation contains the jump that activation causes and how the benefit grows with exposure. Accounts in both arms contribute activation events, because control accounts adopt organically too.
+This is the model of the first chapter with **adoption** as the treatment, calendar-time block included, so the equation contains the jump that activation causes and how the benefit grows with exposure. Accounts in both arms contribute activation events, because control accounts adopt organically too.
 
 **Adoption, as a hazard on the offer clock.** With $S^Z_{it}$ the weeks since the offer, the probability of activating this week given that the account has not yet activated is
 
 $$
-\lambda_{it} = \Phi\!\Big(\mu_D(X_i, t) + \beta^{D}_{S^Z_{it}}\, \nu_D(X_i, t)\, \mathbf{1}\{S^Z_{it} \ge 1\} + \eta_i\Big),
+\lambda_{it} = \Phi\!\Big(\mu_D(X_i) + \eta^{D}_{it} + \beta^{D}_{S^Z_{it}}\, \nu_D(X_i)\, \mathbf{1}\{S^Z_{it} \ge 1\} + u_i\Big),
 $$
 
-a binary LongBet on the first-activation indicator with cells after activation masked out. The account-level term $\eta_i$ is a frailty: it carries unobserved differences in the propensity to adopt.
+a binary LongBet on the first-activation indicator with cells after activation masked out. The account-level term $u_i$ is a frailty: it carries unobserved differences in the propensity to adopt, and the block $\eta^{D}_{it}$ lets the organic adoption rate move with the calendar.
 
 **Composition.** Under an offer schedule, the hazard gives the probability of activating first in week $a$ and of having activated by week $t$. The offer's effects follow:
 
@@ -166,7 +166,7 @@ enc_run <- lb_artifact(
   })
 ```
 
-The fit uses four chains, 2,000 burn-in sweeps and 12,000 further sweeps per chain with every twelfth retained, for both equations.
+The fit uses eight chains, 2,000 burn-in sweeps and 2,000 further sweeps per chain with every second retained, for both equations; the same sampler settings apply to the outcome equation and to the hazard.
 
 ```{r diagnostics}
 diag_tbl <- enc_run$diagnostics %>% filter(group == "all") %>%

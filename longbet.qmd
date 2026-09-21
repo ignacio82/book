@@ -20,8 +20,8 @@ This is the first of six chapters on LongBet:
 
 1. **LongBet: Dynamic Treatment Effects in Staggered Rollouts** (this chapter): the model, a randomized rollout, the fit and its checks, the average effect against a design-based benchmark, and heterogeneity down to the individual seller.
 2. **[LongBet: From Effects to Decisions](longbet_decisions.qmd)**: dollar valuations, a ranked rollout under a capacity constraint, and a joint screen over three outcomes at once.
-3. **[LongBet and Modern Difference-in-Differences](longbet_did.qmd)**: the comparison a reviewer will ask for, against two-way fixed effects, Callaway and Sant'Anna, Sun and Abraham, and Borusyak-Jaravel-Spiess.
-4. **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd)**: projecting past the study window, adoption that was not randomized, where a unit's level comes from, and covariates that move over time.
+3. **[LongBet and Modern Difference-in-Differences](longbet_did.qmd)**: the comparison a reviewer will ask for, against two-way fixed effects, Callaway and Sant'Anna, Sun and Abraham, Borusyak-Jaravel-Spiess and interactive fixed effects, on panels where untreated trends are parallel and on one where they diverge.
+4. **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd)**: projecting past the study window, what the model assumes when adoption was not randomized, where a unit's level comes from, and covariates that move over time.
 5. **[LongBet: Ordinal Outcomes and Customer Experience](longbet_ordinal.qmd)**: ordered ratings and the probability of hitting a customer-experience target.
 6. **[LongBet: Randomized Encouragement and Adoption Timing](longbet_encouragement.qmd)**: when you can only invite people to adopt, and the decision is whom to invite.
 :::
@@ -41,16 +41,19 @@ LongBet, introduced by @wang2024longbet, extends the Bayesian Causal Forest fami
 For unit $i$ in period $t$:
 
 $$
-Y_{it} = \mu(X_i, t) + \beta_{S_{it}}\,\nu(X_i, t)\,\mathbf{1}\{S_{it} \ge 1\} + \gamma_i + \epsilon_{it},
+Y_{it} = \underbrace{\mu(X_i) + \eta_{it} + \gamma_i}_{\text{untreated surface}}
+\;+\; \underbrace{\beta_{S_{it}}\,\nu(X_i)\,\mathbf{1}\{S_{it} \ge 1\}}_{\text{treatment effect}}
+\;+\; \epsilon_{it},
 \qquad \epsilon_{it} \sim \mathcal{N}(0, \sigma^2)
 $$
 
 where
 
   - $Y_{it}$ is the outcome and $X_i$ are pre-treatment covariates;
-  - $S_{it}$ is unit $i$'s **exposure**, the number of periods since it was treated, and zero before that. Treatment is absorbing: once a unit is treated it stays treated;
-  - $\mu(\cdot)$ is the **prognostic** forest, a sum of trees that predicts the untreated outcome;
-  - $\beta_S$ is **one** Gaussian process over exposure, shared by every unit. It is where the model pools information about the *shape* of the response;
+  - $S_{it}$ is unit $i$'s **exposure**: 1 in the period it is first treated, 2 in the next, and zero before that. Treatment is absorbing: once a unit is treated it stays treated;
+  - $\mu(\cdot)$ is the **prognostic** forest, a sum of trees over the covariates that carries the level of the untreated outcome. It does not split on calendar time;
+  - $\eta_{it}$ is the **calendar-time block**. Its first half is a free effect for every period, shared by all units, so a common shock, a seasonal pattern or a platform-wide trend is represented exactly rather than approximated by tree cutpoints. Its second half lets different kinds of units trend differently: smooth functions of calendar time multiplied by a dictionary of nonlinear features of the covariates, under a horseshoe prior that shrinks the terms the data do not call for. On a panel whose untreated paths do not diverge, that prior switches the second half off; on one where they do, it is what keeps the model honest;
+  - $\beta_S$ is **one** Gaussian process over exposure, shared by every unit. It is where the model pools information about the *shape* of the response. Its mean is a free constant rather than zero, which matters when the curve is projected past the data;
   - $\nu(\cdot)$ is the **treatment** forest, a second sum of trees that scales that shape up or down for each kind of unit, which is where heterogeneity in the *size* of the effect lives;
   - $\gamma_i \sim \mathcal{N}(0, \sigma^2_\gamma)$ is a unit intercept, so each unit's own level is carried by a parameter rather than reconstructed from covariates;
   - the indicator switches the treatment term on in treated cells only, so an untreated cell has no treatment contribution at all.
@@ -58,20 +61,22 @@ where
 The effect of $S$ periods of exposure for a unit with covariates $X_i$ is the contrast against never being treated,
 
 $$
-\tau_t(X_i, S) = \beta_S\,\nu(X_i, t).
+\tau_t(X_i, S) = \beta_S\,\nu(X_i).
 $$
 
 One curve, many sizes. That factorisation is what lets a short panel say something about a trajectory: every treated unit-period in the data, whenever it adopted, contributes to the same $\beta_S$, while the forest sorts out who responds strongly.
 
+Three clocks run through a staggered rollout: calendar time $t$, exposure $S$, and the launch period $E_i$, tied together on every treated cell by $t = (E_i - 1) + S_{it}$. That identity is the reason calendar time is kept out of both forests and given a block of its own. A tree that could split on $t$ could also imitate the exposure profile, and the two would then compete over which of them holds a trend, a competition the data cannot settle. The division of labour, forests for the covariates, the block for the calendar, the process for exposure, is what keeps the effect identified inside the model, and it is also what lets the sampler draw the calendar terms, the intercepts and the trajectory together in closed form instead of walking a ridge one step at a time.
+
 ::: {.callout-note title="Implementation"}
-LongBet is implemented in `longbet-jax`: a vectorised Metropolis-Hastings sampler written in JAX on top of `bartz`, with multiple chains, $\hat R$, and optional GPU execution. It is reached from R with `library(longbet)` and from Python with `from longbet import LongBet`. Every sweep updates both forests with GROW, PRUNE, CHANGE and REGROW proposals, then the trajectory, the unit intercepts and the variances, plus a Metropolis move along the exact scale ridge between $\beta$ and the treatment leaves. Chains start from the prior, so $\hat R$ compares chains that could have found different regions.
+LongBet is `longbet-jax`: one compiled JAX program with an R front door, `library(longbet)`, and a Python one, `from longbet import LongBet`, that return the same quantities on the same exposure clock. Every sweep updates both forests with grow, prune, change and whole-tree regrow proposals while the unit intercepts are integrated out analytically, so a proposed split is judged against each seller's marginal precision rather than against last sweep's intercepts. It then draws the trajectory, moves along the exact scale ridge between $\beta$ and the treatment leaves, transfers level and trend components between the two forests in closed form, and finally draws the calendar-time coefficients, the intercepts and the trajectory together from their exact joint Gaussian conditional. After every trajectory draw, $(\beta, \nu)$ is reflected so that $\sum_S \beta_S \ge 0$, a sign convention that leaves every effect $\beta_S\,\nu(X_i)$ untouched. Chains start overdispersed from the prior, so $\hat R$ compares chains that could have found different regions, and the package reports rank-normalized $\hat R$, bulk and tail effective sample sizes and Monte Carlo error for the average effect at every exposure, next to the number of treated cells behind it.
 :::
 
 ## What This Buys in a Randomized Rollout {#sec-longbet-why}
 
-This chapter applies LongBet to a **randomized** experiment, so it is worth being precise about the division of labour. Random assignment is what identifies the effect. A simple comparison against a holdout is already unbiased. What the model adds is everything else:
+This chapter applies LongBet to a **randomized** experiment, so it is worth being precise about the division of labour. The model's own identifying assumption, that once covariates and a unit's persistent level are known the launch date carries no further information about its untreated path, is a version of parallel trends conditional on covariates; the [fourth chapter](longbet_extensions.qmd) spells it out. When the launch order is a lottery that assumption holds by design, which is the situation in which the model's authors most readily recommend it. Random assignment is what identifies the effect, and a simple comparison against a holdout is already unbiased. What the model adds is everything else:
 
-  - **Precision.** Weekly revenue per seller varies by orders of magnitude across sellers. A model of $\mu(X_i, t)$ and $\gamma_i$ explains that variation away before the effect is read off. This is the non-parametric cousin of ANCOVA and of CUPED [@deng2013cuped], and it is the difference between an experiment that answers your question and one that runs for another quarter.
+  - **Precision.** Weekly revenue per seller varies by orders of magnitude across sellers. A model of $\mu(X_i)$, $\eta_{it}$ and $\gamma_i$ explains that variation away before the effect is read off. This is the non-parametric cousin of ANCOVA and of CUPED [@deng2013cuped], and it is the difference between an experiment that answers your question and one that runs for another quarter.
   - **Resolution.** The holdout comparison gives one number per period since launch. LongBet gives a posterior for every seller at every exposure, learned in one model rather than in subgroups you had to name in advance.
   - **Reach.** Experiments end; business cases run for a year. The Gaussian process on $\beta_S$ extrapolates the trajectory past the last period you observed (@sec-longbet-forecast in the fourth chapter).
   - **Decisions.** Posterior draws convert directly into the quantity a business argues about: the probability that a seller is worth the cost (the [second chapter](longbet_decisions.qmd)).
@@ -171,7 +176,7 @@ tibble(wave = rep(wave, times = Tn), week = rep(weeks_all, each = n), y = as.vec
 ## Fitting the Model {#sec-longbet-fitting}
 
 ::: {.callout-note title="Sampler settings"}
-Four chains start from the prior, each discarding 2,000 burn-in sweeps and then running 8,000 sweeps of which every eighth is retained, giving 1,000 draws per chain. The forests are the package defaults: 20 prognostic and 60 treatment trees of depth at most 8. A unit intercept is on. Neither forest splits on calendar time here, because this panel's untreated path has no calendar structure to find; the fourth chapter shows the switch that turns calendar splits back on when the business has seasonality.
+Eight chains start overdispersed from the prior. Each discards 2,000 burn-in sweeps, the package default, and then runs 16,000 more of which every sixteenth is retained, giving 1,000 draws per chain and 8,000 in all. That is twice the package's four chains and sixteen times its retained run, because this chapter reports every seller's own effect, and those mix far more slowly than the average effect the defaults are sized for: at the default budget the average effect already passes every check below, while a tenth of the seller-level effects still do not. Everything structural is the package default: 20 prognostic and 60 treatment trees of depth at most 8, the calendar-time block with its horseshoe prior, a unit intercept, and no calendar splits in either forest. The one choice made for this panel is the lengthscale of the kernel on $\beta_S$, two weeks rather than the default one, a smoother prior for a weekly clock with twelve observed exposures.
 
 None of these settings establishes convergence. The diagnostics after the fit do that.
 :::
@@ -187,25 +192,22 @@ lb_fit <- lb_core_fit(ro)
 ## Python
 
 ```python
-import jax
 from longbet import LongBet, LongBetConfig
 
-config = LongBetConfig(
-    num_chains=4, num_burnin=2000, num_sweeps=1000, n_skip=8,
-    sig_knl=1.0, lambda_knl=2.0,
-    random_intercept=True, split_time_ps=False, split_calendar_trt=False,
-)
-model = LongBet(config)
-model.fit(y=y_train, x=x, z=z_train, t=week_study, key=jax.random.key(42))
+config = LongBetConfig(num_chains=8, num_burnin=2000, num_sweeps=1000, n_skip=16,
+                       sig_knl=1.0, lambda_knl=2.0, random_seed=42)
+model = LongBet(config).fit(y=y_train, x=x, z=z_train, t=week_study)
+pred = model.predict(x=x, z=z_train, t=week_study)
+att, diag = pred.att(), pred.stability()   # ATT with its support; R-hat, ESS and MCSE by exposure
 ```
 :::
 
 `lb_core_fit()` is a thin wrapper that fits the model once and caches it, keyed on the engine source, the sampler settings and a digest of the data, so the decisions and forecasting chapters reuse this fit instead of repeating it. A few arguments deserve comment:
 
-  - `x` is the covariate matrix. Omitting `x_trt` lets both forests share one block of columns instead of allocating a duplicate set.
+  - `x` is the covariate matrix. Omitting `x_trt` lets both forests share one block of columns instead of allocating a duplicate set. The same columns, standardized, feed the covariate dictionary of the calendar-time block.
   - `t` is the calendar index of the panel columns. LongBet infers each unit's exposure $S_{it}$ from `z` and `t`; you never construct it.
-  - The residual variance has a proper inverse-gamma prior, and so does the unit-intercept variance.
-  - `sig_knl` and `lambda_knl` are the standard deviation and lengthscale of the kernel on $\beta_S$. A longer lengthscale favours a smoother trajectory.
+  - The outcome is centred and scaled internally, so the priors on the forests, the block and the variances are on a standardized scale and every reported quantity is transformed back. That is what makes the defaults defaults.
+  - `sig_knl` and `lambda_knl` are the standard deviation and lengthscale of the kernel on $\beta_S$. A longer lengthscale favours a smoother trajectory. They are fixed rather than learned, because twelve exposures say little about them, and the fourth chapter treats them as sensitivity inputs.
 
 Prediction takes the fitted object, the covariates and a treatment panel. Passing the study weeks means the model and the benchmark below average exactly the same treated cells.
 
@@ -214,15 +216,19 @@ Prediction takes the fitted object, the covariates and a treatment panel. Passin
 lb_pred <- predict(lb_fit, x = x, z = z_train, t = week_study, random_seed = 1)
 lb_att  <- get_att(lb_pred, alpha = 0.05)
 n_chains <- lb_fit$model_params$num_chains; n_sweeps <- lb_fit$model_params$num_sweeps
+kable(att_support(lb_pred), digits = c(0, 0, 1, 2),
+      caption = "Calendar support behind each exposure: the treated seller-weeks that the average at that exposure rests on, and the untreated sellers observed in the same weeks. Only the first wave reaches twelve weeks, and the holdout is there throughout.")
 ```
+
+The support table is reported before any estimate, because it says which averages rest on many sellers and which on few. The thin end of the exposure axis is where a staggered rollout always has the least data, and the model's pooling through $\beta_S$ is what lets it say anything there at all.
 
 ### Checking the sampler {#sec-longbet-sampler}
 
-The checks are part of the analysis, and they are run on the quantities the chapter actually reports: the average effect at every exposure, both segment curves, and later every seller's own effect. The package's thresholds are a rank-normalized $\hat R$ of at most 1.01 with bulk and tail effective sample sizes of at least 400.
+The checks are part of the analysis, and they are run on the quantities the chapter actually reports: the average effect at every exposure, both segment curves, and later every seller's own effect. The package's thresholds are a rank-normalized $\hat R$ of at most 1.01 with bulk and tail effective sample sizes of at least 400 [@vehtari2021rank]. Support and convergence are different failures and one does not excuse the other: an exposure with few treated cells has limited information whether or not its chains agree, and an exposure whose chains disagree has not been sampled adequately however well supported it is.
 
 ```{r fig-traces}
-#| fig-cap: "Four chains for the residual scale and for the average effect at eight weeks of exposure. Chains that overlap and wander freely are what a well-explored posterior looks like; the table reports the numbers."
-#| fig-alt: "Two trace panels, each with four coloured chains that overlap and fluctuate around a common level with no drift."
+#| fig-cap: "Eight chains for the residual scale and for the average effect at eight weeks of exposure. Chains that overlap and wander freely are what a well-explored posterior looks like; the table reports the numbers."
+#| fig-alt: "Two trace panels, each with eight coloured chains that overlap and fluctuate around a common level with no drift."
 #| fig-width: 9
 #| fig-height: 3
 S_show <- 8
@@ -237,7 +243,7 @@ bind_rows(
   ggplot(aes(sweep, value, colour = chain)) +
   geom_line(linewidth = 0.3, alpha = 0.8) +
   facet_wrap(~ series, scales = "free_y") +
-  scale_colour_brewer(palette = "Set1") +
+  scale_colour_manual(values = grDevices::hcl.colors(n_chains, "Dark 3")) +
   labs(x = "Retained draw (within chain)", y = NULL, colour = "Chain") +
   theme(legend.position = "bottom")
 ```
@@ -264,7 +270,7 @@ kable(chain_tbl, digits = c(0, 0, 4, 4, 2),
 
 `r if (all(core_diag$ok)) sprintf("Every reported quantity passes: the largest R-hat is %.3f and the smallest bulk effective sample size is %.0f. The intervals below can be read as summaries of this model's posterior.", max(core_diag[["R-hat (max)"]]), min(core_diag[["Bulk ESS (min)"]])) else "Not every reported quantity passes; read the intervals below as provisional."`
 
-Two parameters are deliberately absent from that table. The raw $\beta_S$ draws are not a reported quantity: the likelihood depends on the product $\beta_S\nu$, so flipping the sign of both leaves it unchanged and chains routinely disagree about the sign of $\beta$ while agreeing about every effect. The unit-intercept variance is a nuisance parameter that no reported number depends on. Diagnose what you report.
+Two parameters are deliberately absent from that table. The raw $\beta_S$ and $\nu$ draws are not reported quantities: the likelihood depends only on their product, so their scale is a convention, one the sampler slides along on purpose in its ridge move, and their sign is fixed by the half-space reflection rather than by the data. The unit-intercept variance is a nuisance parameter that no reported number depends on. Diagnose what you report.
 
 ## The Average Effect, Against a Design-Based Benchmark {#sec-longbet-att}
 
@@ -417,12 +423,12 @@ ad_max_s <- max(ad$s[ad$z == 1])
 ad_truth <- vapply(seq_len(ad_max_s), function(ss) mean(ad$tau[ad$s == ss]), numeric(1))
 ad_adopt <- ifelse(is.finite(ad$adopt), ad$adopt, Inf)
 ad_fit <- lb_artifact("additive_fit",
-                      lb_key("additive", lb_budget(4), LB_MODEL, digest::digest(ad[c("y", "x", "z")])),
+                      lb_key("additive", lb_budget(1), LB_MODEL, digest::digest(ad[c("y", "x", "z")])),
                       export = "ad",
                       builder = function() {
                         f <- do.call(longbet::longbet,
                                      c(list(y = ad$y, x = ad$x, z = ad$z, t = ad$tg, random_seed = 101L),
-                                       LB_MODEL, lb_budget(4)))
+                                       LB_MODEL, lb_budget(1)))
                         p <- predict(f, x = ad$x, z = ad$z, t = ad$tg, summary_only = TRUE, random_seed = 1)
                         list(att = get_att(p, alpha = 0.05),
                              layout = chain_layout(f$model_params$num_chains, f$model_params$num_sweeps))
@@ -438,7 +444,7 @@ bind_rows(
 ) %>% kable(digits = 3, caption = "On a purely additive panel the two estimators agree, and the model's regularisation costs nothing measurable here.")
 ```
 
-The model was not told that the world was additive, that the effect was homogeneous, or that the trajectory was linear. It recovers the same curve as the estimator built for exactly this case, and its intervals are narrower rather than wider. That is the reassurance worth having before using it where the classical estimator cannot go.
+The model was not told that the world was additive, that the effect was homogeneous, or that the trajectory was linear. It recovers the same curve as the estimator built for exactly this case, and its intervals are narrower rather than wider. The calendar-time block deserves a word here: this panel has no covariate-dependent trends, and the horseshoe prior on that half of the block shrinks its coefficients toward zero rather than letting a hundred spare columns absorb noise, which is why flexibility costs nothing measurable. That is the reassurance worth having before using it where the classical estimator cannot go.
 
 ## Conclusion
 
@@ -448,9 +454,10 @@ None of that is a decision yet. In **[LongBet: From Effects to Decisions](longbe
 
 ::: {.callout-tip}
 ## Learn more
-  - @wang2024longbet LongBet: heterogeneous treatment effect estimation in panel data.
-  - @longbetpkg The `longbet` package.
+  - @wang2024longbet LongBet: Bayesian ensemble trees for causal inference on longitudinal data, the paper these chapters follow.
+  - @longbetpkg The `longbet` package, one JAX engine with R and Python interfaces.
   - @hahn2020bayesian Bayesian regression tree models for causal inference, the cross-sectional model LongBet extends.
   - @callaway2021did and @bacon2021difference for the staggered-adoption literature the benchmark comes from.
-  - @deng2013cuped for the variance-reduction idea that $\mu(X_i, t)$ generalises.
+  - @vehtari2021rank for the rank-normalized $\hat R$ and effective sample sizes the checks use.
+  - @deng2013cuped for the variance-reduction idea that $\mu(X_i)$ generalises.
 :::

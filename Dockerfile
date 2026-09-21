@@ -6,6 +6,16 @@ RUN apt-get update && apt-get install -y \
     libboost-all-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Pin Quarto to the version the publish workflow installs
+# (.github/workflows/publish.yml). rocker/verse ships whatever Quarto was
+# current when the base image was built, and the committed _freeze/ results
+# are what CI publishes, so the two renderers should be the same program.
+ARG QUARTO_VERSION=1.9.38
+RUN curl -fsSL -o /tmp/quarto.deb \
+        "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.deb" \
+    && dpkg -i /tmp/quarto.deb && rm /tmp/quarto.deb \
+    && quarto --version
+
 # Install pak for fast, dependency-resolved R package installation
 RUN Rscript -e "install.packages('pak', repos = sprintf('https://r-lib.github.io/p/pak/stable/%s/%s/%s', .Platform\$pkgType, R.Version()\$os, R.Version()\$arch))"
 
@@ -33,7 +43,7 @@ RUN R -q -e "shinylive::assets_ensure()"
 # (ignacio82/longbet, <= v0.7.2) is deliberately not installed -- it shares the
 # R package name, so installing both would silently decide which engine the
 # chapter runs on. Pin LONGBET_REF to a commit for a reproducible build.
-ARG LONGBET_REF=bfe845da03172631ec280ff40a6f15f174f1ee34
+ARG LONGBET_REF=c2365be0a779210e8f5944ca5bde211bc916e721
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 python3-venv python3-dev git \
     && rm -rf /var/lib/apt/lists/* \
@@ -72,7 +82,9 @@ RUN R -q -e "stopifnot( \
     is.function(longbet::att_expected_score), \
     is.function(getS3method('predict', 'longbet', envir = asNamespace('longbet'))), \
     is.function(getS3method('predict', 'longbet_multi', envir = asNamespace('longbet'))), \
-    'cache_forest_evaluations' %in% names(formals(getS3method('predict', 'longbet', envir = asNamespace('longbet')))) \
+    'cache_forest_evaluations' %in% names(formals(getS3method('predict', 'longbet', envir = asNamespace('longbet')))), \
+    'trend_num_features' %in% names(formals(longbet::longbet)), \
+    !('split_time_ps' %in% names(formals(longbet::longbet))) \
     ); \
     py <- reticulate::import('longbet'); \
     stopifnot(reticulate::py_has_attr(py, 'LongBet'), \
@@ -81,16 +93,20 @@ RUN R -q -e "stopifnot( \
               reticulate::py_has_attr(py, 'att_stability')); \
     ordinal_config <- py\$LongBetConfig(outcome = 'ordinal', num_categories = 5L); \
     stopifnot(identical(ordinal_config\$outcome, 'ordinal')); \
+    default_config <- py\$LongBetConfig(); \
+    stopifnot(isTRUE(default_config\$use_trend_block), isTRUE(default_config\$trend_horseshoe), \
+              isFALSE(default_config\$split_calendar_mu), isFALSE(default_config\$split_calendar_trt)); \
     cat('longbet R', as.character(packageVersion('longbet')), \
         '/ python', py[['__version__']], 'ok\n')"
 
 # Econometric comparison packages. The LongBet chapters benchmark against the modern staggered
 # difference-in-differences estimators (Callaway & Sant'Anna, Sun & Abraham, Borusyak-Jaravel-Spiess),
-# decompose the canonical two-way fixed effects estimator with Goodman-Bacon weights, and race the
-# encouragement model against generalized random forests. Placed before the project copy so that
-# editing the book never reinstalls them.
-RUN Rscript -e "pak::pkg_install(c('did', 'fixest', 'didimputation', 'bacondecomp', 'grf'))" \
- && R -q -e "stopifnot(all(sapply(c('did','fixest','didimputation','bacondecomp','grf'), requireNamespace, quietly = TRUE)))"
+# the interactive fixed effects / generalized synthetic control estimator (fect), decompose the
+# canonical two-way fixed effects estimator with Goodman-Bacon weights, and race the encouragement
+# model against generalized random forests. Placed before the project copy so that editing the book
+# never reinstalls them.
+RUN Rscript -e "pak::pkg_install(c('did', 'fixest', 'didimputation', 'bacondecomp', 'grf', 'fect'))" \
+ && R -q -e "stopifnot(all(sapply(c('did','fixest','didimputation','bacondecomp','grf','fect'), requireNamespace, quietly = TRUE)))"
 
 WORKDIR /book
 COPY . .

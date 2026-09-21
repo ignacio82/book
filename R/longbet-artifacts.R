@@ -27,6 +27,17 @@ write_artifact_atomic <- function(artifact, target_path) {
   invisible(target_path)
 }
 
+# LONGBET_BUILD_ONLY=name1,name2 turns a render into a builder for just those artifacts: they are
+# fitted as usual, cached artifacts are still reused, and an artifact that is neither listed nor
+# cached comes back as NULL instead of being built. Code that uses such a placeholder fails, so
+# this mode is meant for a throwaway copy rendered with `error: true`, where a failed chunk does
+# not stop the ones after it: tools/prebuild-longbet-cache.sh uses it to spread the fits of one
+# chapter over several containers or machines. A normal render never sets it.
+lb_build_only <- function() {
+  v <- Sys.getenv("LONGBET_BUILD_ONLY")
+  if (!nzchar(v)) NULL else trimws(strsplit(v, ",")[[1]])
+}
+
 # Build `name` unless a cached copy carries the same key. `builder` runs in a fresh worker
 # process by default, so the memory a fit and its prediction allocate is returned to the
 # operating system before the chapter continues; `export` names the objects it needs.
@@ -39,6 +50,11 @@ lb_artifact <- function(name, key, builder, export = character(), in_worker = TR
       return(cached$payload)
     }
     message(sprintf("[Artifact] %s is stale; rebuilding", name))
+  }
+  only <- lb_build_only()
+  if (!is.null(only) && !(name %in% only)) {
+    message(sprintf("[Artifact] %s is not in LONGBET_BUILD_ONLY and not cached; returning NULL", name))
+    return(NULL)
   }
   message(sprintf("[Artifact] Building %s ...", name))
   started <- Sys.time()
@@ -54,7 +70,7 @@ lb_artifact <- function(name, key, builder, export = character(), in_worker = TR
 
 # The marketplace rollout's fit, shared by the first three chapters. The fit object carries the
 # serialized engine state, so predict() rehydrates it in whichever chapter reads it back.
-lb_core_fit <- function(ro, budget = lb_budget(8)) {
+lb_core_fit <- function(ro, budget = lb_budget(16)) {
   key <- lb_key("core_fit", budget, LB_MODEL,
                 digest::digest(list(ro$y_train, ro$x, ro$z_train, ro$week_study), algo = "sha256"))
   lb_artifact("core_fit", key, builder = function() {

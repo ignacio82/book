@@ -1,6 +1,6 @@
 ---
 title: "LongBet and Modern Difference-in-Differences"
-description: "How LongBet compares with the estimators economists reach for in a staggered rollout: two-way fixed effects and its Goodman-Bacon decomposition, Callaway and Sant'Anna, Sun and Abraham, and Borusyak-Jaravel-Spiess. Where they agree, where they cannot go, and what that is worth in a targeting decision."
+description: "How LongBet compares with the estimators economists reach for in a staggered rollout: two-way fixed effects and its Goodman-Bacon decomposition, Callaway and Sant'Anna with and without covariates, Sun and Abraham, Borusyak-Jaravel-Spiess, and interactive fixed effects. Where they agree, where a cohort-by-period average cannot go, what happens when untreated trends diverge with the covariates, and what that is worth in a targeting decision."
 format:
   html:
     css: longbet.css
@@ -13,16 +13,16 @@ share:
 ---
 
 ::: {.callout-note title="Part of the LongBet sequence"}
-This chapter sits between **[LongBet: From Effects to Decisions](longbet_decisions.qmd)** and **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd)**. It is self-contained: the panels here are new, small, and built to isolate one question at a time.
+This chapter sits between **[LongBet: From Effects to Decisions](longbet_decisions.qmd)** and **[LongBet: Forecasting and Observational Panels](longbet_extensions.qmd)**. It is self-contained: the panels here are new, small, and built to isolate one question at a time. The last of them reproduces the simulation design of @wang2024longbet, so its results can be read next to the paper's tables.
 :::
 
 ## The Question a Reviewer Will Ask
 
 Present a panel model of a staggered rollout and someone will ask why you did not run the estimator from the econometrics literature. It is a fair question with a precise answer, and this chapter gives it by running both on the same data.
 
-The modern staggered difference-in-differences toolkit exists because the canonical two-way fixed effects (TWFE) event study breaks under staggered adoption. @bacon2021difference showed that its coefficient is a weighted average of all the two-by-two comparisons available in the panel, including **forbidden** ones that use already-treated units as controls for later-treated units. When effects grow with exposure, those comparisons subtract a rising treated trend and can flip the sign of the answer. The repairs are well known: @callaway2021did estimate group-time effects against never-treated or not-yet-treated units and aggregate afterwards; @sun2021estimating build an interaction-weighted event study; and @borusyak2024revisiting impute untreated potential outcomes from a model fitted on untreated cells only.
+The modern staggered difference-in-differences toolkit exists because the canonical two-way fixed effects (TWFE) event study breaks under staggered adoption. @bacon2021difference showed that its coefficient is a weighted average of all the two-by-two comparisons available in the panel, including **forbidden** ones that use already-treated units as controls for later-treated units. When effects grow with exposure, those comparisons subtract a rising treated trend and can flip the sign of the answer. The repairs are well known: @callaway2021did estimate group-time effects against never-treated or not-yet-treated units and aggregate afterwards, optionally conditioning on covariates through a doubly robust score; @sun2021estimating build an interaction-weighted event study; and @borusyak2024revisiting impute untreated potential outcomes from a model fitted on untreated cells only. A different tradition relaxes parallel trends instead of conditioning on covariates: interactive fixed effects, or the generalized synthetic control of @xu2017generalized, fits a low-rank factor structure to the untreated panel and imputes from it.
 
-Those estimators are excellent at what they do. This chapter's claim is narrow and, I think, useful: on a panel they were built for, LongBet matches them, and on a panel where the effect varies across units, it answers a question they are not built to answer.
+Those estimators are excellent at what they do. This chapter's claim is narrow and, I think, useful: on a panel they were built for, LongBet matches them; on a panel where the effect varies across units, it answers a question they are not built to answer; and on a panel where untreated trends diverge with the covariates, it adjusts for something the linear covariate adjustment cannot represent.
 
 ```{r setup}
 #| message: false
@@ -38,6 +38,7 @@ library(did)
 library(fixest)
 library(didimputation)
 library(bacondecomp)
+library(fect)
 
 source("R/longbet-common.R")
 source("R/longbet-sim.R")
@@ -46,12 +47,15 @@ verify_longbet_environment()
 theme_set(theme_minimal(base_size = 12))
 
 DID_PAL <- c(Truth = "#000000", `TWFE event study` = "#d95f02",
-             `Callaway & Sant'Anna` = "#7570b3", `Sun & Abraham` = "#e7298a",
-             `Borusyak, Jaravel & Spiess` = "#e6ab02", LongBet = "#0072B2")
+             `Callaway & Sant'Anna` = "#7570b3", `Callaway & Sant'Anna, covariates` = "#a6761d",
+             `Sun & Abraham` = "#e7298a", `Borusyak, Jaravel & Spiess` = "#e6ab02",
+             `Interactive fixed effects` = "#1b9e77", LongBet = "#0072B2")
 ```
 
 ```{r did-helpers}
-# One long-format panel per simulation, in the shape the econometric packages expect.
+# One long-format panel per simulation, in the shape the econometric packages expect. A simulator
+# may supply `x_did`, a data frame in which an unordered factor stays a factor; the model matrix
+# `x` handed to LongBet carries the same information as dummies.
 panel_long <- function(sim) {
   n <- nrow(sim$y)
   df <- expand.grid(id = seq_len(n), time = sim$tg)
@@ -61,13 +65,17 @@ panel_long <- function(sim) {
   df$first_treat <- sim$adopt[df$id]
   df$first_treat_did <- ifelse(is.finite(df$first_treat), df$first_treat, 0)
   df$rel_time <- ifelse(df$first_treat_did == 0, -1000, df$time - df$first_treat)
-  for (j in seq_len(ncol(sim$x))) df[[colnames(sim$x)[j]]] <- sim$x[df$id, j]
+  xs <- if (!is.null(sim$x_did)) sim$x_did else as.data.frame(sim$x)
+  for (j in names(xs)) df[[j]] <- xs[df$id, j]
   df
 }
 
 # Each estimator's event-study curve, aligned on exposure S = event time + 1 so that every
-# method is reporting the same quantity on the same axis.
-did_event_curves <- function(df, max_s) {
+# method reports the same quantity on the same axis. Intervals are pointwise 95% throughout.
+# `xformla` adds a covariate-adjusted Callaway-Sant'Anna run; `ife` adds interactive fixed
+# effects, whose factor dimension is chosen by cross-validation.
+did_event_curves <- function(df, max_s, xformla = NULL, ife = FALSE, seed = 1) {
+  set.seed(seed)
   align <- function(event_time, est, lo, hi) {
     m <- match(seq_len(max_s) - 1, event_time)
     tibble(s = seq_len(max_s), estimate = est[m], lower = lo[m], upper = hi[m])
@@ -75,25 +83,47 @@ did_event_curves <- function(df, max_s) {
   tw <- feols(y ~ i(rel_time, ref = c(-1, -1000)) | id + time, data = df)
   tw_ct <- as.data.frame(summary(tw)$coeftable)
   tw_ev <- suppressWarnings(as.numeric(sub(".*::", "", rownames(tw_ct))))
-  cs <- aggte(att_gt(yname = "y", tname = "time", idname = "id", gname = "first_treat_did",
-                     data = df, control_group = "notyettreated", allow_unbalanced_panel = FALSE),
-              type = "dynamic", na.rm = TRUE)
-  cs_crit <- if (!is.null(cs$crit.val.egt) && is.finite(cs$crit.val.egt)) cs$crit.val.egt else 1.96
+  cs_curve <- function(xf, label) {
+    cs <- aggte(att_gt(yname = "y", tname = "time", idname = "id", gname = "first_treat_did",
+                       xformla = xf, data = df, control_group = "notyettreated",
+                       allow_unbalanced_panel = FALSE, est_method = "dr", bstrap = TRUE, cband = FALSE),
+                type = "dynamic", na.rm = TRUE, cband = FALSE)
+    align(cs$egt, cs$att.egt, cs$att.egt - 1.96 * cs$se.egt, cs$att.egt + 1.96 * cs$se.egt) %>%
+      mutate(estimator = label)
+  }
   sa <- feols(y ~ sunab(first_treat_did, time) | id + time, data = df)
   sa_ct <- as.data.frame(summary(sa)$coeftable)
   sa_ev <- suppressWarnings(as.numeric(sub(".*::", "", rownames(sa_ct))))
   bjs <- as.data.frame(did_imputation(data = df, yname = "y", gname = "first_treat_did",
                                       tname = "time", idname = "id", horizon = TRUE, pretrends = FALSE))
   bjs_ev <- suppressWarnings(as.numeric(as.character(bjs$term)))
-  bind_rows(
+  out <- bind_rows(
     align(tw_ev, tw_ct$Estimate, tw_ct$Estimate - 1.96 * tw_ct$`Std. Error`,
           tw_ct$Estimate + 1.96 * tw_ct$`Std. Error`) %>% mutate(estimator = "TWFE event study"),
-    align(cs$egt, cs$att.egt, cs$att.egt - cs_crit * cs$se.egt,
-          cs$att.egt + cs_crit * cs$se.egt) %>% mutate(estimator = "Callaway & Sant'Anna"),
+    cs_curve(NULL, "Callaway & Sant'Anna"),
+    if (!is.null(xformla)) cs_curve(xformla, "Callaway & Sant'Anna, covariates"),
     align(sa_ev, sa_ct$Estimate, sa_ct$Estimate - 1.96 * sa_ct$`Std. Error`,
           sa_ct$Estimate + 1.96 * sa_ct$`Std. Error`) %>% mutate(estimator = "Sun & Abraham"),
     align(bjs_ev, bjs$estimate, bjs$conf.low, bjs$conf.high) %>%
       mutate(estimator = "Borusyak, Jaravel & Spiess"))
+  if (ife) {
+    fe <- suppressMessages(fect(y ~ treat, data = df, index = c("id", "time"), method = "ife",
+                                force = "two-way", CV = TRUE, r = c(0, 3), se = TRUE, nboots = 200,
+                                parallel = FALSE, seed = seed))
+    out <- bind_rows(out, align(as.integer(fe$time) - 1L, as.numeric(fe$att),
+                                as.numeric(fe$est.att[, "CI.lower"]), as.numeric(fe$est.att[, "CI.upper"])) %>%
+                       mutate(estimator = "Interactive fixed effects"))
+  }
+  out
+}
+
+score_curves <- function(curves, truth) {
+  curves %>% group_by(Estimator = estimator) %>%
+    summarise(RMSE = sqrt(mean((estimate - truth)^2)), `Mean error` = mean(estimate - truth),
+              `Interval width` = mean(upper - lower),
+              `Contained truth` = sprintf("%d of %d", sum(truth >= lower & truth <= upper), n()),
+              .groups = "drop") %>%
+    arrange(RMSE)
 }
 ```
 
@@ -109,11 +139,11 @@ ad_max_s <- max(ad$s[ad$z == 1])
 ad_truth <- vapply(seq_len(ad_max_s), function(ss) mean(ad$tau[ad$s == ss]), numeric(1))
 ad_run <- lb_artifact(
   "additive_fit",
-  lb_key("additive", lb_budget(4), LB_MODEL, digest::digest(ad[c("y", "x", "z")])),
+  lb_key("additive", lb_budget(1), LB_MODEL, digest::digest(ad[c("y", "x", "z")])),
   export = "ad",
   builder = function() {
     f <- do.call(longbet::longbet, c(list(y = ad$y, x = ad$x, z = ad$z, t = ad$tg, random_seed = 101L),
-                                     LB_MODEL, lb_budget(4)))
+                                     LB_MODEL, lb_budget(1)))
     p <- predict(f, x = ad$x, z = ad$z, t = ad$tg, summary_only = TRUE, random_seed = 1)
     list(att = get_att(p, alpha = 0.05),
          layout = chain_layout(f$model_params$num_chains, f$model_params$num_sweeps))
@@ -143,13 +173,8 @@ ggplot(ad_curves, aes(s, estimate, colour = estimator)) +
 ```
 
 ```{r did-additive-table}
-ad_curves %>% group_by(Estimator = estimator) %>%
-  summarise(RMSE = sqrt(mean((estimate - ad_truth)^2)), `Mean error` = mean(estimate - ad_truth),
-            `Interval width` = mean(upper - lower),
-            `Contained truth` = sprintf("%d of %d", sum(ad_truth >= lower & ad_truth <= upper), n()),
-            .groups = "drop") %>%
-  arrange(RMSE) %>%
-  kable(digits = 3, caption = sprintf("Accuracy over the %d observed event times on one dataset. Containment counts are not coverage.", ad_max_s))
+kable(score_curves(ad_curves, ad_truth), digits = 3,
+      caption = sprintf("Accuracy over the %d observed event times on one dataset. Containment counts are not coverage.", ad_max_s))
 ```
 
 LongBet was not told that the world was additive, that the effect was homogeneous, or that the trajectory was linear, and it lands with the estimators built for exactly this case. That is the reassurance worth having before using a flexible model where the classical one cannot go: **flexibility is not costing you anything here**.
@@ -188,11 +213,11 @@ hd_max_s <- max(hd$s[hd$z == 1])
 hd_truth <- vapply(seq_len(hd_max_s), function(ss) mean(hd$tau[hd$s == ss]), numeric(1))
 hd_run <- lb_artifact(
   "hetero_fit",
-  lb_key("hetero", lb_budget(24), LB_MODEL, digest::digest(hd[c("y", "x", "z")])),
+  lb_key("hetero", lb_budget(10), LB_MODEL, digest::digest(hd[c("y", "x", "z")])),
   export = "hd",
   builder = function() {
     f <- do.call(longbet::longbet, c(list(y = hd$y, x = hd$x, z = hd$z, t = hd$tg, random_seed = 303L),
-                                     LB_MODEL, lb_budget(24)))
+                                     LB_MODEL, lb_budget(10)))
     p <- predict(f, x = hd$x, z = hd$z, t = hd$tg, random_seed = 1)
     list(att = get_att(p, alpha = 0.05),
          cell_draws = matrix(p$tauhats, nrow = length(hd$z))[as.vector(hd$z == 1), ],
@@ -211,7 +236,7 @@ kable(bind_rows(
   diagnose_draws(hd_cell_draws, hd_run$layout,
                  sprintf("Unit-period effects (%d cells)", nrow(hd_cell_draws)))$summary) %>%
     select(-ok), digits = 3,
-  caption = "Sampling checks for this panel, including every treated unit-period effect. These are the slowest quantities in the book, so this fit runs the longest chains.")
+  caption = "Sampling checks for this panel, including every treated unit-period effect, the slowest-mixing quantities in the book.")
 hd_curves %>% group_by(Estimator = estimator) %>%
   summarise(`Average-effect RMSE` = sqrt(mean((estimate - hd_truth)^2)),
             `Interval width` = mean(upper - lower), .groups = "drop") %>%
@@ -266,17 +291,131 @@ tibble(Policy = c("Oracle (true effects)", "LongBet posterior mean",
 
 An estimator that ranks exposures must treat every unit at an exposure or none of them. An estimator that ranks units can leave the unprofitable ones out. That gap is the case for a unit-level model in a targeting problem, and notice what it is *not*: it is not a gap in average accuracy, because the previous table showed the two agreeing on the average.
 
+## When Untreated Trends Diverge With the Covariates {#sec-did-diverging}
+
+Both panels so far had parallel trends: the covariates did nothing to the untreated path, so a difference against the not-yet-treated removed everything that was not the effect. That is the world the estimators above were built for, and it is not the only world. The simulation study of @wang2024longbet is built around the other one, and this section reproduces its design on a single pair of panels so the result can be read next to the paper's tables.
+
+Five hundred units over twelve periods. Five covariates: three standard normal, one binary, and one three-level factor, which the linear estimators receive as dummies. A unit's untreated level depends on the covariates through the loading $g(x_4) + x_1\,|x_3 - 1|$, with $g(0) = 2$ and $g(1) = -1$, a piece of the prognostic function of the BCF simulation design [@hahn2020bayesian]: a step and a kink, nothing a linear adjustment can represent exactly. Adoption starts in period 7, and in every period from then on a unit that has not yet adopted does so with a probability that rises with its loading, so cohorts differ systematically in their untreated level. The effect factorizes as the model assumes, $\nu(x)\,(1 - e^{-S/2})$, with $\nu$ depending on two covariates that drive neither the level nor adoption, so that heterogeneity is not confounded with selection.
+
+Two panels share everything, seed included, and differ in one line. Under **parallel** trends the units move together, driven by a common calendar factor. Under **diverging** trends each unit also drifts in proportion to its loading, so the units that adopt first are the ones whose untreated path was already climbing fastest, by an amount calibrated to be of the same order as the effect. Conditional on the covariates the trends are still parallel, because the drift is a function of recorded covariates and calendar time; unconditionally they are not.
+
+```{r paper-design}
+#| message: false
+pd <- list(parallel = simulate_paper_design(seed = 4, trend = "parallel"),
+           diverging = simulate_paper_design(seed = 4, trend = "diverging"))
+stopifnot(identical(pd$parallel$z, pd$diverging$z), identical(pd$parallel$tau, pd$diverging$tau))
+pd_max_s <- max(pd$parallel$s)
+pd_truth <- vapply(seq_len(pd_max_s), function(ss) mean(pd$parallel$tau[pd$parallel$s == ss]), numeric(1))
+pd_budget <- list(parallel = lb_budget(2), diverging = lb_budget(10))   # unit-period effects are reported for the diverging panel
+pd_runs <- lapply(pd, function(d) lb_artifact(
+  paste0("paper_", d$trend),
+  lb_key("paper_design", d$trend, pd_budget[[d$trend]], LB_MODEL, digest::digest(d[c("y", "x", "z")])),
+  export = "pd_budget",
+  builder = function() {
+    f <- do.call(longbet::longbet, c(list(y = d$y, x = d$x, z = d$z, t = d$tg, random_seed = 404L),
+                                     LB_MODEL, pd_budget[[d$trend]]))
+    p <- predict(f, x = d$x, z = d$z, t = d$tg, random_seed = 1)
+    list(att = get_att(p, alpha = 0.05),
+         cell_draws = matrix(p$tauhats, nrow = length(d$z))[as.vector(d$z == 1), ],
+         layout = chain_layout(f$model_params$num_chains, f$model_params$num_sweeps))
+  }))
+pd_long <- lapply(pd, panel_long)
+tibble(Cohort = c(paste("Adopted in period", sort(unique(pd$parallel$adopt[is.finite(pd$parallel$adopt)]))), "Never adopted"),
+       Units = c(as.vector(table(pd$parallel$adopt[is.finite(pd$parallel$adopt)])), sum(!is.finite(pd$parallel$adopt))),
+       `Mean loading` = c(tapply(pd$parallel$loading, pd$parallel$adopt, mean)[as.character(sort(unique(pd$parallel$adopt[is.finite(pd$parallel$adopt)])))],
+                          mean(pd$parallel$loading[!is.finite(pd$parallel$adopt)]))) %>%
+  kable(digits = 2, caption = "Adoption is confounded with the prognostic loading: earlier cohorts have higher untreated levels, and under diverging trends they also climb faster.")
+```
+
+```{r paper-estimators}
+#| message: false
+#| warning: false
+pd_curves <- imap_dfr(pd, function(d, nm) bind_rows(
+  did_event_curves(pd_long[[nm]], pd_max_s, xformla = ~ x1 + x2 + x3 + x4 + x5, ife = TRUE),
+  tibble(s = seq_len(pd_max_s), estimate = pd_runs[[nm]]$att$att[seq_len(pd_max_s)],
+         lower = pd_runs[[nm]]$att$intervals[1, seq_len(pd_max_s)],
+         upper = pd_runs[[nm]]$att$intervals[2, seq_len(pd_max_s)], estimator = "LongBet")) %>%
+  mutate(panel = factor(if (nm == "parallel") "Parallel trends" else "Diverging trends",
+                        levels = c("Parallel trends", "Diverging trends"))))
+pd_cell_diag <- diagnose_draws(pd_runs$diverging$cell_draws, pd_runs$diverging$layout,
+                               sprintf("Diverging trends: unit-period effects (%d cells)", nrow(pd_runs$diverging$cell_draws)))
+pd_diag <- bind_rows(
+  diagnose_draws(pd_runs$parallel$att$att_full, pd_runs$parallel$layout, "Parallel trends: average effect, every exposure")$summary,
+  diagnose_draws(pd_runs$diverging$att$att_full, pd_runs$diverging$layout, "Diverging trends: average effect, every exposure")$summary,
+  pd_cell_diag$summary)
+kable(pd_diag %>% select(-ok), digits = 3,
+      caption = "Sampling checks for the two LongBet fits. The diverging panel, whose unit-period effects are reported below, runs five times longer chains than the parallel one, whose average effect is all that is used.")
+```
+
+`r if (all(pd_diag$ok)) "Every reported quantity on both panels passes the gate." else sprintf("The average effects pass on both panels. The unit-period effects on the diverging panel do not all clear the gate at this budget: %d of %d cells pass, and the largest R-hat is %.2f. That is the one place in these chapters where the sampler is visibly slow, and it is slow for a reason worth knowing. On this panel a unit's own amplitude trades off against its covariate-linked trend, because the same covariates drive both, and the chains move along that direction one tree at a time; the paper's own diagnostics single out the diverging heterogeneous design as the hardest of its six. The average effect is not affected, and the parallel panel's cells mix as well as the previous section's. Read the cell-level numbers on this panel as indicative, and treat the average-effect comparison, which is the point of the section, as settled.", sum(pd_cell_diag$bytarget$rhat <= GATE_RHAT & pd_cell_diag$bytarget$ess_bulk >= GATE_ESS & pd_cell_diag$bytarget$ess_tail >= GATE_ESS), nrow(pd_cell_diag$bytarget), max(pd_cell_diag$bytarget$rhat))`
+
+```{r fig-did-paper}
+#| fig-cap: "Event-study estimates on the paper's design, one panel per trend factor. The two panels share covariates, adoption dates, unit levels, noise and effects, and differ only in whether the untreated path drifts with the loading. The dashed line is the truth, which is the same in both."
+#| fig-alt: "Two panels of point ranges for eight estimators over six exposures. In the left panel every estimator sits on the dashed truth line. In the right panel four estimators sit far above the truth, two sit modestly above it with wide intervals, and LongBet sits on it."
+#| fig-width: 10
+#| fig-height: 5
+ggplot(pd_curves, aes(s, estimate, colour = estimator)) +
+  geom_line(data = tidyr::expand_grid(panel = levels(pd_curves$panel), tibble(s = seq_len(pd_max_s), estimate = pd_truth)) %>%
+              mutate(estimator = "Truth", panel = factor(panel, levels = levels(pd_curves$panel))),
+            linewidth = 1.1, linetype = "dashed") +
+  geom_pointrange(aes(ymin = lower, ymax = upper), position = position_dodge(0.75), size = 0.22) +
+  facet_wrap(~ panel) +
+  scale_colour_manual(values = DID_PAL) +
+  scale_x_continuous(breaks = seq_len(pd_max_s)) +
+  labs(x = "Periods since adoption", y = "Effect", colour = NULL) +
+  theme(legend.position = "bottom") + guides(colour = guide_legend(nrow = 3))
+```
+
+```{r did-paper-table}
+pd_curves %>% group_by(panel) %>% group_modify(~ score_curves(.x, pd_truth)) %>% ungroup() %>%
+  rename(Panel = panel) %>%
+  kable(digits = 3, caption = sprintf("Accuracy over the %d observed event times, one dataset per panel. Containment counts are not coverage; the paper reports coverage over twelve replicates of each design.", pd_max_s))
+```
+
+Read the table in the order the paper reports it. Where trends are parallel, every estimator recovers the curve, and LongBet's intervals are among the narrowest for the reason the first chapter gave: with nothing for it to do, the horseshoe prior switches the covariate-trend half of the calendar-time block off. Where trends diverge, the estimators that condition on nothing but the rollout are misled by about as much as the effect they are estimating, by construction. Two survive it. Callaway and Sant'Anna with covariates conditions on them through a linear outcome regression and a logistic propensity score, and what remains of its error is the part of $g(x_4) + x_1|x_3 - 1|$ that a linear adjustment cannot reach. Interactive fixed effects never sees the covariates: it fits a low-rank factor structure to the untreated panel, which this drift has exactly, at the price of estimating a loading for every unit from its own untreated periods. LongBet represents the conditional trend with a tree ensemble for the level, a free effect for every period, and smooth time profiles loaded on a dictionary of the covariates that contains the step in $x_4$ exactly and a hinge in $x_3$ that comes close to the kink. Across the twelve replicates of the paper's study that combination halves the root mean squared error of interactive fixed effects on both diverging designs while keeping coverage near nominal; one panel cannot show coverage, but it can show the ordering.
+
+```{r paper-unit-level}
+div_curve <- function(label) pd_curves %>% filter(panel == "Diverging trends", estimator == label) %>% arrange(s) %>% pull(estimate)
+pd_cell_truth <- pd$diverging$tau[pd$diverging$z == 1]; pd_cell_s <- pd$diverging$s[pd$diverging$z == 1]
+pd_cell_est <- rowMeans(pd_runs$diverging$cell_draws)
+pd_cell_lo <- apply(pd_runs$diverging$cell_draws, 1, quantile, 0.025)
+pd_cell_hi <- apply(pd_runs$diverging$cell_draws, 1, quantile, 0.975)
+broadcast <- function(label) div_curve(label)[pd_cell_s]
+tibble(`Unit-period predictor` = c("LongBet posterior mean, per unit-period",
+                                   "Callaway & Sant'Anna with covariates, imputed to every unit",
+                                   "Interactive fixed effects, imputed to every unit"),
+       RMSE = c(sqrt(mean((pd_cell_est - pd_cell_truth)^2)),
+                sqrt(mean((broadcast("Callaway & Sant'Anna, covariates") - pd_cell_truth)^2)),
+                sqrt(mean((broadcast("Interactive fixed effects") - pd_cell_truth)^2))),
+       `Correlation with truth` = c(cor(pd_cell_est, pd_cell_truth),
+                                    cor(broadcast("Callaway & Sant'Anna, covariates"), pd_cell_truth),
+                                    cor(broadcast("Interactive fixed effects"), pd_cell_truth)),
+       `Share of cells with the truth inside the 95% interval` =
+         c(mean(pd_cell_truth >= pd_cell_lo & pd_cell_truth <= pd_cell_hi), NA, NA)) %>%
+  kable(digits = 3, caption = sprintf("Unit-period effects on the diverging-trends panel, %d treated cells. Only LongBet produces a cell-level interval; the comparison rows broadcast an event-time average, as the paper's unit-level table does.", length(pd_cell_truth)))
+```
+
+### The same assumption, two differences
+
+It would be easy to read this section as LongBet assuming less than the difference-in-differences estimators. It does not. Its identifying assumption is that once the covariates and a unit's persistent level are known, the adoption date carries no further information about the untreated path; together with the additive level inside the model, that implies parallel trends conditional on the covariates, so the model belongs to the same family as the covariate-adjusted estimators rather than being an alternative to it. Two things differ, and neither is a weaker assumption.
+
+The first is what the conditional trend is allowed to be. The doubly robust implementation of @callaway2021did represents it with a linear outcome regression and a logistic propensity score in the supplied covariates. LongBet represents it with a tree ensemble for the level, a complete basis for the common movement of every period, and smooth time profiles loaded on a nonlinear feature map of the covariates, under a prior that keeps the unused terms at zero. The diverging panel above satisfies conditional parallel trends with a conditional trend that is nonlinear in the covariates, and that is exactly the case that separates the two.
+
+The second is what the model does with the unit's level once it has it. Differencing removes a level correlated with adoption timing exactly, whatever that correlation is. LongBet estimates the level and shrinks it toward an exchangeable prior, and the [fourth chapter](longbet_extensions.qmd) puts a number on what that costs when a unit has only one or two untreated periods. In exchange, the same fit delivers an effect that varies across units rather than across cohorts, a trajectory pooled across cohorts and projectable past the panel, and intervals that are narrower when the additional structure is right.
+
 ## How to Choose
 
-- **Use the econometric estimators** when the question is the average effect of a staggered rollout, when the panel is large and the model should be as transparent as possible, or when a reviewer needs an estimator with published guarantees and pre-trend diagnostics. They are fast, they are well understood, and on their home turf nothing beats them.
-- **Use LongBet as well** when the decision needs a number per unit rather than per period, when you want the trajectory projected past the end of the study, when several outcomes must be screened together, or when the deliverable is a probability that a specific unit clears a specific bar.
-- **Run both.** They estimate the same average from the same data, so agreement is a real check on the model and a disagreement is worth understanding before either result ships. The LongBet chapters keep a design-based estimate alongside the model wherever the design provides one, for exactly this reason.
+- **Use the econometric estimators** when the question is the average effect of a staggered rollout, when unconditional parallel trends is plausible or the covariates enter the trend linearly, when the panel is large and the model should be as transparent as possible, or when a reviewer needs an estimator with published guarantees and pre-trend diagnostics. They are fast, they are well understood, and on their home turf nothing beats them.
+- **Use LongBet as well** when the decision needs a number per unit rather than per period, when the untreated paths of different kinds of units plausibly diverge in ways a linear adjustment will not capture, when you want the trajectory projected past the end of the study, when several outcomes must be screened together, or when the deliverable is a probability that a specific unit clears a specific bar.
+- **Run both, and report both.** They estimate the same average from the same data under the same family of assumptions, so agreement is a real check on the model and a disagreement is information: it says that the linear conditional trend and the flexible one disagree about where the untreated cohorts were headed, which is a substantive question about the panel rather than a modelling detail. The LongBet chapters keep a design-based estimate alongside the model wherever the design provides one, for exactly this reason.
 
 ::: {.callout-tip}
 ## Learn more
   - @bacon2021difference on the decomposition of the two-way fixed effects estimator.
-  - @callaway2021did on group-time average treatment effects.
+  - @callaway2021did on group-time average treatment effects, with and without covariates.
   - @sun2021estimating on interaction-weighted event studies.
   - @borusyak2024revisiting on imputation estimators.
+  - @xu2017generalized and @liu2024practical on interactive fixed effects and counterfactual estimators.
   - @roth2023trending for a survey of what is now standard practice.
+  - @wang2024longbet for the full simulation study this section reproduces one panel of.
 :::
