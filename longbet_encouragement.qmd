@@ -62,28 +62,30 @@ enc_budget <- c(lb_budget(2), list(random_seed = 123L))
 **The outcome, on the adoption clock.** With $S^D_{it}$ the weeks since account $i$ activated,
 
 $$
-Y_{it} = \mu_Y(X_i) + \eta^{Y}_{it} + \beta^{Y}_{S^D_{it}}\, \nu_Y(X_i)\, \mathbf{1}\{S^D_{it} \ge 1\} + \gamma^{Y}_i + \epsilon^{Y}_{it}.
+Y_{it} = \mu_Y(X_i) + \eta^{Y}_{it} + \beta^{Y}_{S^D_{it}}\, \nu_Y(X_i)\, \mathbf{1}\{S^D_{it} \ge 1\} + \gamma^{Y}_i + \epsilon^{Y}_{it},
+\qquad
+\nu_Y(X_i) = 1 + \tilde{\nu}_Y(X_i) + \tilde{X}_i^\top b_Y,
 $$
 
-This is the model of the first chapter with **adoption** as the treatment, calendar-time block included, so the equation contains the jump that activation causes and how the benefit grows with exposure. Accounts in both arms contribute activation events, because control accounts adopt organically too.
+where the centered tree ensemble $\tilde{\nu}_Y(X_i)$ has sample mean zero ($\overline{\tilde{\nu}_Y} = 0$) and $\tilde{X}_i$ is centered and standardized. Anchoring the moderator around $1$ identifies $\beta^{Y}_s = \mathbb{E}_X[\tau_Y(X_i, s)]$ directly in sign and scale as the population-average exposure trajectory and prevents bilinear Gibbs attenuation between $\beta^{Y}_s$ and $\nu_Y(X_i)$ when the signal-to-noise ratio is moderate. The equation includes the calendar-time block $\eta^{Y}_{it}$, unit random intercepts $\gamma^{Y}_i$, and $\mathrm{AR}(1)$ innovations $\epsilon^{Y}_{it} = \phi \epsilon^{Y}_{i,t-1} + u^{Y}_{it}$. Accounts in both arms contribute activation events, because control accounts adopt organically too.
 
-**Adoption, as a hazard on the offer clock.** With $S^Z_{it}$ the weeks since the offer, the probability of activating this week given that the account has not yet activated is
-
-$$
-\lambda_{it} = \Phi\!\Big(\mu_D(X_i) + \eta^{D}_{it} + \beta^{D}_{S^Z_{it}}\, \nu_D(X_i)\, \mathbf{1}\{S^Z_{it} \ge 1\} + u_i\Big),
-$$
-
-a binary LongBet on the first-activation indicator with cells after activation masked out. The account-level term $u_i$ is a frailty: it carries unobserved differences in the propensity to adopt, and the block $\eta^{D}_{it}$ lets the organic adoption rate move with the calendar.
-
-**Composition.** Under an offer schedule, the hazard gives the probability of activating first in week $a$ and of having activated by week $t$. The offer's effects follow:
+**Adoption, as a survivor-averaged hazard on the offer clock.** With $S^Z_{it}$ the weeks since the offer, the probability of activating this week given that the account has not yet activated is
 
 $$
-\mathrm{CITT}_Y(X_i, t) = \sum_{a \le t} \big[\pi_a(X_i, 1) - \pi_a(X_i, 0)\big]\, \tau_t(X_i, t - a + 1),
+\lambda_{it} = \Phi\!\Big(\mu_D(X_i) + \eta^{D}_{it} + \beta^{D}_{S^Z_{it}}\, \nu_D(X_i)\, \mathbf{1}\{S^Z_{it} \ge 1\}\Big),
+$$
+
+a binary LongBet on the first-activation indicator with cells after activation masked out. Because each account activates at most once, an account-specific frailty is not separately identified from the baseline hazard profile; instead, $\lambda_{it}$ directly models the survivor-averaged hazard among accounts still at risk in week $t$, and the block $\eta^{D}_{it}$ lets the organic adoption rate move with the calendar.
+
+**Composition.** By the chain rule of conditional probability, the product of survivor-averaged hazards telescopes directly to the exact first-adoption distribution $\pi_a(X_i, z) = \lambda_{ia}(z)\prod_{r < a}\big(1 - \lambda_{ir}(z)\big)$ and cumulative adoption stock $P_t(X_i, z) = \sum_{a \le t} \pi_a(X_i, z)$, with no frailty integral required. The offer's effects follow:
+
+$$
+\mathrm{CITT}_Y(X_i, t) = \sum_{a \le t} \big[\pi_a(X_i, 1) - \pi_a(X_i, 0)\big]\, \tau_Y(X_i, t - a + 1),
 \qquad
 \mathrm{CITT}_D(X_i, t) = P_t(X_i, 1) - P_t(X_i, 0),
 $$
 
-evaluated draw by draw, with the frailty integrated outside the survival product by Gauss-Hermite quadrature. That composition is what handles the awkward case a snapshot cannot: an account that would have adopted organically in week 7 and adopts in week 4 because of the offer has the same adoption status by week 8 in both arms, and four extra weeks of exposure. The adoption contrast at week 8 misses it entirely; the outcome effect does not.
+evaluated draw by draw in a single vectorized pass via the exposure trajectory $\beta^{Y}_{t-a+1}\nu_Y(X_i)$. That composition is what handles the awkward case a snapshot cannot: an account that would have adopted organically in week 7 and adopts in week 4 because of the offer has the same adoption status by week 8 in both arms, and four extra weeks of exposure. The adoption contrast at week 8 misses it entirely; the outcome effect does not.
 
 `predict_conditional()` returns, for any covariate profile and every week, posterior draws of both effects, the principal strata under monotonicity, the complier effect as a draw-wise ratio, the cumulative lift, the probability that the cumulative lift beats a cost, and a knapsack allocation under capacity and budget constraints.
 
@@ -181,7 +183,7 @@ kable(diag_tbl, digits = c(0, 0, 0, 0, 3, 0),
 
 `r sprintf("%d of %d reported quantities pass both thresholds; the smallest bulk effective sample size is %.0f and the largest R-hat is %.3f.", sum(diag_tbl$Passed), nrow(diag_tbl), min(diag_tbl[["Bulk ESS"]]), max(diag_tbl[["Rank R-hat"]]))`
 
-Two features of this panel make it comfortable for the sampler, and they are worth recognising in your own data. The outcome equation sees the activation jump it is built to represent, so its residual is close to the noise the model assumes. And the adoption equation is a probit on the at-risk set with a few hundred events, which is a small, well-conditioned problem.
+Two features of this panel make it comfortable for the sampler, and they are worth recognizing in your own data. The outcome equation sees the activation jump it is built to represent, so its residual is close to the noise the model assumes. And the adoption equation is a probit on the at-risk set with a few hundred events, which is a small, well-conditioned problem.
 
 ```{r population-effects}
 eff <- enc_run$effects %>% filter(group == "all", quantity %in% c("itt_y", "itt_d")) %>%
@@ -270,7 +272,7 @@ Every method below is trained on the pilot and asked for the effect of the offer
 | Estimator | Route | Uses the panel structure? |
 |---|---|---|
 | **LongBet adoption-clock model** | Composition: outcome on the adoption clock, adoption hazard on the offer clock | Yes: unit intercepts, exposure trajectory |
-| **Instrumental forest x first-stage causal forest**, pooled with account clusters | Complier effect times adoption contrast | Partly: clustered, no unit intercepts |
+| **Instrumental forest $\times$ first-stage causal forest**, pooled with account clusters | Complier effect times adoption contrast | Partly: clustered, no unit intercepts |
 | **Causal forest on the offer**, pooled with a week covariate and account clusters | Direct | Partly |
 | **Causal forest on the offer**, one forest per week | Direct | No |
 | **Two-stage least squares**, per week, with covariate interactions in both stages | Complier effect times adoption contrast | No |
@@ -355,7 +357,7 @@ Three patterns matter more than the ranking.
 
 **Linear models cannot represent this target.** The true surface is a step in two covariates, so a plane through it overstates the ready-but-small segment and understates the ready-and-scaled one, which is precisely where the money is.
 
-**Modelling the adoption jump is what the panel structure buys.** The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account's outcome jumped when it activated and has been compounding since. That is why it is the only estimator that follows the compounding trajectory in the ready-and-scaled segment. The roughness column shows the other half of the story: anything fitted week by week has to rediscover the shape from noise at every horizon, while the pooled forests are smooth only because they barely move across weeks at all.
+**Modeling the adoption jump is what the panel structure buys.** The forests see each account-week as an observation with covariates; the adoption-clock model knows that an account's outcome jumped when it activated and has been compounding since. That is why it is the only estimator that follows the compounding trajectory in the ready-and-scaled segment. The roughness column shows the other half of the story: anything fitted week by week has to rediscover the shape from noise at every horizon, while the pooled forests are smooth only because they barely move across weeks at all.
 
 **The ratio route pays for a noisy denominator.** The instrumental forest's complier effect times its first stage lands close to the direct route, but dividing by a small adoption contrast is what makes a ratio heavy-tailed, which is the statistical version of the argument at the top of this chapter.
 
@@ -593,7 +595,7 @@ p_right <- tibble(prob = prob_regret,
 patchwork::wrap_plots(p_left, p_right, nrow = 1)
 ```
 
-Three lessons come out of this example, and they generalise well beyond the simulation.
+Three lessons come out of this example, and they generalize well beyond the simulation.
 
 - **Snapshots fail in opposite directions.** The early window sees nothing, because the effect has not started, and would have shelved the feature. The end-line snapshot sees the largest gap and, extrapolated over the horizon, overstates it. The trajectory is the object to model.
 - **Compliance is not benefit.** Ranking on the first stage, or on a constant complier effect times the first stage, sends nudges to the most compliant users, many of whom are harmed. The effect of the offer on the outcome is what protects them.
@@ -602,12 +604,12 @@ Three lessons come out of this example, and they generalise well beyond the simu
 ## A Practitioner's Checklist
 
 1. **Decide what the decision needs.** Allocating an offer needs the cumulative effect of the offer against its cost. Pricing the feature needs the complier effect. Never rank accounts on a ratio.
-2. **Start with the reference.** `encouragement_effects()` gives the adoption curves, the first stage at each horizon, and the assigned-arm contrasts with no model at all.
+2. **Start with the reference.** `encouragement_effects()` gives the adoption curves, the first stage at each horizon, and the assigned-arm contrasts with no model at all; run `preadoption_dip_diagnostic()` ($z_{\mathrm{dip}}$) on the observed panel before fitting to check for anticipatory outcome dips prior to adoption.
 3. **Fit with enough chains and draws,** then report `predict(fit)$diagnostics` for exactly the quantities you will use.
-4. **Compare the population effects with the reference.** `predict(fit)` returns both on the same accounts; agreement is what licenses the account-level surfaces.
+4. **Compare the population effects with the reference.** `predict(fit)` returns both on the same accounts alongside `cumulative_discrepancy()` ($z_{\mathrm{cum}}$); agreement across horizons and on the cumulative sum is what licenses the account-level surfaces.
 5. **Predict for the population you will act on.** `predict_conditional(new_x = ...)` describes new accounts under the offer schedule you would deploy.
 6. **Use the draws.** Breakeven probabilities, certainty-adjusted rankings and regret filters are one line each, and `knapsack_policy()` respects capacity and budget.
 
 ## Conclusion
 
-When adoption is a choice, the effect of an offer is a composition: what the offer does to when people adopt, and what adopting does over the weeks that follow. Modelling those two pieces separately and composing them keeps the activation jump where it belongs, delivers the effect of the offer account by account, and turns a pilot into a ranked list of whom to invite next, with the uncertainty attached.
+When adoption is a choice, the effect of an offer is a composition: what the offer does to when people adopt, and what adopting does over the weeks that follow. Modeling those two pieces separately and composing them keeps the activation jump where it belongs, delivers the effect of the offer account by account, and turns a pilot into a ranked list of whom to invite next, with the uncertainty attached.
